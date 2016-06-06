@@ -24,7 +24,7 @@ IProcessor * CProcessorManager::GetNextProcessor()
 	return  (++_current != _processors.end()) ? _current->second : nullptr;
 }
 
-IProcessor * CProcessorManager::GetProcessor(const char * name)
+IProcessor * CProcessorManager::GetProcessor(const wchar_t * name)
 {
 	auto iter = _processors.find(name);
 	return  (iter != _processors.end()) ? iter->second : nullptr;

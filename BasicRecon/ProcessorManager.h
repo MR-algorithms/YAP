@@ -12,12 +12,12 @@ public:
 
 	virtual IProcessor * GetFirstProcessor() override;
 	virtual IProcessor * GetNextProcessor() override;
-	virtual IProcessor * GetProcessor(const char * name) override;
+	virtual IProcessor * GetProcessor(const wchar_t * name) override;
 
 	bool AddProcessor(IProcessor * processor);
 
 private:
-	std::map<std::string, IProcessor*> _processors;
-	std::map<std::string, IProcessor*>::iterator _current;
+	std::map<std::wstring, IProcessor*> _processors;
+	std::map<std::wstring, IProcessor*>::iterator _current;
 };
 
