@@ -74,6 +74,19 @@ void CProcessorImp::Feed(const wchar_t * out_port, IData * data)
 	}
 }
 
+bool CProcessorImp::AddProperty(const wchar_t * name, PropertyType type)
+{
+	TODO(try...catch...);
+
+	auto property = new CPropertyImp(name, type);
+	return _properties.AddProperty(property);
+}
+
+IPropertyEnumerator * CProcessorImp::GetProperties()
+{
+	return &_properties;
+}
+
 bool CPortEnumerator::AddPort(IPort* port)
 {
 	if (port == nullptr)
@@ -117,4 +130,26 @@ unsigned int CPort::GetDimensions()
 DataType CPort::GetDataType()
 {
 	return _data_type;
+}
+
+IProperty * CPropertyEnumerator::GetFirst()
+{
+	if (_properties.empty())
+		return nullptr;
+
+	_current = _properties.begin();
+
+	return _current->second;
+}
+
+IProperty * CPropertyEnumerator::GetNext()
+{
+	return (_current != _properties.end() && ++_current != _properties.end()) ? 
+		_current->second : nullptr;
+}
+
+IProperty * CPropertyEnumerator::GetProperty(const wchar_t * name)
+{
+	auto iter = _properties.find(name);
+	return (iter != _properties.end()) ? iter->second : nullptr;
 }
