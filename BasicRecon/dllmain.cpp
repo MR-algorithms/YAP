@@ -6,7 +6,7 @@
 
 extern "C"
 {
-	IProcessorManager * GetProcessorManager()
+	__declspec(dllexport) IProcessorManager * GetProcessorManager()
 	{
 		auto processor_manager = new CProcessorManager;
 
