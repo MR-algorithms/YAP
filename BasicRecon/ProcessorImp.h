@@ -195,8 +195,6 @@ public:
 
 	bool AddProperty(const wchar_t * name, PropertyType type);
 
-	TODO(LWJ: Implement following functions.);
-
 	void SetIntProperty(const wchar_t * name, int value);
 	int GetIntProperty(const wchar_t * name);
 	void SetFloatProperty(const wchar_t * name, double value);
