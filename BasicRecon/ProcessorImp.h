@@ -204,6 +204,8 @@ public:
 	void SetStringProperty(const wchar_t * name, const wchar_t * value);
 	const wchar_t * GetStringProperty(const wchar_t * name);
 
+	void CheckProperty(const wchar_t * name);
+
 	virtual IPropertyEnumerator * GetProperties() override;
 
 	CPortEnumerator _input_ports;
