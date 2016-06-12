@@ -77,10 +77,14 @@ void CProcessorImp::Feed(const wchar_t * out_port, IData * data)
 
 bool CProcessorImp::AddProperty(const wchar_t * name, PropertyType type)
 {
-	TODO(try...catch...);
-
-	auto property = new CPropertyImp(name, type);
-	return _properties.AddProperty(property);
+	try
+	{
+		return _properties.AddProperty(new CPropertyImp(name, type));
+	}
+	catch (std::bad_alloc&)
+	{
+		return false;
+	}
 }
 
 IPropertyEnumerator * CProcessorImp::GetProperties()
