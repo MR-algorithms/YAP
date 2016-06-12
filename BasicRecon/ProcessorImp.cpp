@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include "..\Interface\Interface.h"
+#include <assert.h>
 
 using namespace std;
 
@@ -77,10 +78,14 @@ void CProcessorImp::Feed(const wchar_t * out_port, IData * data)
 
 bool CProcessorImp::AddProperty(const wchar_t * name, PropertyType type)
 {
-	TODO(try...catch...);
-
-	auto property = new CPropertyImp(name, type);
-	return _properties.AddProperty(property);
+	try
+	{
+		return _properties.AddProperty(new CPropertyImp(name, type));
+	}
+	catch (std::bad_alloc&)
+	{
+		return false;
+	}
 }
 
 IPropertyEnumerator * CProcessorImp::GetProperties()
@@ -90,42 +95,69 @@ IPropertyEnumerator * CProcessorImp::GetProperties()
 
 void CProcessorImp::SetIntProperty(const wchar_t * name, int value)
 {
+	CheckProperty(name);
+
 	(reinterpret_cast<CIntValue*>(_properties.GetProperty(name)->GetValueInterface()))->SetValue(value);
 }
 
 int CProcessorImp::GetIntProperty(const wchar_t * name)
 {
+	CheckProperty(name);
+
 	return (reinterpret_cast<CIntValue*>(_properties.GetProperty(name)->GetValueInterface()))->GetValue();
 }
 
 void CProcessorImp::SetFloatProperty(const wchar_t * name, double value)
 {
+	CheckProperty(name);
+
 	(reinterpret_cast<CFloatValue*>(_properties.GetProperty(name)->GetValueInterface()))->SetValue(value);
 }
 
 double CProcessorImp::GetFloatProperty(const wchar_t * name)
 {
+	CheckProperty(name);
+
 	return (reinterpret_cast<CFloatValue*>(_properties.GetProperty(name)->GetValueInterface()))->GetValue();
 }
 
 void CProcessorImp::SetBoolProperty(const wchar_t * name, bool value)
 {
+	CheckProperty(name);
+
 	(reinterpret_cast<CBoolValue*>(_properties.GetProperty(name)->GetValueInterface()))->SetValue(value);
 }
 
 bool CProcessorImp::GetBoolProperty(const wchar_t * name)
 {
+	CheckProperty(name);
+
 	return (reinterpret_cast<CBoolValue*>(_properties.GetProperty(name)->GetValueInterface()))->GetValue();
 }
 
 void CProcessorImp::SetStringProperty(const wchar_t * name, const wchar_t * value)
 {
+	CheckProperty(name);
+
 	(reinterpret_cast<CStringValue*>(_properties.GetProperty(name)->GetValueInterface()))->SetValue(value);
 }
 
 const wchar_t * CProcessorImp::GetStringProperty(const wchar_t * name)
 {
+	CheckProperty(name);
+
 	return (reinterpret_cast<CStringValue*>(_properties.GetProperty(name)->GetValueInterface()))->GetValue();
+}
+
+void CProcessorImp::CheckProperty(const wchar_t * name)
+{
+	assert(name != nullptr && name[0] != 0);
+
+	auto property = _properties.GetProperty(name);
+	if (property == nullptr)
+		throw "Property not found!"; //抛出异常，临时代码，将来使用具体的异常类型
+
+	assert(property->GetValueInterface() != nullptr);
 }
 
 bool CPortEnumerator::AddPort(IPort* port)
