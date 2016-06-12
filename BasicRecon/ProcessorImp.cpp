@@ -2,6 +2,7 @@
 #include "ProcessorImp.h"
 #include <iostream>
 #include <algorithm>
+#include "..\Interface\Interface.h"
 
 using namespace std;
 
@@ -87,11 +88,53 @@ IPropertyEnumerator * CProcessorImp::GetProperties()
 	return &_properties;
 }
 
+void CProcessorImp::SetIntProperty(const wchar_t * name, int value)
+{
+	(reinterpret_cast<CIntValue*>(_properties.GetProperty(name)->GetValueInterface()))->SetValue(value);
+}
+
+int CProcessorImp::GetIntProperty(const wchar_t * name)
+{
+	return (reinterpret_cast<CIntValue*>(_properties.GetProperty(name)->GetValueInterface()))->GetValue();
+}
+
+void CProcessorImp::SetFloatProperty(const wchar_t * name, double value)
+{
+	(reinterpret_cast<CFloatValue*>(_properties.GetProperty(name)->GetValueInterface()))->SetValue(value);
+}
+
+double CProcessorImp::GetFloatProperty(const wchar_t * name)
+{
+	return (reinterpret_cast<CFloatValue*>(_properties.GetProperty(name)->GetValueInterface()))->GetValue();
+}
+
+void CProcessorImp::SetBoolProperty(const wchar_t * name, bool value)
+{
+	(reinterpret_cast<CBoolValue*>(_properties.GetProperty(name)->GetValueInterface()))->SetValue(value);
+}
+
+bool CProcessorImp::GetBoolProperty(const wchar_t * name)
+{
+	return (reinterpret_cast<CBoolValue*>(_properties.GetProperty(name)->GetValueInterface()))->GetValue();
+}
+
+void CProcessorImp::SetStringProperty(const wchar_t * name, const wchar_t * value)
+{
+	(reinterpret_cast<CStringValue*>(_properties.GetProperty(name)->GetValueInterface()))->SetValue(value);
+}
+
+const wchar_t * CProcessorImp::GetStringProperty(const wchar_t * name)
+{
+	return (reinterpret_cast<CStringValue*>(_properties.GetProperty(name)->GetValueInterface()))->GetValue();
+}
+
 bool CPortEnumerator::AddPort(IPort* port)
 {
 	if (port == nullptr)
 		return false;
-	_ports.insert(std::make_pair(port->GetName(), port));
+
+	shared_ptr<IPort> p(port);
+	_ports.insert(std::make_pair(port->GetName(), p));
 
 	return true;
 }
