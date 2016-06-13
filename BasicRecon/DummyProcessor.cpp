@@ -9,6 +9,11 @@ CDummyProcessor::CDummyProcessor()
 {
 	AddInputPort(L"Input", 2, DataTypeFloat);
 	AddOutputPort(L"Output", 2, DataTypeFloat);
+	AddProperty(L"TestBool", PropertyBool);
+	SetBoolProperty(L"TestBool", false);
+
+	AddProperty(L"TestFloat", PropertyFloat);
+	SetFloatProperty(L"TestFloat", 1.0);
 }
 
 

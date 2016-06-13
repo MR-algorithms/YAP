@@ -174,6 +174,19 @@ protected:
 
 };
 
+
+struct PropertyException
+{
+	enum Type
+	{
+		PropertyNotFound,
+		TypeNotMatch,
+	};
+	std::wstring property_name;
+	Type type;
+	PropertyException(const wchar_t * name, Type type_) : property_name(name), type(type_){}
+};
+
 class CProcessorImp :
 	public IProcessor
 {
@@ -203,8 +216,6 @@ public:
 	bool GetBoolProperty(const wchar_t * name);
 	void SetStringProperty(const wchar_t * name, const wchar_t * value);
 	const wchar_t * GetStringProperty(const wchar_t * name);
-
-	void CheckProperty(const wchar_t * name);
 
 	virtual IPropertyEnumerator * GetProperties() override;
 
