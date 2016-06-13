@@ -174,6 +174,19 @@ protected:
 
 };
 
+
+struct PropertyException
+{
+	enum Type
+	{
+		PropertyNotFound,
+		TypeNotMatch,
+	};
+	std::wstring property_name;
+	Type type;
+	PropertyException(const wchar_t * name, Type type_) : property_name(name), type(type_){}
+};
+
 class CProcessorImp :
 	public IProcessor
 {
@@ -194,8 +207,6 @@ public:
 	void Feed(const wchar_t * name, IData * data);
 
 	bool AddProperty(const wchar_t * name, PropertyType type);
-
-	TODO(LWJ: Implement following functions.);
 
 	void SetIntProperty(const wchar_t * name, int value);
 	int GetIntProperty(const wchar_t * name);
