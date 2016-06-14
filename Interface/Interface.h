@@ -119,6 +119,7 @@ struct IDimensions
 struct IData
 {
 	virtual void * GetData() = 0;
+	virtual DataType GetDataType() = 0;
 	virtual IDimensions * GetDimension() = 0;
 };
 

@@ -101,6 +101,12 @@ public:
 	{
 		return &_dimensions;
 	}
+
+	virtual DataType GetDataType() override
+	{
+		return DataTypeComplexDouble;
+	}
+
 protected:
 	double * _data;
 	CDimensionsImp _dimensions;
