@@ -101,6 +101,12 @@ public:
 	{
 		return &_dimensions;
 	}
+
+	virtual DataType GetDataType() override
+	{
+		return DataTypeComplexDouble;
+	}
+
 protected:
 	double * _data;
 	CDimensionsImp _dimensions;
@@ -138,6 +144,46 @@ int main()
 	}
 
 	auto processor = processor_manager->GetProcessor(L"Dummy");
+
+	auto properties = processor->GetProperties();
+	if (properties != nullptr)
+	{
+		for (auto property = properties->GetFirst(); property != nullptr;
+			property = properties->GetNext())
+		{
+			wcout << property->GetName() << " " << property->GetType() << " ";
+			switch (property->GetType())
+			{
+			case PropertyBool:
+			{
+				auto value_interface = reinterpret_cast<IBoolValue*>(property->GetValueInterface());
+				wcout << value_interface->GetValue();
+				break;
+			}
+			case PropertyFloat:
+			{
+				auto value_interface = reinterpret_cast<IFloatValue*>(property->GetValueInterface());
+				wcout << value_interface->GetValue();
+				break;
+			}
+			case PropertyInt:
+			{
+				auto value_interface = reinterpret_cast<IIntValue*>(property->GetValueInterface());
+				wcout << value_interface->GetValue();
+				break;
+			}
+			case PropertyString:
+			{
+				auto value_interface = reinterpret_cast<IStringValue*>(property->GetValueInterface());
+				wcout << value_interface->GetValue();
+				break;
+			}
+			default:
+				break;
+			}
+			wcout << endl;
+		}
+	}
 
 	vector<double> image(256 * 256);
 	for (unsigned int i = 0; i < image.size(); ++i)

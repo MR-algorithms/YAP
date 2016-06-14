@@ -2,6 +2,8 @@
 #include "ProcessorImp.h"
 #include <iostream>
 #include <algorithm>
+#include "..\Interface\Interface.h"
+#include <assert.h>
 
 using namespace std;
 
@@ -74,11 +76,155 @@ void CProcessorImp::Feed(const wchar_t * out_port, IData * data)
 	}
 }
 
+bool CProcessorImp::AddProperty(const wchar_t * name, 
+	PropertyType type)
+{
+	try
+	{
+		return _properties.AddProperty(new CPropertyImp(name, type));
+	}
+	catch (std::bad_alloc&)
+	{
+		return false;
+	}
+}
+
+IPropertyEnumerator * CProcessorImp::GetProperties()
+{
+	return &_properties;
+}
+
+void CProcessorImp::SetIntProperty(const wchar_t * name, int value)
+{
+	assert(name != nullptr && name[0] != 0);
+
+	auto property = _properties.GetProperty(name);
+	if (property == nullptr)
+		throw "Property not found!"; //抛出异常，临时代码，将来使用具体的异常类型
+
+	if (property->GetType() != PropertyInt)
+		throw "Property type error!";
+
+	assert(property->GetValueInterface() != nullptr);
+
+	(reinterpret_cast<CIntValue*>(property->GetValueInterface()))->SetValue(value);
+}
+
+int CProcessorImp::GetIntProperty(const wchar_t * name)
+{
+	assert(name != nullptr && name[0] != 0);
+
+	auto property = _properties.GetProperty(name);
+	if (property == nullptr)
+		throw "Property not found!"; //抛出异常，临时代码，将来使用具体的异常类型
+
+	if (property->GetType() != PropertyInt)
+		throw "Property type error!";
+
+	assert(property->GetValueInterface() != nullptr);
+
+	return (reinterpret_cast<CIntValue*>(property->GetValueInterface()))->GetValue();
+}
+
+void CProcessorImp::SetFloatProperty(const wchar_t * name, double value)
+{
+	assert(name != nullptr && name[0] != 0);
+
+	auto property = _properties.GetProperty(name);
+	if (property == nullptr)
+		throw "Property not found!"; //抛出异常，临时代码，将来使用具体的异常类型
+
+	if (property->GetType() != PropertyFloat)
+		throw "Property type error!";
+
+	assert(property->GetValueInterface() != nullptr);
+	(reinterpret_cast<CFloatValue*>(property->GetValueInterface()))->SetValue(value);
+}
+
+double CProcessorImp::GetFloatProperty(const wchar_t * name)
+{
+	assert(name != nullptr && name[0] != 0);
+
+	auto property = _properties.GetProperty(name);
+	if (property == nullptr)
+		throw "Property not found!"; //抛出异常，临时代码，将来使用具体的异常类型
+
+	if (property->GetType() != PropertyFloat)
+		throw "Property type error!";
+
+	assert(property->GetValueInterface() != nullptr);
+	return (reinterpret_cast<CFloatValue*>(property->GetValueInterface()))->GetValue();
+}
+
+void CProcessorImp::SetBoolProperty(const wchar_t * name, bool value)
+{
+	assert(name != nullptr && name[0] != 0);
+
+	auto property = _properties.GetProperty(name);
+	if (property == nullptr)
+		throw "Property not found!"; //抛出异常，临时代码，将来使用具体的异常类型
+
+	if (property->GetType() != PropertyBool)
+		throw "Property type error!";
+
+	assert(property->GetValueInterface() != nullptr);
+	(reinterpret_cast<CBoolValue*>(property->GetValueInterface()))->SetValue(value);
+}
+
+bool CProcessorImp::GetBoolProperty(const wchar_t * name)
+{
+	assert(name != nullptr && name[0] != 0);
+
+	auto property = _properties.GetProperty(name);
+	if (property == nullptr)
+		throw "Property not found!"; //抛出异常，临时代码，将来使用具体的异常类型
+
+	if (property->GetType() != PropertyBool)
+		throw "Property type error!";
+
+	assert(property->GetValueInterface() != nullptr);
+
+	return (reinterpret_cast<CBoolValue*>(property->GetValueInterface()))->GetValue();
+}
+
+void CProcessorImp::SetStringProperty(const wchar_t * name, const wchar_t * value)
+{
+	assert(name != nullptr && name[0] != 0);
+
+	auto property = _properties.GetProperty(name);
+	if (property == nullptr)
+		throw PropertyException(name, PropertyException::PropertyNotFound);
+
+	if (property->GetType() != PropertyString)
+		throw PropertyException(name, PropertyException::TypeNotMatch);
+
+	assert(property->GetValueInterface() != nullptr);
+	(reinterpret_cast<CStringValue*>(property->GetValueInterface()))->SetValue(value);
+}
+
+
+const wchar_t * CProcessorImp::GetStringProperty(const wchar_t * name)
+{
+	assert(name != nullptr && name[0] != 0);
+
+	auto property = _properties.GetProperty(name);
+	if (property == nullptr)
+		throw "Property not found!"; //抛出异常，临时代码，将来使用具体的异常类型
+
+	if (property->GetType() != PropertyString)
+		throw "Property type error!";
+
+	assert(property->GetValueInterface() != nullptr);
+	return (reinterpret_cast<CStringValue*>(property->GetValueInterface()))->GetValue();
+}
+
 bool CPortEnumerator::AddPort(IPort* port)
 {
 	if (port == nullptr)
 		return false;
-	_ports.insert(std::make_pair(port->GetName(), port));
+
+	shared_ptr<IPort> p(port);
+	_ports.insert(std::make_pair(port->GetName(), p));
 
 	return true;
 }
@@ -117,4 +263,26 @@ unsigned int CPort::GetDimensions()
 DataType CPort::GetDataType()
 {
 	return _data_type;
+}
+
+IProperty * CPropertyEnumerator::GetFirst()
+{
+	if (_properties.empty())
+		return nullptr;
+
+	_current = _properties.begin();
+
+	return _current->second;
+}
+
+IProperty * CPropertyEnumerator::GetNext()
+{
+	return (_current != _properties.end() && ++_current != _properties.end()) ? 
+		_current->second : nullptr;
+}
+
+IProperty * CPropertyEnumerator::GetProperty(const wchar_t * name)
+{
+	auto iter = _properties.find(name);
+	return (iter != _properties.end()) ? iter->second : nullptr;
 }

@@ -63,6 +63,52 @@ struct Dimension
 	unsigned int length;
 };
 
+enum PropertyType
+{
+	PropertyBool,
+	PropertyInt,
+	PropertyFloat,
+	PropertyString,
+};
+
+struct IProperty
+{
+	virtual const wchar_t * GetName() = 0;
+	virtual PropertyType GetType() = 0;
+	virtual void * GetValueInterface() = 0;
+};
+
+struct IPropertyEnumerator
+{
+	virtual IProperty * GetFirst() = 0;
+	virtual IProperty * GetNext() = 0;
+	virtual IProperty * GetProperty(const wchar_t * name) = 0;
+};
+
+struct IFloatValue
+{
+	virtual double GetValue() = 0;
+	virtual void SetValue(double value) = 0;
+};
+
+struct IBoolValue
+{
+	virtual bool GetValue() = 0;
+	virtual void SetValue(bool value) = 0;
+};
+
+struct IIntValue
+{
+	virtual int GetValue() = 0;
+	virtual void SetValue(int value) = 0;
+};
+
+struct IStringValue
+{
+	virtual const wchar_t * GetValue() = 0;
+	virtual void SetValue(const wchar_t * value) = 0;
+};
+
 struct IDimensions
 {
 	virtual unsigned int GetDimensionCount() = 0;
@@ -73,6 +119,7 @@ struct IDimensions
 struct IData
 {
 	virtual void * GetData() = 0;
+	virtual DataType GetDataType() = 0;
 	virtual IDimensions * GetDimension() = 0;
 };
 
@@ -86,6 +133,7 @@ struct IProcessor
 	// virtual bool Process() = 0;
 	virtual bool Input(const wchar_t * port, IData * data) = 0;
 	virtual bool Link(const wchar_t * out_port, IProcessor* next_processor, wchar_t * in_port) = 0;
+	virtual IPropertyEnumerator * GetProperties() = 0;
 };
 
 
