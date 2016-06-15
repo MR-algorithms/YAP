@@ -81,7 +81,19 @@ bool CProcessorImp::AddProperty(const wchar_t * name,
 {
 	try
 	{
-		return _properties.AddProperty(new CPropertyImp(name, type));
+		switch (type)
+		{
+		case PropertyBool:
+			return _properties.AddProperty(new CBoolProperty(name));
+		case PropertyInt:
+			return _properties.AddProperty(new CIntProperty(name));
+		case PropertyFloat:
+			return _properties.AddProperty(new CFloatProperty(name));
+		case PropertyString:
+			return _properties.AddProperty(new CStringProperty(name));
+		default:
+			return false;
+		}
 	}
 	catch (std::bad_alloc&)
 	{
@@ -105,9 +117,9 @@ void CProcessorImp::SetIntProperty(const wchar_t * name, int value)
 	if (property->GetType() != PropertyInt)
 		throw "Property type error!";
 
-	assert(property->GetValueInterface() != nullptr);
-
-	(reinterpret_cast<CIntValue*>(property->GetValueInterface()))->SetValue(value);
+	auto int_value = dynamic_cast<IIntValue*>(property);
+	assert(int_value != nullptr);
+	int_value->SetValue(value);
 }
 
 int CProcessorImp::GetIntProperty(const wchar_t * name)
@@ -121,9 +133,10 @@ int CProcessorImp::GetIntProperty(const wchar_t * name)
 	if (property->GetType() != PropertyInt)
 		throw "Property type error!";
 
-	assert(property->GetValueInterface() != nullptr);
+	auto int_value = dynamic_cast<IIntValue*>(property);
+	assert(int_value != nullptr);
 
-	return (reinterpret_cast<CIntValue*>(property->GetValueInterface()))->GetValue();
+	return int_value->GetValue();
 }
 
 void CProcessorImp::SetFloatProperty(const wchar_t * name, double value)
@@ -137,8 +150,9 @@ void CProcessorImp::SetFloatProperty(const wchar_t * name, double value)
 	if (property->GetType() != PropertyFloat)
 		throw "Property type error!";
 
-	assert(property->GetValueInterface() != nullptr);
-	(reinterpret_cast<CFloatValue*>(property->GetValueInterface()))->SetValue(value);
+	auto float_value = dynamic_cast<IFloatValue*>(property);
+	assert(float_value != nullptr);
+	float_value->SetValue(value);
 }
 
 double CProcessorImp::GetFloatProperty(const wchar_t * name)
@@ -152,8 +166,10 @@ double CProcessorImp::GetFloatProperty(const wchar_t * name)
 	if (property->GetType() != PropertyFloat)
 		throw "Property type error!";
 
-	assert(property->GetValueInterface() != nullptr);
-	return (reinterpret_cast<CFloatValue*>(property->GetValueInterface()))->GetValue();
+	auto float_value = dynamic_cast<IFloatValue*>(property);
+	assert(float_value != nullptr);
+
+	return float_value->GetValue();
 }
 
 void CProcessorImp::SetBoolProperty(const wchar_t * name, bool value)
@@ -167,8 +183,9 @@ void CProcessorImp::SetBoolProperty(const wchar_t * name, bool value)
 	if (property->GetType() != PropertyBool)
 		throw "Property type error!";
 
-	assert(property->GetValueInterface() != nullptr);
-	(reinterpret_cast<CBoolValue*>(property->GetValueInterface()))->SetValue(value);
+	auto bool_value = dynamic_cast<IBoolValue*>(property);
+	assert(bool_value != nullptr);
+	bool_value->SetValue(value);
 }
 
 bool CProcessorImp::GetBoolProperty(const wchar_t * name)
@@ -182,9 +199,10 @@ bool CProcessorImp::GetBoolProperty(const wchar_t * name)
 	if (property->GetType() != PropertyBool)
 		throw "Property type error!";
 
-	assert(property->GetValueInterface() != nullptr);
+	auto bool_value = dynamic_cast<IBoolValue*>(property);
+	assert(bool_value != nullptr);
 
-	return (reinterpret_cast<CBoolValue*>(property->GetValueInterface()))->GetValue();
+	return bool_value->GetValue();
 }
 
 void CProcessorImp::SetStringProperty(const wchar_t * name, const wchar_t * value)
@@ -198,8 +216,9 @@ void CProcessorImp::SetStringProperty(const wchar_t * name, const wchar_t * valu
 	if (property->GetType() != PropertyString)
 		throw PropertyException(name, PropertyException::TypeNotMatch);
 
-	assert(property->GetValueInterface() != nullptr);
-	(reinterpret_cast<CStringValue*>(property->GetValueInterface()))->SetValue(value);
+	auto string_value = dynamic_cast<IStringValue*>(property);
+	assert(string_value != nullptr);
+	string_value->SetValue(value);
 }
 
 
@@ -214,8 +233,9 @@ const wchar_t * CProcessorImp::GetStringProperty(const wchar_t * name)
 	if (property->GetType() != PropertyString)
 		throw "Property type error!";
 
-	assert(property->GetValueInterface() != nullptr);
-	return (reinterpret_cast<CStringValue*>(property->GetValueInterface()))->GetValue();
+	auto string_value = dynamic_cast<IStringValue*>(property);
+	assert(string_value != nullptr);
+	return string_value->GetValue();
 }
 
 bool CPortEnumerator::AddPort(IPort* port)
