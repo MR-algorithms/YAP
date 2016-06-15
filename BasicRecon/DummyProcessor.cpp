@@ -72,4 +72,5 @@ bool CDummyProcessor::Test(IData * data)
 	auto data_buffer = reinterpret_cast<complex<double> *> (data_object.GetData());
 
 	// fft(data_buffer, width, height);
+	return true;
 }
