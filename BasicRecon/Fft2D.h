@@ -25,7 +25,7 @@ public:
 protected:
 	void SwapBlock(std::complex<double> * block1, std::complex<double> * block2, unsigned int width, unsigned int height, unsigned int line_stride);
 
-	fftw_plan _p_FFT;
+	fftw_plan _fft_plan;
 
 	bool Fft2D(IData * data);
 

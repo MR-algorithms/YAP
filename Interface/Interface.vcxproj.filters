@@ -18,5 +18,16 @@
     <ClInclude Include="Interface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ReconData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SmartPtr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ReconData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

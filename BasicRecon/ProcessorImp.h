@@ -1,10 +1,11 @@
 #pragma once
-#include "..\Interface\Interface.h"
+#include "../Interface/Interface.h"
 
 #include <map>
 #include <string>
 #include <memory>
-#include "..\Utilities\macros.h"
+#include "../Utilities/macros.h"
+#include "../interface/reconData.h"
 
 class CPort : public IPort
 {
@@ -50,7 +51,7 @@ public:
 		size_t count = 1;
 		for (unsigned int i = 0; i < dimension_count; ++i)
 		{
-			Dimension dimension;
+			Yap::Dimension dimension;
 			_dimensions.GetDimensionInfo(i, dimension.type, dimension.start_index, dimension.length);
 			count *= dimension.length;
 		}
@@ -61,96 +62,129 @@ protected:
 	IDimensions& _dimensions;
 };
 
-class CFloatValue : public IFloatValue
+class CFloatProperty : public IProperty, public IFloatValue
 {
 public:
-	CFloatValue() : _value(0) {}
-	CFloatValue(double value) : _value(value) {}
+	CFloatProperty(const wchar_t * name, double value = 0.0) 
+		: _name(name), _value(value){}
 	virtual double GetValue() { return _value; }
 	virtual void SetValue(double value) { _value = value; }
-protected:
-	double _value;
-};
-
-class CIntValue : public IIntValue
-{
-public:
-	CIntValue() : _value(0) {}
-	CIntValue(int value) : _value(value) {}
-	virtual int GetValue() { return _value; }
-	virtual void SetValue(int value) { _value = value; }
-protected:
-	int _value;
-};
-
-class CBoolValue : public IBoolValue
-{
-public:
-	CBoolValue() : _value(false) {}
-	CBoolValue(bool value) : _value(value) {}
-	virtual bool GetValue() { return _value; }
-	virtual void SetValue(bool value) { _value = value; }
-protected:
-	bool _value;
-};
-
-class CStringValue : public IStringValue
-{
-public:
-	CStringValue() {}
-	CStringValue(const wchar_t * value) : _value(value) {}
-	virtual const wchar_t * GetValue() { return _value.c_str(); }
-	virtual void SetValue(const wchar_t * value) { _value = value; }
-protected:
-	std::wstring _value;
-};
-
-class CPropertyImp : public IProperty
-{
-public:
-	CPropertyImp(const wchar_t * name, PropertyType type) : _name(name), _type(type) 
-	{
-		switch (type)
-		{
-		case PropertyBool:
-			_value_interface = new CBoolValue;
-			break;
-		case PropertyInt:
-			_value_interface = new CIntValue;
-			break;
-		case PropertyFloat:
-			_value_interface = new CFloatValue;
-			break;
-		case PropertyString:
-			_value_interface = new CStringValue;
-			break;
-		default:
-			break;
-		}
-	}
-
-	~CPropertyImp()
-	{
-		// switch ... case ...
-		delete _value_interface;
-	}
-
 	virtual const wchar_t * GetName() override {
 		return _name.c_str();
 	}
-
 	virtual PropertyType GetType() override {
-		return _type;
+		return PropertyFloat;
 	}
 
-	virtual void * GetValueInterface() override {
-		return _value_interface;
-	}
 protected:
+	double _value;
 	std::wstring _name;
-	PropertyType _type;
-	void * _value_interface;
 };
+
+class CIntProperty : public IProperty, public IIntValue
+{
+public:
+	CIntProperty(const wchar_t * name, int value = 0)
+		: _name(name), _value(value) {}
+	virtual int GetValue() { return _value; }
+	virtual void SetValue(int value) { _value = value; }
+	virtual const wchar_t * GetName() override {
+		return _name.c_str();
+	}
+	virtual PropertyType GetType() override {
+		return PropertyInt;
+	}
+
+protected:
+	int _value;
+	std::wstring _name;
+};
+
+class CBoolProperty : public IProperty, public IBoolValue
+{
+public:
+	CBoolProperty(const wchar_t * name, bool value = 0)
+		: _name(name), _value(value) {}
+	virtual bool GetValue() { return _value; }
+	virtual void SetValue(bool value) { _value = value; }
+	virtual const wchar_t * GetName() override {
+		return _name.c_str();
+	}
+	virtual PropertyType GetType() override {
+		return PropertyBool;
+	}
+
+protected:
+	bool _value;
+	std::wstring _name;
+};
+
+class CStringProperty : public IProperty, public IStringValue
+{
+public:
+	CStringProperty(const wchar_t * name, const wchar_t * value = nullptr)
+		: _name(name), _value(value) {}
+	virtual const wchar_t * GetValue() { return _value.c_str(); }
+	virtual void SetValue(const wchar_t * value) { _value = value; }
+	virtual const wchar_t * GetName() override {
+		return _name.c_str();
+	}
+	virtual PropertyType GetType() override {
+		return PropertyString;
+	}
+
+protected:
+	std::wstring _value;
+	std::wstring _name;
+};
+
+
+// class CPropertyImp : public IProperty
+// {
+// public:
+// 	CPropertyImp(const wchar_t * name, PropertyType type) : _name(name), _type(type) 
+// 	{
+// 		switch (type)
+// 		{
+// 		case PropertyBool:
+// 			_value_interface = new CBoolValue;
+// 			break;
+// 		case PropertyInt:
+// 			_value_interface = new CIntValue;
+// 			break;
+// 		case PropertyFloat:
+// 			_value_interface = new CFloatValue;
+// 			break;
+// 		case PropertyString:
+// 			_value_interface = new CStringValue;
+// 			break;
+// 		default:
+// 			break;
+// 		}
+// 	}
+// 
+// 	~CPropertyImp()
+// 	{
+// 		// switch ... case ...
+// 		delete _value_interface;
+// 	}
+// 
+// 	virtual const wchar_t * GetName() override {
+// 		return _name.c_str();
+// 	}
+// 
+// 	virtual PropertyType GetType() override {
+// 		return _type;
+// 	}
+// 
+// 	virtual void * GetValueInterface() override {
+// 		return _value_interface;
+// 	}
+// protected:
+// 	std::wstring _name;
+// 	PropertyType _type;
+// 	void * _value_interface;
+// };
 
 class CPropertyEnumerator : public IPropertyEnumerator
 {
@@ -159,11 +193,12 @@ public:
 		if (property == nullptr)
 			return false;
 
-		TODO(ldb: Ôö¼Ó assert());
+		if (_properties.find(property->GetName()) != _properties.end())
+			return false;
+
 		_properties.insert(std::make_pair(property->GetName(), property));
 		return true;
 	}
-
 
 	virtual IProperty * GetFirst() override;
 	virtual IProperty * GetNext() override;

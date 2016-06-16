@@ -21,12 +21,12 @@ public:
 	std::vector<std::complex<double>> Transform(const std::vector<std::complex<double>>& input);
 	void FFTShift(std::vector<std::complex<double>>& data);
 
-	void SetIFFTPlan(const fftw_plan& plan) { _p_ifft = plan; }
+	void SetIFFTPlan(const fftw_plan& plan) { _fft_plan = plan; }
 
 protected:
 	bool _fft_shift;
-	fftw_plan _p_ifft;
-	bool Fft1D(IData* data, unsigned int height_index);
+	fftw_plan _fft_plan;
+	bool Fft1D(IData* data);
 
 };
 
