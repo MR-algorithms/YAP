@@ -36,6 +36,12 @@
     <ClInclude Include="DataHelper.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Fft2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Fft1D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -60,6 +66,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Interface\ReconData.cpp">
+    <ClCompile Include="Fft2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Fft1D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
