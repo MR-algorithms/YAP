@@ -143,6 +143,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Interface.h" />
+    <ClInclude Include="ReconData.h" />
+    <ClInclude Include="SmartPtr.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ReconData.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -156,25 +156,25 @@ int main()
 			{
 			case PropertyBool:
 			{
-				auto value_interface = reinterpret_cast<IBoolValue*>(property->GetValueInterface());
+				auto value_interface = dynamic_cast<IBoolValue*>(property);
 				wcout << value_interface->GetValue();
 				break;
 			}
 			case PropertyFloat:
 			{
-				auto value_interface = reinterpret_cast<IFloatValue*>(property->GetValueInterface());
+				auto value_interface = dynamic_cast<IFloatValue*>(property);
 				wcout << value_interface->GetValue();
 				break;
 			}
 			case PropertyInt:
 			{
-				auto value_interface = reinterpret_cast<IIntValue*>(property->GetValueInterface());
+				auto value_interface = dynamic_cast<IIntValue*>(property);
 				wcout << value_interface->GetValue();
 				break;
 			}
 			case PropertyString:
 			{
-				auto value_interface = reinterpret_cast<IStringValue*>(property->GetValueInterface());
+				auto value_interface = dynamic_cast<IStringValue*>(property);
 				wcout << value_interface->GetValue();
 				break;
 			}

@@ -35,7 +35,7 @@ wchar_t * CFft2D::GetId()
 
 void CFft2D::SetFFTPlan(const fftw_plan & plan)
 {
-	_p_FFT = plan;
+	_fft_plan = plan;
 }
 
 std::vector<std::complex<double>> CFft2D::Transform(std::vector<std::complex<double>> input)
@@ -43,7 +43,7 @@ std::vector<std::complex<double>> CFft2D::Transform(std::vector<std::complex<dou
 	vector<complex<double>> output;
 	output.resize(input.size());
 
-	fftw_execute_dft(_p_FFT, (fftw_complex*)input.data(), (fftw_complex*)output.data());
+	fftw_execute_dft(_fft_plan, (fftw_complex*)input.data(), (fftw_complex*)output.data());
 
 	return output;
 }
@@ -93,9 +93,10 @@ bool CFft2D::Fft2D(IData * data)
 	unsigned int height = raw_data.GetHeight();
 
 	auto rawdata = reinterpret_cast<vector<complex<double>>* > (raw_data.GetData());
-	fftw_plan _p_IFFT = fftw_plan_dft_2d(height, width, (fftw_complex*)rawdata, (fftw_complex*)rawdata, FFTW_BACKWARD, FFTW_ESTIMATE);
-	Fft2.SetFFTPlan(_p_IFFT);
+	_fft_plan = fftw_plan_dft_2d(height, width, (fftw_complex*)rawdata, (fftw_complex*)rawdata, FFTW_BACKWARD, FFTW_ESTIMATE);
+	Fft2.SetFFTPlan(_fft_plan);
 	result = Fft2.Transform(*rawdata);
+
 	std::complex<double> scale(result.size(), 0);
 	for (auto iter = result.begin(); iter != result.end(); ++iter)
 	{
