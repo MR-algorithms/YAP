@@ -10,6 +10,7 @@ CDummyProcessor::CDummyProcessor()
 {
 	AddInputPort(L"Input", 2, DataTypeFloat);
 	AddOutputPort(L"Output", 2, DataTypeFloat);
+
 	AddProperty(L"TestBool", PropertyBool);
 	SetBoolProperty(L"TestBool", false);
 
@@ -59,7 +60,7 @@ bool CDummyProcessor::Input(const wchar_t * port, IData * data)
 
 bool CDummyProcessor::Test(IData * data)
 {
-	CData data_object(data);
+	CDataHelper data_object(data);
 
 	if (data_object.GetDataType() != DataTypeComplexDouble)
 		return false;

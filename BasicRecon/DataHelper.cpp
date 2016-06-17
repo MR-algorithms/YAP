@@ -1,19 +1,19 @@
 #include "stdafx.h"
 #include "DataHelper.h"
 
-DataType CData::GetDataType()
+DataType CDataHelper::GetDataType()
 {
 	return _data_interface.GetDataType();
 }
 
-unsigned int CData::GetDimensionCount()
+unsigned int CDataHelper::GetDimensionCount()
 {
 	auto dimension = _data_interface.GetDimension();
 
 	return (dimension != nullptr) ? dimension->GetDimensionCount() : 0;
 }
 
-unsigned int CData::GetWidth()
+unsigned int CDataHelper::GetWidth()
 {
 	auto dimension = _data_interface.GetDimension();
 	DimensionType dimension_type;
@@ -23,7 +23,7 @@ unsigned int CData::GetWidth()
 	return length;
 }
 
-unsigned int CData::GetHeight()
+unsigned int CDataHelper::GetHeight()
 {
 	auto dimension = _data_interface.GetDimension();
 	DimensionType dimension_type;
@@ -33,7 +33,7 @@ unsigned int CData::GetHeight()
 	return length;
 }
 
-void * CData::GetData()
+void * CDataHelper::GetData()
 {
 	return _data_interface.GetData();
 }

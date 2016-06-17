@@ -23,7 +23,7 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) != L"Input")
 		return false;
-	CData raw_data(data);
+	CDataHelper raw_data(data);
 	if (raw_data.GetDataType() != DataTypeComplexDouble)
 		return false;
 	if (raw_data.GetDimensionCount() != 2)
@@ -79,7 +79,7 @@ void CFft2D::SwapBlock(std::complex<double>* block1, std::complex<double>* block
 
 bool CFft2D::Fft2D(IData * data)
 {
-	CData raw_data(data);
+	CDataHelper raw_data(data);
 	CFft2D Fft2;
 	unsigned int _width = raw_data.GetWidth();
 	unsigned int _height = raw_data.GetHeight();
