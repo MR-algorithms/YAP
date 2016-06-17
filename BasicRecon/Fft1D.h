@@ -18,13 +18,16 @@ public:
 	virtual wchar_t * GetId() override;
 
 
-	std::vector<std::complex<double>> Transform(const std::vector<std::complex<double>>& input);
+	std::vector<std::complex<double>> Transform(const std::complex<double>* input);
 	void FFTShift(std::vector<std::complex<double>>& data);
 
 	void SetIFFTPlan(const fftw_plan& plan) { _fft_plan = plan; }
 
 protected:
-	bool _fft_shift;
+
+	void SwapBlock(std::complex<double> * block1, std::complex<double> * block2,
+		unsigned int width);
+	unsigned int _width;
 	fftw_plan _fft_plan;
 	bool Fft1D(IData* data);
 
