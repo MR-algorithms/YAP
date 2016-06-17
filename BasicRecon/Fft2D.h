@@ -19,7 +19,7 @@ public:
 	virtual wchar_t * GetId() override;
 
 	void SetFFTPlan(const fftw_plan& plan);
-	std::vector<std::complex<double>> Transform(std::vector<std::complex<double>> input);
+	std::vector<std::complex<double>> Transform(std::complex<double>* input);
 	void FftShift(std::vector<std::complex<double>>& data, unsigned int width, unsigned int height);
 
 protected:
@@ -28,6 +28,8 @@ protected:
 	fftw_plan _fft_plan;
 
 	bool Fft2D(IData * data);
+	unsigned int _width;
+	unsigned int _height;
 
 };
 

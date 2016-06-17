@@ -25,6 +25,12 @@ bool CFft1D::Input(const wchar_t * port, IData * data)
 	if (wstring(port) != L"Input")
 		return false;
 
+	CData raw_data(data);
+	if (raw_data.GetDataType() != DataTypeComplexDouble)
+		return false;
+	if (raw_data.GetDimensionCount() != 1)
+		return false;
+
 	Fft1D(data);
 
 	return true;
@@ -36,64 +42,63 @@ wchar_t * CFft1D::GetId()
 }
 
 
-std::vector<std::complex<double>> CFft1D::Transform(const std::vector<std::complex<double>>& input)
+std::vector<std::complex<double>> CFft1D::Transform(const std::complex<double>* input)
 {
 	vector<complex<double>> output;
-	output.resize(input.size());
+	output.resize(_width);
 
-	fftw_execute_dft(_fft_plan, (fftw_complex*)input.data(), (fftw_complex*)output.data());
+	fftw_execute_dft(_fft_plan, (fftw_complex*)input, (fftw_complex*)output.data());
 
 	return output;
 }
 
 void CFft1D::FFTShift(std::vector<std::complex<double>>& data)
 {
-	unsigned int width = data.size();
+	unsigned int width = static_cast<unsigned int> (data.size());
 	bool is_odd = (width % 2 == 0 ? false : true);
-	std::vector<std::complex<double>> temp(width);
-
-	TODO(Use only half buffer size.);
 	if (is_odd)
 	{
-		copy(data.begin(), data.begin() + width / 2, temp.begin() + width / 2 + 1);
-		copy(data.begin() + width / 2, data.end(), temp.begin());
+		SwapBlock(data.data(), data.data() + (width-1) / 2 + 1, (width-1) / 2);
 	}
 	else
 	{
-		copy(data.begin(), data.begin() + width / 2, temp.begin() + width / 2);
-		copy(data.begin() + width / 2, data.end(), temp.begin());
+		SwapBlock(data.data(), data.data() + width / 2, width / 2);
 	}
-	copy(temp.begin(), temp.end(), data.begin());
+}
+
+void CFft1D::SwapBlock(std::complex<double>* block1, std::complex<double>* block2, unsigned int width)
+{
+	std::vector<std::complex<double>> swap_buffer;
+	swap_buffer.resize(width);
+
+	auto cursor1 = block1;
+	auto cursor2 = block2;
+
+	memcpy(swap_buffer.data(), cursor1, width * sizeof(std::complex<double>));
+	memcpy(cursor1, cursor2, width * sizeof(std::complex<double>));
+	memcpy(cursor2, swap_buffer.data(), width * sizeof(std::complex<double>));
+
 }
 
 bool CFft1D::Fft1D(IData* data)
 {
 	CData raw_data(data);
-	if (raw_data.GetDataType() != DataTypeComplexDouble)
-		return false;
-	if (raw_data.GetDimensionCount() != 1)
-		return false;
-
 	CFft1D Fft1;
-	vector<complex<double>> recon_data(raw_data.GetWidth());
-	vector<complex<double>> result(raw_data.GetWidth());
-
-	unsigned int width = raw_data.GetWidth();
+	unsigned int _width = raw_data.GetWidth();
+	vector<complex<double>> result(_width);	
 	auto rawdata = reinterpret_cast<complex<double>* > (raw_data.GetData());
-	_fft_plan = fftw_plan_dft_1d(width, (fftw_complex*)rawdata, 
+	_fft_plan = fftw_plan_dft_1d(_width, (fftw_complex*)rawdata, 
 		(fftw_complex*)result.data(), FFTW_BACKWARD, FFTW_ESTIMATE);
 
-	BUG(Change the parameter type of Transform());
-	//result = Fft1.Transform(rawdata);
+	result = Fft1.Transform(rawdata);
 
 	for (auto data : result)
 	{
-		data /= result.size();
+		data /= sqrt(result.size());
 	}
 
 	Fft1.FFTShift(result);
-
-	copy(result.begin(), result.end(), rawdata);
+	memcpy(rawdata, result.data(), result.size() * sizeof(std::complex<double>));
 
 	return true;
 }
