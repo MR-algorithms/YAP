@@ -23,6 +23,11 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) != L"Input")
 		return false;
+	CDataHelper raw_data(data);
+	if (raw_data.GetDataType() != DataTypeComplexDouble)
+		return false;
+	if (raw_data.GetDimensionCount() != 2)
+		return false;
 
  	Fft2D(data);
 	return true;
@@ -38,12 +43,12 @@ void CFft2D::SetFFTPlan(const fftw_plan & plan)
 	_fft_plan = plan;
 }
 
-std::vector<std::complex<double>> CFft2D::Transform(std::vector<std::complex<double>> input)
+std::vector<std::complex<double>> CFft2D::Transform(std::complex<double>* input)
 {
 	vector<complex<double>> output;
-	output.resize(input.size());
+	output.resize(_width, _height);
 
-	fftw_execute_dft(_fft_plan, (fftw_complex*)input.data(), (fftw_complex*)output.data());
+	fftw_execute_dft(_fft_plan, (fftw_complex*)input, (fftw_complex*)output.data());
 
 	return output;
 }
@@ -74,37 +79,25 @@ void CFft2D::SwapBlock(std::complex<double>* block1, std::complex<double>* block
 
 bool CFft2D::Fft2D(IData * data)
 {
-	CData raw_data(data);
-
-	if (raw_data.GetDataType() != DataTypeComplexDouble)
-		return false;
-	if (raw_data.GetDimensionCount() != 2)
-		return false;
-
-	vector<complex<double>> recon_data;
-	recon_data.resize(raw_data.GetWidth(), raw_data.GetHeight());
-
-
+	CDataHelper raw_data(data);
 	CFft2D Fft2;
-	vector<complex<double>> result;
-	result.resize(raw_data.GetWidth(), raw_data.GetHeight());
+	unsigned int _width = raw_data.GetWidth();
+	unsigned int _height = raw_data.GetHeight();
 
-	unsigned int width = raw_data.GetWidth();
-	unsigned int height = raw_data.GetHeight();
+	vector<complex<double>> result(_width, _height);
 
-	auto rawdata = reinterpret_cast<vector<complex<double>>* > (raw_data.GetData());
-	_fft_plan = fftw_plan_dft_2d(height, width, (fftw_complex*)rawdata, (fftw_complex*)rawdata, FFTW_BACKWARD, FFTW_ESTIMATE);
+	auto rawdata = reinterpret_cast<complex<double>*> (raw_data.GetData());
+	_fft_plan = fftw_plan_dft_2d(_height, _width, (fftw_complex*)rawdata, (fftw_complex*)rawdata, FFTW_BACKWARD, FFTW_ESTIMATE);
 	Fft2.SetFFTPlan(_fft_plan);
-	result = Fft2.Transform(*rawdata);
+	result = Fft2.Transform(rawdata);
 
-	std::complex<double> scale(result.size(), 0);
-	for (auto iter = result.begin(); iter != result.end(); ++iter)
+	for (auto data : result)
 	{
-		*iter = *iter / scale;
+		data /=  sqrt(result.size());
 	}
 
-	Fft2.FftShift(result, width, height);
-	copy(result.begin(), result.end(), recon_data.begin());
+	Fft2.FftShift(result, _width, _height);
+	memcpy(rawdata, result.data(), result.size() * sizeof(std::complex<double>));
 
 	return true;
 }

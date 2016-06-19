@@ -1,13 +1,12 @@
 #pragma once
 #include "..\Interface\Interface.h"
 
-class CData
+class CDataHelper
 {
 public:
-	CData(IData * data) : _data_interface(*data) {}
+	CDataHelper(IData * data) : _data_interface(*data) {}
 
 	DataType GetDataType();
-
 	unsigned int GetDimensionCount();
 
 	unsigned int GetWidth();

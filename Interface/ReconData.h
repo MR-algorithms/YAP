@@ -5,6 +5,7 @@
 #include <vector>
 // #include "Localization.h"
 #include "..\interface\SmartPtr.h"
+#include <assert.h>
 
 namespace Yap
 {
@@ -40,21 +41,21 @@ namespace Yap
 		std::vector<Dimension> _dimension_info;
 	};
 
-	template<typename T>
+	template<typename T, DataType DATA_TYPE>
 	class CData : public IData, public IMemory
 	{
 	public:
-		CData(T* data, const CDimensions& dimensions, IData * parent = nullptr, bool own_data = false) :
+		CData(T* data, const CDimensions& dimensions, IMemory * parent = nullptr, bool own_data = false) :
 			_data(data), _own_memory(own_data), _use_count(0), _parent(parent)
 		{
-			ASSERT(data != nullptr);
+			assert(data != nullptr);
 			_dimensions = dimensions;
 		}
 		
-		CData(T* data, IDimensions * dimensions, IData * parent = nullptr, bool own_data = false) : 
+		CData(T* data, IDimensions * dimensions, IMemory * parent = nullptr, bool own_data = false) : 
 			_data(data), _own_memory(own_data), _dimensions(dimensions), _use_count(0), _parent(parent)
 		{
-			ASSERT(data != nullptr);
+			assert(data != nullptr);
 		}
 
 		CData(IDimensions * dimensions) : _own_memory(true), _dimensions(dimensions), _use_count(0)
@@ -111,7 +112,7 @@ namespace Yap
 
 		virtual void Release()
 		{
-			ASSERT(_use_count > 0);
+			assert(_use_count > 0);
 			--_use_count;
 
 			if (_parent)
@@ -134,6 +135,16 @@ namespace Yap
 			}
 		}
 
+		virtual DataType GetDataType() override
+		{
+			return DATA_TYPE;
+		}
+
+		virtual IDimensions * GetDimension() override
+		{
+			return &_dimensions;
+		}
+
 
 		T * _data;
 		CDimensions _dimensions;
@@ -141,7 +152,9 @@ namespace Yap
 
 		unsigned int _use_count;
 		bool _own_memory;
-		CSmartPtr<IData> _parent;
+		CSmartPtr<IMemory> _parent;
 	};
+
+	typedef CData<double, DataTypeDouble> CDoubleData;
 };
 

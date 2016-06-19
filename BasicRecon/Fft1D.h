@@ -4,6 +4,7 @@
 #include "fftw3.h"
 #include <complex>
 #include <vector>
+
 class CFft1D :
 	public CProcessorImp
 {
@@ -12,21 +13,24 @@ public:
 	virtual ~CFft1D();
 
 	virtual bool Init() override;
-
 	virtual bool Input(const wchar_t * port, IData * data) override;
-
 	virtual wchar_t * GetId() override;
 
-
-	std::vector<std::complex<double>> Transform(const std::vector<std::complex<double>>& input);
-	void FFTShift(std::vector<std::complex<double>>& data);
-
-	void SetIFFTPlan(const fftw_plan& plan) { _fft_plan = plan; }
+	void FFTShift(std::complex<double>* data, size_t size);
 
 protected:
-	bool _fft_shift;
+
+	void SwapBlock(std::complex<double> * block1, std::complex<double> * block2,
+		size_t width);
+
+	unsigned int _plan_data_size;
+	bool _plan_inverse;
+	bool _plan_in_place;
 	fftw_plan _fft_plan;
-	bool Fft1D(IData* data);
+
+	bool Fft1D(std::complex<double> * data, std::complex<double> * result,
+		size_t size, bool inverse = false);
+	void Plan(size_t size, bool inverse, bool in_place);
 
 };
 
