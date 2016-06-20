@@ -150,6 +150,7 @@
     <ClInclude Include="DummyProcessor.h" />
     <ClInclude Include="Fft1D.h" />
     <ClInclude Include="Fft2D.h" />
+    <ClInclude Include="Grappa.h" />
     <ClInclude Include="ProcessorImp.h" />
     <ClInclude Include="ProcessorManager.h" />
     <ClInclude Include="stdafx.h" />
@@ -181,6 +182,7 @@
     <ClCompile Include="DummyProcessor.cpp" />
     <ClCompile Include="Fft1D.cpp" />
     <ClCompile Include="Fft2D.cpp" />
+    <ClCompile Include="Grappa.cpp" />
     <ClCompile Include="ProcessorImp.cpp" />
     <ClCompile Include="ProcessorManager.cpp" />
     <ClCompile Include="stdafx.cpp">
