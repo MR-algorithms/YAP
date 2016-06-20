@@ -112,10 +112,10 @@ void CProcessorImp::SetIntProperty(const wchar_t * name, int value)
 
 	auto property = _properties.GetProperty(name);
 	if (property == nullptr)
-		throw "Property not found!"; //抛出异常，临时代码，将来使用具体的异常类型
+		throw PropertyException(name, PropertyException::PropertyNotFound);
 
 	if (property->GetType() != PropertyInt)
-		throw "Property type error!";
+		throw PropertyException(name, PropertyException::TypeNotMatch);
 
 	auto int_value = dynamic_cast<IIntValue*>(property);
 	assert(int_value != nullptr);
@@ -128,10 +128,10 @@ int CProcessorImp::GetIntProperty(const wchar_t * name)
 
 	auto property = _properties.GetProperty(name);
 	if (property == nullptr)
-		throw "Property not found!"; //抛出异常，临时代码，将来使用具体的异常类型
+		throw PropertyException(name, PropertyException::PropertyNotFound);
 
 	if (property->GetType() != PropertyInt)
-		throw "Property type error!";
+		throw PropertyException(name, PropertyException::TypeNotMatch);
 
 	auto int_value = dynamic_cast<IIntValue*>(property);
 	assert(int_value != nullptr);
@@ -145,10 +145,10 @@ void CProcessorImp::SetFloatProperty(const wchar_t * name, double value)
 
 	auto property = _properties.GetProperty(name);
 	if (property == nullptr)
-		throw "Property not found!"; //抛出异常，临时代码，将来使用具体的异常类型
+		throw PropertyException(name, PropertyException::PropertyNotFound);
 
 	if (property->GetType() != PropertyFloat)
-		throw "Property type error!";
+		throw PropertyException(name, PropertyException::TypeNotMatch);
 
 	auto float_value = dynamic_cast<IFloatValue*>(property);
 	assert(float_value != nullptr);
@@ -161,10 +161,10 @@ double CProcessorImp::GetFloatProperty(const wchar_t * name)
 
 	auto property = _properties.GetProperty(name);
 	if (property == nullptr)
-		throw "Property not found!"; //抛出异常，临时代码，将来使用具体的异常类型
+		throw PropertyException(name, PropertyException::PropertyNotFound);
 
 	if (property->GetType() != PropertyFloat)
-		throw "Property type error!";
+		throw PropertyException(name, PropertyException::TypeNotMatch);
 
 	auto float_value = dynamic_cast<IFloatValue*>(property);
 	assert(float_value != nullptr);
@@ -178,10 +178,10 @@ void CProcessorImp::SetBoolProperty(const wchar_t * name, bool value)
 
 	auto property = _properties.GetProperty(name);
 	if (property == nullptr)
-		throw "Property not found!"; //抛出异常，临时代码，将来使用具体的异常类型
+		throw PropertyException(name, PropertyException::PropertyNotFound);
 
 	if (property->GetType() != PropertyBool)
-		throw "Property type error!";
+		throw PropertyException(name, PropertyException::TypeNotMatch);
 
 	auto bool_value = dynamic_cast<IBoolValue*>(property);
 	assert(bool_value != nullptr);
@@ -194,10 +194,10 @@ bool CProcessorImp::GetBoolProperty(const wchar_t * name)
 
 	auto property = _properties.GetProperty(name);
 	if (property == nullptr)
-		throw "Property not found!"; //抛出异常，临时代码，将来使用具体的异常类型
+		throw PropertyException(name, PropertyException::PropertyNotFound);
 
 	if (property->GetType() != PropertyBool)
-		throw "Property type error!";
+		throw PropertyException(name, PropertyException::TypeNotMatch);
 
 	auto bool_value = dynamic_cast<IBoolValue*>(property);
 	assert(bool_value != nullptr);
@@ -228,10 +228,10 @@ const wchar_t * CProcessorImp::GetStringProperty(const wchar_t * name)
 
 	auto property = _properties.GetProperty(name);
 	if (property == nullptr)
-		throw "Property not found!"; //抛出异常，临时代码，将来使用具体的异常类型
+		throw PropertyException(name, PropertyException::PropertyNotFound);
 
 	if (property->GetType() != PropertyString)
-		throw "Property type error!";
+		throw PropertyException(name, PropertyException::TypeNotMatch);
 
 	auto string_value = dynamic_cast<IStringValue*>(property);
 	assert(string_value != nullptr);
