@@ -156,5 +156,6 @@ namespace Yap
 	};
 
 	typedef CData<double, DataTypeDouble> CDoubleData;
+	typedef CData<std::complex<double>, DataTypeComplexDouble> CComplexDoubleData;
 };
 

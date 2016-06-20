@@ -3,6 +3,9 @@
 
 #include "ProcessorManager.h"
 #include "DummyProcessor.h"
+#include "Fft1D.h"
+#include "Fft2D.h"
+#include "ZeroFilling.h"
 
 extern "C"
 {
@@ -11,6 +14,9 @@ extern "C"
 		auto processor_manager = new CProcessorManager;
 
 		processor_manager->AddProcessor(new CDummyProcessor);
+		processor_manager->AddProcessor(new CFft1D);
+		processor_manager->AddProcessor(new CFft2D);
+		processor_manager->AddProcessor(new CZeroFilling);
 
 		return processor_manager;
 	}
