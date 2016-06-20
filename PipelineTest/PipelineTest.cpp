@@ -5,6 +5,7 @@
 #include <winbase.h>
 #include <iostream>
 #include "..\Interface\Interface.h"
+#include "../Interface/ReconData.h"
 #include <string>
 #include <vector>
 
@@ -46,71 +47,6 @@ void DebugOutput(IProcessor& processor)
 	}
 
 }
-
-class CDimensionsImp : public IDimensions
-{
-public:
-	CDimensionsImp(unsigned int width, unsigned int height) : _width(width), _height(height) {}
-	virtual unsigned int GetDimensionCount() override
-	{
-		return 2;
-	}
-
-	virtual bool GetDimensionInfo(unsigned int index, 
-		OUT DimensionType& dimension_type, 
-		OUT unsigned int& start_index, 
-		OUT unsigned int& length) override
-	{
-		if (index == 0)
-		{
-			dimension_type = DimensionReadout;
-			start_index = 0;
-			length = _width;
-		}
-		else if (index == 1)
-		{
-			dimension_type = DimensionPhaseEncoding;
-			start_index = 0;
-			length = _height;
-		}
-		else
-		{
-			return false;
-		}
-
-		return true;
-	}
-protected:
-	unsigned int _width;
-	unsigned int _height;
-};
-
-class CDataImp : public IData
-{
-public:
-	CDataImp(double * data, unsigned int width, unsigned height) : 
-		_data(data), _dimensions(width, height)
-	{
-	}
-	virtual void * GetData() override
-	{
-		return _data;
-	}
-
-	virtual IDimensions * GetDimension() override
-	{
-		return &_dimensions;
-	}
-
-	virtual DataType GetDataType() override
-	{
-		return DataTypeComplexDouble;
-	}
-
-protected:
-	double * _data;
-	CDimensionsImp _dimensions;
-};
 
 int main()
 {
@@ -156,25 +92,25 @@ int main()
 			{
 			case PropertyBool:
 			{
-				auto value_interface = reinterpret_cast<IBoolValue*>(property->GetValueInterface());
+				auto value_interface = dynamic_cast<IBoolValue*>(property);
 				wcout << value_interface->GetValue();
 				break;
 			}
 			case PropertyFloat:
 			{
-				auto value_interface = reinterpret_cast<IFloatValue*>(property->GetValueInterface());
+				auto value_interface = dynamic_cast<IFloatValue*>(property);
 				wcout << value_interface->GetValue();
 				break;
 			}
 			case PropertyInt:
 			{
-				auto value_interface = reinterpret_cast<IIntValue*>(property->GetValueInterface());
+				auto value_interface = dynamic_cast<IIntValue*>(property);
 				wcout << value_interface->GetValue();
 				break;
 			}
 			case PropertyString:
 			{
-				auto value_interface = reinterpret_cast<IStringValue*>(property->GetValueInterface());
+				auto value_interface = dynamic_cast<IStringValue*>(property);
 				wcout << value_interface->GetValue();
 				break;
 			}
@@ -190,10 +126,13 @@ int main()
 	{
 		image[i] = 1.0;
 	}
+	Yap::CDimensions dimension;
+	dimension(DimensionReadout, 0, 256)
+		(DimensionPhaseEncoding, 0, 256);
 
-	CDataImp data(image.data(), 256, 256);
+	auto * data = new Yap::CDoubleData(image.data(), dimension, nullptr, false);
 
-	processor->Input(L"Input", &data);
+	processor->Input(L"Input", data);
 
     return 0;
 }
