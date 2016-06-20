@@ -115,7 +115,7 @@ void CFft1D::Plan(size_t size, bool inverse, bool in_place)
 			FFTW_MEASURE);
 	}
 
-	_plan_data_size = size;
+	_plan_data_size = static_cast<unsigned int> (size);
 	_plan_inverse = inverse;
 	_plan_in_place = in_place;
 }
