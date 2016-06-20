@@ -5,8 +5,20 @@
 
 using namespace std;
 
-CFft2D::CFft2D()
+CFft2D::CFft2D():
+	_plan_data_width(0),
+	_plan_data_height(0),
+	_plan_inverse(false),
+	_plan_in_place(false)
 {
+	AddProperty(L"Inverse", PropertyBool);
+	AddProperty(L"InPlace", PropertyBool);
+
+	SetBoolProperty(L"Inverse", false);
+	SetBoolProperty(L"InPlace", true);
+
+	AddInputPort(L"Input", 1, DataTypeComplexDouble);
+	AddOutputPort(L"Output", 1, DataTypeComplexDouble);
 }
 
 
@@ -29,7 +41,21 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 	if (raw_data.GetDimensionCount() != 2)
 		return false;
 
- 	Fft2D(data);
+	if (GetBoolProperty(L"InPlace"))
+	{
+		Fft2D(reinterpret_cast<complex<double>*>(raw_data.GetData()),
+			reinterpret_cast<complex<double>*>(raw_data.GetData()),
+			raw_data.GetWidth(), GetBoolProperty(L"Inverse"));
+		Feed(L"Output", data);
+	}
+	else
+	{
+		auto * output_data = new Yap::CDoubleData(data->GetDimension());
+		Fft2D(reinterpret_cast<complex<double>*>(raw_data.GetData()),
+			reinterpret_cast<complex<double>*>(output_data->GetData()),
+			raw_data.GetWidth(), GetBoolProperty(L"Inverse"));
+		Feed(L"Output", output_data);
+	}
 	return true;
 }
 
@@ -38,28 +64,19 @@ wchar_t * CFft2D::GetId()
 	return L"Fft2D";
 }
 
-void CFft2D::SetFFTPlan(const fftw_plan & plan)
+// void CFft2D::SetFFTPlan(const fftw_plan & plan)
+// {
+// 	_fft_plan = plan;
+// }
+
+
+void CFft2D::FftShift(std::complex<double>* data, size_t  width, size_t height)
 {
-	_fft_plan = plan;
+	SwapBlock(data, data + height / 2 * width + width / 2, width / 2, height / 2, width);
+	SwapBlock(data + width / 2, data + height / 2 * width, width / 2, height / 2, width);
 }
 
-std::vector<std::complex<double>> CFft2D::Transform(std::complex<double>* input)
-{
-	vector<complex<double>> output;
-	output.resize(_width, _height);
-
-	fftw_execute_dft(_fft_plan, (fftw_complex*)input, (fftw_complex*)output.data());
-
-	return output;
-}
-
-void CFft2D::FftShift(std::vector<std::complex<double>>& data, unsigned int width, unsigned int height)
-{
-	SwapBlock(data.data(), data.data() + height / 2 * width + width / 2, width / 2, height / 2, width);
-	SwapBlock(data.data() + width / 2, data.data() + height / 2 * width, width / 2, height / 2, width);
-}
-
-void CFft2D::SwapBlock(std::complex<double>* block1, std::complex<double>* block2, unsigned int width, unsigned int height, unsigned int line_stride)
+void CFft2D::SwapBlock(std::complex<double>* block1, std::complex<double>* block2, size_t width, size_t height, size_t line_stride)
 {
 	std::vector<std::complex<double>> swap_buffer;
 	swap_buffer.resize(width);
@@ -77,27 +94,47 @@ void CFft2D::SwapBlock(std::complex<double>* block1, std::complex<double>* block
 	}
 }
 
-bool CFft2D::Fft2D(IData * data)
+bool CFft2D::Fft2D(std::complex<double> * data, std::complex<double> * result_data, size_t width, size_t height, bool inverse)
 {
-	CDataHelper raw_data(data);
-	CFft2D Fft2;
-	unsigned int _width = raw_data.GetWidth();
-	unsigned int _height = raw_data.GetHeight();
-
-	vector<complex<double>> result(_width, _height);
-
-	auto rawdata = reinterpret_cast<complex<double>*> (raw_data.GetData());
-	_fft_plan = fftw_plan_dft_2d(_height, _width, (fftw_complex*)rawdata, (fftw_complex*)rawdata, FFTW_BACKWARD, FFTW_ESTIMATE);
-	Fft2.SetFFTPlan(_fft_plan);
-	result = Fft2.Transform(rawdata);
-
-	for (auto data : result)
+	
+	bool in_place = (data == result_data);
+	if (width != _plan_data_width || height != _plan_data_height || inverse != _plan_inverse || in_place != _plan_in_place)
 	{
-		data /=  sqrt(result.size());
+		Plan(width, height, inverse, in_place);
+	}
+	fftw_execute_dft(_fft_plan, (fftw_complex*)data, (fftw_complex*)result_data);
+
+	for (auto data = result_data; data < result_data + width * height; ++data)
+	{
+		*data /=  sqrt(width * height);
 	}
 
-	Fft2.FftShift(result, _width, _height);
-	memcpy(rawdata, result.data(), result.size() * sizeof(std::complex<double>));
+	FftShift(result_data, width, height);
 
 	return true;
+}
+
+void CFft2D::Plan(size_t width, size_t height, bool inverse, bool in_place)
+{
+	vector<fftw_complex> data(width * height);
+	if (in_place)
+	{
+		_fft_plan = fftw_plan_dft_2d(_plan_data_width, _plan_data_height, (fftw_complex*)data.data(),
+			(fftw_complex*)data.data(),
+			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
+			FFTW_MEASURE);
+	}
+	else
+	{
+		vector<fftw_complex> result(width * height);
+		_fft_plan = fftw_plan_dft_2d(_plan_data_width, _plan_data_height,  (fftw_complex*)data.data(),
+			(fftw_complex*)result.data(),
+			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
+			FFTW_MEASURE);
+	}
+
+	_plan_data_width = static_cast<unsigned int> (width);
+	_plan_data_height = static_cast<unsigned int> (height);
+	_plan_inverse = inverse;
+	_plan_in_place = in_place;
 }
