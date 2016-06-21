@@ -50,7 +50,7 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 	}
 	else
 	{
-		auto * output_data = new Yap::CDoubleData(data->GetDimension());
+		auto * output_data = new Yap::CComplexDoubleData(data->GetDimension());
 		Fft2D(reinterpret_cast<complex<double>*>(raw_data.GetData()),
 			reinterpret_cast<complex<double>*>(output_data->GetData()),
 			raw_data.GetWidth(), GetBoolProperty(L"Inverse"));
