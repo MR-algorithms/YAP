@@ -10,6 +10,10 @@ CProcessorManager::CProcessorManager()
 
 CProcessorManager::~CProcessorManager()
 {
+	for (auto processor : _processors)
+	{
+		delete processor.second;
+	}
 }
 
 IProcessor * CProcessorManager::GetFirstProcessor()

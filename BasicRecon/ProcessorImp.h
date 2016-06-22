@@ -41,27 +41,6 @@ struct Anchor
 	Anchor(IProcessor* processor_, const wchar_t * in_port_) : processor(processor_), in_port(in_port_) {}
 };
 
-class CDimensions
-{
-public:
-	CDimensions(IDimensions * dimensions) : _dimensions(*dimensions) {
-	}
-	size_t TotalDataCount() {
-		auto dimension_count = _dimensions.GetDimensionCount();
-		size_t count = 1;
-		for (unsigned int i = 0; i < dimension_count; ++i)
-		{
-			Yap::Dimension dimension;
-			_dimensions.GetDimensionInfo(i, dimension.type, dimension.start_index, dimension.length);
-			count *= dimension.length;
-		}
-
-		return count;
-	}
-protected:
-	IDimensions& _dimensions;
-};
-
 class CFloatProperty : public IProperty, public IFloatValue
 {
 public:

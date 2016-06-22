@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <complex>
+#include "..\Interface\ReconData.h"
 
 using namespace std;
 
@@ -39,21 +40,21 @@ bool CDummyProcessor::Input(const wchar_t * port, IData * data)
 		return false;
 
 	Test(data);
-
-	CDimensions dimensions(data->GetDimension());
-	size_t count = dimensions.TotalDataCount();
-	wcout << L"Total pixels: " << count << endl;
-
-
-	auto d = reinterpret_cast<double*>(data->GetData());
-	double sum = 0.0;
-	for (unsigned int i = 0; i < count; ++i)
-	{
-		sum += d[i];
-	}
-	wcout << "Sum of all pixels: " << sum << endl;
-
-	Feed(L"Output", data);
+// 
+// 	Yap::CDimensions dimensions(data->GetDimension());
+// 	size_t count = dimensions.TotalDataCount();
+// 	wcout << L"Total pixels: " << count << endl;
+// 
+// 
+// 	auto d = reinterpret_cast<double*>(data->GetData());
+// 	double sum = 0.0;
+// 	for (unsigned int i = 0; i < count; ++i)
+// 	{
+// 		sum += d[i];
+// 	}
+// 	wcout << "Sum of all pixels: " << sum << endl;
+// 
+// 	Feed(L"Output", data);
 
 	return true;
 }

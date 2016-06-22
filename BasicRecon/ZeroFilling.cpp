@@ -1,15 +1,24 @@
 #include "stdafx.h"
 #include "ZeroFilling.h"
 #include <string>
+#include <complex>
+
 #include "..\Interface\SmartPtr.h"
 #include "DataHelper.h"
+#include "..\Interface\ReconData.h"
 
+using namespace std;
+using namespace Yap;
 
-CZeroFilling::CZeroFilling():
-	_output_image(0)
+CZeroFilling::CZeroFilling()
 {
-	AddInputPort(L"Input", 2, DataTypeUnknown);
-	AddOutputPort(L"Output", 2, DataTypeUnknown);
+	AddInputPort(L"Input", 2, DataTypeComplexDouble);
+	AddOutputPort(L"Output", 2, DataTypeComplexDouble);
+
+	AddProperty(L"DestWidth", PropertyInt);
+	AddProperty(L"DestHeight", PropertyInt);
+	AddProperty(L"Left", PropertyInt);
+	AddProperty(L"Top", PropertyInt);
 }
 
 
@@ -22,24 +31,27 @@ bool CZeroFilling::Input(const wchar_t * port, IData * data)
 	if (std::wstring(port) != L"Input")
 		return false;
 
-	auto properties = GetProperties();
-	if (properties->GetProperty(L"Dimension Readout") == nullptr)
+	auto dest_width = GetIntProperty(L"DestWidth");
+	auto dest_height = GetIntProperty(L"DestHeight");
+
+	CDataHelper input_data(data);
+	if (input_data.GetDataType() != DataTypeComplexDouble)
 		return false;
-	if (properties->GetProperty(L"Dimension PhaseEncoding") == nullptr)
+	if (input_data.GetDimensionCount() != 2)
 		return false;
 
-	auto output_readout = GetIntProperty(L"Dimension Readout");
-	auto output_phase_encoding = GetIntProperty(L"Dimension PhaseEncoding");
+	if (dest_width < input_data.GetWidth() || dest_height < input_data.GetHeight())
+		return false;
 
-	ZeroFilling(data, output_readout, output_phase_encoding);
+	Yap::CDimensions dims;
+	dims(DimensionReadout, 0, dest_width)
+		(DimensionPhaseEncoding, 0, dest_height);
 
-	Yap::CDimensions output_dimension;
-	output_dimension(DimensionReadout, 0, output_readout)
-		(DimensionPhaseEncoding, 0, output_phase_encoding);
+	auto output = CSmartPtr<CComplexDoubleData>(new CComplexDoubleData(&dims));
+	ZeroFilling(reinterpret_cast<complex<double>*>(output->GetData()), dest_width, dest_height,
+		reinterpret_cast<complex<double>*>(input_data.GetData()), input_data.GetWidth(), input_data.GetHeight());
 
-	auto * output_data = new Yap::CDoubleData(_output_image.data(), output_dimension, nullptr, false);
-
-	Feed(L"Output", output_data);
+	Feed(L"Output", output.get());
 
 	return true;
 }
@@ -49,46 +61,17 @@ wchar_t * CZeroFilling::GetId()
 	return L"ZeroFilling";
 }
 
-bool CZeroFilling::ZeroFilling(IData * input, unsigned int output_readout, unsigned int output_phase_encoding)
+bool CZeroFilling::ZeroFilling(complex<double>* dest, unsigned int dest_width, unsigned int dest_height,
+	complex<double>* source, unsigned int source_width, unsigned int source_height)
 {
-	CDataHelper input_data(input);
-	if (input_data.GetDimensionCount() != 2)
-		return false;
+	assert(dest != nullptr && source != nullptr);
+	assert(dest_width >= source_width && dest_height >= source_height);
 
-	auto input_image = reinterpret_cast<double*>(input_data.GetData());
-	auto input_readout = input_data.GetWidth();
-	auto input_phase_encoding = input_data.GetHeight();
-
-	_output_image.resize(output_readout * output_phase_encoding);
-	for (unsigned int i = 0; i < _output_image.size(); ++i)
+	memset(dest, 0, dest_width * dest_height * sizeof(complex<double>));
+	for (auto row = 0; row < source_height; ++row)
 	{
-		_output_image[i] = 0.0;
-	}
-
-	for (unsigned int i = 0; i < input_readout * input_phase_encoding; ++i)
-	{
-		unsigned int input_x(0);
-		unsigned int input_y(0);
-		unsigned int output_x(0);
-		unsigned int output_y(0);
-
-		if (i % input_readout == 0)
-		{
-			input_x = i / input_readout;
-			input_y = input_readout;
-		}
-		else
-		{
-			input_x = (unsigned int)ceil(i / input_readout);
-			input_y = i % input_readout;
-		}
-
-		output_x = input_x + (unsigned int)floor((output_phase_encoding - input_phase_encoding) / 2);
-		output_y = input_y + (unsigned int)floor((output_readout - input_readout) / 2);
-
-		auto output_index = (output_x - 1) * output_readout + output_y;
-
-		_output_image[output_index] = input_image[i];
+		memcpy(dest + (dest_height - source_height) / 2 * dest_width + (dest_width - source_width) / 2, 
+			source + row * source_width, source_width * sizeof(complex<double>));
 	}
 
 	return true;

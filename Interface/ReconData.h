@@ -156,6 +156,10 @@ namespace Yap
 	};
 
 	typedef CData<double, DataTypeDouble> CDoubleData;
+<<<<<<< HEAD
 	typedef CData<std::complex<double>, DataTypeComplexDouble> CComplexDouble;
+=======
+	typedef CData<std::complex<double>, DataTypeComplexDouble> CComplexDoubleData;
+>>>>>>> refs/remotes/MR-algorithms/master
 };
 

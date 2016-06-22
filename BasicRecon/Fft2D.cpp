@@ -50,7 +50,11 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 	}
 	else
 	{
+<<<<<<< HEAD
 		auto * output_data = new Yap::CComplexDouble(data->GetDimension());
+=======
+		auto * output_data = new Yap::CComplexDoubleData(data->GetDimension());
+>>>>>>> refs/remotes/MR-algorithms/master
 		Fft2D(reinterpret_cast<complex<double>*>(raw_data.GetData()),
 			reinterpret_cast<complex<double>*>(output_data->GetData()),
 			raw_data.GetWidth(), raw_data.GetHeight(), GetBoolProperty(L"Inverse"));
