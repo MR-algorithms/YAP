@@ -12,6 +12,9 @@ public:
 	unsigned int GetWidth();
 
 	unsigned int GetHeight();
+
+	unsigned int GetSlice();
+	
 	void * GetData();
 
 protected:

@@ -154,6 +154,7 @@
     <ClInclude Include="Fft2D.h" />
     <ClInclude Include="ProcessorImp.h" />
     <ClInclude Include="ProcessorManager.h" />
+    <ClInclude Include="RemoveDC.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ZeroFilling.h" />
@@ -187,6 +188,7 @@
     <ClCompile Include="Fft2D.cpp" />
     <ClCompile Include="ProcessorImp.cpp" />
     <ClCompile Include="ProcessorManager.cpp" />
+    <ClCompile Include="RemoveDC.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

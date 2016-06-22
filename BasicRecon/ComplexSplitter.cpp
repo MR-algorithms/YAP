@@ -6,9 +6,9 @@ using namespace std;
 CComplexSplitter::CComplexSplitter()
 {
 	AddProperty(L"CreatReal", PropertyBool);
-	SetBoolProperty(L"CreatReal", 0);
+	SetBoolProperty(L"CreatReal", false);
 	AddProperty(L"Imaginary", PropertyBool);
-	SetBoolProperty(L"Imaginary", 0);
+	SetBoolProperty(L"Imaginary", false);
 
 	//one dimension
 	AddInputPort(L"Input_D1",1,DataTypeComplexDouble);
@@ -19,6 +19,12 @@ CComplexSplitter::CComplexSplitter()
 	AddInputPort(L"Input_D2", 2, DataTypeComplexDouble);
 	AddOutputPort(L"Real_D2", 2, DataTypeDouble);
 	AddOutputPort(L"Imaginary_D2", 2, DataTypeDouble);
+
+	//three dimensions
+	AddInputPort(L"Input_D3",3, DataTypeComplexDouble);
+	AddOutputPort(L"Real_D3",3,DataTypeDouble);
+	AddOutputPort(L"Imaginary_D3",3, DataTypeDouble);
+
 }
 
 CComplexSplitter::~CComplexSplitter()
@@ -28,12 +34,12 @@ CComplexSplitter::~CComplexSplitter()
 
 bool CComplexSplitter::Init()
 {
-	return false;
+	return true;
 }
 
 bool CComplexSplitter::Input(const wchar_t * port, IData * data)
 {
-	if (wstring(port) != L"Input__D1" || wstring(port) != L"Input__D2")
+	if (wstring(port) != L"Input__D1" || wstring(port) != L"Input__D2" || wstring(port) != L"Input_D3")
 		return false;
 	
 	if (data->GetDataType() != DataTypeComplexDouble)
@@ -44,26 +50,30 @@ bool CComplexSplitter::Input(const wchar_t * port, IData * data)
 	auto * real_data = new Yap::CDoubleData(data->GetDimension());
 	auto * imaginary_data = new Yap::CDoubleData(data->GetDimension());
 
-	//one and two dimension(s)
+	unsigned int size = -1;
+	//one, two and three dimension(s)
 	if (input_data.GetDimensionCount() == 2)
 	{	
-		Split(reinterpret_cast<std::complex<double> *>(input_data.GetData()),
-			reinterpret_cast<double*>(real_data->GetData()),
-			reinterpret_cast<double*>(imaginary_data->GetData()),
-			input_data.GetHeight()*input_data.GetWidth());
-
+			size = input_data.GetHeight()*input_data.GetWidth();
 	}
 	else if (input_data.GetDimensionCount()==1)
 	{
-		Split(reinterpret_cast<std::complex<double> *>(input_data.GetData()),
-			reinterpret_cast<double*>(real_data->GetData()),
-			reinterpret_cast<double*>(imaginary_data->GetData()),
-			input_data.GetWidth());
+			size = input_data.GetWidth();
 	}
-	else 
+	else if (input_data.GetDimensionCount() == 3)
+	{
+
+		size = input_data.GetWidth()* input_data.GetHeight() * input_data.GetSlice();
+	}
+	else
 	{
 		return false;
 	}
+
+	Split(reinterpret_cast<std::complex<double> *>(input_data.GetData()),
+		reinterpret_cast<double*>(real_data->GetData()),
+		reinterpret_cast<double*>(imaginary_data->GetData()),
+		size);
 
 	if (GetBoolProperty(L"CreatReal"))
 	{
