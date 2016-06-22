@@ -122,7 +122,7 @@ void CProcessorImp::SetIntProperty(const wchar_t * name, int value)
 	int_value->SetValue(value);
 }
 
-int CProcessorImp::GetIntProperty(const wchar_t * name)
+unsigned int CProcessorImp::GetIntProperty(const wchar_t * name)
 {
 	assert(name != nullptr && name[0] != 0);
 

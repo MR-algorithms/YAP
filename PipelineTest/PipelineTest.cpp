@@ -79,7 +79,7 @@ int main()
 		DebugOutput(*processor);
 	}
 
-	auto processor = processor_manager->GetProcessor(L"Dummy");
+	auto processor = processor_manager->GetProcessor(L"Dummy");	
 
 	auto properties = processor->GetProperties();
 	if (properties != nullptr)

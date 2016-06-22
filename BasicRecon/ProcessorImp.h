@@ -223,7 +223,7 @@ public:
 	bool AddProperty(const wchar_t * name, PropertyType type);
 
 	void SetIntProperty(const wchar_t * name, int value);
-	int GetIntProperty(const wchar_t * name);
+	unsigned int GetIntProperty(const wchar_t * name);
 	void SetFloatProperty(const wchar_t * name, double value);
 	double GetFloatProperty(const wchar_t * name);
 	void SetBoolProperty(const wchar_t * name, bool value);

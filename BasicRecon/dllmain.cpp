@@ -6,6 +6,7 @@
 #include "Fft1D.h"
 #include "Fft2D.h"
 #include "ZeroFilling.h"
+#include "Grappa.h"
 
 extern "C"
 {
@@ -17,6 +18,7 @@ extern "C"
 		processor_manager->AddProcessor(new CFft1D);
 		processor_manager->AddProcessor(new CFft2D);
 		processor_manager->AddProcessor(new CZeroFilling);
+		processor_manager->AddProcessor(new CGrappa);
 
 		return processor_manager;
 	}
