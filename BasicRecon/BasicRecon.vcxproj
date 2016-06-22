@@ -147,6 +147,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ComplexSplitter.h" />
     <ClInclude Include="DataHelper.h" />
     <ClInclude Include="DummyProcessor.h" />
     <ClInclude Include="Fft1D.h" />
@@ -165,6 +166,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="BasicRecon.cpp" />
+    <ClCompile Include="ComplexSplitter.cpp" />
     <ClCompile Include="DataHelper.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>

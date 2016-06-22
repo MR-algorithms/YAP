@@ -12,6 +12,7 @@
     <ClCompile Include="ProcessorManager.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="ZeroFilling.cpp" />
+    <ClCompile Include="ComplexSplitter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataHelper.h" />
@@ -23,6 +24,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ZeroFilling.h" />
+    <ClInclude Include="ComplexSplitter.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
