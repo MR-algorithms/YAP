@@ -11,7 +11,7 @@
 
 using namespace std;
 
-void DebugOutput(IPortEnumerator& ports)
+void DebugPort(IPortEnumerator& ports)
 {
 	for (auto port = ports.GetFirstPort(); port != nullptr; port = ports.GetNextPort())
 	{
@@ -28,7 +28,7 @@ void DebugOutput(IProcessor& processor)
 	if (in_ports != nullptr)
 	{
 		wcout << L"In port(s): \n";
-		DebugOutput(*in_ports);
+		DebugPort(*in_ports);
 	}
 	else
 	{
@@ -39,11 +39,54 @@ void DebugOutput(IProcessor& processor)
 	if (out_ports != nullptr)
 	{
 		wcout << L"Out port(s): \n";
-		DebugOutput(*out_ports);
+		DebugPort(*out_ports);
 	}
 	else
 	{
 		wcout << "No in port found.\n";
+	}
+
+}
+
+void DebugProperties(IPropertyEnumerator * properties)
+{
+	if (properties != nullptr)
+	{
+		for (auto property = properties->GetFirst(); property != nullptr;
+		property = properties->GetNext())
+		{
+			wcout << property->GetName() << " " << property->GetType() << " ";
+			switch (property->GetType())
+			{
+			case PropertyBool:
+			{
+				auto value_interface = dynamic_cast<IBoolValue*>(property);
+				wcout << value_interface->GetValue();
+				break;
+			}
+			case PropertyFloat:
+			{
+				auto value_interface = dynamic_cast<IFloatValue*>(property);
+				wcout << value_interface->GetValue();
+				break;
+			}
+			case PropertyInt:
+			{
+				auto value_interface = dynamic_cast<IIntValue*>(property);
+				wcout << value_interface->GetValue();
+				break;
+			}
+			case PropertyString:
+			{
+				auto value_interface = dynamic_cast<IStringValue*>(property);
+				wcout << value_interface->GetValue();
+				break;
+			}
+			default:
+				break;
+			}
+			wcout << endl;
+		}
 	}
 
 }
@@ -80,47 +123,9 @@ int main()
 	}
 
 	auto processor = processor_manager->GetProcessor(L"Dummy");
-
 	auto properties = processor->GetProperties();
-	if (properties != nullptr)
-	{
-		for (auto property = properties->GetFirst(); property != nullptr;
-			property = properties->GetNext())
-		{
-			wcout << property->GetName() << " " << property->GetType() << " ";
-			switch (property->GetType())
-			{
-			case PropertyBool:
-			{
-				auto value_interface = dynamic_cast<IBoolValue*>(property);
-				wcout << value_interface->GetValue();
-				break;
-			}
-			case PropertyFloat:
-			{
-				auto value_interface = dynamic_cast<IFloatValue*>(property);
-				wcout << value_interface->GetValue();
-				break;
-			}
-			case PropertyInt:
-			{
-				auto value_interface = dynamic_cast<IIntValue*>(property);
-				wcout << value_interface->GetValue();
-				break;
-			}
-			case PropertyString:
-			{
-				auto value_interface = dynamic_cast<IStringValue*>(property);
-				wcout << value_interface->GetValue();
-				break;
-			}
-			default:
-				break;
-			}
-			wcout << endl;
-		}
-	}
-
+	DebugProperties(properties);
+	
 	vector<double> image(256 * 256);
 	for (unsigned int i = 0; i < image.size(); ++i)
 	{
@@ -133,6 +138,10 @@ int main()
 	auto * data = new Yap::CDoubleData(image.data(), dimension, nullptr, false);
 
 	processor->Input(L"Input", data);
+
+	auto complex_splitter_processor = processor_manager->GetProcessor(L"ComplexSplitter");
+	auto complex_splitter_properties = complex_splitter_processor->GetProperties();
+	DebugProperties(complex_splitter_properties);
 
     return 0;
 }

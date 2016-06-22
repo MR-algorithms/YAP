@@ -12,6 +12,8 @@
     <ClCompile Include="ProcessorManager.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="ZeroFilling.cpp" />
+    <ClCompile Include="ComplexSplitter.cpp" />
+    <ClCompile Include="RemoveDC.cpp" />
     <ClCompile Include="ModulePhase.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -24,7 +26,12 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ZeroFilling.h" />
+<<<<<<< HEAD
+    <ClInclude Include="ComplexSplitter.h" />
+    <ClInclude Include="RemoveDC.h" />
+=======
     <ClInclude Include="ModulePhase.h" />
+>>>>>>> refs/remotes/MR-algorithms/master
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
