@@ -33,6 +33,15 @@ unsigned int CDataHelper::GetHeight()
 	return length;
 }
 
+unsigned int CDataHelper::GetSlice()
+{
+	auto dimension = _data_interface.GetDimension();
+	DimensionType dimension_type;
+	unsigned int start, length;
+	dimension->GetDimensionInfo(2, dimension_type, start, length);
+	return length;
+}
+
 void * CDataHelper::GetData()
 {
 	return _data_interface.GetData();

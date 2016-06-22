@@ -50,6 +50,7 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 
 	if (GetBoolProperty(L"InPlace"))
 	{
+
 		Fft2D(reinterpret_cast<complex<double>*>(input_data.GetData()),
 			reinterpret_cast<complex<double>*>(input_data.GetData()),
 			width, height, GetBoolProperty(L"Inverse"));
@@ -57,6 +58,7 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 	}
 	else
 	{
+
 		Yap::CDimensions dims;
 		dims(DimensionReadout, 0, width)
 			(DimensionPhaseEncoding, 0, height);

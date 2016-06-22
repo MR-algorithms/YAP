@@ -31,8 +31,8 @@ bool CZeroFilling::Input(const wchar_t * port, IData * data)
 	if (std::wstring(port) != L"Input")
 		return false;
 
-	auto dest_width = GetIntProperty(L"DestWidth");
-	auto dest_height = GetIntProperty(L"DestHeight");
+	unsigned int dest_width = GetIntProperty(L"DestWidth");
+	unsigned int dest_height = GetIntProperty(L"DestHeight");
 
 	CDataHelper input_data(data);
 	if (input_data.GetDataType() != DataTypeComplexDouble)
