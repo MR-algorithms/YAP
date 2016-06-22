@@ -20,8 +20,8 @@ CFft2D::CFft2D():
 	SetBoolProperty(L"Inverse", false);
 	SetBoolProperty(L"InPlace", true);
 
-	AddInputPort(L"Input", 1, DataTypeComplexDouble);
-	AddOutputPort(L"Output", 1, DataTypeComplexDouble);
+	AddInputPort(L"Input", 2, DataTypeComplexDouble);
+	AddOutputPort(L"Output", 2, DataTypeComplexDouble);
 }
 
 
