@@ -2,11 +2,16 @@
 #include "Fft1D.h"
 #include <string>
 
+#include "..\Interface\SmartPtr.h"
+#include "DataHelper.h"
+#include "..\Interface\ReconData.h"
+
 #pragma comment(lib, "libfftw3-3.lib")
 #pragma comment(lib, "libfftw3f-3.lib")
 #pragma comment(lib, "libfftw3l-3.lib")
 
 using namespace std;
+using namespace Yap;
 
 CFft1D::CFft1D() :
 	_plan_data_size(0),
@@ -37,26 +42,30 @@ bool CFft1D::Input(const wchar_t * port, IData * data)
 	if (wstring(port) != L"Input")
 		return false;
 
-	CDataHelper raw_data(data);
-	if (raw_data.GetDataType() != DataTypeComplexDouble)
+	CDataHelper input_data(data);
+	if (input_data.GetDataType() != DataTypeComplexDouble)
 		return false;
-	if (raw_data.GetDimensionCount() != 1)
+	if (input_data.GetDimensionCount() != 1)
 		return false;
+
+	auto size = input_data.GetWidth();
 
 	if (GetBoolProperty(L"InPlace"))
 	{
-		Fft1D(reinterpret_cast<complex<double>*>(raw_data.GetData()),
-			reinterpret_cast<complex<double>*>(raw_data.GetData()),
-			raw_data.GetWidth(), GetBoolProperty(L"Inverse"));
+		Fft1D(reinterpret_cast<complex<double>*>(input_data.GetData()),
+			reinterpret_cast<complex<double>*>(input_data.GetData()),
+			size, GetBoolProperty(L"Inverse"));
 		Feed(L"Output", data);
 	}
 	else
 	{
-		auto * output_data = new Yap::CComplexDouble(data->GetDimension());
-		Fft1D(reinterpret_cast<complex<double>*>(raw_data.GetData()),
-			reinterpret_cast<complex<double>*>(output_data->GetData()),
-			raw_data.GetWidth(), GetBoolProperty(L"Inverse"));
-		Feed(L"Output", output_data);
+		Yap::CDimensions dims;
+		dims(DimensionReadout, 0, size);
+		auto output = CSmartPtr<CComplexDoubleData>(new CComplexDoubleData(&dims));
+		Fft1D(reinterpret_cast<complex<double>*>(input_data.GetData()),
+			reinterpret_cast<complex<double>*>(output->GetData()),
+			size, GetBoolProperty(L"Inverse"));
+		Feed(L"Output", output.get());
 	}
 
 	return true;

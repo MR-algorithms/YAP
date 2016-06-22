@@ -18,11 +18,8 @@ public:
 
 	virtual wchar_t * GetId() override;
 
-	bool Recon(std::complex<double> * subsampled_data, size_t r, size_t acs, size_t block, size_t width, size_t height, size_t num_coil);
-
-
-	
-
+	bool Recon(std::complex<double> * subsampled_data, 
+		size_t r, size_t acs, size_t block, size_t width, size_t height, size_t num_coil);
 
 
 protected:
@@ -31,8 +28,12 @@ protected:
 	unsigned int _acs;
 	unsigned int _block;
 
-	std::complex<double> * MakeFidelity(std::complex<double> * recon_data, std::vector<std::complex<double>> acs_data, size_t r, size_t acs, size_t width, size_t height, size_t num_coil);
-	arma::cx_mat FitCoef(std::complex<double> * subsampled_data, size_t r, size_t acs, size_t block, size_t width, size_t height, size_t num_coil);
+	std::complex<double> * MakeFidelity(std::complex<double> * recon_data, std::vector<std::complex<double>> acs_data, 
+		size_t r, size_t acs, size_t width, size_t height, size_t num_coil);
+	arma::cx_mat FitCoef(std::complex<double> * subsampled_data, 
+		size_t r, size_t acs, size_t block, size_t width, size_t height, size_t num_coil);
+
+	std::vector<std::complex<double>> GetAcsData(std::complex<double> * data, size_t r, size_t acs, size_t width, size_t height, size_t num_coil);
 
 
 };

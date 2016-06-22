@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Grappa.h"
-#include "string"
+#include <string>
 
 using namespace std;
 using namespace arma;
@@ -29,13 +29,14 @@ bool CGrappa::Input(const wchar_t * port, IData * data)
 	if (wstring(port) != L"Input")
 		return false;
 
-	CDataHelper input_data(data);  //输入数据为欠采添零的数据
+	CDataHelper input_data(data);  //输入数据为欠采添零的K空间数据
 	if (input_data.GetDataType() != DataTypeComplexDouble)
 		return false;
 	if (input_data.GetDimensionCount() != 2)
 		return false;
 
-	Recon(reinterpret_cast<complex<double>*>(input_data.GetData()), _r, _acs, _block, input_data.GetWidth(), input_data.GetHeight(), input_data.GetCoilCount());
+	Recon(reinterpret_cast<complex<double>*>(input_data.GetData()), _r, _acs, _block, 
+		input_data.GetWidth(), input_data.GetHeight(), input_data.GetCoilCount());
 
 	Feed(L"Output", data);
 
@@ -47,7 +48,9 @@ wchar_t * CGrappa::GetId()
 	return L"Grappa";
 }
 
-bool CGrappa::Recon(std::complex<double> * subsampled_data, size_t r, size_t acs, size_t block, size_t width, size_t height, size_t num_coil)
+
+std::vector<std::complex<double>> CGrappa::GetAcsData(std::complex<double> * data, 
+	size_t r, size_t acs, size_t width, size_t height, size_t num_coil)
 {
 	unsigned int first = static_cast<unsigned int> (((height - acs) / (2 * r)) * r + 1);
 	vector<complex<double>> acs_data(acs * width * num_coil, 0);
@@ -56,14 +59,19 @@ bool CGrappa::Recon(std::complex<double> * subsampled_data, size_t r, size_t acs
 		for (unsigned int k = 0; k < acs; ++k)
 		{
 			auto acs_position = width * height * coil_index + (first + k) * width;
-			copy(subsampled_data + acs_position, subsampled_data + acs_position + width, 
-				acs_data.begin() + k * width + width * height * coil_index);
+// 			copy(data + acs_position, data + acs_position + width,
+// 				acs_data.begin() + k * width + width * height * coil_index);
+			memcpy(acs_data.data()  + width * height * coil_index + k * width, data + acs_position, width * sizeof(complex<double>));
 		}
 	}
+	return acs_data;
+}
 
 
-
-
+bool CGrappa::Recon(std::complex<double> * subsampled_data, 
+	size_t r, size_t acs, size_t block, size_t width, size_t height, size_t num_coil)
+{
+	vector<complex<double>> acs_data = GetAcsData(subsampled_data, r, acs, width, height, num_coil);
 	cx_mat coef = FitCoef(subsampled_data, r, acs, block, width, height, num_coil);
 	cx_rowvec Temp(1, block * num_coil * 3);
 	Temp.zeros();
@@ -122,7 +130,8 @@ bool CGrappa::Recon(std::complex<double> * subsampled_data, size_t r, size_t acs
 }
 
 
-complex<double> * CGrappa::MakeFidelity(complex<double> * recon_data, vector<complex<double>> acs_data, size_t r, size_t acs, size_t width, size_t height, size_t num_coil)
+complex<double> * CGrappa::MakeFidelity(complex<double> * recon_data, vector<complex<double>> acs_data, 
+	size_t r, size_t acs, size_t width, size_t height, size_t num_coil)
 {
 	unsigned int first = static_cast<unsigned int> (((height - acs) / (2 * r)) * r + 1);
 	for (unsigned int coil_index = 0; coil_index < num_coil; ++coil_index)
@@ -130,8 +139,9 @@ complex<double> * CGrappa::MakeFidelity(complex<double> * recon_data, vector<com
 		for (unsigned int k = 0; k < acs; ++k)
 		{
 			auto acs_position = width * height * coil_index + (first + k) * width;
-			copy(acs_data.data() + k * width + width * height * coil_index, 
-				acs_data.data() + (k + 1) * width + width * height * coil_index, recon_data + acs_position);
+// 			copy(acs_data.data() + k * width + width * height * coil_index, 
+// 				acs_data.data() + (k + 1) * width + width * height * coil_index, recon_data + acs_position);
+			memcpy(recon_data + acs_position, acs_data.data()  + width * height * coil_index + k * width, width * sizeof(complex<double>));
 		}
 	}
 	return recon_data;
@@ -139,7 +149,8 @@ complex<double> * CGrappa::MakeFidelity(complex<double> * recon_data, vector<com
 
 
 
-arma::cx_mat CGrappa::FitCoef(complex<double> * subsampled_data, size_t r, size_t acs, size_t block, size_t width, size_t height, size_t num_coil)
+arma::cx_mat CGrappa::FitCoef(complex<double> * subsampled_data, 
+	size_t r, size_t acs, size_t block, size_t width, size_t height, size_t num_coil)
 {
 	unsigned int first = static_cast<unsigned int> (((height - acs) / (2 * r)) * r + 1);
 	unsigned int fit_num = static_cast<unsigned int> (acs / r);

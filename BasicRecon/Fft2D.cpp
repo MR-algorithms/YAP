@@ -1,9 +1,12 @@
 #include "stdafx.h"
 #include "Fft2D.h"
 #include <string>
-
+#include "..\Interface\SmartPtr.h"
+#include "DataHelper.h"
+#include "..\Interface\ReconData.h"
 
 using namespace std;
+using namespace Yap;
 
 CFft2D::CFft2D():
 	_plan_data_width(0),
@@ -35,30 +38,33 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) != L"Input")
 		return false;
-	CDataHelper raw_data(data);
-	if (raw_data.GetDataType() != DataTypeComplexDouble)
+
+	CDataHelper input_data(data);
+	if (input_data.GetDataType() != DataTypeComplexDouble)
 		return false;
-	if (raw_data.GetDimensionCount() != 2)
+	if (input_data.GetDimensionCount() != 2)
 		return false;
+
+	auto width = input_data.GetWidth();
+	auto height = input_data.GetHeight();
 
 	if (GetBoolProperty(L"InPlace"))
 	{
-		Fft2D(reinterpret_cast<complex<double>*>(raw_data.GetData()),
-			reinterpret_cast<complex<double>*>(raw_data.GetData()),
-			raw_data.GetWidth(), raw_data.GetHeight(), GetBoolProperty(L"Inverse"));
+		Fft2D(reinterpret_cast<complex<double>*>(input_data.GetData()),
+			reinterpret_cast<complex<double>*>(input_data.GetData()),
+			width, height, GetBoolProperty(L"Inverse"));
 		Feed(L"Output", data);
 	}
 	else
 	{
-<<<<<<< HEAD
-		auto * output_data = new Yap::CComplexDouble(data->GetDimension());
-=======
-		auto * output_data = new Yap::CComplexDoubleData(data->GetDimension());
->>>>>>> refs/remotes/MR-algorithms/master
-		Fft2D(reinterpret_cast<complex<double>*>(raw_data.GetData()),
-			reinterpret_cast<complex<double>*>(output_data->GetData()),
-			raw_data.GetWidth(), raw_data.GetHeight(), GetBoolProperty(L"Inverse"));
-		Feed(L"Output", output_data);
+		Yap::CDimensions dims;
+		dims(DimensionReadout, 0, width)
+			(DimensionPhaseEncoding, 0, height);
+		auto output = CSmartPtr<CComplexDoubleData>(new CComplexDoubleData(&dims));
+		Fft2D(reinterpret_cast<complex<double>*>(input_data.GetData()),
+			reinterpret_cast<complex<double>*>(output->GetData()),
+			width, height, GetBoolProperty(L"Inverse"));
+		Feed(L"Output", output.get());
 	}
 	return true;
 }
