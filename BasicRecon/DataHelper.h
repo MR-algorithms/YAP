@@ -12,6 +12,9 @@ public:
 	unsigned int GetWidth();
 
 	unsigned int GetHeight();
+
+	unsigned int GetCoilCount();
+
 	void * GetData();
 
 protected:

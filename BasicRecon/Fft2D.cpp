@@ -45,15 +45,15 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 	{
 		Fft2D(reinterpret_cast<complex<double>*>(raw_data.GetData()),
 			reinterpret_cast<complex<double>*>(raw_data.GetData()),
-			raw_data.GetWidth(), GetBoolProperty(L"Inverse"));
+			raw_data.GetWidth(), raw_data.GetHeight(), GetBoolProperty(L"Inverse"));
 		Feed(L"Output", data);
 	}
 	else
 	{
-		auto * output_data = new Yap::CDoubleData(data->GetDimension());
+		auto * output_data = new Yap::CComplexDouble(data->GetDimension());
 		Fft2D(reinterpret_cast<complex<double>*>(raw_data.GetData()),
 			reinterpret_cast<complex<double>*>(output_data->GetData()),
-			raw_data.GetWidth(), GetBoolProperty(L"Inverse"));
+			raw_data.GetWidth(), raw_data.GetHeight(), GetBoolProperty(L"Inverse"));
 		Feed(L"Output", output_data);
 	}
 	return true;
@@ -63,11 +63,6 @@ wchar_t * CFft2D::GetId()
 {
 	return L"Fft2D";
 }
-
-// void CFft2D::SetFFTPlan(const fftw_plan & plan)
-// {
-// 	_fft_plan = plan;
-// }
 
 
 void CFft2D::FftShift(std::complex<double>* data, size_t  width, size_t height)
