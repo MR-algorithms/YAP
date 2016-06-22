@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\Interface\Interface.h"
+#include "..\Interface\YapInterfaces.h"
 #include <complex>
 #include <vector>
 // #include "Localization.h"

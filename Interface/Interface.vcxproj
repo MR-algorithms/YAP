@@ -142,7 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Interface.h" />
+    <ClInclude Include="YapInterfaces.h" />
     <ClInclude Include="ReconData.h" />
     <ClInclude Include="SmartPtr.h" />
   </ItemGroup>

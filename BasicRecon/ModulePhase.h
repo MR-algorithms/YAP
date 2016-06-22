@@ -1,23 +1,24 @@
 #pragma once
 #include "ProcessorImp.h"
 
-
-class CModulePhase :
-	public CProcessorImp
+namespace Yap
 {
-public:
-	CModulePhase();
-	virtual ~CModulePhase();
+	class CModulePhase :
+		public CProcessorImp
+	{
+	public:
+		CModulePhase();
+		virtual ~CModulePhase();
 
-	virtual bool Input(const wchar_t * port, IData * data) override;
+		virtual bool Input(const wchar_t * port, IData * data) override;
 
-	virtual wchar_t * GetId() override;
+		virtual wchar_t * GetId() override;
 
-protected:
-	bool GetModule(std::complex<double>* input_data, double* module, 
-		unsigned int width, unsigned int height);
-	bool GetPhase(std::complex<double>* input_data, double* phase,
-		unsigned int width, unsigned int height);
+	protected:
+		bool GetModule(std::complex<double>* input_data, double* module,
+			size_t size);
+		bool GetPhase(std::complex<double>* input_data, double* phase,
+			size_t size);
 
-};
-
+	};
+}

@@ -5,7 +5,6 @@
     <ClCompile Include="BasicRecon.cpp" />
     <ClCompile Include="DataHelper.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="DummyProcessor.cpp" />
     <ClCompile Include="Fft1D.cpp" />
     <ClCompile Include="Fft2D.cpp" />
     <ClCompile Include="ProcessorImp.cpp" />
@@ -16,7 +15,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataHelper.h" />
-    <ClInclude Include="DummyProcessor.h" />
     <ClInclude Include="Fft1D.h" />
     <ClInclude Include="Fft2D.h" />
     <ClInclude Include="ProcessorImp.h" />

@@ -4,12 +4,13 @@
 #include "stdafx.h"
 #include <winbase.h>
 #include <iostream>
-#include "..\Interface\Interface.h"
+#include "..\Interface\YapInterfaces.h"
 #include "../Interface/ReconData.h"
 #include <string>
 #include <vector>
 
 using namespace std;
+using namespace Yap;
 
 void DebugOutput(IPortEnumerator& ports)
 {

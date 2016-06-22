@@ -7,14 +7,15 @@
 #pragma comment(lib, "libfftw3l-3.lib")
 
 using namespace std;
+using namespace Yap;
 
 CFft1D::CFft1D() :
 	_plan_data_size(0),
 	_plan_inverse(false),
 	_plan_in_place(false)
 {
-	AddProperty(L"Inverse", PropertyBool);
-	AddProperty(L"InPlace", PropertyBool);
+	AddProperty(PropertyBool, L"Inverse", L"");
+	AddProperty(PropertyBool, L"InPlace", L"");
 
 	SetBoolProperty(L"Inverse", false);
 	SetBoolProperty(L"InPlace", true);

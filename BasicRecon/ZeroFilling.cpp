@@ -15,10 +15,10 @@ CZeroFilling::CZeroFilling()
 	AddInputPort(L"Input", 2, DataTypeComplexDouble);
 	AddOutputPort(L"Output", 2, DataTypeComplexDouble);
 
-	AddProperty(L"DestWidth", PropertyInt);
-	AddProperty(L"DestHeight", PropertyInt);
-	AddProperty(L"Left", PropertyInt);
-	AddProperty(L"Top", PropertyInt);
+	AddProperty(PropertyInt, L"DestWidth", L"Destination width.");
+	AddProperty(PropertyInt, L"DestHeight", L"Destination height.");
+	AddProperty(PropertyInt, L"Left", L"X coordinate of top left corner of source data in destination data.");
+	AddProperty(PropertyInt, L"Top", L"Y coordinate of top left corner of source data in destination data.");
 }
 
 
