@@ -14,7 +14,8 @@ public:
 	unsigned int GetHeight();
 
 	unsigned int GetSlice();
-	
+
+	unsigned int GetCoilCount();
 	void * GetData();
 
 protected:

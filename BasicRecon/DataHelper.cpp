@@ -47,3 +47,13 @@ void * CDataHelper::GetData()
 	return _data_interface.GetData();
 }
 
+unsigned int CDataHelper::GetCoilCount()
+{
+	auto dimension = _data_interface.GetDimension();
+	DimensionType dimension_type;
+	unsigned int start, length;
+	dimension->GetDimensionInfo(4, dimension_type, start, length);
+
+	return length;
+}
+
