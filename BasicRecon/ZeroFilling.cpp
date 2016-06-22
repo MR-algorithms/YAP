@@ -68,7 +68,7 @@ bool CZeroFilling::ZeroFilling(complex<double>* dest, unsigned int dest_width, u
 	assert(dest_width >= source_width && dest_height >= source_height);
 
 	memset(dest, 0, dest_width * dest_height * sizeof(complex<double>));
-	for (auto row = 0; row < source_height; ++row)
+	for (unsigned int row = 0; row < source_height; ++row)
 	{
 		memcpy(dest + (dest_height - source_height) / 2 * dest_width + (dest_width - source_width) / 2, 
 			source + row * source_width, source_width * sizeof(complex<double>));
