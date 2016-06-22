@@ -17,8 +17,8 @@ CFft2D::CFft2D():
 	SetBoolProperty(L"Inverse", false);
 	SetBoolProperty(L"InPlace", true);
 
-	AddInputPort(L"Input", 1, DataTypeComplexDouble);
-	AddOutputPort(L"Output", 1, DataTypeComplexDouble);
+	AddInputPort(L"Input", 2, DataTypeComplexDouble);
+	AddOutputPort(L"Output", 2, DataTypeComplexDouble);
 }
 
 
@@ -45,7 +45,7 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 	{
 		Fft2D(reinterpret_cast<complex<double>*>(raw_data.GetData()),
 			reinterpret_cast<complex<double>*>(raw_data.GetData()),
-			raw_data.GetWidth(), GetBoolProperty(L"Inverse"));
+			raw_data.GetWidth(), raw_data.GetHeight(),GetBoolProperty(L"Inverse"));
 		Feed(L"Output", data);
 	}
 	else
@@ -53,7 +53,7 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 		auto * output_data = new Yap::CComplexDoubleData(data->GetDimension());
 		Fft2D(reinterpret_cast<complex<double>*>(raw_data.GetData()),
 			reinterpret_cast<complex<double>*>(output_data->GetData()),
-			raw_data.GetWidth(), GetBoolProperty(L"Inverse"));
+			raw_data.GetWidth(), raw_data.GetHeight(), GetBoolProperty(L"Inverse"));
 		Feed(L"Output", output_data);
 	}
 	return true;
