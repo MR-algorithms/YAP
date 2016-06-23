@@ -5,14 +5,15 @@
 #include "..\Interface\ReconData.h"
 
 using namespace std;
+using namespace Yap;
 
 CRemoveDC::CRemoveDC()
 {
 	AddInputPort(L"Input", 2, DataTypeDouble);
 	
-	AddProperty(L"Inplace", PropertyBool);
+	AddProperty(PropertyBool, L"Inplace", L"");
 	SetBoolProperty(L"Inplace", true);
-	AddProperty(L"CornerSize", PropertyInt);
+	AddProperty(PropertyInt, L"CornerSize", L"");
 	SetIntProperty(L"CornerSize", 10);
 
 	AddOutputPort(L"Output", 2, DataTypeDouble);
@@ -47,6 +48,7 @@ bool CRemoveDC::Input(const wchar_t * port, IData * data)
 		reinterpret_cast<double *>(output_data->GetData()),
 		width, height, inplace, corner_size);
 
+	return true;
 }
 
 wchar_t * CRemoveDC::GetId()

@@ -4,12 +4,13 @@
 #include "stdafx.h"
 #include <winbase.h>
 #include <iostream>
-#include "..\Interface\Interface.h"
+#include "..\Interface\YapInterfaces.h"
 #include "../Interface/ReconData.h"
 #include <string>
 #include <vector>
 
 using namespace std;
+using namespace Yap;
 
 void DebugPort(IPortEnumerator& ports)
 {
@@ -48,13 +49,13 @@ void DebugOutput(IProcessor& processor)
 
 }
 
-void DebugProperties(IPropertyEnumerator * properties)
+bool DebugProperties(IPropertyEnumerator * properties)
 {
 	auto module = ::LoadLibrary(L"BasicRecon.dll");
 	if (module == NULL)
 	{
 		wcout << L"Failed to load plugin.\n";
-		return -1;
+		return false;
 	}
 
 	auto get_processor_manager = reinterpret_cast<IProcessorManager * (*)()>
@@ -63,14 +64,14 @@ void DebugProperties(IPropertyEnumerator * properties)
 	if (get_processor_manager == nullptr)
 	{
 		wcout << L"Failed to find GetProcessorManager().\n";
-		return -1;
+		return false;
 	}
 
 	auto processor_manager = get_processor_manager();
 	if (processor_manager == nullptr)
 	{
 		wcout << L"Failed to get IProcessorManager.\n";
-		return -1;
+		return false;
 	}
 
 	for (auto processor = processor_manager->GetFirstProcessor(); processor != nullptr;
@@ -79,9 +80,6 @@ void DebugProperties(IPropertyEnumerator * properties)
 		DebugOutput(*processor);
 	}
 
-	auto processor = processor_manager->GetProcessor(L"Dummy");	
-
-	auto properties = processor->GetProperties();
 	if (properties != nullptr)
 	{
 		for (auto property = properties->GetFirst(); property != nullptr;

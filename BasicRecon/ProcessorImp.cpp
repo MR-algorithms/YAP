@@ -2,10 +2,11 @@
 #include "ProcessorImp.h"
 #include <iostream>
 #include <algorithm>
-#include "..\Interface\Interface.h"
+#include "..\Interface\YapInterfaces.h"
 #include <assert.h>
 
 using namespace std;
+using namespace Yap;
 
 CProcessorImp::CProcessorImp()
 {
@@ -37,7 +38,8 @@ bool CProcessorImp::Input(const wchar_t * port, IData * data)
 	return true;
 }
 
-bool CProcessorImp::Link(const wchar_t * out_port, IProcessor* next_processor, wchar_t * in_port)
+
+bool CProcessorImp::Link(const wchar_t * out_port, IProcessor* next_processor, const wchar_t * in_port)
 {
 	_links.insert(std::make_pair(out_port, Anchor(next_processor, in_port)));
 	return true;
@@ -76,21 +78,22 @@ void CProcessorImp::Feed(const wchar_t * out_port, IData * data)
 	}
 }
 
-bool CProcessorImp::AddProperty(const wchar_t * name, 
-	PropertyType type)
+bool CProcessorImp::AddProperty(PropertyType type,
+	const wchar_t * name,
+	const wchar_t * description)
 {
 	try
 	{
 		switch (type)
 		{
 		case PropertyBool:
-			return _properties.AddProperty(new CBoolProperty(name));
+			return _properties.AddProperty(new CBoolProperty(name, description));
 		case PropertyInt:
-			return _properties.AddProperty(new CIntProperty(name));
+			return _properties.AddProperty(new CIntProperty(name, description));
 		case PropertyFloat:
-			return _properties.AddProperty(new CFloatProperty(name));
+			return _properties.AddProperty(new CFloatProperty(name, description));
 		case PropertyString:
-			return _properties.AddProperty(new CStringProperty(name));
+			return _properties.AddProperty(new CStringProperty(name, description));
 		default:
 			return false;
 		}
@@ -122,7 +125,7 @@ void CProcessorImp::SetIntProperty(const wchar_t * name, int value)
 	int_value->SetValue(value);
 }
 
-unsigned int CProcessorImp::GetIntProperty(const wchar_t * name)
+int CProcessorImp::GetIntProperty(const wchar_t * name)
 {
 	assert(name != nullptr && name[0] != 0);
 
@@ -238,6 +241,25 @@ const wchar_t * CProcessorImp::GetStringProperty(const wchar_t * name)
 	return string_value->GetValue();
 }
 
+bool Yap::CProcessorImp::CanLink(IProcessor * source,
+	const wchar_t * source_output_name,
+	IProcessor * next,
+	const wchar_t * next_input_name)
+{
+	NOT_IMPLEMENTED;
+	return false;
+}
+
+wchar_t * Yap::CProcessorImp::GetId()
+{
+	throw std::logic_error("The method or operation is not implemented.");
+}
+
+bool Yap::CProcessorImp::LinkProperty(const wchar_t * property_id, const wchar_t * param_id)
+{
+	throw std::logic_error("The method or operation is not implemented.");
+}
+
 bool CPortEnumerator::AddPort(IPort* port)
 {
 	if (port == nullptr)
@@ -266,7 +288,16 @@ IPort * CPortEnumerator::GetNextPort()
 		nullptr : _current_port->second.get();
 }
 
-CPort::CPort(const wchar_t * name, unsigned int dimensions, DataType data_type) : _name(name), _dimensions(dimensions), _data_type(data_type)
+Yap::IPort * Yap::CPortEnumerator::GetPort(const wchar_t * name)
+{
+	auto iter = _ports.find(name);
+	return (iter != _ports.end()) ? iter->second.get() : nullptr;
+}
+
+CPort::CPort(const wchar_t * name, unsigned int dimensions, DataType data_type) : 
+	_name(name), 
+	_dimensions(dimensions), 
+	_data_type(data_type)
 {
 }
 
@@ -305,4 +336,26 @@ IProperty * CPropertyEnumerator::GetProperty(const wchar_t * name)
 {
 	auto iter = _properties.find(name);
 	return (iter != _properties.end()) ? iter->second : nullptr;
+}
+
+Yap::CProperty::CProperty(PropertyType type, const wchar_t * name, const wchar_t * description) :
+	_type(type),
+	_name(name),
+	_description(description)
+{
+}
+
+const wchar_t * Yap::CProperty::GetName()
+{
+	return _name.c_str();
+}
+
+Yap::PropertyType Yap::CProperty::GetType()
+{
+	return _type;
+}
+
+const wchar_t * Yap::CProperty::GetDescription()
+{
+	return _description.c_str();
 }

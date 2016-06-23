@@ -10,14 +10,16 @@ using namespace std;
 
 CModulePhase::CModulePhase()
 {
-	AddInputPort(L"Input", 2, DataTypeComplexDouble);
-	AddOutputPort(L"Module", 2, DataTypeDouble);
-	AddOutputPort(L"Phase", 2, DataTypeDouble);
+	AddInputPort(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble);
+	AddOutputPort(L"Module", YAP_ANY_DIMENSION, DataTypeDouble);
+	AddOutputPort(L"Phase", YAP_ANY_DIMENSION, DataTypeDouble);
 
-	AddProperty(L"CreateModeule", PropertyBool);
-	AddProperty(L"CreatePhase", PropertyBool);
+	AddProperty(PropertyBool, L"CreateModule", L"If true, the processor will output Modules of the input data.");
+	SetBoolProperty(L"CreateModule", true);
+
+	AddProperty(PropertyBool, L"CreatePhase", L"If true, the processor will output Phases of the input data.");
+	SetBoolProperty(L"CreatePhase", false);
 }
-
 
 CModulePhase::~CModulePhase()
 {
@@ -47,7 +49,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 
 		GetModule(reinterpret_cast<complex<double>*>(input_data.GetData()),
 			reinterpret_cast<double*>(module->GetData()),
-			input_data.GetWidth(), input_data.GetHeight());
+			input_data.GetDataSize());
 
 		Feed(L"Module", module.get());
 	}
@@ -58,7 +60,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 
 		GetPhase(reinterpret_cast<complex<double>*>(input_data.GetData()), 
 			reinterpret_cast<double*>(phase->GetData()),
-			input_data.GetWidth(), input_data.GetHeight());
+			input_data.GetDataSize());
 
 		Feed(L"Phase", phase.get());
 	}
@@ -71,27 +73,30 @@ wchar_t * CModulePhase::GetId()
 	return L"ModulePhase";
 }
 
-bool CModulePhase::GetModule(std::complex<double>* input, double* module,
-	unsigned int width, unsigned int height)
+bool CModulePhase::GetModule(std::complex<double>* input, 
+	double* module,
+	size_t size)
 {
 	assert(input != nullptr && module != nullptr);
 
-	for (unsigned int pixel = 0; pixel < width * height; ++pixel)
+	auto input_end = input + size;
+	while (input != input_end)
 	{
-		*(module + pixel) = abs(*(input + pixel));
+		*(module++) = abs(*(input++));
 	}
 
 	return true;
 }
 
 bool CModulePhase::GetPhase(std::complex<double>* input, double* phase,
-	unsigned int width, unsigned int height)
+	size_t size)
 {
 	assert(input != nullptr && phase != nullptr);
 
-	for (unsigned int pixel = 0; pixel < width * height; ++pixel)
+	auto input_end = input + size;
+	while (input != input_end)
 	{
-		*(phase + pixel) = arg(*(input + pixel));
+		*(phase++) = arg(*(input++));
 	}
 
 	return true;

@@ -8,12 +8,13 @@
 
 using namespace std;
 using namespace arma;
+using namespace Yap;
 
 CGrappa::CGrappa()
 {
-	AddProperty(L"Rate", PropertyInt);
-	AddProperty(L"AcsCount", PropertyInt);
-	AddProperty(L"Block", PropertyInt);
+	AddProperty(PropertyInt, L"Rate", L"");
+	AddProperty(PropertyInt, L"AcsCount", L"");
+	AddProperty(PropertyInt, L"Block", L"");
 
 	AddInputPort(L"Input", 2, DataTypeComplexDouble);
 	AddOutputPort(L"Output", 2, DataTypeComplexDouble);

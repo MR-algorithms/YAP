@@ -2,12 +2,13 @@
 #include "ComplexSplitter.h"
 
 using namespace std;
+using namespace Yap;
 
 CComplexSplitter::CComplexSplitter()
 {
-	AddProperty(L"CreatReal", PropertyBool);
+	AddProperty(PropertyBool, L"CreatReal", L"");
 	SetBoolProperty(L"CreatReal", false);
-	AddProperty(L"Imaginary", PropertyBool);
+	AddProperty(PropertyBool, L"Imaginary", L"");
 	SetBoolProperty(L"Imaginary", false);
 
 	//one dimension

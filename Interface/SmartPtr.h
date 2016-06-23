@@ -1,7 +1,7 @@
 #ifndef dataptr_h_20140619
 #define dataptr_h_20140619
 
-#include "interface.h"
+#include "YapInterfaces.h"
 #include <assert.h>
 
 namespace Yap

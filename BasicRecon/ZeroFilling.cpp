@@ -15,10 +15,10 @@ CZeroFilling::CZeroFilling()
 	AddInputPort(L"Input", 2, DataTypeComplexDouble);
 	AddOutputPort(L"Output", 2, DataTypeComplexDouble);
 
-	AddProperty(L"DestWidth", PropertyInt);
-	AddProperty(L"DestHeight", PropertyInt);
-	AddProperty(L"Left", PropertyInt);
-	AddProperty(L"Top", PropertyInt);
+	AddProperty(PropertyInt, L"DestWidth", L"Destination width.");
+	AddProperty(PropertyInt, L"DestHeight", L"Destination height.");
+	AddProperty(PropertyInt, L"Left", L"X coordinate of top left corner of source data in destination data.");
+	AddProperty(PropertyInt, L"Top", L"Y coordinate of top left corner of source data in destination data.");
 }
 
 
@@ -31,8 +31,8 @@ bool CZeroFilling::Input(const wchar_t * port, IData * data)
 	if (std::wstring(port) != L"Input")
 		return false;
 
-	unsigned int dest_width = GetIntProperty(L"DestWidth");
-	unsigned int dest_height = GetIntProperty(L"DestHeight");
+	auto dest_width = static_cast<unsigned int>(GetIntProperty(L"DestWidth"));
+	auto dest_height = static_cast<unsigned int>(GetIntProperty(L"DestHeight"));
 
 	CDataHelper input_data(data);
 	if (input_data.GetDataType() != DataTypeComplexDouble)
@@ -68,9 +68,9 @@ bool CZeroFilling::ZeroFilling(complex<double>* dest, unsigned int dest_width, u
 	assert(dest_width >= source_width && dest_height >= source_height);
 
 	memset(dest, 0, dest_width * dest_height * sizeof(complex<double>));
-	for (unsigned int row = 0; row < source_height; ++row)
+	for (auto row = 0; row < source_height; ++row)
 	{
-		memcpy(dest + (dest_height - source_height) / 2 * dest_width + (dest_width - source_width) / 2, 
+		memcpy(dest + ((dest_height - source_height) / 2 + row) * dest_width + (dest_width - source_width) / 2, 
 			source + row * source_width, source_width * sizeof(complex<double>));
 	}
 
