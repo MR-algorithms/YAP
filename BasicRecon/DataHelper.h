@@ -17,6 +17,9 @@ namespace Yap
 		void * GetData();
 		size_t GetDataSize() const;
 
+		unsigned int GetSlice();
+		unsigned int GetCoilCount();
+
 	protected:
 		IData & _data_interface;
 	};

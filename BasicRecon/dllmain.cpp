@@ -5,6 +5,8 @@
 #include "Fft1D.h"
 #include "Fft2D.h"
 #include "ZeroFilling.h"
+#include "ComplexSplitter.h"
+#include "Grappa.h"
 
 using namespace Yap;
 
@@ -17,7 +19,9 @@ extern "C"
 		processor_manager->AddProcessor(new CFft1D);
 		processor_manager->AddProcessor(new CFft2D);
 		processor_manager->AddProcessor(new CZeroFilling);
-
+		processor_manager->AddProcessor(new CComplexSplitter);
+		processor_manager->AddProcessor(new CGrappa);
+		
 		return processor_manager;
 	}
 }
