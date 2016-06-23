@@ -1,22 +1,26 @@
 #pragma once
-#include "..\Interface\Interface.h"
+#include "..\Interface\YapInterfaces.h"
 
-class CDataHelper
+namespace Yap
 {
-public:
-	CDataHelper(IData * data) : _data_interface(*data) {}
+	class CDataHelper
+	{
+	public:
+		CDataHelper(IData * data) : _data_interface(*data) {}
 
-	DataType GetDataType();
-	unsigned int GetDimensionCount();
+		DataType GetDataType();
+		unsigned int GetDimensionCount();
 
-	unsigned int GetWidth();
+		unsigned int GetWidth();
 
-	unsigned int GetHeight();
+		unsigned int GetHeight();
+		void * GetData();
+		size_t GetDataSize() const;
 
-	unsigned int GetCoilCount();
+		unsigned int GetSlice();
+		unsigned int GetCoilCount();
 
-	void * GetData();
-
-protected:
-	IData & _data_interface;
-};
+	protected:
+		IData & _data_interface;
+	};
+}

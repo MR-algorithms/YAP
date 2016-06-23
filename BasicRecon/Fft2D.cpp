@@ -14,8 +14,8 @@ CFft2D::CFft2D():
 	_plan_inverse(false),
 	_plan_in_place(false)
 {
-	AddProperty(L"Inverse", PropertyBool);
-	AddProperty(L"InPlace", PropertyBool);
+	AddProperty(PropertyBool, L"Inverse", L"");
+	AddProperty(PropertyBool, L"InPlace", L"");
 
 	SetBoolProperty(L"Inverse", false);
 	SetBoolProperty(L"InPlace", true);
@@ -50,6 +50,7 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 
 	if (GetBoolProperty(L"InPlace"))
 	{
+
 		Fft2D(reinterpret_cast<complex<double>*>(input_data.GetData()),
 			reinterpret_cast<complex<double>*>(input_data.GetData()),
 			width, height, GetBoolProperty(L"Inverse"));
@@ -57,6 +58,7 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 	}
 	else
 	{
+
 		Yap::CDimensions dims;
 		dims(DimensionReadout, 0, width)
 			(DimensionPhaseEncoding, 0, height);

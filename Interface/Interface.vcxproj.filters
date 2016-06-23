@@ -15,13 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Interface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ReconData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SmartPtr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="YapInterfaces.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

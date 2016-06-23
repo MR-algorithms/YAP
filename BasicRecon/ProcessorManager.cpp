@@ -2,6 +2,7 @@
 #include "ProcessorManager.h"
 #include <cassert>
 
+using namespace Yap;
 
 CProcessorManager::CProcessorManager()
 {

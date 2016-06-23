@@ -5,32 +5,37 @@
 #include <complex>
 #include <vector>
 
-class CFft1D :
-	public CProcessorImp
+namespace Yap
 {
-public:
-	CFft1D();
-	virtual ~CFft1D();
+	class CFft1D :
+		public CProcessorImp
+	{
+	public:
+		CFft1D();
+		virtual ~CFft1D();
 
-	virtual bool Init() override;
-	virtual bool Input(const wchar_t * port, IData * data) override;
-	virtual wchar_t * GetId() override;
+		virtual bool Init() override;
+		virtual bool Input(const wchar_t * port, IData * data) override;
+		virtual wchar_t * GetId() override;
 
-	void FFTShift(std::complex<double>* data, size_t size);
+		void FFTShift(std::complex<double>* data, size_t size);
 
-protected:
+	protected:
 
-	void SwapBlock(std::complex<double> * block1, std::complex<double> * block2,
-		size_t width);
+		void SwapBlock(std::complex<double> * block1, std::complex<double> * block2,
+			size_t width);
 
-	unsigned int _plan_data_size;
-	bool _plan_inverse;
-	bool _plan_in_place;
-	fftw_plan _fft_plan;
+		unsigned int _plan_data_size;
+		bool _plan_inverse;
+		bool _plan_in_place;
+		fftw_plan _fft_plan;
 
-	bool Fft1D(std::complex<double> * data, std::complex<double> * result,
-		size_t size, bool inverse = false);
-	void Plan(size_t size, bool inverse, bool in_place);
+		bool Fft1D(std::complex<double> * data, std::complex<double> * result,
+			size_t size, bool inverse = false);
+		void Plan(size_t size, bool inverse, bool in_place);
 
-};
+	};
+}
+
+
 
