@@ -38,9 +38,9 @@ IProcessor * CProcessorManager::GetProcessor(const wchar_t * name)
 bool CProcessorManager::AddProcessor(IProcessor * processor)
 {
 	assert(processor != nullptr);
-	assert(_processors.find(processor->GetId()) == _processors.end());
+	assert(_processors.find(processor->GetClassId()) == _processors.end());
 
-	_processors.insert(std::make_pair(processor->GetId(), processor));
+	_processors.insert(std::make_pair(processor->GetClassId(), processor));
 
 	return true;
 }

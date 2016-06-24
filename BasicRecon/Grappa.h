@@ -18,8 +18,6 @@ namespace Yap
 
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
-		virtual wchar_t * GetId() override;
-
 		bool Recon(std::complex<double> * subsampled_data,
 			size_t r, size_t acs, size_t Block, size_t width, size_t height, size_t Num_coil);
 

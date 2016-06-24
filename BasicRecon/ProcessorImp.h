@@ -150,23 +150,40 @@ namespace Yap
 		public IProcessor
 	{
 	public:
-		CProcessorImp();
-		virtual ~CProcessorImp();
+		CProcessorImp(const wchar_t * class_id);
+		CProcessorImp(const CProcessorImp& rhs);
+
+
+		/// 复制当前Processor的实例。
+		virtual IProcessor * Clone();
+		/// 释放当前Processor的资源。
+		virtual void Release();
 
 		virtual IPortEnumerator * GetInputPortEnumerator() override;
 		virtual IPortEnumerator * GetOutputPortEnumerator() override;
 
 		virtual bool Init() override;
-		virtual bool Input(const wchar_t * port, IData * data) override;
+		virtual const wchar_t * GetClassId() override;
+		virtual void SetClassId(const wchar_t * id) override;
+		virtual const wchar_t * GetInstanceId() override;
+		virtual void SetInstanceId(const wchar_t * instance_id) override;
+
+		virtual IPropertyEnumerator * GetProperties() override;
+
+		virtual bool LinkProperty(const wchar_t * property_id, const wchar_t * param_id) override;
+		virtual bool UpdateProperties(IPropertyEnumerator * params) override;
+
 		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) override;
+		virtual bool Input(const wchar_t * port, IData * data) override;
+
+
+	protected:
+		bool CanLink(const wchar_t * source_output_name, IProcessor * next, const wchar_t * next_input_name);
 
 		bool AddInputPort(const wchar_t * name, unsigned int dimensions, DataType data_type);
 		bool AddOutputPort(const wchar_t * name, unsigned int dimensions, DataType data_type);
 
 		void Feed(const wchar_t * name, IData * data);
-
-	protected:
-		bool CanLink(IProcessor * source, const wchar_t * source_output_name, IProcessor * next, const wchar_t * next_input_name);
 
 		bool AddProperty(PropertyType type, const wchar_t * name, const wchar_t * description);
 		void SetIntProperty(const wchar_t * name, int value);
@@ -178,17 +195,22 @@ namespace Yap
 		void SetStringProperty(const wchar_t * name, const wchar_t * value);
 		const wchar_t * GetStringProperty(const wchar_t * name);
 
-		virtual IPropertyEnumerator * GetProperties() override;
-
-		virtual wchar_t * GetId() override;
-
-		virtual bool LinkProperty(const wchar_t * property_id, const wchar_t * param_id) override;
-
 		CPortEnumerator _input_ports;
 		CPortEnumerator _output_ports;
 		CPropertyEnumerator _properties;
 
 		std::multimap<std::wstring, Anchor> _links;
+		std::map<std::wstring, std::wstring> _property_links;
+
+		std::wstring _instance_id;
+		std::wstring _class_id;
+		IPropertyEnumerator * _system_variables;
+
+		virtual ~CProcessorImp();
+	private:
+		CProcessorImp(const CProcessorImp&& rhs);
+		const CProcessorImp& operator = (CProcessorImp&& rhs);
+		const CProcessorImp& operator = (const CProcessorImp& rhs);
 	};
 };
 

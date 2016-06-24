@@ -10,7 +10,8 @@ using namespace std;
 using namespace arma;
 using namespace Yap;
 
-CGrappa::CGrappa()
+CGrappa::CGrappa() :
+	CProcessorImp(L"Grappa")
 {
 	AddProperty(PropertyInt, L"Rate", L"");
 	AddProperty(PropertyInt, L"AcsCount", L"");
@@ -52,12 +53,6 @@ bool CGrappa::Input(const wchar_t * port, IData * data)
 
 	return true;
 }
-
-wchar_t * CGrappa::GetId()
-{
-	return L"Grappa";
-}
-
 
 std::vector<std::complex<double>> CGrappa::GetAcsData(std::complex<double> * data, 
 	size_t r, size_t acs, size_t width, size_t height, size_t num_coil)

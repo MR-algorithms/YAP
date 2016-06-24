@@ -16,7 +16,6 @@ namespace Yap
 
 		virtual bool Init() override;
 		virtual bool Input(const wchar_t * port, IData * data) override;
-		virtual wchar_t * GetId() override;
 
 		void FFTShift(std::complex<double>* data, size_t size);
 

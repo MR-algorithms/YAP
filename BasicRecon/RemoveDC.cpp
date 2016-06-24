@@ -8,7 +8,8 @@
 using namespace std;
 using namespace Yap;
 
-CRemoveDC::CRemoveDC()
+CRemoveDC::CRemoveDC() :
+	CProcessorImp(L"RemoveDC")
 {
 	AddInputPort(L"Input", 2, DataTypeDouble);
 	
@@ -64,9 +65,4 @@ bool CRemoveDC::Input(const wchar_t * port, IData * data)
 	}
 
 	return true;
-}
-
-wchar_t * CRemoveDC::GetId()
-{
-	return L"RemoveDC";
 }

@@ -13,7 +13,8 @@
 using namespace std;
 using namespace Yap;
 
-CFft1D::CFft1D() :
+CFft1D::CFft1D() : 
+	CProcessorImp(L"Fft1D"),
 	_plan_data_size(0),
 	_plan_inverse(false),
 	_plan_in_place(false)
@@ -69,11 +70,6 @@ bool CFft1D::Input(const wchar_t * port, IData * data)
 	}
 
 	return true;
-}
-
-wchar_t * CFft1D::GetId()
-{
-	return L"Fft1D";
 }
 
 void CFft1D::FFTShift(std::complex<double>* data, size_t size)

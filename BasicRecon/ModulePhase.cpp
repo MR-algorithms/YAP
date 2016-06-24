@@ -8,7 +8,8 @@
 using namespace Yap;
 using namespace std;
 
-CModulePhase::CModulePhase()
+CModulePhase::CModulePhase() :
+	CProcessorImp(L"ModulePhase")
 {
 	AddInputPort(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble);
 	AddOutputPort(L"Module", YAP_ANY_DIMENSION, DataTypeDouble);
@@ -66,11 +67,6 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 	}
 
 	return true;
-}
-
-wchar_t * CModulePhase::GetId()
-{
-	return L"ModulePhase";
 }
 
 bool CModulePhase::GetModule(std::complex<double>* input, 

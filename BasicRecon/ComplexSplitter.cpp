@@ -4,7 +4,8 @@
 using namespace std;
 using namespace Yap;
 
-CComplexSplitter::CComplexSplitter()
+CComplexSplitter::CComplexSplitter() :
+	CProcessorImp(L"ComplexSplitter")
 {
 	AddProperty(PropertyBool, L"CreatReal", L"Create Real Image");
 	SetBoolProperty(L"CreatReal", false);
@@ -71,10 +72,5 @@ bool CComplexSplitter::Input(const wchar_t * port, IData * data)
 
 	return true;
 
-}
-
-wchar_t * CComplexSplitter::GetId()
-{
-	return L"ComplexSplitter";
 }
 

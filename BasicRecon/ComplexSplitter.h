@@ -14,8 +14,6 @@ namespace Yap
 		virtual bool Init() override;
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
-		virtual wchar_t * GetId() override;
-
 	protected:
 
 		void Split(std::complex<double> * data, double *Real, double * Imaginary, size_t size)

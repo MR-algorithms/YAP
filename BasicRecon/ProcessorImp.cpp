@@ -8,14 +8,45 @@
 using namespace std;
 using namespace Yap;
 
-CProcessorImp::CProcessorImp()
+CProcessorImp::CProcessorImp(const wchar_t * class_id) :
+	_system_variables(nullptr),
+	_class_id(class_id)
 {
 }
 
+Yap::CProcessorImp::CProcessorImp(const CProcessorImp& rhs) :
+	_input_ports(rhs._input_ports),
+	_output_ports(rhs._output_ports),
+	_properties(rhs._properties),
+	_links(rhs._links),
+	_property_links(rhs._property_links),
+	_instance_id(rhs._instance_id),
+	_class_id(rhs._class_id),
+	_system_variables(rhs._system_variables)
+{
+}
+
+Yap::IProcessor * Yap::CProcessorImp::Clone()
+{
+	try
+	{
+		return new CProcessorImp(*this);
+	}
+	catch (bad_alloc&)
+	{
+		return nullptr;
+	}
+}
+
+void Yap::CProcessorImp::Release()
+{
+	delete this;
+}
 
 CProcessorImp::~CProcessorImp()
 {
 }
+
 
 IPortEnumerator * CProcessorImp::GetInputPortEnumerator()
 {
@@ -41,6 +72,13 @@ bool CProcessorImp::Input(const wchar_t * port, IData * data)
 
 bool CProcessorImp::Link(const wchar_t * out_port, IProcessor* next_processor, const wchar_t * in_port)
 {
+	assert(wcslen(out_port) != 0);
+	assert(next_processor != nullptr);
+	assert(wcslen(in_port) != 0);
+
+	if (!CanLink(out_port, next_processor, in_port))
+		return false;
+
 	_links.insert(std::make_pair(out_port, Anchor(next_processor, in_port)));
 	return true;
 }
@@ -241,23 +279,108 @@ const wchar_t * CProcessorImp::GetStringProperty(const wchar_t * name)
 	return string_value->GetValue();
 }
 
-bool Yap::CProcessorImp::CanLink(IProcessor * source,
-	const wchar_t * source_output_name,
-	IProcessor * next,
-	const wchar_t * next_input_name)
+const wchar_t * Yap::CProcessorImp::GetClassId()
 {
-	NOT_IMPLEMENTED;
-	return false;
+	return _class_id.c_str();
 }
 
-wchar_t * Yap::CProcessorImp::GetId()
+void Yap::CProcessorImp::SetClassId(const wchar_t * id)
 {
-	throw std::logic_error("The method or operation is not implemented.");
+	_class_id = id;
+}
+
+const wchar_t * Yap::CProcessorImp::GetInstanceId()
+{
+	return _instance_id.c_str();
+}
+
+void Yap::CProcessorImp::SetInstanceId(const wchar_t * instance_id)
+{
+	_instance_id = instance_id;
 }
 
 bool Yap::CProcessorImp::LinkProperty(const wchar_t * property_id, const wchar_t * param_id)
 {
-	throw std::logic_error("The method or operation is not implemented.");
+	if (_properties.GetProperty(property_id) != nullptr)
+	{
+		return false;
+	}
+
+	_property_links.insert(make_pair(wstring(property_id), wstring(param_id)));
+
+	return true;
+}
+
+bool Yap::CProcessorImp::UpdateProperties(IPropertyEnumerator * params)
+{
+	for (auto link : _property_links)
+	{
+		auto property = _properties.GetProperty(link.first.c_str());
+		if (property == nullptr)
+			return false;
+
+		auto system_variable = params->GetProperty(link.second.c_str());
+		if (system_variable == nullptr)
+			return false;
+
+		if (property->GetType() != system_variable->GetType())
+			return false;
+
+		try
+		{
+			switch (property->GetType())
+			{
+			case PropertyBool:
+				dynamic_cast<IBoolValue&>(*property).SetValue(dynamic_cast<IBoolValue&>(*system_variable).GetValue());
+				break;
+			case PropertyInt:
+				dynamic_cast<IIntValue&>(*property).SetValue(dynamic_cast<IIntValue&>(*system_variable).GetValue());
+				break;
+			case PropertyFloat:
+				dynamic_cast<IFloatValue&>(*property).SetValue(dynamic_cast<IFloatValue&>(*system_variable).GetValue());
+				break;
+			case PropertyString:
+				dynamic_cast<IStringValue&>(*property).SetValue(dynamic_cast<IStringValue&>(*system_variable).GetValue());
+				break;
+			default:
+				return false;
+			}
+		}
+		catch (std::bad_cast&)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool Yap::CProcessorImp::CanLink(const wchar_t * source_output_name, 
+	IProcessor * next, 
+	const wchar_t * next_input_name)
+{
+	assert(next != nullptr);
+	assert(wcslen(source_output_name) != 0);
+	assert(wcslen(next_input_name) != 0);
+
+	auto out_port = _output_ports.GetPort(source_output_name);
+	if (out_port == nullptr)
+		return false;
+
+	auto in_port_enumerator = next->GetInputPortEnumerator();
+	if (in_port_enumerator == nullptr)
+		return false;
+
+	auto in_port = in_port_enumerator->GetPort(next_input_name);
+	if (in_port == nullptr)
+		return false;
+
+	if (out_port->GetDataType() != in_port->GetDataType())
+		return false;
+
+	return (out_port->GetDimensions() == in_port->GetDimensions() ||
+		out_port->GetDimensions() == YAP_ANY_DIMENSION ||
+		in_port->GetDimensions() == YAP_ANY_DIMENSION);
 }
 
 bool CPortEnumerator::AddPort(IPort* port)
