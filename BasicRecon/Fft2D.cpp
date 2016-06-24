@@ -9,6 +9,7 @@ using namespace std;
 using namespace Yap;
 
 CFft2D::CFft2D():
+	CProcessorImp(L"Fft2D"),
 	_plan_data_width(0),
 	_plan_data_height(0),
 	_plan_inverse(false),
@@ -70,12 +71,6 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 	}
 	return true;
 }
-
-wchar_t * CFft2D::GetId()
-{
-	return L"Fft2D";
-}
-
 
 void CFft2D::FftShift(std::complex<double>* data, size_t  width, size_t height)
 {

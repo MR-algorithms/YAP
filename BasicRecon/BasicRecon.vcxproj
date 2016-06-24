@@ -71,11 +71,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>D:\YAP\FFTW\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\gadgetron\Dependencies\Armadillo\Armadillo-7200.2\lib_debug;C:\Users\James\Documents\Visual Studio 2015\Projects\YAP\FFTW-64\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>..\FFTW-64\lib;D:\Armadillo-7200.2\lib_debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\gadgetron\Dependencies\Armadillo\Armadillo-7200.2\lib_debug;C:\Users\James\Documents\Visual Studio 2015\Projects\YAP\FFTW-64\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -89,12 +89,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;BASICRECON_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\YAP\FFTW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\gadgetron\Dependencies\Armadillo\Armadillo-7200.2\include;C:\Users\James\Documents\Visual Studio 2015\Projects\YAP\FFTW-64\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win64_MTd.lib;lapack_win64_MTd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -103,12 +103,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;BASICRECON_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\FFTW-64\include;D:\Armadillo-7200.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\gadgetron\Dependencies\Armadillo\Armadillo-7200.2\include;C:\Users\James\Documents\Visual Studio 2015\Projects\YAP\FFTW-64\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win64_MTd.lib;lapack_win64_MTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win64_MTd.lib;lapack_win64_MTd.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>D:\Armadillo-7200.2\lib_debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -152,10 +152,8 @@
     <ClInclude Include="DataHelper.h" />
     <ClInclude Include="Fft1D.h" />
     <ClInclude Include="Fft2D.h" />
-
     <ClInclude Include="Grappa.h" />
     <ClInclude Include="ModulePhase.h" />
-
     <ClInclude Include="ProcessorImp.h" />
     <ClInclude Include="ProcessorManager.h" />
     <ClInclude Include="RemoveDC.h" />
@@ -189,11 +187,8 @@
     </ClCompile>
     <ClCompile Include="Fft1D.cpp" />
     <ClCompile Include="Fft2D.cpp" />
-
     <ClCompile Include="Grappa.cpp" />
-
     <ClCompile Include="ModulePhase.cpp" />
-
     <ClCompile Include="ProcessorImp.cpp" />
     <ClCompile Include="ProcessorManager.cpp" />
     <ClCompile Include="RemoveDC.cpp" />
