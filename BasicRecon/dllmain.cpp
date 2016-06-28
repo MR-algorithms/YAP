@@ -1,7 +1,7 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "stdafx.h"
 
-#include "ProcessorManager.h"
+#include "ProcessorManagerImp.h"
 #include "Fft1D.h"
 #include "Fft2D.h"
 #include "ZeroFilling.h"
@@ -14,7 +14,7 @@ extern "C"
 {
 	__declspec(dllexport) IProcessorManager * GetProcessorManager()
 	{
-		auto processor_manager = new CProcessorManager;
+		auto processor_manager = new CProcessorManagerImp;
 
 		processor_manager->AddProcessor(new CFft1D);
 		processor_manager->AddProcessor(new CFft2D);

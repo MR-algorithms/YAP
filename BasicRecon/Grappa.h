@@ -14,8 +14,6 @@ namespace Yap
 		CGrappa();
 		virtual ~CGrappa();
 
-		virtual bool Init() override;
-
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
 		bool Recon(std::complex<double> * subsampled_data,

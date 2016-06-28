@@ -1,15 +1,15 @@
 #include "stdafx.h"
-#include "ProcessorManager.h"
+#include "ProcessorManagerImp.h"
 #include <cassert>
 
 using namespace Yap;
 
-CProcessorManager::CProcessorManager()
+CProcessorManagerImp::CProcessorManagerImp()
 {
 }
 
 
-CProcessorManager::~CProcessorManager()
+CProcessorManagerImp::~CProcessorManagerImp()
 {
 	for (auto processor : _processors)
 	{
@@ -17,25 +17,25 @@ CProcessorManager::~CProcessorManager()
 	}
 }
 
-IProcessor * CProcessorManager::GetFirstProcessor()
+IProcessor * CProcessorManagerImp::GetFirstProcessor()
 {
 	_current = _processors.begin();
 
 	return  (_current != _processors.end()) ? _current->second : nullptr;
 }
 
-IProcessor * CProcessorManager::GetNextProcessor()
+IProcessor * CProcessorManagerImp::GetNextProcessor()
 {
 	return  (++_current != _processors.end()) ? _current->second : nullptr;
 }
 
-IProcessor * CProcessorManager::GetProcessor(const wchar_t * name)
+IProcessor * CProcessorManagerImp::GetProcessor(const wchar_t * name)
 {
 	auto iter = _processors.find(name);
 	return  (iter != _processors.end()) ? iter->second : nullptr;
 }
 
-bool CProcessorManager::AddProcessor(IProcessor * processor)
+bool CProcessorManagerImp::AddProcessor(IProcessor * processor)
 {
 	assert(processor != nullptr);
 	assert(_processors.find(processor->GetClassId()) == _processors.end());
@@ -43,4 +43,14 @@ bool CProcessorManager::AddProcessor(IProcessor * processor)
 	_processors.insert(std::make_pair(processor->GetClassId(), processor));
 
 	return true;
+}
+
+void Yap::CProcessorManagerImp::Release()
+{
+	for (auto item : _processors)
+	{
+		item.second->Release();
+	}
+	_processors.clear();
+	_current = _processors.begin();
 }

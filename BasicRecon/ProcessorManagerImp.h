@@ -5,16 +5,17 @@
 
 namespace Yap
 {
-	class CProcessorManager :
+	class CProcessorManagerImp :
 		public IProcessorManager
 	{
 	public:
-		CProcessorManager();
-		~CProcessorManager();
+		CProcessorManagerImp();
+		~CProcessorManagerImp();
 
 		virtual IProcessor * GetFirstProcessor() override;
 		virtual IProcessor * GetNextProcessor() override;
 		virtual IProcessor * GetProcessor(const wchar_t * name) override;
+		virtual void Release() override;
 
 		bool AddProcessor(IProcessor * processor);
 

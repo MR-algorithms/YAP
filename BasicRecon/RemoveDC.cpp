@@ -26,11 +26,6 @@ CRemoveDC::~CRemoveDC()
 {
 }
 
-bool CRemoveDC::Init()
-{
-	return true;
-}
-
 bool CRemoveDC::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) != L"Input")

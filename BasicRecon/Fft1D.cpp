@@ -33,11 +33,6 @@ CFft1D::~CFft1D()
 {
 }
 
-bool CFft1D::Init()
-{
-	return true;
-}
-
 bool CFft1D::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) != L"Input")

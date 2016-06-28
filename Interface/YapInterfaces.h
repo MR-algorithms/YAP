@@ -158,12 +158,15 @@ namespace Yap
 
 	struct IProcessor
 	{
+		/// 复制当前Processor的实例。
+		virtual IProcessor * Clone() = 0;
+		/// 释放当前Processor的资源。
+		virtual void Release() = 0;
+
 		virtual const wchar_t * GetClassId() = 0;
 		virtual void SetClassId(const wchar_t * id) = 0;
 		virtual const wchar_t * GetInstanceId() = 0;
 		virtual void SetInstanceId(const wchar_t * instance_id) = 0;
-
-		virtual bool Init() = 0;
 
 		virtual IPortEnumerator * GetInputPortEnumerator() = 0;
 		virtual IPortEnumerator * GetOutputPortEnumerator() = 0;
@@ -189,5 +192,6 @@ namespace Yap
 		virtual IProcessor * GetFirstProcessor() = 0;
 		virtual IProcessor * GetNextProcessor() = 0;
 		virtual IProcessor * GetProcessor(const wchar_t * name) = 0;
+		virtual void Release() = 0;
 	};
 }
