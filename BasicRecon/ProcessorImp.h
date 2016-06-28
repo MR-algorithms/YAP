@@ -161,9 +161,9 @@ namespace Yap
 
 
 		/// 复制当前Processor的实例。
-		virtual IProcessor * Clone();
+		virtual IProcessor * Clone() override;
 		/// 释放当前Processor的资源。
-		virtual void Release();
+		virtual void Release() override;
 
 		virtual IPortEnumerator * GetInputPortEnumerator() override;
 		virtual IPortEnumerator * GetOutputPortEnumerator() override;
