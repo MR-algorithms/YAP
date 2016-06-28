@@ -54,7 +54,7 @@ bool CComplexSplitter::Input(const wchar_t * port, IData * data)
 
 	unsigned int size = -1;
 	//one, two and three dimension(s), ANY¡¡DIMENSION
-	size = input_data.GetDataSize();
+	size = static_cast<unsigned int> (input_data.GetDataSize());
 
 	Split(reinterpret_cast<std::complex<double> *>(input_data.GetData()),
 		reinterpret_cast<double*>(real_data->GetData()),

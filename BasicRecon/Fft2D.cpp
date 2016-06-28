@@ -15,8 +15,8 @@ CFft2D::CFft2D():
 	_plan_inverse(false),
 	_plan_in_place(false)
 {
-	AddProperty(PropertyBool, L"Inverse", L"");
-	AddProperty(PropertyBool, L"InPlace", L"");
+	AddProperty(PropertyBool, L"Inverse", L"The direction of FFT2D.");
+	AddProperty(PropertyBool, L"InPlace", L"The position of FFT2D.");
 
 	SetBoolProperty(L"Inverse", false);
 	SetBoolProperty(L"InPlace", true);
