@@ -26,11 +26,6 @@ CGrappa::~CGrappa()
 {
 }
 
-bool CGrappa::Init()
-{
-	return true;
-}
-
 bool CGrappa::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) != L"Input")

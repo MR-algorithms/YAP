@@ -18,12 +18,12 @@ Yap::CProcessorImp::CProcessorImp(const CProcessorImp& rhs) :
 	_input_ports(rhs._input_ports),
 	_output_ports(rhs._output_ports),
 	_properties(rhs._properties),
-	_links(rhs._links),
-	_property_links(rhs._property_links),
 	_instance_id(rhs._instance_id),
 	_class_id(rhs._class_id),
-	_system_variables(rhs._system_variables)
+	_system_variables(nullptr)
 {
+	_links.clear();
+	_property_links.clear();
 }
 
 Yap::IProcessor * Yap::CProcessorImp::Clone()
@@ -60,12 +60,11 @@ IPortEnumerator * CProcessorImp::GetOutputPortEnumerator()
 
 bool CProcessorImp::Init()
 {
-	return true;
+	return OnInit();
 }
 
 bool CProcessorImp::Input(const wchar_t * port, IData * data)
 {
-
 	return true;
 }
 
@@ -85,35 +84,29 @@ bool CProcessorImp::Link(const wchar_t * out_port, IProcessor* next_processor, c
 
 bool CProcessorImp::AddInputPort(const wchar_t * name, unsigned int dimensions, DataType data_type)
 {
-	try
-	{
-		return _input_ports.AddPort(new CPort(name, dimensions, data_type));
-	}
-	catch (std::bad_alloc&)
-	{
-		return false;
-	}
+	return _input_ports.AddPort(name, dimensions, data_type);
 }
 
 bool CProcessorImp::AddOutputPort(const wchar_t * name, unsigned int dimensions, DataType data_type)
 {
-	try
-	{
-		return _output_ports.AddPort(new CPort(name, dimensions, data_type));
-	}
-	catch (std::bad_alloc&)
-	{
-		return false;
-	}
+	return _output_ports.AddPort(name, dimensions, data_type);
 }
 
-void CProcessorImp::Feed(const wchar_t * out_port, IData * data)
+bool CProcessorImp::Feed(const wchar_t * out_port, IData * data)
 {
+	assert(wcslen(out_port) != 0);
+	assert(data != nullptr);
+
 	auto range = _links.equal_range(out_port);
 	for (auto iter = range.first; iter != range.second; ++iter)
 	{
-		iter->second.processor->Input(iter->second.in_port.c_str(), data);
+		auto link = iter->second;
+		assert(link.processor != nullptr);
+		if (link.processor == nullptr || !link.processor->Input(link.in_port.c_str(), data))
+			return false;
 	}
+
+	return true;
 }
 
 bool CProcessorImp::AddProperty(PropertyType type,
@@ -229,22 +222,6 @@ void CProcessorImp::SetBoolProperty(const wchar_t * name, bool value)
 	bool_value->SetValue(value);
 }
 
-bool CProcessorImp::GetBoolProperty(const wchar_t * name)
-{
-	assert(name != nullptr && name[0] != 0);
-
-	auto property = _properties.GetProperty(name);
-	if (property == nullptr)
-		throw PropertyException(name, PropertyException::PropertyNotFound);
-
-	if (property->GetType() != PropertyBool)
-		throw PropertyException(name, PropertyException::TypeNotMatch);
-
-	auto bool_value = dynamic_cast<IBoolValue*>(property);
-	assert(bool_value != nullptr);
-
-	return bool_value->GetValue();
-}
 
 void CProcessorImp::SetStringProperty(const wchar_t * name, const wchar_t * value)
 {
@@ -378,18 +355,32 @@ bool Yap::CProcessorImp::CanLink(const wchar_t * source_output_name,
 	if (out_port->GetDataType() != in_port->GetDataType())
 		return false;
 
+	TODO(Refine the processing of YAP_ANY_DIMENSION and support of multiple data type.);
+
 	return (out_port->GetDimensions() == in_port->GetDimensions() ||
 		out_port->GetDimensions() == YAP_ANY_DIMENSION ||
 		in_port->GetDimensions() == YAP_ANY_DIMENSION);
 }
 
-bool CPortEnumerator::AddPort(IPort* port)
+Yap::Anchor Yap::CProcessorImp::GetLink(const wchar_t * output_name)
 {
-	if (port == nullptr)
-		return false;
+	auto link = _links.find(output_name);
+	return (link != _links.end()) ? link->second : Anchor(nullptr, nullptr);
+}
 
-	shared_ptr<IPort> p(port);
-	_ports.insert(std::make_pair(port->GetName(), p));
+bool CPortEnumerator::AddPort(const wchar_t * name,
+	unsigned int dimensions, 
+	DataType data_type)
+{
+	try
+	{
+		shared_ptr<IPort> port(new CPort(name, dimensions, data_type));
+		_ports.insert(std::make_pair(port->GetName(), port));
+	}
+	catch (bad_alloc&)
+	{
+		return false;
+	}
 
 	return true;
 }
@@ -397,12 +388,7 @@ bool CPortEnumerator::AddPort(IPort* port)
 IPort * CPortEnumerator::GetFirstPort()
 {
 	_current_port = _ports.begin();
-	if (_current_port != _ports.end())
-	{
-		return _current_port->second.get();
-	}
-
-	return nullptr;
+	return (_current_port != _ports.end()) ? _current_port->second.get() : nullptr;
 }
 
 IPort * CPortEnumerator::GetNextPort()
@@ -439,7 +425,7 @@ DataType CPort::GetDataType()
 	return _data_type;
 }
 
-IProperty * CPropertyEnumerator::GetFirst()
+IProperty * CPropertyEnumeratorImp::GetFirst()
 {
 	if (_properties.empty())
 		return nullptr;
@@ -449,16 +435,51 @@ IProperty * CPropertyEnumerator::GetFirst()
 	return _current->second;
 }
 
-IProperty * CPropertyEnumerator::GetNext()
+IProperty * CPropertyEnumeratorImp::GetNext()
 {
 	return (_current != _properties.end() && ++_current != _properties.end()) ? 
 		_current->second : nullptr;
 }
 
-IProperty * CPropertyEnumerator::GetProperty(const wchar_t * name)
+IProperty * CPropertyEnumeratorImp::GetProperty(const wchar_t * name)
 {
 	auto iter = _properties.find(name);
 	return (iter != _properties.end()) ? iter->second : nullptr;
+}
+
+bool Yap::CPropertyEnumeratorImp::GetBool(const wchar_t * id) const
+{
+	assert(id != nullptr && id[0] != 0);
+
+	auto iter = _properties.find(id);
+	if (iter == _properties.end())
+		throw PropertyException(id, PropertyException::PropertyNotFound);
+
+	auto property = iter->second;
+	if (property->GetType() != PropertyBool)
+		throw PropertyException(id, PropertyException::TypeNotMatch);
+
+	auto bool_value = dynamic_cast<IBoolValue*>(property);
+	assert(bool_value != nullptr);
+
+	return bool_value->GetValue();
+}
+
+bool CProcessorImp::GetBoolProperty(const wchar_t * name)
+{
+	assert(name != nullptr && name[0] != 0);
+
+	auto property = _properties.GetProperty(name);
+	if (property == nullptr)
+		throw PropertyException(name, PropertyException::PropertyNotFound);
+
+	if (property->GetType() != PropertyBool)
+		throw PropertyException(name, PropertyException::TypeNotMatch);
+
+	auto bool_value = dynamic_cast<IBoolValue*>(property);
+	assert(bool_value != nullptr);
+
+	return bool_value->GetValue();
 }
 
 Yap::CProperty::CProperty(PropertyType type, const wchar_t * name, const wchar_t * description) :

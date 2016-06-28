@@ -1,7 +1,7 @@
 #pragma once
 #include "ProcessorImp.h"
 #include "DataHelper.h"
-#include "fftw3.h"
+#include <fftw3.h>
 #include <complex>
 #include <vector>
 
@@ -14,7 +14,6 @@ namespace Yap
 		CFft2D();
 		virtual ~CFft2D();
 
-		virtual bool Init() override;
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
 		void FftShift(std::complex<double>* data, size_t width, size_t height);

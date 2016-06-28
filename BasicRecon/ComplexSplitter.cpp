@@ -34,11 +34,6 @@ CComplexSplitter::~CComplexSplitter()
 
 }
 
-bool CComplexSplitter::Init()
-{
-	return true;
-}
-
 bool CComplexSplitter::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) != L"Input" )
@@ -52,9 +47,8 @@ bool CComplexSplitter::Input(const wchar_t * port, IData * data)
 	auto * real_data = new Yap::CDoubleData(data->GetDimension());
 	auto * imaginary_data = new Yap::CDoubleData(data->GetDimension());
 
-	unsigned int size = -1;
 	//one, two and three dimension(s), ANY¡¡DIMENSION
-	size = input_data.GetDataSize();
+	auto size = input_data.GetDataSize();
 
 	Split(reinterpret_cast<std::complex<double> *>(input_data.GetData()),
 		reinterpret_cast<double*>(real_data->GetData()),

@@ -10,8 +10,6 @@ namespace Yap
 		CRemoveDC();
 		~CRemoveDC();
 
-		virtual bool Init() override;
-
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
 	protected:

@@ -11,7 +11,6 @@ namespace Yap
 		CComplexSplitter();;
 		~CComplexSplitter();
 
-		virtual bool Init() override;
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
 	protected:

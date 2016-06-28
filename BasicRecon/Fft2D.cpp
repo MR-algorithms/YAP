@@ -30,11 +30,6 @@ CFft2D::~CFft2D()
 {
 }
 
-bool CFft2D::Init()
-{
-	return true;
-}
-
 bool CFft2D::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) != L"Input")

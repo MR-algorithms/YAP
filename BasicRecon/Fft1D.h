@@ -14,7 +14,6 @@ namespace Yap
 		CFft1D();
 		virtual ~CFft1D();
 
-		virtual bool Init() override;
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
 		void FFTShift(std::complex<double>* data, size_t size);

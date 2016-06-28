@@ -163,8 +163,6 @@ namespace Yap
 		virtual const wchar_t * GetInstanceId() = 0;
 		virtual void SetInstanceId(const wchar_t * instance_id) = 0;
 
-		virtual bool Init() = 0;
-
 		virtual IPortEnumerator * GetInputPortEnumerator() = 0;
 		virtual IPortEnumerator * GetOutputPortEnumerator() = 0;
 

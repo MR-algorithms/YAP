@@ -75,7 +75,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>C:\gadgetron\Dependencies\Armadillo\Armadillo-7200.2\lib_debug;C:\Users\James\Documents\Visual Studio 2015\Projects\YAP\FFTW-64\lib</LibraryPath>
+    <LibraryPath>C:\gadgetron\Dependencies\Armadillo\Armadillo-7200.2\lib_debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -89,7 +89,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;BASICRECON_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\gadgetron\Dependencies\Armadillo\Armadillo-7200.2\include;C:\Users\James\Documents\Visual Studio 2015\Projects\YAP\FFTW-64\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\gadgetron\Dependencies\Armadillo\Armadillo-7200.2\include;C:\Users\James\Documents\Visual Studio 2015\Projects\YAP\FFTW-64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -103,7 +103,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;BASICRECON_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\gadgetron\Dependencies\Armadillo\Armadillo-7200.2\include;C:\Users\James\Documents\Visual Studio 2015\Projects\YAP\FFTW-64\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\gadgetron\Dependencies\Armadillo\Armadillo-7200.2\include;C:\Users\James\Documents\Visual Studio 2015\Projects\YAP\FFTW-64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

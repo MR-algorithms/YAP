@@ -27,7 +27,7 @@ namespace Yap
 	class CPortEnumerator : public IPortEnumerator
 	{
 	public:
-		bool AddPort(IPort* port);;
+		bool AddPort(const wchar_t * name, unsigned int dimensions, DataType data_type);
 
 		virtual IPort * GetFirstPort() override;
 		virtual IPort * GetNextPort() override;
@@ -110,9 +110,13 @@ namespace Yap
 		std::wstring _value;
 	};
 
-	class CPropertyEnumerator : public IPropertyEnumerator
+	class CPropertyEnumeratorImp : public IPropertyEnumerator
 	{
 	public:
+		virtual IProperty * GetFirst() override;
+		virtual IProperty * GetNext() override;
+		virtual IProperty * GetProperty(const wchar_t * name) override;
+
 		bool AddProperty(IProperty * property) {
 			if (property == nullptr)
 				return false;
@@ -124,9 +128,11 @@ namespace Yap
 			return true;
 		}
 
-		virtual IProperty * GetFirst() override;
-		virtual IProperty * GetNext() override;
-		virtual IProperty * GetProperty(const wchar_t * name) override;
+		bool GetBool(const wchar_t * id) const;
+//		double GetFloat(const wchar_t * id) const;
+//		const wchar_t * GetString(const wchar_t * id) const;
+//		const GetInt(const wchar_t * id) const;
+
 	protected:
 		std::map<std::wstring, IProperty*> _properties;
 		std::map<std::wstring, IProperty*>::iterator _current;
@@ -162,7 +168,8 @@ namespace Yap
 		virtual IPortEnumerator * GetInputPortEnumerator() override;
 		virtual IPortEnumerator * GetOutputPortEnumerator() override;
 
-		virtual bool Init() override;
+		bool Init();
+		virtual bool OnInit() { return true; };
 		virtual const wchar_t * GetClassId() override;
 		virtual void SetClassId(const wchar_t * id) override;
 		virtual const wchar_t * GetInstanceId() override;
@@ -179,11 +186,13 @@ namespace Yap
 
 	protected:
 		bool CanLink(const wchar_t * source_output_name, IProcessor * next, const wchar_t * next_input_name);
+		Yap::Anchor GetLink(const wchar_t * output_name);
+
 
 		bool AddInputPort(const wchar_t * name, unsigned int dimensions, DataType data_type);
 		bool AddOutputPort(const wchar_t * name, unsigned int dimensions, DataType data_type);
 
-		void Feed(const wchar_t * name, IData * data);
+		bool Feed(const wchar_t * name, IData * data);
 
 		bool AddProperty(PropertyType type, const wchar_t * name, const wchar_t * description);
 		void SetIntProperty(const wchar_t * name, int value);
@@ -197,7 +206,7 @@ namespace Yap
 
 		CPortEnumerator _input_ports;
 		CPortEnumerator _output_ports;
-		CPropertyEnumerator _properties;
+		CPropertyEnumeratorImp _properties;
 
 		std::multimap<std::wstring, Anchor> _links;
 		std::map<std::wstring, std::wstring> _property_links;
