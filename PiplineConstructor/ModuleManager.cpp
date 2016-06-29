@@ -104,6 +104,21 @@ Yap::IProcessor * Yap::CModuleManager::FindProcessorInAllModules(const wchar_t *
 	return processors[0];
 }
 
+Yap::IProcessor * Yap::CModuleManager::CreateProcessor(const wchar_t * class_id, const wchar_t * instance_id)
+{
+	auto processor = GetProcessor(class_id);
+	if (processor == nullptr)
+		return nullptr;
+
+	auto new_processor = processor->Clone();
+	if (new_processor != nullptr)
+	{
+		new_processor->SetInstanceId(instance_id);
+	}
+
+	return new_processor;
+}
+
 bool Yap::CModuleManager::LoadModule(const wchar_t * module_path)
 {
 	shared_ptr<CProcessorManagerAgent> processor_manager_agent(new CProcessorManagerAgent);
