@@ -102,7 +102,7 @@ bool CProcessorImp::Feed(const wchar_t * out_port, IData * data)
 	{
 		auto link = iter->second;
 		assert(link.processor != nullptr);
-		if (link.processor == nullptr || !link.processor->Input(link.in_port.c_str(), data))
+		if (link.processor == nullptr || !link.processor->Input(link.port.c_str(), data))
 			return false;
 	}
 

@@ -42,8 +42,8 @@ namespace Yap
 	struct Anchor
 	{
 		IProcessor * processor;
-		std::wstring in_port;
-		Anchor(IProcessor* processor_, const wchar_t * in_port_) : processor(processor_), in_port(in_port_) {}
+		std::wstring port;
+		Anchor(IProcessor* processor_, const wchar_t * in_port_) : processor(processor_), port(in_port_) {}
 	};
 
 
