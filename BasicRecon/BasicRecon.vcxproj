@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClInclude Include="ComplexSplitter.h" />
     <ClInclude Include="DataHelper.h" />
+    <ClInclude Include="Difference.h" />
     <ClInclude Include="Fft1D.h" />
     <ClInclude Include="Fft2D.h" />
     <ClInclude Include="Grappa.h" />
@@ -171,6 +172,7 @@
     <ClCompile Include="BasicRecon.cpp" />
     <ClCompile Include="ComplexSplitter.cpp" />
     <ClCompile Include="DataHelper.cpp" />
+    <ClCompile Include="Difference.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
