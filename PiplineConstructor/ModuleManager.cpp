@@ -119,6 +119,12 @@ Yap::IProcessor * Yap::CModuleManager::CreateProcessor(const wchar_t * class_id,
 	return new_processor;
 }
 
+void Yap::CModuleManager::Reset()
+{
+	_modules.clear();
+	_current_module = _modules.begin();
+}
+
 bool Yap::CModuleManager::LoadModule(const wchar_t * module_path)
 {
 	shared_ptr<CProcessorManagerAgent> processor_manager_agent(new CProcessorManagerAgent);

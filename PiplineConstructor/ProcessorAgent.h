@@ -39,7 +39,7 @@ namespace Yap
 		bool SetInt(const wchar_t * property_name, int value);
 		bool SetBool(const wchar_t * property_name, bool value);
 		bool SetFloat(const wchar_t * property_name, double value);
-		bool SetString(const wchar_t* property_name, wchar_t* value);
+		bool SetString(const wchar_t* property_name, const wchar_t* value);
 
 	protected:
 		IProcessor * _processor;

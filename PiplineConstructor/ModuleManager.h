@@ -21,8 +21,10 @@ namespace Yap
 		IProcessor * GetProcessor(const wchar_t * name);
 
 		bool LoadModule(const wchar_t * module_path);
+
 		IProcessor * FindProcessorInAllModules(const wchar_t * name);
 		IProcessor * CreateProcessor(const wchar_t * class_id, const wchar_t * instance_id);
+		void Reset();
 	protected:
 		std::map<std::wstring, std::shared_ptr<CProcessorManagerAgent>> _modules;
 		decltype(_modules)::iterator _current_module;
