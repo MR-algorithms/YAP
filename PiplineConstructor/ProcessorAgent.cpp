@@ -147,7 +147,8 @@ bool Yap::CProcessorAgent::SetFloat(const wchar_t * property_name, double value)
 	return true;
 }
 
-bool Yap::CProcessorAgent::SetString(const wchar_t* property_name, wchar_t* value)
+bool Yap::CProcessorAgent::SetString(const wchar_t* property_name, 
+	const wchar_t* value)
 {
 	assert(_processor != nullptr);
 	auto properties = _processor->GetProperties();

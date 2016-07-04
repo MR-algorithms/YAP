@@ -14,6 +14,7 @@ CProcessorManagerAgent::CProcessorManagerAgent() :
 
 CProcessorManagerAgent::~CProcessorManagerAgent()
 {
+	Release();
 }
 
 bool Yap::CProcessorManagerAgent::Load(const wchar_t * plugin_path)
@@ -70,8 +71,9 @@ Yap::IProcessor * Yap::CProcessorManagerAgent::GetProcessor(const wchar_t * name
 
 void Yap::CProcessorManagerAgent::Release()
 {
-	assert(_manager);
-	_manager->Release();
-
-	delete this;
+	if (_manager != nullptr)
+	{
+		_manager->Release();
+	}
+	_manager = nullptr;
 }

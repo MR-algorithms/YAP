@@ -58,20 +58,52 @@ bool Yap::CCompositeProcessor::Input(const wchar_t * port, IData * data)
 	return iter->second.processor->Input(iter->second.port.c_str(), data);
 }
 
-bool Yap::CCompositeProcessor::AssignInPort(const wchar_t * port, IProcessor * inner_processor, const wchar_t * inner_port)
+bool Yap::CCompositeProcessor::AssignInPort(const wchar_t * port, 
+	const wchar_t * inner_processor, 
+	const wchar_t * inner_port)
 {
-	if (_in_ports.find(port) != _in_ports.end())
+	if (_in_ports.find(port) == _in_ports.end())
 		return false;
 
-	_in_ports.insert(make_pair(port, Anchor(inner_processor, inner_port)));
+	auto processor = GetProcessor(inner_processor);
+	if (!processor)
+		return false;
+
+	_in_ports.insert(make_pair(port, Anchor(processor.get(), inner_port)));
 	return true;
 }
 
-bool Yap::CCompositeProcessor::AssignOutPort(const wchar_t * port, IProcessor * inner_processor, const wchar_t * inner_port)
+bool Yap::CCompositeProcessor::AssignOutPort(const wchar_t * port, 
+	const wchar_t * inner_processor, 
+	const wchar_t * inner_port)
 {
-	if (_out_ports.find(port) != _out_ports.end())
+	if (_out_ports.find(port) == _out_ports.end())
 		return false;
 
-	_out_ports.insert(make_pair(port, Anchor(inner_processor, inner_port)));
+	auto processor = GetProcessor(inner_processor);
+	if (!processor)
+		return false;
+
+	_out_ports.insert(make_pair(port, Anchor(processor.get(), inner_port)));
 	return true;
+}
+
+bool Yap::CCompositeProcessor::AddProcessor(std::shared_ptr<CProcessorAgent> processor)
+{
+	assert(processor);
+	if (_processors.find(processor->GetInstanceId()) != _processors.end())
+		return false;
+
+	_processors.insert(make_pair(processor->GetInstanceId(), processor));
+
+	return true;
+}
+
+std::shared_ptr<CProcessorAgent> Yap::CCompositeProcessor::GetProcessor(const wchar_t * instance_id)
+{
+	auto iter = _processors.find(instance_id);
+	if (iter == _processors.end())
+		return shared_ptr<CProcessorAgent>();
+
+	return iter->second;
 }
