@@ -15,6 +15,7 @@
     <ClCompile Include="RemoveDC.cpp" />
     <ClCompile Include="ModulePhase.cpp" />
     <ClCompile Include="ProcessorManagerImp.cpp" />
+    <ClCompile Include="Difference.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataHelper.h" />
@@ -29,6 +30,7 @@
     <ClInclude Include="RemoveDC.h" />
     <ClInclude Include="ModulePhase.h" />
     <ClInclude Include="ProcessorManagerImp.h" />
+    <ClInclude Include="Difference.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
