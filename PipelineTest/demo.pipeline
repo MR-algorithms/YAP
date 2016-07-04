@@ -1,0 +1,53 @@
+import "systemReconModule.dll";
+
+RawDataReader raw_data_reader;
+raw_data_reader.DataPath = "d:\temp\2";
+raw_data_reader.ChannelCount = 4;
+
+SliceIterator slice_iterator;
+
+RemoveDC2D remove_dc_2d;
+remove_dc_2d.InPlace = true;
+
+ZeroFilling2D zero_filling;
+zero_filling.CenterFilling = true;
+zero_filling.DestHeight = 512;
+zero_filling.DestWidth = 512;
+
+FFT2D fft_2d;
+fft_2d.Forward = false;
+fft_2d.InPlace = true;
+fft_2d.FFtShift = true;
+fft_2d.PhaseShift = true;
+fft_2d.ActualFovY = 192.0;
+fft_2d.Chop <=> scan.sequence_options.chop;
+
+ModulationComplex2D module;
+
+Interpolate2D interpolate2d;
+interpolate2d.DestWidth <=> recon.resolution.x;
+interpolate2d.DestHeight <=> recon.resolution.y;
+interpolate2d.Fov <=> localization.fov;
+interpolate2d.FovyRatio <=> localization.fov_y_ratio;
+
+ImageTransform image_transform;
+image_transform.InPlace = false;
+
+ChannelMerger channel_merger;
+channel_merger.ChannelCount = 4;
+
+JpegExporter jpeg_exporter;
+jpeg_exporter.ExportPath = "D:\\temp\\2";
+
+raw_data_reader.Output->slice_iterator.Input;
+slice_iterator->remove_dc_2d;
+remove_dc_2d->zero_filling;
+zero_filling->fft_2d;
+fft_2d->module;
+module->interpolate2d;
+interpolate2d->image_transform;
+image_transform->channel_merger;
+channel_merger->jpeg_exporter;
+
+self.Input->raw_data_reader.Input;
+
