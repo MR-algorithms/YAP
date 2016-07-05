@@ -7,6 +7,9 @@
 
 namespace Yap
 {
+	class CCompositeProcessor;
+	class CPipelineConstructor;
+
 	enum TokenType
 	{
 		TokenUnknown,
@@ -103,8 +106,10 @@ namespace Yap
 	class CStatement
 	{
 	public:
+		explicit CStatement(CPipelineConstructor& constructor);
+
+		/// Clear the tokens in the statement.
 		void Reset();
-		void Begin();
 
 		/// Check to see if the statement is empty.
 		bool IsEmpty();
@@ -115,17 +120,26 @@ namespace Yap
 		/// Get the type of the statement.
 		StatementType GetType() const;
 
-		/// Get the total count of tokens in the statement.
-		size_t GetTokenCount() const;
+		/// Process the statement to construc
+		bool Process();
 
 		/// Add the token to the statement.
 		void AddToken(const Token& token);
 
+		/// Get the total count of tokens in the statement.
+		size_t GetTokenCount() const;
+
 		/// Get the token with the given index.
 		const Token& GetToken(unsigned int index);
 
-		const Token& GetCurrentToken();
+		/// Get the last token in the statement.
 		const Token& GetLastToken() const;;
+
+		/// Output the information about the statement for debugging purpose.
+		void DebugOutput(std::wostream& output);
+
+	protected:
+		const Token& GetCurrentToken();
 		bool AtEnd() const;
 
 		/// 如果迭代其指向的token的类型不是type，则抛出编译错误。缺省情况下该函数不引起迭代器变化。
@@ -147,17 +161,17 @@ namespace Yap
 		/// 试图提取参数id。迭代器移动到提取内容之后。
 		std::wstring GetParamId();
 
-		void Next();
-		void DebugOutput(std::wostream& output);
+		bool ProcessImport();
+		bool ProcessPortLink();
+		bool ProcessDeclaration();
+		bool ProcessPropertyLink();
+		bool ProcessAssignment();
 
-	protected:
 		StatementType _type;
 		std::vector<Token> _tokens;
 		std::vector<Token>::iterator _iter;
+		CPipelineConstructor& _constructor;
 	};
-
-	class CCompositeProcessor;
-	class CPipelineConstructor;
 
 	class CPipelineCompiler
 	{
@@ -165,14 +179,14 @@ namespace Yap
 		CPipelineCompiler();
 		~CPipelineCompiler();
 
-		CCompositeProcessor * Load(const wchar_t * path);
+		std::shared_ptr<CCompositeProcessor> CompileFile(const wchar_t * path);
+		std::shared_ptr<CCompositeProcessor> Compile(const wchar_t * text);
 
 	protected:
+		std::shared_ptr<CCompositeProcessor> DoCompile(std::wistream& input);
+
 		std::vector<std::wstring> _script_lines;
-
 		std::vector<Token> _tokens;
-		CStatement _statement;
-
 		std::set<std::wstring> _key_words;
 
 		/** 这个变量用于括号匹配检查，遇到左括号时压入，遇到右括号弹出，同时检查类型是否一致。
@@ -181,21 +195,13 @@ namespace Yap
 
 		std::shared_ptr<CPipelineConstructor> _constructor;
 
-		bool Preprocess(std::wifstream& input_stream);
+		bool Preprocess(std::wistream& input_stream);
 		bool PreprocessLine(std::wstring& line, int line_number);
 
 		bool Process();
-		bool ProcessStatement(CStatement& statement);
-		bool ProcessImport(CStatement& statement);
-
-		bool ProcessPortLink(CStatement& statement);
-		bool ProcessDeclaration(CStatement& statement);
-		bool ProcessPropertyLink(CStatement& statement);
-		bool ProcessAssignment(CStatement& statement);
 
 		std::wstring GetTokenString(const Token& token) const;
 		void DebugOutputTokens(std::wostream& output);
-		void DebugOutputStatement(std::wostream& output, const CStatement& statement);
 		void TestTokens();
 	};
 }
