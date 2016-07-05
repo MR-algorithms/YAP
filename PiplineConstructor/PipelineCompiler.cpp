@@ -9,34 +9,50 @@
 #include "../Utilities/macros.h"
 #include "PipelineConstructor.h"
 #include <map>
+#include <ctype.h>
 
 using namespace Yap;
 using namespace std;
 
-void Statement::Reset()
+void CStatement::Reset()
 {
-	type = StatementUnknown;
-	tokens.clear();
+	_type = StatementUnknown;
+	_tokens.clear();
+	_iter = _tokens.begin();
 }
 
-void Statement::Restart()
-{
-	_iter = tokens.begin();
-}
+map<TokenType, wstring> token_map = boost::assign::map_list_of
+	(TokenOperatorPointer, L"->")
+	(TokenOperatorLink, L"<=>")
+	(TokenOperatorDot, L".")
+	(TokenOperatorAssign, L"=")
+	(TokenComma, L",")
+	(TokenSemiColon, L";")
+	(TokenLeftBrace, L"{")
+	(TokenRightParenthesis, L"}")
+	(TokenLeftParenthesis, L"(")
+	(TokenRightParenthesis, L")")
+	(TokenOperatorMinus, L"-")
+	(TokenId, L"identifier")
+	(TokenStringLiteral, L"string literal")
+	(TokenNumericLiteral, L"numeric literal")
+	(TokenKeyword, L"keyword");
 
 /// 如果迭代其指向的token的类型不是type，则抛出编译错误。
-void Statement::CheckFor(TokenType type, bool move_next)
+void CStatement::CheckFor(TokenType type, bool move_next)
 {
-	assert(_iter != tokens.end());
-	if (_iter->type != type)
+	if (_iter == _tokens.end())
 	{
-		if (_iter->type == TokenSemiColon)
-		{
-			throw (CCompileError(*_iter, CompileErrorUnexpectedEndOfStatement, L"不完整的语句。"));
-		}
-
-		throw (CCompileError(*_iter, CompileErrorTokenType, L"符号的类型不正确。"));
+		throw (CCompileError(*_iter, CompileErrorUnexpectedEndOfStatement, L"不完整的语句。"));
 	}
+
+	if ((_iter->type != type) &&
+		!(type == TokenId && _iter->type == TokenKeyword && _iter->text == L"self")) // treat keyword 'self' as id
+	{
+		wstring message = L"Incorrect token type, " + token_map[type] + L" expected.";
+		throw (CCompileError(*_iter, CompileErrorTokenType, message));
+	}
+
 	if (move_next)
 	{
 		++_iter;
@@ -44,27 +60,33 @@ void Statement::CheckFor(TokenType type, bool move_next)
 }
 
 /// 检查迭代器指向的token是否指定的类型。该函数不引起迭代器变化。
-bool Statement::IsType(TokenType type)
+bool CStatement::IsType(TokenType type)
 {
 	return _iter->type != type;
 }
 
 /// 试图提取一个Id，迭代器移动到提取内容之后。
-std::wstring Statement::GetId()
+std::wstring CStatement::GetId()
 {
-	CheckFor(TokenId);
+	CheckFor(TokenId, false);
 
 	return (_iter++)->text;
 }
 
-void Statement::Next()
+std::wstring CStatement::GetLiteralValue()
 {
-	assert(_iter != tokens.end());
-	++_iter;
+	if (AtEnd() ||
+		(_iter->type != TokenStringLiteral && _iter->type != TokenNumericLiteral &&
+		!(_iter->type == TokenKeyword && (_iter->text == L"true" || _iter->text == L"false"))))
+	{
+		throw CCompileError(*_iter, CompileErrorValueExpected, L"Property value expected.");
+	}
+
+	return _iter->text;
 }
 
 /// 试图提取处理器/成员（属性或者端口）对，迭代器移动到提取内容之后。
-std::pair<std::wstring, std::wstring> Statement::GetProcessorMember(bool empty_member_allowed)
+std::pair<std::wstring, std::wstring> CStatement::GetProcessorMember(bool empty_member_allowed)
 {
 	pair<wstring, wstring> result;
 	result.first = GetId();
@@ -73,7 +95,7 @@ std::pair<std::wstring, std::wstring> Statement::GetProcessorMember(bool empty_m
 	{
 		if (IsType(TokenOperatorDot))
 		{
-			Next();
+			++_iter;
 			result.second = GetId();
 		}
 	}
@@ -86,11 +108,11 @@ std::pair<std::wstring, std::wstring> Statement::GetProcessorMember(bool empty_m
 }
 
 /// 试图提取参数id。迭代器移动到提取内容之后。
-std::wstring Statement::GetParamId()
+std::wstring CStatement::GetParamId()
 {
 	wstring param_id;
 	bool id_expected = true;
-	while (_iter != tokens.end() && _iter->type != TokenComma && _iter->type != TokenRightParenthesis)
+	while (_iter != _tokens.end() && _iter->type != TokenComma && _iter->type != TokenRightParenthesis)
 	{
 		if (!((id_expected && _iter->type == TokenId) || (!id_expected && _iter->type == TokenOperatorDot)))
 		{
@@ -101,6 +123,319 @@ std::wstring Statement::GetParamId()
 	}
 
 	return param_id;
+}
+
+Yap::CStatement::CStatement(CPipelineConstructor& constructor) :
+	_constructor(constructor), 
+	_type(StatementUnknown)
+{
+	Reset();
+}
+
+bool Yap::CStatement::IsEmpty()
+{
+	return _tokens.empty();
+}
+
+void Yap::CStatement::SetType(StatementType type)
+{
+	_type = type;
+}
+
+Yap::StatementType Yap::CStatement::GetType() const
+{
+	return _type;
+}
+
+size_t Yap::CStatement::GetTokenCount() const
+{
+	return _tokens.size();
+}
+
+void Yap::CStatement::AddToken(const Token& token)
+{
+	_tokens.push_back(token);
+}
+
+const Yap::Token& Yap::CStatement::GetToken(unsigned int index)
+{
+	assert(index < _tokens.size()); 
+	return _tokens[index];
+}
+
+const Yap::Token& Yap::CStatement::GetCurrentToken()
+{
+	return *_iter;
+}
+
+const Yap::Token& Yap::CStatement::GetLastToken() const
+{
+	return *(_tokens.end() - 1);
+}
+
+bool Yap::CStatement::AtEnd() const
+{
+	return _iter == _tokens.end();
+}
+
+std::wstring Yap::CStatement::GetVariableId()
+{
+	wstring variable_id;
+	bool id_expected = true;
+	while (_iter != _tokens.end() && _iter->type != TokenComma && _iter->type != TokenRightParenthesis)
+	{
+		if ((!id_expected && _iter->type != TokenOperatorDot) || (id_expected && _iter->type != TokenId))
+		{
+			throw CCompileError(*_iter, CompileErrorParamIdInvalid, L"Invalid format for system variable id.");
+		}
+		variable_id += (_iter++)->text;
+		id_expected = !id_expected;
+	}
+	if (id_expected)
+	{
+		throw CCompileError(*(_iter - 1), CompileErrorParamIdInvalid, L"Invalid format for system variable id.");
+	}
+
+	return variable_id;
+}
+
+bool CStatement::Process()
+{
+	switch (_type)
+	{
+	case StatementImport:
+		return ProcessImport();
+	case StatementAssign:
+		return ProcessAssignment();
+	case StatementDeclaration:
+		return ProcessDeclaration();
+	case StatementPortLink:
+		return ProcessPortLink();
+	case StatementPropertyLink:
+		return ProcessPropertyLink();
+	default:
+		assert(0);
+		return false;
+	}
+}
+
+/**
+迭代器指向模块名称。
+*/
+bool CStatement::ProcessImport()
+{
+	assert(GetType() == StatementImport);
+	assert(!IsEmpty());
+
+	if (GetTokenCount() > 2)
+	{
+		throw CCompileError(GetToken(2), CompileErrorSemicolonExpected, L"Semicolon expected.");
+	}
+
+	_iter = _tokens.begin();
+	++_iter;	// bypass 'import'
+
+	const Token& token = GetCurrentToken();
+	if (GetTokenCount() == 1 || token.type != TokenStringLiteral)
+	{
+		throw CCompileError(token, CompileErrorStringExpected,
+			L"String literal should be used to specify plugin to import.");
+	}
+
+	if (!_constructor.LoadModule(token.text.c_str()))
+	{
+		wstring output = wstring(L"无法加载模块文件：") + token.text;
+		throw CCompileError(token, CompileErrorLoadModule, output);
+	}
+
+	return true;
+}
+
+/**
+迭代器指向第一个元素。一般形式是：
+process1.output_port->process2.input_port;
+其中.output_port和.input_port是可选的，如果省略，则使用缺省的Output和Input。
+*/
+bool CStatement::ProcessPortLink()
+{
+	_iter = _tokens.begin();
+	auto source_processor = GetId();
+
+	wstring source_port(L"Output");
+	if (GetCurrentToken().type == TokenOperatorDot)
+	{
+		++_iter;
+		source_port = GetId();
+	}
+
+	CheckFor(TokenOperatorPointer, true);
+
+	auto dest_processor = GetId();
+
+	wstring dest_port(L"Input");
+
+	if (GetCurrentToken().type == TokenOperatorDot)
+	{
+		++_iter;
+		dest_port = GetId();
+	}
+
+	if (source_processor == L"self")
+	{
+		if (dest_processor == L"self")
+		{
+			throw CCompileError(GetCurrentToken(), CompileErrorSelfLink,
+				L"Can not link the output of the pipeline to the input of itself.");
+		}
+		else
+		{
+			return _constructor.AssignPipelineInPort(source_port.c_str(), dest_processor.c_str(), dest_port.c_str());
+		}
+	}
+	else if (dest_processor == L"self")
+	{
+		return _constructor.AssignPipelineOutPort(dest_port.c_str(), source_processor.c_str(), source_port.c_str());
+	}
+	else
+	{
+		return _constructor.Link(source_processor.c_str(), source_port.empty() ? L"Output" : source_port.c_str(),
+			dest_processor.c_str(), dest_port.empty() ? L"Input" : dest_port.c_str());
+	}
+}
+
+
+bool CStatement::ProcessDeclaration()
+{
+	assert(_type == StatementDeclaration);
+	assert(GetTokenCount() >= 2);
+
+	_iter = _tokens.begin();
+
+	wstring class_id = GetId();
+	wstring instance_id = GetId();
+
+	if (_constructor.InstanceIdExists(instance_id.c_str()))
+	{
+		throw CCompileError(GetToken(1), CompileErrorIdExists,
+			wstring(L"Instance id specified for the processor already exists: ") + instance_id);
+	}
+
+	if (AtEnd())
+	{
+		_constructor.CreateProcessor(class_id.c_str(), instance_id.c_str());
+	}
+	else if (GetCurrentToken().type != TokenLeftParenthesis)
+	{
+		throw CCompileError(GetCurrentToken(), CompileErrorSemicolonExpected,
+			L"Semicolon or left parenthesis expected.");
+	}
+	else
+	{
+		_constructor.CreateProcessor(class_id.c_str(), instance_id.c_str());
+		for (;;)
+		{
+			++_iter;
+			wstring property = GetId();
+
+			if (GetCurrentToken().type == TokenOperatorAssign)
+			{
+				++_iter;
+				wstring value = GetLiteralValue();
+				_constructor.SetProperty(instance_id.c_str(), property.c_str(), value.c_str());
+			}
+			else if (GetCurrentToken().type == TokenOperatorLink)
+			{
+				++_iter;
+				wstring variable_id = GetVariableId();
+
+				_constructor.LinkProperty(instance_id.c_str(), property.c_str(), variable_id.c_str());
+			}
+			else
+			{
+				throw CCompileError(GetCurrentToken(), CompileErrorPropertyOperatorExpected,
+					L"Property operator must be specified, you can use either \'=\' or \'<=>\'.");
+			}
+
+			if (AtEnd())
+			{
+				throw CCompileError(GetLastToken(), CompileErrorRightParenthesisExpected, L"Right parenthesis expected.");
+			}
+			else if (GetCurrentToken().type == TokenRightParenthesis)
+			{
+				break;
+			}
+			else if (GetCurrentToken().type != TokenComma)
+			{
+				throw CCompileError(GetCurrentToken(), CompileErrorCommaExpected,
+					L"Comma \',\' or right parenthesis \')\' expected.");
+			}
+		}
+	}
+
+	return true;
+}
+
+bool CStatement::ProcessPropertyLink()
+{
+	assert(_type == StatementPropertyLink);
+
+	_iter = _tokens.begin();
+
+	wstring processor_instance_id = GetId();
+	if (!_constructor.InstanceIdExists(processor_instance_id.c_str()))
+	{
+		throw CCompileError(_tokens[0], CompileErrorProcessorNotFound,
+			wstring(L"Processor not found: ") + processor_instance_id);
+	}
+
+	CheckFor(TokenOperatorDot, true);
+	wstring property = GetId();
+
+	CheckFor(TokenOperatorLink, true);
+	wstring variable_id = GetVariableId();
+
+	return _constructor.LinkProperty(processor_instance_id.c_str(), property.c_str(), variable_id.c_str());
+}
+
+bool CStatement::ProcessAssignment()
+{
+	assert(_type == StatementAssign);
+
+	_iter = _tokens.begin();
+
+	wstring processor_instance_id = GetId();
+	if (!_constructor.InstanceIdExists(processor_instance_id.c_str()))
+	{
+		throw CCompileError(GetToken(0), CompileErrorProcessorNotFound,
+			wstring(L"Processor not found: ") + processor_instance_id);
+	}
+
+	CheckFor(TokenOperatorDot, true);
+	wstring property = GetId();
+
+	CheckFor(TokenOperatorAssign, true);
+	wstring value = GetLiteralValue();
+
+	return _constructor.SetProperty(processor_instance_id.c_str(), property.c_str(), value.c_str());
+}
+
+void Yap::CStatement::DebugOutput(wostream& output)
+{
+	static map<StatementType, wstring> statment_label = boost::assign::map_list_of
+	(StatementImport, L"Import")
+		(StatementAssign, L"Assign")
+		(StatementDeclaration, L"Decl")
+		(StatementPortLink, L"PortLink")
+		(StatementPropertyLink, L"PropertyLink");
+
+	output << statment_label[_type] << L"\t\t: ";
+
+	for (auto token : _tokens)
+	{
+		output << token.text << " ";
+	}
+
+	output << "\n";
 }
 
 CPipelineCompiler::CPipelineCompiler(void)
@@ -115,7 +450,16 @@ CPipelineCompiler::~CPipelineCompiler(void)
 {
 }
 
-CCompositeProcessor * CPipelineCompiler::Load(const wchar_t * path)
+
+std::shared_ptr<CCompositeProcessor> Yap::CPipelineCompiler::Compile(const wchar_t * text)
+{
+	wistringstream input;
+	input.str(text);
+
+	return DoCompile(input);
+}
+
+shared_ptr<CCompositeProcessor> CPipelineCompiler::CompileFile(const wchar_t * path)
 {
 	wifstream script_file;
 	script_file.open(path);
@@ -124,10 +468,15 @@ CCompositeProcessor * CPipelineCompiler::Load(const wchar_t * path)
 	{
 		wstring message = wstring(L"Failed to open script file: ") + path;
 		// throw CCompileError(Token(), CompileErrorFailedOpenFile, message);
+		return shared_ptr<CCompositeProcessor>();
 	}
 
-	Preprocess(script_file);
-	script_file.close();
+	return DoCompile(script_file);
+}
+
+std::shared_ptr<CCompositeProcessor> CPipelineCompiler::DoCompile(std::wistream& input)
+{
+	Preprocess(input);
 
 	if (!_constructor)
 	{
@@ -139,10 +488,10 @@ CCompositeProcessor * CPipelineCompiler::Load(const wchar_t * path)
 	{
 		if (Process())
 		{
-			return _constructor->GetPipeline().get();
+			return _constructor->GetPipeline();
 		}
 
-		return nullptr;
+		return std::shared_ptr<CCompositeProcessor>();
 	}
 	catch (CCompileError& e)
 	{
@@ -154,11 +503,11 @@ CCompositeProcessor * CPipelineCompiler::Load(const wchar_t * path)
 
 		wcerr << output.str();
 
-		return nullptr;
+		return std::shared_ptr<CCompositeProcessor>();
 	}
 }
 
-bool CPipelineCompiler::Preprocess(wifstream& script_file)
+bool CPipelineCompiler::Preprocess(wistream& script_file)
 {
 	wstring statement;
 	wstring line;
@@ -352,8 +701,7 @@ bool CPipelineCompiler::PreprocessLine(std::wstring& line,
 
 bool CPipelineCompiler::Process()
 {
-	Statement statement;
-	statement.Reset();
+	CStatement statement(*_constructor);
 
 	for (auto token : _tokens)
 	{
@@ -362,54 +710,54 @@ bool CPipelineCompiler::Process()
 		switch (token.type)
 		{
 		case TokenKeyword:
-			if (token.text == L"import" && statement.tokens.empty())
+			if (token.text == L"import" && statement.IsEmpty())
 			{
-				statement.type = StatementImport;
+				statement.SetType(StatementImport);
 			}
-			statement.tokens.push_back(token);
 			break;
 		case TokenOperatorAssign:
-			if (statement.type == StatementUnknown)
+			if (statement.GetType() == StatementUnknown)
 			{
-				statement.type = StatementAssign;
+				statement.SetType(StatementAssign);
 			}
-			statement.tokens.push_back(token);
 			break;
 		case TokenOperatorLink:
-			if (statement.type == StatementUnknown)
+			if (statement.GetType() == StatementUnknown)
 			{
-				statement.type = StatementPropertyLink;
+				statement.SetType(StatementPropertyLink);
 			}
-			statement.tokens.push_back(token);
 			break;
 		case TokenOperatorPointer:
-			statement.type = StatementPortLink;
-			statement.tokens.push_back(token);
+			statement.SetType(StatementPortLink);
 			break;
 		case TokenId:
-			if (statement.tokens.size() == 1 && statement.tokens[0].type == TokenId)
+			if (statement.GetTokenCount() == 1 && statement.GetToken(0).type == TokenId)
 			{
-				statement.type = StatementDeclaration;
+				statement.SetType(StatementDeclaration);
 			}
-			statement.tokens.push_back(token);
 			break;
 		case TokenSemiColon:
-			if (!statement.tokens.empty())
+			if (!statement.IsEmpty())
 			{
-				if (statement.type == StatementUnknown)
+				if (statement.GetType() == StatementUnknown)
 				{
-					throw(CCompileError(statement.tokens[statement.tokens.size() - 1], 
+					throw(CCompileError(statement.GetLastToken(), 
 						CompileErrorIncompleteStatement, L"Statement not complete."));
 				}
 #ifdef DEBUG
 				DebugOutputStatement(cout, statement);
 #endif
-				ProcessStatement(statement);
+				statement.Process();
 				statement.Reset();
 			}
 			break;
 		default:
-			statement.tokens.push_back(token);
+			;
+		}
+
+		if (token.type != TokenSemiColon)
+		{
+			statement.AddToken(token);
 		}
 	}
 
@@ -417,261 +765,17 @@ bool CPipelineCompiler::Process()
 }
 
 
-bool CPipelineCompiler::ProcessStatement(Statement& statement)
-{
-	switch (statement.type)
-	{
-	case StatementImport:
-		return ProcessImport(statement);
-	case StatementAssign:
-		return ProcessAssignment(statement);
-	case StatementDeclaration:
-		return ProcessDeclaration(statement);
-	case StatementPortLink:
-		return ProcessPortLink(statement);
-	case StatementPropertyLink:
-		return ProcessPropertyLink(statement);
-	default:
-		assert(0);
-		return false;
-	}
-}
+
 
 wstring CPipelineCompiler::GetTokenString(const Token& token) const
 {
 	return _script_lines[token.line].substr(token.column, token.length);
 }
 
-/**
-	迭代器指向模块名称。
-*/
-bool CPipelineCompiler::ProcessImport(Statement& statement)
-{
-	statement.Restart();
-	statement.Next();
 
-	auto iter = statement.tokens.begin();
-	assert(iter != statement.tokens.end() && statement.type == StatementImport);
-
-	if (statement.tokens.size() > 2)
-	{
-		throw CCompileError(*(iter + 2), CompileErrorSemicolonExpected, L"Semicolon expected.");
-	}
-
-	++iter;
-	if (statement.tokens.size() == 1 || iter->type != TokenStringLiteral)
-	{
-		throw CCompileError(*iter, CompileErrorStringExpected, 
-			L"String literal should be used to specify plugin to import.");
-	}
-
-	if (!_constructor->LoadModule(iter->text.c_str()))
-	{
-		wstring output = wstring(L"无法加载模块文件：") + iter->text;
-		throw CCompileError(*iter, CompileErrorLoadModule, output);
-	}
-
-	return true;
-}
-
-/**
-迭代器指向第一个元素。一般形式是：
-process1.output_port->process2.input_port;
-其中.output_port和.input_port是可选的，如果省略，则使用缺省的Output和Input。
-*/
-bool CPipelineCompiler::ProcessPortLink(Statement& statement)
-{
-	assert(_constructor);
-
-	auto iter = statement.tokens.begin();
-	auto source_processor = GetTokenString(*iter);
-	if (iter->type != TokenId && !(iter->type == TokenKeyword && source_processor == L"self"))
-	{
-		throw CCompileError(*iter, CompileErrorProcessorExpected, L"Processor instance id or \'self\' expected.");
-	}
-
-	wstring source_port(L"Output");
-	++iter;
-	if (iter->type == TokenOperatorDot)
-	{
-		++iter;
-
-		if (iter->type != TokenId)
-		{
-			throw CCompileError(*iter, CompileErrorPortExpected, L"Port name expected.");
-		}
-		source_port = GetTokenString(*iter);
-		++iter;
-	}
-
-	if (iter->type != TokenOperatorPointer)
-	{
-		throw CCompileError(*iter, CompileErrorLinkOperatorExpected, L"Operator \'->\' expected.)");
-	}
-
-	++iter;
-	auto dest_processor = GetTokenString(*iter);
-	if (iter->type != TokenId && !(iter->type == TokenKeyword && dest_processor == L"self"))
-	{
-		throw CCompileError(*iter, CompileErrorProcessorExpected, L"Processor instance id or \'self\' expected.");
-	}
-
-	wstring dest_port(L"Input");
-	++iter;
-	if (iter != statement.tokens.end() && iter->type == TokenOperatorDot)
-	{
-		++iter;
-
-		if (iter->type != TokenId)
-		{
-			throw CCompileError(*iter, CompileErrorPortExpected, L"Port name expected.");
-		}
-		dest_port = GetTokenString(*iter);
-		++iter;
-	}
-
-	if (source_processor == L"self")
-	{
-		if (dest_processor == L"self")
-		{
-			throw CCompileError(*iter, CompileErrorSelfLink, 
-				L"Can not link the output of the pipeline to the input of itself.");
-		}
-		else
-		{
-			return _constructor->AssignPipelineInPort(source_port.c_str(), dest_processor.c_str(), dest_port.c_str());
-		}
-	}
-	else if (dest_processor == L"self")
-	{
-		return _constructor->AssignPipelineOutPort(dest_port.c_str(), source_processor.c_str(), source_port.c_str());
-	}
-	else
-	{
-		return _constructor->Link(source_processor.c_str(), source_port.empty() ? L"Output" : source_port.c_str(),
-			dest_processor.c_str(), dest_port.empty() ? L"Input" : dest_port.c_str());
-	}
-}
-
-bool CPipelineCompiler::ProcessDeclaration(Statement& statement)
-{
-	assert(statement.tokens.size() >= 2);
-	assert(statement.type == StatementDeclaration);
-
-	auto iter = statement.tokens.begin();
-
-	wstring class_id = GetTokenString(*iter++);
-	wstring instance_id = GetTokenString(*iter++);
-
-	if (_constructor->InstanceIdExists(instance_id.c_str()))
-	{
-		throw CCompileError(*iter, CompileErrorIdExists, 
-			wstring(L"Instance id specified for the processor already exists: ") + instance_id);
-	}
-
-	if (iter == statement.tokens.end())
-	{
-		_constructor->CreateProcessor(class_id.c_str(), instance_id.c_str());
-	}
-	else if (iter->type != TokenLeftParenthesis)
-	{
-		throw CCompileError(*iter, CompileErrorSemicolonExpected, L"Semicolon or left parenthesis expected.");
-	}
-	else
-	{
-		_constructor->CreateProcessor(class_id.c_str(), instance_id.c_str());
-		for (;;)
-		{
-			++iter;
-			if (iter == statement.tokens.end() || iter->type != TokenId)
-			{
-				throw CCompileError(*iter, CompileErrorIdExpected, L"Property id expected.");
-			}
-			wstring property = GetTokenString(*iter);
-
-			++iter;
-			if (iter->type == TokenOperatorAssign)
-			{
-				++iter;
-				if (iter == statement.tokens.end() ||
-					(iter->type != TokenStringLiteral && iter->type != TokenNumericLiteral &&
-						!(iter->type == TokenKeyword && (GetTokenString(*iter) == L"true" || 
-							GetTokenString(*iter) == L"false"))))
-				{
-					throw CCompileError(*iter, CompileErrorValueExpected, L"Property value expected.");
-				}
-				wstring value = GetTokenString(*iter);
-				_constructor->SetProperty(instance_id.c_str(), property.c_str(), value.c_str());
-				++iter;
-			}
-			else if (iter->type == TokenOperatorLink)
-			{
-				++iter;
-				wstring param_id;
-				bool id_expected = true;
-				while (iter != statement.tokens.end() && iter->type != TokenComma && iter->type != TokenRightParenthesis)
-				{
-					if (!((id_expected && iter->type == TokenId) || (!id_expected && iter->type == TokenOperatorDot)))
-					{
-						throw CCompileError(*iter, CompileErrorParamIdInvalid, L"Invalid format for system variable id.");
-					}
-					param_id += GetTokenString(*iter++);
-					id_expected = !id_expected;
-				}
-				_constructor->LinkProperty(instance_id.c_str(), property.c_str(), param_id.c_str());
-			}
-			else
-			{
-				throw CCompileError(*iter, CompileErrorPropertyOperatorExpected, 
-					L"Property operator must be specified, you can use either \'=\' or \'<=>\'.");
-			}
-
-			if (iter == statement.tokens.end())
-			{
-				throw CCompileError(*--iter, CompileErrorRightParenthesisExpected, L"Right parenthesis expected.");
-			}
-			else if (iter->type == TokenRightParenthesis)
-			{
-				break;
-			}
-			else if (iter->type != TokenComma)
-			{
-				throw CCompileError(*iter, CompileErrorCommaExpected, L"Comma \',\' or right parenthesis \')\' expected.");
-			}
-		}
-	}
-
-	return true;
-}
-
-bool CPipelineCompiler::ProcessPropertyLink(Statement& statement)
-{
-	return true;
-}
-
-bool CPipelineCompiler::ProcessAssignment(Statement& statement)
-{
-	return true;
-}
 
 void CPipelineCompiler::DebugOutputTokens(std::wostream& output)
 {
-	map<TokenType, wstring> token_map = boost::assign::map_list_of(TokenOperatorPointer, L"->")
-		(TokenOperatorLink, L"<=>")
-		(TokenOperatorDot, L".")
-		(TokenOperatorAssign, L"=")
-		(TokenComma, L",")
-		(TokenSemiColon, L";")
-		(TokenLeftBrace, L"{")
-		(TokenRightBrace, L"}")
-		(TokenLeftParenthesis, L"(")
-		(TokenRightParenthesis, L")")
-		(TokenOperatorMinus, L"-")
-		(TokenId, L"id")
-		(TokenNumericLiteral, L"num")
-		(TokenStringLiteral, L"str")
-		(TokenKeyword, L"key");
-
 	for (auto iter = _tokens.begin(); iter != _tokens.end(); ++iter)
 	{
 		auto token = _script_lines[iter->line].substr(iter->column, iter->length);
@@ -685,26 +789,6 @@ void CPipelineCompiler::DebugOutputTokens(std::wostream& output)
 			assert(0);
 		}
 	}
-}
-
-void CPipelineCompiler::DebugOutputStatement(std::wostream& output,
-	const Statement& statement)
-{
-	static map<StatementType, wstring> statment_label = boost::assign::map_list_of
-		(StatementImport, L"Import")
-		(StatementAssign, L"Assign")
-		(StatementDeclaration, L"Decl")
-		(StatementPortLink, L"PortLink")
-		(StatementPropertyLink, L"PropertyLink");
-
-	output << statment_label[statement.type] << L"\t\t: ";
-
-	for (auto iter = statement.tokens.begin(); iter != statement.tokens.end(); ++iter)
-	{
-		output << iter->text << " ";
-	}
-
-	output << "\n";
 }
 
 void CPipelineCompiler::TestTokens()
