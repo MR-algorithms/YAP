@@ -78,7 +78,7 @@ namespace Yap
 	{
 	public:
 		CCompileError() : _error_number(CompileErrorSuccess) {}
-		CCompileError(Token& token, int error_number, const std::wstring& error_message) :
+		CCompileError(const Token& token, int error_number, const std::wstring& error_message) :
 			_error_message(error_message), _error_number(error_number), _token(token) {}
 
 		const Token& GetToken() const { return _token; }
@@ -100,13 +100,33 @@ namespace Yap
 		StatementAssign,
 	};
 
-	struct Statement
+	class CStatement
 	{
-		StatementType type;
-		std::vector<Token> tokens;
-
+	public:
 		void Reset();
-		void Restart();
+		void Begin();
+
+		/// Check to see if the statement is empty.
+		bool IsEmpty();
+
+		/// Set the type of the statement.
+		void SetType(StatementType type);
+
+		/// Get the type of the statement.
+		StatementType GetType() const;
+
+		/// Get the total count of tokens in the statement.
+		size_t GetTokenCount() const;
+
+		/// Add the token to the statement.
+		void AddToken(const Token& token);
+
+		/// Get the token with the given index.
+		const Token& GetToken(unsigned int index);
+
+		const Token& GetCurrentToken();
+		const Token& GetLastToken() const;;
+		bool AtEnd() const;
 
 		/// 如果迭代其指向的token的类型不是type，则抛出编译错误。缺省情况下该函数不引起迭代器变化。
 		void CheckFor(TokenType type, bool move_next = false);
@@ -116,6 +136,9 @@ namespace Yap
 
 		/// 试图提取一个Id，迭代器移动到提取内容之后。
 		std::wstring GetId();
+		std::wstring GetLiteralValue();
+		/// Try to extract a variable id from the statement and move to next token.
+		std::wstring GetVariableId();
 
 		/// 试图提取
 		/// 试图提取处理器/成员（属性或者端口）对，迭代器移动到提取内容之后。
@@ -125,8 +148,11 @@ namespace Yap
 		std::wstring GetParamId();
 
 		void Next();
+		void DebugOutput(std::wostream& output);
 
 	protected:
+		StatementType _type;
+		std::vector<Token> _tokens;
 		std::vector<Token>::iterator _iter;
 	};
 
@@ -145,7 +171,7 @@ namespace Yap
 		std::vector<std::wstring> _script_lines;
 
 		std::vector<Token> _tokens;
-		Statement _statement;
+		CStatement _statement;
 
 		std::set<std::wstring> _key_words;
 
@@ -159,18 +185,17 @@ namespace Yap
 		bool PreprocessLine(std::wstring& line, int line_number);
 
 		bool Process();
-		bool ProcessStatement(Statement& statement);
-		bool ProcessImport(Statement& statement);
+		bool ProcessStatement(CStatement& statement);
+		bool ProcessImport(CStatement& statement);
 
-		bool ProcessPortLink(Statement& statement);
-		bool ProcessDeclaration(Statement& statement);
-		bool ProcessPropertyLink(Statement& statement);
-		bool ProcessAssignment(Statement& statement);
+		bool ProcessPortLink(CStatement& statement);
+		bool ProcessDeclaration(CStatement& statement);
+		bool ProcessPropertyLink(CStatement& statement);
+		bool ProcessAssignment(CStatement& statement);
 
 		std::wstring GetTokenString(const Token& token) const;
-
 		void DebugOutputTokens(std::wostream& output);
-		void DebugOutputStatement(std::wostream& output, const Statement& statement);
+		void DebugOutputStatement(std::wostream& output, const CStatement& statement);
 		void TestTokens();
 	};
 }
