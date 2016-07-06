@@ -140,7 +140,7 @@ IPropertyEnumerator * CProcessorImp::GetProperties()
 	return &_properties;
 }
 
-void CProcessorImp::SetIntProperty(const wchar_t * name, int value)
+void CProcessorImp::SetInt(const wchar_t * name, int value)
 {
 	assert(name != nullptr && name[0] != 0);
 
@@ -156,7 +156,7 @@ void CProcessorImp::SetIntProperty(const wchar_t * name, int value)
 	int_value->SetValue(value);
 }
 
-int CProcessorImp::GetIntProperty(const wchar_t * name)
+int CProcessorImp::GetInt(const wchar_t * name)
 {
 	assert(name != nullptr && name[0] != 0);
 
@@ -173,7 +173,7 @@ int CProcessorImp::GetIntProperty(const wchar_t * name)
 	return int_value->GetValue();
 }
 
-void CProcessorImp::SetFloatProperty(const wchar_t * name, double value)
+void CProcessorImp::SetFloat(const wchar_t * name, double value)
 {
 	assert(name != nullptr && name[0] != 0);
 
@@ -189,7 +189,7 @@ void CProcessorImp::SetFloatProperty(const wchar_t * name, double value)
 	float_value->SetValue(value);
 }
 
-double CProcessorImp::GetFloatProperty(const wchar_t * name)
+double CProcessorImp::GetFloat(const wchar_t * name)
 {
 	assert(name != nullptr && name[0] != 0);
 
@@ -206,7 +206,7 @@ double CProcessorImp::GetFloatProperty(const wchar_t * name)
 	return float_value->GetValue();
 }
 
-void CProcessorImp::SetBoolProperty(const wchar_t * name, bool value)
+void CProcessorImp::SetBool(const wchar_t * name, bool value)
 {
 	assert(name != nullptr && name[0] != 0);
 
@@ -223,7 +223,7 @@ void CProcessorImp::SetBoolProperty(const wchar_t * name, bool value)
 }
 
 
-void CProcessorImp::SetStringProperty(const wchar_t * name, const wchar_t * value)
+void CProcessorImp::SetString(const wchar_t * name, const wchar_t * value)
 {
 	assert(name != nullptr && name[0] != 0);
 
@@ -240,7 +240,7 @@ void CProcessorImp::SetStringProperty(const wchar_t * name, const wchar_t * valu
 }
 
 
-const wchar_t * CProcessorImp::GetStringProperty(const wchar_t * name)
+const wchar_t * CProcessorImp::GetString(const wchar_t * name)
 {
 	assert(name != nullptr && name[0] != 0);
 
@@ -465,7 +465,7 @@ bool Yap::CPropertyEnumeratorImp::GetBool(const wchar_t * id) const
 	return bool_value->GetValue();
 }
 
-bool CProcessorImp::GetBoolProperty(const wchar_t * name)
+bool CProcessorImp::GetBool(const wchar_t * name)
 {
 	assert(name != nullptr && name[0] != 0);
 

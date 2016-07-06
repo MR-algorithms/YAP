@@ -24,10 +24,10 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Interface\ReconData.h">
+    <ClInclude Include="ProcessorDebugger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessorDebugger.h">
+    <ClInclude Include="..\Interface\DataImp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,10 +38,10 @@
     <ClCompile Include="PipelineTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Interface\ReconData.cpp">
+    <ClCompile Include="ProcessorDebugger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessorDebugger.cpp">
+    <ClCompile Include="..\Interface\DataImp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

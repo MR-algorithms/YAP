@@ -3,7 +3,7 @@
 #include <string>
 #include "..\Interface\SmartPtr.h"
 #include "DataHelper.h"
-#include "..\Interface\ReconData.h"
+#include "..\Interface\DataImp.h"
 
 using namespace std;
 using namespace Yap;
@@ -18,8 +18,8 @@ CFft2D::CFft2D():
 	AddProperty(PropertyBool, L"Inverse", L"");
 	AddProperty(PropertyBool, L"InPlace", L"");
 
-	SetBoolProperty(L"Inverse", false);
-	SetBoolProperty(L"InPlace", true);
+	SetBool(L"Inverse", false);
+	SetBool(L"InPlace", true);
 
 	AddInputPort(L"Input", 2, DataTypeComplexDouble);
 	AddOutputPort(L"Output", 2, DataTypeComplexDouble);
@@ -44,24 +44,25 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 	auto width = input_data.GetWidth();
 	auto height = input_data.GetHeight();
 
-	if (GetBoolProperty(L"InPlace"))
+	if (GetBool(L"InPlace"))
 	{
 
 		Fft2D(reinterpret_cast<complex<double>*>(input_data.GetData()),
 			reinterpret_cast<complex<double>*>(input_data.GetData()),
-			width, height, GetBoolProperty(L"Inverse"));
+			width, height, GetBool(L"Inverse"));
 		Feed(L"Output", data);
 	}
 	else
 	{
 
-		Yap::CDimensions dims;
+		Yap::CDimensionsImp dims;
 		dims(DimensionReadout, 0, width)
 			(DimensionPhaseEncoding, 0, height);
 		auto output = CSmartPtr<CComplexDoubleData>(new CComplexDoubleData(&dims));
+
 		Fft2D(reinterpret_cast<complex<double>*>(input_data.GetData()),
 			reinterpret_cast<complex<double>*>(output->GetData()),
-			width, height, GetBoolProperty(L"Inverse"));
+			width, height, GetBool(L"Inverse"));
 		Feed(L"Output", output.get());
 	}
 	return true;

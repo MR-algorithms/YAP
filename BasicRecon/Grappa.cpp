@@ -4,7 +4,7 @@
 
 #include "..\Interface\SmartPtr.h"
 #include "DataHelper.h"
-#include "..\Interface\ReconData.h"
+#include "..\Interface\DataImp.h"
 
 using namespace std;
 using namespace arma;
@@ -31,9 +31,9 @@ bool CGrappa::Input(const wchar_t * port, IData * data)
 	if (wstring(port) != L"Input")
 		return false;
 
-	auto R = GetIntProperty(L"Rate");
-	auto Acs = GetIntProperty(L"AcsCount");
-	auto Block = GetIntProperty(L"Block");
+	auto R = GetInt(L"Rate");
+	auto Acs = GetInt(L"AcsCount");
+	auto Block = GetInt(L"Block");
 
 	CDataHelper input_data(data);  //输入数据为欠采添零的K空间数据
 	if (input_data.GetDataType() != DataTypeComplexDouble)

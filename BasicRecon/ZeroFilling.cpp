@@ -5,7 +5,7 @@
 
 #include "..\Interface\SmartPtr.h"
 #include "DataHelper.h"
-#include "..\Interface\ReconData.h"
+#include "..\Interface\DataImp.h"
 
 using namespace std;
 using namespace Yap;
@@ -31,8 +31,8 @@ bool CZeroFilling::Input(const wchar_t * port, IData * data)
 	if (std::wstring(port) != L"Input")
 		return false;
 
-	auto dest_width = static_cast<unsigned int>(GetIntProperty(L"DestWidth"));
-	auto dest_height = static_cast<unsigned int>(GetIntProperty(L"DestHeight"));
+	auto dest_width = static_cast<unsigned int>(GetInt(L"DestWidth"));
+	auto dest_height = static_cast<unsigned int>(GetInt(L"DestHeight"));
 
 	CDataHelper input_data(data);
 	if (input_data.GetDataType() != DataTypeComplexDouble)
@@ -43,7 +43,7 @@ bool CZeroFilling::Input(const wchar_t * port, IData * data)
 	if (dest_width < input_data.GetWidth() || dest_height < input_data.GetHeight())
 		return false;
 
-	Yap::CDimensions dims;
+	Yap::CDimensionsImp dims;
 	dims(DimensionReadout, 0, dest_width)
 		(DimensionPhaseEncoding, 0, dest_height);
 
