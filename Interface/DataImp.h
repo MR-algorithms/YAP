@@ -18,13 +18,13 @@ namespace Yap
 		Dimension(DimensionType type, unsigned start_index, unsigned int length);
 	};
 
-	class CDimensions : public IDimensions
+	class CDimensionsImp : public IDimensions
 	{
 	public:
-		CDimensions();
-		CDimensions(unsigned int dimension_count);
-		CDimensions(const CDimensions& source);
-		CDimensions(IDimensions * source);
+		CDimensionsImp();
+		CDimensionsImp(unsigned int dimension_count);
+		CDimensionsImp(const CDimensionsImp& source);
+		CDimensionsImp(IDimensions * source);
 
 		bool ModifyDimension(DimensionType type, unsigned int length, unsigned int start_index = 0);
 		unsigned int GetLength(unsigned int dimension_index);
@@ -36,29 +36,29 @@ namespace Yap
 
 		virtual IDimensions * Clone();
 		virtual void Release();
-		CDimensions & operator() (DimensionType type, unsigned int index, unsigned int length);
+		CDimensionsImp & operator() (DimensionType type, unsigned int index, unsigned int length);
 	private:
 		std::vector<Dimension> _dimension_info;
 	};
 
 	template<typename T, DataType DATA_TYPE>
-	class CData : public IData, public IMemory
+	class CDataImp : public IData, public IMemory
 	{
 	public:
-		CData(T* data, const CDimensions& dimensions, IMemory * parent = nullptr, bool own_data = false) :
+		CDataImp(T* data, const CDimensionsImp& dimensions, IMemory * parent = nullptr, bool own_data = false) :
 			_data(data), _own_memory(own_data), _use_count(0), _parent(parent)
 		{
 			assert(data != nullptr);
 			_dimensions = dimensions;
 		}
 		
-		CData(T* data, IDimensions * dimensions, IMemory * parent = nullptr, bool own_data = false) : 
+		CDataImp(T* data, IDimensions * dimensions, IMemory * parent = nullptr, bool own_data = false) : 
 			_data(data), _own_memory(own_data), _dimensions(dimensions), _use_count(0), _parent(parent)
 		{
 			assert(data != nullptr);
 		}
 
-		CData(IDimensions * dimensions) : _own_memory(true), _dimensions(dimensions), _use_count(0)
+		CDataImp(IDimensions * dimensions) : _own_memory(true), _dimensions(dimensions), _use_count(0)
 		{
 			unsigned int total_size = 1;
 
@@ -127,7 +127,7 @@ namespace Yap
 		}
 
 	private:
-		~CData()
+		~CDataImp()
 		{
 			if (_own_memory)
 			{
@@ -147,7 +147,7 @@ namespace Yap
 
 
 		T * _data;
-		CDimensions _dimensions;
+		CDimensionsImp _dimensions;
 //		CLocalization _localization;
 
 		unsigned int _use_count;
@@ -155,7 +155,9 @@ namespace Yap
 		CSmartPtr<IMemory> _parent;
 	};
 
-	typedef CData<double, DataTypeDouble> CDoubleData;
-	typedef CData<std::complex<double>, DataTypeComplexDouble> CComplexDoubleData;
+	typedef CDataImp<double, DataTypeDouble> CDoubleData;
+	typedef CDataImp<float, DataTypeFloat> CFloatData;
+	typedef CDataImp<std::complex<double>, DataTypeComplexDouble> CComplexDoubleData;
+	typedef CDataImp<std::complex<float>, DataTypeComplexFloat> CComplexFloat;
 };
 

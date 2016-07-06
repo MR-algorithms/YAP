@@ -15,18 +15,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ReconData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SmartPtr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="YapInterfaces.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DataImp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ReconData.cpp">
+    <ClCompile Include="DataImp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

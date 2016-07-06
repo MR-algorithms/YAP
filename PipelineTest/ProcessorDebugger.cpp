@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "..\Interface\YapInterfaces.h"
-#include "../Interface/ReconData.h"
+#include "../Interface/DataImp.h"
 
 using namespace Yap;
 using namespace std;

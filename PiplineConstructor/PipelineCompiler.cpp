@@ -62,7 +62,7 @@ void CStatement::CheckFor(TokenType type, bool move_next)
 /// 检查迭代器指向的token是否指定的类型。该函数不引起迭代器变化。
 bool CStatement::IsType(TokenType type)
 {
-	return _iter->type != type;
+	return _iter->type == type;
 }
 
 /// 试图提取一个Id，迭代器移动到提取内容之后。

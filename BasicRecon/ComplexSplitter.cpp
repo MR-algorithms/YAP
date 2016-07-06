@@ -8,9 +8,9 @@ CComplexSplitter::CComplexSplitter() :
 	CProcessorImp(L"ComplexSplitter")
 {
 	AddProperty(PropertyBool, L"CreatReal", L"Create Real Image");
-	SetBoolProperty(L"CreatReal", false);
+	SetBool(L"CreatReal", false);
 	AddProperty(PropertyBool, L"Imaginary", L"Create Imaginary image");
-	SetBoolProperty(L"Imaginary", false);
+	SetBool(L"Imaginary", false);
 
 	//ANY  DIMENSION
 	AddInputPort(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble);
@@ -54,11 +54,11 @@ bool CComplexSplitter::Input(const wchar_t * port, IData * data)
 		reinterpret_cast<double*>(imaginary_data->GetData()),
 		size);
 
-	if (GetBoolProperty(L"CreatReal"))
+	if (GetBool(L"CreatReal"))
 	{
 		Feed(L"Real", real_data);
 	}
-	if (GetBoolProperty(L"Imaginary"))
+	if (GetBool(L"Imaginary"))
 	{
 		Feed(L"Imaginary", imaginary_data);
 	}

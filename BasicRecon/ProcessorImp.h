@@ -5,7 +5,7 @@
 #include <string>
 #include <memory>
 #include "../Utilities/macros.h"
-#include "../interface/reconData.h"
+#include "../interface/DataImp.h"
 
 namespace Yap
 {
@@ -195,14 +195,15 @@ namespace Yap
 		bool Feed(const wchar_t * name, IData * data);
 
 		bool AddProperty(PropertyType type, const wchar_t * name, const wchar_t * description);
-		void SetIntProperty(const wchar_t * name, int value);
-		int GetIntProperty(const wchar_t * name);
-		void SetFloatProperty(const wchar_t * name, double value);
-		double GetFloatProperty(const wchar_t * name);
-		void SetBoolProperty(const wchar_t * name, bool value);
-		bool GetBoolProperty(const wchar_t * name);
-		void SetStringProperty(const wchar_t * name, const wchar_t * value);
-		const wchar_t * GetStringProperty(const wchar_t * name);
+
+		void SetInt(const wchar_t * name, int value);
+		int GetInt(const wchar_t * name);
+		void SetFloat(const wchar_t * name, double value);
+		double GetFloat(const wchar_t * name);
+		void SetBool(const wchar_t * name, bool value);
+		bool GetBool(const wchar_t * name);
+		void SetString(const wchar_t * name, const wchar_t * value);
+		const wchar_t * GetString(const wchar_t * name);
 
 		CPortEnumerator _input_ports;
 		CPortEnumerator _output_ports;

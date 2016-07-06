@@ -4,7 +4,7 @@
 
 #include "..\Interface\SmartPtr.h"
 #include "DataHelper.h"
-#include "..\Interface\ReconData.h"
+#include "..\Interface\DataImp.h"
 
 #pragma comment(lib, "libfftw3-3.lib")
 #pragma comment(lib, "libfftw3f-3.lib")
@@ -22,8 +22,8 @@ CFft1D::CFft1D() :
 	AddProperty(PropertyBool, L"Inverse", L"The direction of FFT1D."); 
 	AddProperty(PropertyBool, L"InPlace", L"The position of FFT1D.");
 
-	SetBoolProperty(L"Inverse", false);
-	SetBoolProperty(L"InPlace", true);
+	SetBool(L"Inverse", false);
+	SetBool(L"InPlace", true);
 
 	AddInputPort(L"Input", 1, DataTypeComplexDouble);
 	AddOutputPort(L"Output", 1, DataTypeComplexDouble);
@@ -46,21 +46,21 @@ bool CFft1D::Input(const wchar_t * port, IData * data)
 
 	auto size = input_data.GetWidth();
 
-	if (GetBoolProperty(L"InPlace"))
+	if (GetBool(L"InPlace"))
 	{
 		Fft1D(reinterpret_cast<complex<double>*>(input_data.GetData()),
 			reinterpret_cast<complex<double>*>(input_data.GetData()),
-			size, GetBoolProperty(L"Inverse"));
+			size, GetBool(L"Inverse"));
 		Feed(L"Output", data);
 	}
 	else
 	{
-		Yap::CDimensions dims;
+		Yap::CDimensionsImp dims;
 		dims(DimensionReadout, 0, size);
 		auto output = CSmartPtr<CComplexDoubleData>(new CComplexDoubleData(&dims));
 		Fft1D(reinterpret_cast<complex<double>*>(input_data.GetData()),
 			reinterpret_cast<complex<double>*>(output->GetData()),
-			size, GetBoolProperty(L"Inverse"));
+			size, GetBool(L"Inverse"));
 		Feed(L"Output", output.get());
 	}
 

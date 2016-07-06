@@ -2,7 +2,7 @@
 #include "RemoveDC.h"
 #include <string>
 #include "DataHelper.h"
-#include "..\Interface\ReconData.h"
+#include "..\Interface\DataImp.h"
 
 
 using namespace std;
@@ -14,9 +14,9 @@ CRemoveDC::CRemoveDC() :
 	AddInputPort(L"Input", 2, DataTypeDouble);
 	
 	AddProperty(PropertyBool, L"Inplace", L"The remove DC is in the source's place.");
-	SetBoolProperty(L"Inplace", true);
+	SetBool(L"Inplace", true);
 	AddProperty(PropertyInt, L"CornerSize", L"corner patch size of remove DC.");
-	SetIntProperty(L"CornerSize", 10);
+	SetInt(L"CornerSize", 10);
 
 	AddOutputPort(L"Output", 2, DataTypeDouble);
 }
@@ -38,8 +38,8 @@ bool CRemoveDC::Input(const wchar_t * port, IData * data)
 
 	unsigned int width = input_data.GetWidth();
 	unsigned int height = input_data.GetHeight();
-	auto inplace = GetBoolProperty(L"Inplace");
-	unsigned int corner_size = GetIntProperty(L"CornerSize");
+	auto inplace = GetBool(L"Inplace");
+	unsigned int corner_size = GetInt(L"CornerSize");
 
 	auto output_data = CSmartPtr<CDoubleData>(new CDoubleData(data->GetDimension()));
 
