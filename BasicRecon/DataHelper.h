@@ -12,8 +12,8 @@ namespace Yap
 		unsigned int GetDimensionCount();
 
 		unsigned int GetWidth();
-
 		unsigned int GetHeight();
+
 		void * GetData();
 		size_t GetDataSize() const;
 

@@ -16,6 +16,7 @@
     <ClCompile Include="ProcessorManagerImp.cpp" />
     <ClCompile Include="CmrDataReader.cpp" />
     <ClCompile Include="..\Interface\DataImp.cpp" />
+    <ClCompile Include="JpegExporter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataHelper.h" />
@@ -31,6 +32,7 @@
     <ClInclude Include="ModulePhase.h" />
     <ClInclude Include="ProcessorManagerImp.h" />
     <ClInclude Include="CmrDataReader.h" />
+    <ClInclude Include="JpegExporter.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

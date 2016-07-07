@@ -43,6 +43,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -50,6 +51,7 @@
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -110,6 +112,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win64_MTd.lib;lapack_win64_MTd.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>D:\Armadillo-7200.2\lib_debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -154,6 +158,7 @@
     <ClInclude Include="Fft1D.h" />
     <ClInclude Include="Fft2D.h" />
     <ClInclude Include="Grappa.h" />
+    <ClInclude Include="JpegExporter.h" />
     <ClInclude Include="ModulePhase.h" />
     <ClInclude Include="ProcessorImp.h" />
     <ClInclude Include="ProcessorManagerImp.h" />
@@ -190,6 +195,7 @@
     <ClCompile Include="Fft1D.cpp" />
     <ClCompile Include="Fft2D.cpp" />
     <ClCompile Include="Grappa.cpp" />
+    <ClCompile Include="JpegExporter.cpp" />
     <ClCompile Include="ModulePhase.cpp" />
     <ClCompile Include="ProcessorImp.cpp" />
     <ClCompile Include="ProcessorManagerImp.cpp" />
