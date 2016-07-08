@@ -152,6 +152,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ChannelMerger.h" />
     <ClInclude Include="CmrDataReader.h" />
     <ClInclude Include="ComplexSplitter.h" />
     <ClInclude Include="DataHelper.h" />
@@ -175,6 +176,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="BasicRecon.cpp" />
+    <ClCompile Include="ChannelMerger.cpp" />
     <ClCompile Include="CmrDataReader.cpp" />
     <ClCompile Include="ComplexSplitter.cpp" />
     <ClCompile Include="DataHelper.cpp" />
