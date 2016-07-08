@@ -76,8 +76,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>D:\C++Library\boost_1_61_0\lib\x64;$(LibraryPath)</LibraryPath>
-    <IncludePath>D:\C++Library\boost_1_61_0;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\boost\boost_1_61_0\lib64-msvc-14.0;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
