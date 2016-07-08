@@ -7,7 +7,7 @@
     <ClCompile Include="Fft1D.cpp" />
     <ClCompile Include="Fft2D.cpp" />
     <ClCompile Include="ProcessorImp.cpp" />
-    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="ProcessorManager.cpp" />
     <ClCompile Include="Grappa.cpp" />
     <ClCompile Include="ZeroFilling.cpp" />
     <ClCompile Include="ComplexSplitter.cpp" />
@@ -16,13 +16,14 @@
     <ClCompile Include="ProcessorManagerImp.cpp" />
     <ClCompile Include="CmrDataReader.cpp" />
     <ClCompile Include="..\Interface\DataImp.cpp" />
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataHelper.h" />
     <ClInclude Include="Fft1D.h" />
     <ClInclude Include="Fft2D.h" />
     <ClInclude Include="ProcessorImp.h" />
-    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="ProcessorManager.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Grappa.h" />
     <ClInclude Include="ZeroFilling.h" />
@@ -31,6 +32,7 @@
     <ClInclude Include="ModulePhase.h" />
     <ClInclude Include="ProcessorManagerImp.h" />
     <ClInclude Include="CmrDataReader.h" />
+
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

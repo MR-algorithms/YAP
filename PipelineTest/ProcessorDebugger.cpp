@@ -116,13 +116,10 @@ bool CProcessorDebugger::DebugPlugin(const wchar_t * path)
 
 	for (auto processor = processor_manager->GetFirstProcessor(); processor != nullptr;
 		processor = processor_manager->GetNextProcessor())
-	{
+	{		
 		DebugOutput(*processor);
+		auto properties = processor->GetProperties();
+		DebugProperties(properties);
 	}
-
-	auto processor = processor_manager->GetProcessor(L"Dummy");
-	auto properties = processor->GetProperties();
-	DebugProperties(properties);
-
 	return true;
 }
