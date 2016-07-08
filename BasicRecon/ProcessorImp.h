@@ -186,8 +186,7 @@ namespace Yap
 
 	protected:
 		bool CanLink(const wchar_t * source_output_name, IProcessor * next, const wchar_t * next_input_name);
-		Yap::Anchor GetLink(const wchar_t * output_name);
-
+		bool OutportLinked(const wchar_t * out_port_name) const;
 
 		bool AddInputPort(const wchar_t * name, unsigned int dimensions, DataType data_type);
 		bool AddOutputPort(const wchar_t * name, unsigned int dimensions, DataType data_type);

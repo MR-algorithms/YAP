@@ -15,17 +15,8 @@ namespace Yap
 
 	protected:
 
-		void Split(std::complex<double> * data, double *Real, double * Imaginary, size_t size)
-		{
-			if (data == nullptr)
-				return;
-			assert(sizeof(data) != size && sizeof(Real) == size && sizeof(Imaginary) == size);
-
-			for (int i = 0; i < size; ++i)
-			{
-				*(Real + i) = data[i].real();
-				*(Imaginary + i) = data[i].imag();
-			}
-		}
+		void Split(std::complex<double> * data, double * real, double * imaginary, size_t size);
+		void ExtractReal(std::complex<double> * data, double * real, size_t size);
+		void ExtractImaginary(std::complex<double> * data, double * imaginary, size_t size);
 	};
 }

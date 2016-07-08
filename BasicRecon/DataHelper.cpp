@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "DataHelper.h"
 #include "..\Utilities\macros.h"
+#include "..\Interface\DataImp.h"
 
 using namespace Yap;
 
@@ -79,3 +80,33 @@ unsigned int CDataHelper::GetCoilCount()
 	return length;
 }
 
+/**
+获得指定维度的一块数据所包含的数据元素的个数。例如当type等于DimensionSlice时，
+返回一个slice中的元素个数。
+@param  type 指定所关心的维度。
+@return 包含的数据元素的个数。
+*/
+unsigned int CDataHelper::GetBlockSize(DimensionType type) const
+{
+	assert(_data_interface.GetDimension() != nullptr);
+
+	Dimension dimension;
+	unsigned int dimension_count = _data_interface.GetDimension()->GetDimensionCount();
+	unsigned int block_size = 1;
+
+	bool success = false;
+	for (unsigned int dimension_index = 0; dimension_index < dimension_count; ++dimension_index)
+	{
+		_data_interface.GetDimension()->GetDimensionInfo(dimension_index,
+			dimension.type, dimension.start_index, dimension.length);
+
+		if (dimension.type == type)
+		{
+			success = true;
+			break;
+		}
+		block_size *= dimension.length;
+	}
+
+	return block_size;
+}

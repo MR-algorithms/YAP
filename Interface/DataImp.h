@@ -158,6 +158,6 @@ namespace Yap
 	typedef CDataImp<double, DataTypeDouble> CDoubleData;
 	typedef CDataImp<float, DataTypeFloat> CFloatData;
 	typedef CDataImp<std::complex<double>, DataTypeComplexDouble> CComplexDoubleData;
-	typedef CDataImp<std::complex<float>, DataTypeComplexFloat> CComplexFloat;
+	typedef CDataImp<std::complex<float>, DataTypeComplexFloat> CComplexFloatData;
 };
 

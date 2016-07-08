@@ -362,10 +362,9 @@ bool Yap::CProcessorImp::CanLink(const wchar_t * source_output_name,
 		in_port->GetDimensions() == YAP_ANY_DIMENSION);
 }
 
-Yap::Anchor Yap::CProcessorImp::GetLink(const wchar_t * output_name)
+bool Yap::CProcessorImp::OutportLinked(const wchar_t * out_port_name) const
 {
-	auto link = _links.find(output_name);
-	return (link != _links.end()) ? link->second : Anchor(nullptr, nullptr);
+	return (_links.find(out_port_name) != _links.end());
 }
 
 bool CPortEnumerator::AddPort(const wchar_t * name,
