@@ -35,8 +35,8 @@ bool CComplexSplitter::Input(const wchar_t * port, IData * data)
 
 	if (want_real && want_imaginary)
 	{
-		auto * real_data = new Yap::CDoubleData(data->GetDimension());
-		auto * imaginary_data = new Yap::CDoubleData(data->GetDimension());
+		auto * real_data = new Yap::CDoubleData(data->GetDimensions());
+		auto * imaginary_data = new Yap::CDoubleData(data->GetDimensions());
 		Split(reinterpret_cast<std::complex<double> *>(input_data.GetData()),
 			reinterpret_cast<double*>(real_data->GetData()),
 			reinterpret_cast<double*>(imaginary_data->GetData()),
@@ -46,7 +46,7 @@ bool CComplexSplitter::Input(const wchar_t * port, IData * data)
 	}
 	else if (want_real)
 	{
-		auto * real_data = new Yap::CDoubleData(data->GetDimension());
+		auto * real_data = new Yap::CDoubleData(data->GetDimensions());
 		ExtractReal(reinterpret_cast<std::complex<double> *>(input_data.GetData()),
 			reinterpret_cast<double*>(real_data->GetData()),
 			size);
@@ -54,7 +54,7 @@ bool CComplexSplitter::Input(const wchar_t * port, IData * data)
 	}
 	else if (want_imaginary)
 	{
-		auto * imaginary_data = new Yap::CDoubleData(data->GetDimension());
+		auto * imaginary_data = new Yap::CDoubleData(data->GetDimensions());
 		ExtractImaginary(reinterpret_cast<std::complex<double> *>(input_data.GetData()),
 			reinterpret_cast<double*>(imaginary_data->GetData()),
 			size);

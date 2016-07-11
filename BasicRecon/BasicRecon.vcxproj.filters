@@ -18,6 +18,7 @@
     <ClCompile Include="..\Interface\DataImp.cpp" />
     <ClCompile Include="JpegExporter.cpp" />
     <ClCompile Include="ChannelMerger.cpp" />
+    <ClCompile Include="SliceIterator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataHelper.h" />
@@ -35,6 +36,7 @@
     <ClInclude Include="CmrDataReader.h" />
     <ClInclude Include="JpegExporter.h" />
     <ClInclude Include="ChannelMerger.h" />
+    <ClInclude Include="SliceIterator.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

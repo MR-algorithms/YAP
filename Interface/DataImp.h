@@ -91,7 +91,7 @@ namespace Yap
 // 			return &_localization;
 // 		}
 
-		virtual IDimensions * GetDimensions()
+		virtual IDimensions * GetDimensions() override
 		{
 			return &_dimensions;
 		}
@@ -139,12 +139,6 @@ namespace Yap
 		{
 			return DATA_TYPE;
 		}
-
-		virtual IDimensions * GetDimension() override
-		{
-			return &_dimensions;
-		}
-
 
 		T * _data;
 		CDimensionsImp _dimensions;
