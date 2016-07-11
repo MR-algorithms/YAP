@@ -153,7 +153,7 @@ namespace Yap
 		virtual void * GetData() = 0;
 
 		virtual DataType GetDataType() = 0;			///< 返回数据元素的类型
-		virtual IDimensions * GetDimension() = 0;	///< 获得数据的维度信息。
+		virtual IDimensions * GetDimensions() = 0;	///< 获得数据的维度信息。
 	};
 
 	struct IProcessor

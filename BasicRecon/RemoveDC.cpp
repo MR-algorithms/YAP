@@ -41,7 +41,7 @@ bool CRemoveDC::Input(const wchar_t * port, IData * data)
 	auto inplace = GetBool(L"Inplace");
 	unsigned int corner_size = GetInt(L"CornerSize");
 
-	auto output_data = CSmartPtr<CDoubleData>(new CDoubleData(data->GetDimension()));
+	auto output_data = CSmartPtr<CDoubleData>(new CDoubleData(data->GetDimensions()));
 
 	if (corner_size >= height / 2 || corner_size >= width / 2 || corner_size < 2)
 		return false;

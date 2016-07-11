@@ -47,7 +47,7 @@ bool CChannelMerger::Input(const wchar_t * name, IData * data)
 
 	CDataHelper helper(data);
 	
-	vector<unsigned int> key = GetKey(data->GetDimension());
+	vector<unsigned int> key = GetKey(data->GetDimensions());
 	auto iter = _merge_buffers.find(key);
 	if (iter == _merge_buffers.end())
 	{
@@ -59,7 +59,7 @@ bool CChannelMerger::Input(const wchar_t * name, IData * data)
 
 		for (unsigned int i = 0; i < helper.GetDimensionCount(); ++i)
 		{
-			data->GetDimension()->GetDimensionInfo(i, type, index, length);
+			data->GetDimensions()->GetDimensionInfo(i, type, index, length);
 			if (type != DimensionChannel)
 			{
 				merge_dimensions.SetDimensionInfo(dest_dimension_index, type, index, length);

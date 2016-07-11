@@ -1,5 +1,6 @@
 #pragma once
 #include "..\Interface\YapInterfaces.h"
+#include "../Interface/DataImp.h"
 
 namespace Yap
 {
@@ -10,7 +11,7 @@ namespace Yap
 
 		DataType GetDataType();
 		unsigned int GetDimensionCount();
-
+		Dimension GetDimension(DimensionType dimension_type);
 		unsigned int GetWidth();
 		unsigned int GetHeight();
 

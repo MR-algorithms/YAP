@@ -12,14 +12,14 @@ DataType CDataHelper::GetDataType()
 
 unsigned int CDataHelper::GetDimensionCount()
 {
-	auto dimension = _data_interface.GetDimension();
+	auto dimension = _data_interface.GetDimensions();
 
 	return (dimension != nullptr) ? dimension->GetDimensionCount() : 0;
 }
 
 unsigned int CDataHelper::GetWidth()
 {
-	auto dimension = _data_interface.GetDimension();
+	auto dimension = _data_interface.GetDimensions();
 	DimensionType dimension_type;
 	unsigned int start, length;
 	dimension->GetDimensionInfo(0, dimension_type, start, length);
@@ -29,7 +29,7 @@ unsigned int CDataHelper::GetWidth()
 
 unsigned int CDataHelper::GetHeight()
 {
-	auto dimension = _data_interface.GetDimension();
+	auto dimension = _data_interface.GetDimensions();
 	DimensionType dimension_type;
 	unsigned int start, length;
 	dimension->GetDimensionInfo(1, dimension_type, start, length);
@@ -39,7 +39,7 @@ unsigned int CDataHelper::GetHeight()
 
 unsigned int CDataHelper::GetSlice()
 {
-	auto dimension = _data_interface.GetDimension();
+	auto dimension = _data_interface.GetDimensions();
 	DimensionType dimension_type;
 	unsigned int start, length;
 	dimension->GetDimensionInfo(2, dimension_type, start, length);
@@ -51,10 +51,29 @@ void * CDataHelper::GetData()
 	return _data_interface.GetData();
 }
 
+Yap::Dimension Yap::CDataHelper::GetDimension(DimensionType dimension_type)
+{
+	assert(_data_interface.GetDimensions());
+
+	Dimension dimension;
+	unsigned int dimension_count = _data_interface.GetDimensions()->GetDimensionCount();
+	for (unsigned int dimension_index = 0; dimension_index < dimension_count; ++dimension_index)
+	{
+		_data_interface.GetDimensions()->GetDimensionInfo(dimension_index,
+			dimension.type, dimension.start_index, dimension.length);
+		if (dimension.type == dimension_type)
+		{
+			break;
+		}
+	}
+
+	return dimension;
+}
+
 size_t Yap::CDataHelper::GetDataSize() const
 {
 	size_t count = 1;
-	auto dimension = _data_interface.GetDimension();
+	auto dimension = _data_interface.GetDimensions();
 	DimensionType dimension_type;
 	unsigned int start, length;
 
@@ -69,7 +88,7 @@ size_t Yap::CDataHelper::GetDataSize() const
 
 unsigned int CDataHelper::GetCoilCount()
 {
-	auto dimension = _data_interface.GetDimension();
+	auto dimension = _data_interface.GetDimensions();
 	DimensionType dimension_type;
 	unsigned int start, length;
 
@@ -88,16 +107,16 @@ unsigned int CDataHelper::GetCoilCount()
 */
 unsigned int CDataHelper::GetBlockSize(DimensionType type) const
 {
-	assert(_data_interface.GetDimension() != nullptr);
+	assert(_data_interface.GetDimensions() != nullptr);
 
 	Dimension dimension;
-	unsigned int dimension_count = _data_interface.GetDimension()->GetDimensionCount();
+	unsigned int dimension_count = _data_interface.GetDimensions()->GetDimensionCount();
 	unsigned int block_size = 1;
 
 	bool success = false;
 	for (unsigned int dimension_index = 0; dimension_index < dimension_count; ++dimension_index)
 	{
-		_data_interface.GetDimension()->GetDimensionInfo(dimension_index,
+		_data_interface.GetDimensions()->GetDimensionInfo(dimension_index,
 			dimension.type, dimension.start_index, dimension.length);
 
 		if (dimension.type == type)
