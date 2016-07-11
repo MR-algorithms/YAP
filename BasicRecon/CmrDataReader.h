@@ -3,6 +3,17 @@
 
 namespace Yap
 {
+	/// Class used to read raw data file created by CMR.
+	/**
+		\remarks Properties:
+		DataPath: specifies the path of the folder containing raw data file.
+		ChannelCount: specifies the number of the total channels.
+		ChannelSwitch: specifies which channels are used.
+		GroupCount: specifies how many groups are used in the scan.
+
+		Feel nullptr to the "Input" port to trigger file reading.
+		"Output" data will be of type ComplexFloat.
+	*/
 	class CCmrDataReader :
 		public CProcessorImp
 	{

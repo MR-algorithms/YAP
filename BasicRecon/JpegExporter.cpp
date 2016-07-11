@@ -130,7 +130,7 @@ CJpegExporter::CJpegExporter() :
 	CProcessorImp(L"JpegExporter")
 {
 	AddInputPort(L"Input", 2, DataTypeFloat);
-	AddProperty(PropertyString, L"ExportPath", L"Set folder used to hold exported images.");
+	AddProperty(PropertyString, L"ExportFolder", L"Set folder used to hold exported images.");
 
 	_impl = shared_ptr<CJpegExporterImp>(new CJpegExporterImp);
 }
@@ -173,7 +173,7 @@ bool CJpegExporter::Input( const wchar_t * name, IData * data)
 	CDataHelper data_helper(data);
 	_impl->ExportImage(reinterpret_cast<float*>(data_helper.GetData()),
 		data_helper.GetWidth(), data_helper.GetHeight(),
-		GetString(L"ExportPath"));
+		GetString(L"ExportFolder"));
 
 	return true;
 }
