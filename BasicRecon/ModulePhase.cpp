@@ -11,9 +11,9 @@ using namespace std;
 CModulePhase::CModulePhase() :
 	CProcessorImp(L"ModulePhase")
 {
-	AddInputPort(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble);
-	AddOutputPort(L"Module", YAP_ANY_DIMENSION, DataTypeDouble);
-	AddOutputPort(L"Phase", YAP_ANY_DIMENSION, DataTypeDouble);
+	AddInputPort(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddOutputPort(L"Module", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
+	AddOutputPort(L"Phase", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
 
 	AddProperty(PropertyBool, L"CreateModule", L"If true, the processor will output Modules of the input data.");
 	SetBool(L"CreateModule", true);

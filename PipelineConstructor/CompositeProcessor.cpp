@@ -62,7 +62,7 @@ bool Yap::CCompositeProcessor::AssignInPort(const wchar_t * port,
 	const wchar_t * inner_processor, 
 	const wchar_t * inner_port)
 {
-	if (_in_ports.find(port) == _in_ports.end())
+	if (_in_ports.find(port) != _in_ports.end())
 		return false;
 
 	auto processor = GetProcessor(inner_processor);

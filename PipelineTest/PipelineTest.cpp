@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include <winbase.h>
 #include <iostream>
-#include "..\Interface\YapInterfaces.h"
+#include "../Interface/YapInterfaces.h"
 #include "../Interface/DataImp.h"
 #include <string>
 #include <vector>
@@ -13,7 +13,7 @@ using namespace std;
 using namespace Yap;
 
 #include "ProcessorDebugger.h"
-#include "..\PipelineConstructor\PipelineConstructor.h"
+#include "../PipelineConstructor/PipelineConstructor.h"
 #include "../PipelineConstructor/CompositeProcessor.h"
 
 int main()
@@ -43,7 +43,7 @@ int main()
 
 		constructor.Link(L"reader", L"slice_iterator");
 		constructor.Link(L"slice_iterator", L"dc_remover");
-		constructor.Link(L"dc_remove", L"zero_filling");
+		constructor.Link(L"dc_remover", L"zero_filling");
 		constructor.Link(L"zero_filling", L"fft");
 		constructor.Link(L"fft", L"module_phase");
 		constructor.Link(L"module_phase", L"Module", L"jpeg_exporter", L"Input");

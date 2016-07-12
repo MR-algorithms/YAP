@@ -12,22 +12,22 @@ namespace Yap
 	class CPort : public IPort
 	{
 	public:
-		CPort(const wchar_t * name, unsigned int dimensions, DataType data_type);
+		CPort(const wchar_t * name, unsigned int dimensions, int data_type);
 		virtual const wchar_t * GetName() override;
 		virtual unsigned int GetDimensions() override;
-		virtual DataType GetDataType() override;
+		virtual int GetDataType() override;
 
 	protected:
 		std::wstring _name;
 		unsigned int _dimensions;
-		DataType _data_type;
+		int _data_type;
 
 	};
 
 	class CPortEnumerator : public IPortEnumerator
 	{
 	public:
-		bool AddPort(const wchar_t * name, unsigned int dimensions, DataType data_type);
+		bool AddPort(const wchar_t * name, unsigned int dimensions, int data_type);
 
 		virtual IPort * GetFirstPort() override;
 		virtual IPort * GetNextPort() override;
@@ -188,8 +188,8 @@ namespace Yap
 		bool CanLink(const wchar_t * source_output_name, IProcessor * next, const wchar_t * next_input_name);
 		bool OutportLinked(const wchar_t * out_port_name) const;
 
-		bool AddInputPort(const wchar_t * name, unsigned int dimensions, DataType data_type);
-		bool AddOutputPort(const wchar_t * name, unsigned int dimensions, DataType data_type);
+		bool AddInputPort(const wchar_t * name, unsigned int dimensions, int data_type);
+		bool AddOutputPort(const wchar_t * name, unsigned int dimensions, int data_type);
 
 		bool Feed(const wchar_t * name, IData * data);
 

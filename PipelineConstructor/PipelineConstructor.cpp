@@ -115,13 +115,15 @@ bool Yap::CPipelineConstructor::Link(const wchar_t * source,
 	auto source_processor = _pipeline->GetProcessor(source);
 	if (!source_processor)
 	{
-		throw CConstructError(0, ConstructErrorProcessorNotFound, L"Processor not found.");
+		wstring message(L"Source processor not found: ");
+		throw CConstructError(0, ConstructErrorProcessorNotFound, message + source);
 	}
 
 	auto dest_processor = _pipeline->GetProcessor(dest);
 	if (!dest_processor)
 	{
-		throw CConstructError(0, ConstructErrorProcessorNotFound, L"Processor not found.");
+		wstring message(L"Destination processor not found.");
+		throw CConstructError(0, ConstructErrorProcessorNotFound, message + dest);
 	}
 
 	if (source_port == nullptr)
@@ -135,7 +137,9 @@ bool Yap::CPipelineConstructor::Link(const wchar_t * source,
 
 	if (!source_processor->Link(source_port, dest_processor.get(), dest_port))
 	{
-		throw CConstructError(0, ConstructErrorAddLink, L"Failed to add link.");
+		wstring message(L"Failed to add link. Source: ");
+		message = message + source + L"." + source_port + L" Dest: " + dest + L"." + dest_port;
+		throw CConstructError(0, ConstructErrorAddLink, message);
 	}
 
 	return true;

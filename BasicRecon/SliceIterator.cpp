@@ -10,8 +10,8 @@ using namespace Yap;
 CSliceIterator::CSliceIterator(void) :
 	CProcessorImp(L"SliceIterator")
 {
+	AddInputPort(L"Input", 3, DataTypeComplexFloat);
 	AddOutputPort(L"Output", 2, DataTypeComplexFloat);
-	AddInputPort(L"Input", 2, DataTypeComplexFloat);
 }
 
 CSliceIterator::CSliceIterator( const CSliceIterator& rhs)

@@ -5,7 +5,7 @@
 
 using namespace Yap;
 
-DataType CDataHelper::GetDataType()
+int CDataHelper::GetDataType()
 {
 	return _data_interface.GetDataType();
 }
