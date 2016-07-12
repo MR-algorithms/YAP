@@ -41,7 +41,7 @@ namespace Yap
 		std::vector<Dimension> _dimension_info;
 	};
 
-	template<typename T, DataType DATA_TYPE>
+	template<typename T, int DATA_TYPE>
 	class CDataImp : public IData, public IMemory
 	{
 	public:
@@ -135,7 +135,7 @@ namespace Yap
 			}
 		}
 
-		virtual DataType GetDataType() override
+		virtual int GetDataType() override
 		{
 			return DATA_TYPE;
 		}

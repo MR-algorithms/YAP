@@ -6,28 +6,25 @@
 
 namespace Yap
 {
-	enum DataType
-	{
-		DataTypeUnknown			= 0x00000000,	///< enum not initialized yet.
-		DataTypeChar			= 0x00000001,	///< wchar_t (1)
-		DataTypeUnsignedChar	= 0x00000002,	///< unsigned wchar_t (1)
-		DataTypeShort			= 0x00000004,	///< short (2)
-		DataTypeUnsignedShort	= 0x00000008,	///< unsigned short (2)
-		DataTypeFloat			= 0x00000010,	///< float (4)
-		DataTypeDouble			= 0x00000020,	///< double (8)
-		DataTypeInt				= 0x00000040,	///< int (4)
-		DataTypeUnsignedInt		= 0x00000080,	///< unsigned int (4)
-		DataTypeComplexFloat	= 0x00000100,	///< complex<float> (8)
-		DataTypeComplexDouble	= 0x00000200,	///< complex<double> (16)
-		DataTypeBool			= 0x00000400,	///< bool
-		DataTypeAll				= 0xFFFFFFFF,	///< 若为此类型，说明此处理器对什么类型都接受。
-	};
+	const int DataTypeUnknown		= 0x00000000;	///< enum not initialized yet.
+	const int DataTypeChar			= 0x00000001;	///< wchar_t (1)
+	const int DataTypeUnsignedChar	= 0x00000002;	///< unsigned wchar_t (1)
+	const int DataTypeShort			= 0x00000004;	///< short (2)
+	const int DataTypeUnsignedShort	= 0x00000008;	///< unsigned short (2)
+	const int DataTypeFloat			= 0x00000010;	///< float (4)
+	const int DataTypeDouble		= 0x00000020;	///< double (8)
+	const int DataTypeInt			= 0x00000040;	///< int (4)
+	const int DataTypeUnsignedInt	= 0x00000080;	///< unsigned int (4)
+	const int DataTypeComplexFloat	= 0x00000100;	///< complex<float> (8)
+	const int DataTypeComplexDouble	= 0x00000200;	///< complex<double> (16)
+	const int DataTypeBool			= 0x00000400;	///< bool
+	const int DataTypeAll			= 0xFFFFFFFF;	///< 若为此类型，说明此处理器对什么类型都接受。
 
 	struct IPort
 	{
 		virtual const wchar_t * GetName() = 0;
 		virtual unsigned int GetDimensions() = 0;
-		virtual DataType GetDataType() = 0;
+		virtual int GetDataType() = 0;
 	};
 
 	struct IPortEnumerator
@@ -152,7 +149,7 @@ namespace Yap
 		/** 获得数据后必须进行强制类型转换后使用. */
 		virtual void * GetData() = 0;
 
-		virtual DataType GetDataType() = 0;			///< 返回数据元素的类型
+		virtual int GetDataType() = 0;			///< 返回数据元素的类型
 		virtual IDimensions * GetDimensions() = 0;	///< 获得数据的维度信息。
 	};
 

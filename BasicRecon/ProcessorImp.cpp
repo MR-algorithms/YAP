@@ -82,12 +82,12 @@ bool CProcessorImp::Link(const wchar_t * out_port, IProcessor* next_processor, c
 	return true;
 }
 
-bool CProcessorImp::AddInputPort(const wchar_t * name, unsigned int dimensions, DataType data_type)
+bool CProcessorImp::AddInputPort(const wchar_t * name, unsigned int dimensions, int data_type)
 {
 	return _input_ports.AddPort(name, dimensions, data_type);
 }
 
-bool CProcessorImp::AddOutputPort(const wchar_t * name, unsigned int dimensions, DataType data_type)
+bool CProcessorImp::AddOutputPort(const wchar_t * name, unsigned int dimensions, int data_type)
 {
 	return _output_ports.AddPort(name, dimensions, data_type);
 }
@@ -352,7 +352,7 @@ bool Yap::CProcessorImp::CanLink(const wchar_t * source_output_name,
 	if (in_port == nullptr)
 		return false;
 
-	if (out_port->GetDataType() != in_port->GetDataType())
+	if ((out_port->GetDataType() & in_port->GetDataType()) == 0)
 		return false;
 
 	TODO(Refine the processing of YAP_ANY_DIMENSION and support of multiple data type.);
@@ -369,7 +369,7 @@ bool Yap::CProcessorImp::OutportLinked(const wchar_t * out_port_name) const
 
 bool CPortEnumerator::AddPort(const wchar_t * name,
 	unsigned int dimensions, 
-	DataType data_type)
+	int data_type)
 {
 	try
 	{
@@ -402,7 +402,7 @@ Yap::IPort * Yap::CPortEnumerator::GetPort(const wchar_t * name)
 	return (iter != _ports.end()) ? iter->second.get() : nullptr;
 }
 
-CPort::CPort(const wchar_t * name, unsigned int dimensions, DataType data_type) : 
+CPort::CPort(const wchar_t * name, unsigned int dimensions, int data_type) : 
 	_name(name), 
 	_dimensions(dimensions), 
 	_data_type(data_type)
@@ -419,7 +419,7 @@ unsigned int CPort::GetDimensions()
 	return _dimensions;
 }
 
-DataType CPort::GetDataType()
+int CPort::GetDataType()
 {
 	return _data_type;
 }

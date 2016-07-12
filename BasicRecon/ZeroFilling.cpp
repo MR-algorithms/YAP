@@ -21,7 +21,6 @@ CZeroFilling::CZeroFilling() : CProcessorImp(L"ZeroFilling")
 	AddProperty(PropertyInt, L"Top", L"Y coordinate of top left corner of source data in destination data.");
 }
 
-
 CZeroFilling::~CZeroFilling()
 {
 }

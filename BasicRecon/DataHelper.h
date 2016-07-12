@@ -9,7 +9,7 @@ namespace Yap
 	public:
 		CDataHelper(IData * data) : _data_interface(*data) {}
 
-		DataType GetDataType();
+		int GetDataType();
 		unsigned int GetDimensionCount();
 		Dimension GetDimension(DimensionType dimension_type);
 		unsigned int GetWidth();
