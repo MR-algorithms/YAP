@@ -42,7 +42,6 @@ CPipelineConstructor::CPipelineConstructor()
 
 }
 
-
 CPipelineConstructor::~CPipelineConstructor()
 {
 }
@@ -60,8 +59,7 @@ void CPipelineConstructor::Reset(bool reset_modules)
 
 bool Yap::CPipelineConstructor::LoadModule(const wchar_t * module_name)
 {
-	assert(!_plugin_folder.empty());
-	auto plugin_path = _plugin_folder;
+	wstring plugin_path = L".";
 	if (plugin_path[plugin_path.length() - 1] != L'\\')
 	{
 		plugin_path += L'\\';
@@ -104,6 +102,11 @@ std::shared_ptr<CProcessorAgent> Yap::CPipelineConstructor::CreateProcessor(cons
 	}
 }
 
+bool CPipelineConstructor::Link(const wchar_t * source, const wchar_t * dest)
+{
+	return Link(source, nullptr, dest, nullptr);
+}
+
 bool Yap::CPipelineConstructor::Link(const wchar_t * source, 
 	const wchar_t * source_port, 
 	const wchar_t * dest, 
@@ -119,6 +122,15 @@ bool Yap::CPipelineConstructor::Link(const wchar_t * source,
 	if (!dest_processor)
 	{
 		throw CConstructError(0, ConstructErrorProcessorNotFound, L"Processor not found.");
+	}
+
+	if (source_port == nullptr)
+	{
+		source_port = L"Output";
+	}
+	if (dest_port == nullptr)
+	{
+		dest_port = L"Input";
 	}
 
 	if (!source_processor->Link(source_port, dest_processor.get(), dest_port))

@@ -39,6 +39,12 @@
     <ClInclude Include="ProcessorAgent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PipelineCompiler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BasicRecon\ProcessorImp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -57,6 +63,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ProcessorAgent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PipelineCompiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\BasicRecon\ProcessorImp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

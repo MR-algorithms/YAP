@@ -53,7 +53,7 @@ namespace Yap
 
 		std::shared_ptr<CProcessorAgent> CreateProcessor(const wchar_t * class_id, const wchar_t * instance_id);
 		bool Link(const wchar_t * source, const wchar_t * source_port, const wchar_t * dest, const wchar_t * dest_port);
-
+		bool Link(const wchar_t * source, const wchar_t * dest);
 		bool SetProperty(const wchar_t * processor_id, const wchar_t * property_id, const wchar_t * value);
 		bool LinkProperty(const wchar_t * processor_id, const wchar_t * property_id, const wchar_t * param_id);
 

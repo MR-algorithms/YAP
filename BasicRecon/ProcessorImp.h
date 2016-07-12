@@ -101,7 +101,7 @@ namespace Yap
 	class CStringProperty : public CProperty, public IStringValue
 	{
 	public:
-		CStringProperty(const wchar_t * name, const wchar_t * description, const wchar_t * value = nullptr)
+		CStringProperty(const wchar_t * name, const wchar_t * description, const wchar_t * value = L"")
 			: CProperty(PropertyString, name, description), _value(value) {}
 		virtual const wchar_t * GetValue() { return _value.c_str(); }
 		virtual void SetValue(const wchar_t * value) { _value = value; }

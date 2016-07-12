@@ -11,6 +11,7 @@
 #include "RemoveDC.h"
 #include "CmrDataReader.h"
 #include "JpegExporter.h"
+#include "SliceIterator.h"
 
 using namespace Yap;
 
@@ -21,13 +22,14 @@ extern "C"
 		auto processor_manager = new CProcessorManagerImp;
 
 		processor_manager->AddProcessor(new CCmrDataReader);
+		processor_manager->AddProcessor(new CSliceIterator);
+		processor_manager->AddProcessor(new CRemoveDC);
 		processor_manager->AddProcessor(new CFft1D);
 		processor_manager->AddProcessor(new CFft2D);
 		processor_manager->AddProcessor(new CZeroFilling);
 		processor_manager->AddProcessor(new CComplexSplitter);
 		processor_manager->AddProcessor(new CGrappa);
 		processor_manager->AddProcessor(new CModulePhase);
-		processor_manager->AddProcessor(new CRemoveDC);
 		processor_manager->AddProcessor(new CJpegExporter);
 		
 		return processor_manager;

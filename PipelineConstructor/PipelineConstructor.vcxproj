@@ -21,8 +21,9 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{42DBF462-12AA-4E2B-AAF2-5D50AC6182EB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>PiplineConstructor</RootNamespace>
+    <RootNamespace>PipelineConstructor</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>PipelineConstructor</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -126,6 +127,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\BasicRecon\ProcessorImp.h" />
     <ClInclude Include="CompositeProcessor.h" />
     <ClInclude Include="ModuleManager.h" />
     <ClInclude Include="PipelineCompiler.h" />
@@ -136,6 +138,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\BasicRecon\ProcessorImp.cpp" />
     <ClCompile Include="CompositeProcessor.cpp" />
     <ClCompile Include="ModuleManager.cpp" />
     <ClCompile Include="PipelineCompiler.cpp" />
