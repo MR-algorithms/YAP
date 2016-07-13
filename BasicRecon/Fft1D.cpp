@@ -41,7 +41,8 @@ bool CFft1D::Input(const wchar_t * port, IData * data)
 	CDataHelper input_data(data);
 	if (input_data.GetDataType() != DataTypeComplexDouble)
 		return false;
-	if (input_data.GetDimensionCount() != 1)
+
+	if (input_data.GetActualDimensionCount() != 1)
 		return false;
 
 	auto size = input_data.GetWidth();

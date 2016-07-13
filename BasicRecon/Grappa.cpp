@@ -38,7 +38,7 @@ bool CGrappa::Input(const wchar_t * port, IData * data)
 	CDataHelper input_data(data);  //输入数据为欠采添零的K空间数据
 	if (input_data.GetDataType() != DataTypeComplexDouble)
 		return false;
-	if (input_data.GetDimensionCount() != 4)
+	if (input_data.GetActualDimensionCount() != 4)
 		return false;
 
 	Recon(reinterpret_cast<complex<double>*>(input_data.GetData()), R, Acs, Block, 

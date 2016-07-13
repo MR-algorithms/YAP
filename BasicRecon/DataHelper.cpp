@@ -17,6 +17,29 @@ unsigned int CDataHelper::GetDimensionCount()
 	return (dimension != nullptr) ? dimension->GetDimensionCount() : 0;
 }
 
+/**
+返回数据的实际维数。例如，对于三维空间中的平面，其实际维数应该是两维，虽然所用的空间坐标是三维的。
+@return 数据集的实际维数。
+*/
+unsigned int CDataHelper::GetActualDimensionCount() const
+{
+	assert(_data_interface.GetDimensions() != nullptr);
+
+	Dimension dimension;
+	unsigned int dimension_count = _data_interface.GetDimensions()->GetDimensionCount();
+	unsigned int actual_dimension_count = 0;
+	for (unsigned int dimension_index = 0; dimension_index < dimension_count; ++dimension_index)
+	{
+		_data_interface.GetDimensions()->GetDimensionInfo(dimension_index,
+			dimension.type, dimension.start_index, dimension.length);
+		if (dimension.length > 1)
+		{
+			++actual_dimension_count;
+		}
+	}
+
+	return actual_dimension_count;
+}
 unsigned int CDataHelper::GetWidth()
 {
 	auto dimension = _data_interface.GetDimensions();

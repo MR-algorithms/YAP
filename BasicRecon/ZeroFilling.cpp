@@ -58,7 +58,8 @@ bool CZeroFilling::Input(const wchar_t * port, IData * data)
 	CDataHelper input_data(data);
 	if (input_data.GetDataType() != DataTypeComplexDouble && input_data.GetDataType() != DataTypeComplexFloat)
 		return false;
-	if (input_data.GetDimensionCount() != 2)
+
+	if (input_data.GetActualDimensionCount() != 2)
 		return false;
 
 	if (dest_width < input_data.GetWidth() || dest_height < input_data.GetHeight())

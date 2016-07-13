@@ -82,7 +82,7 @@ bool CRemoveDC::Input(const wchar_t * port, IData * data)
 		return false;
 
 	CDataHelper input_data(data);
-	if (input_data.GetDimensionCount() != 2)
+	if (input_data.GetActualDimensionCount() != 2)
 		return false;
 
 	unsigned int width = input_data.GetWidth();
