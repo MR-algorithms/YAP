@@ -159,9 +159,6 @@ namespace Yap
 		CProcessorImp(const wchar_t * class_id);
 		CProcessorImp(const CProcessorImp& rhs);
 
-
-		/// 复制当前Processor的实例。
-		virtual IProcessor * Clone() override;
 		/// 释放当前Processor的资源。
 		virtual void Release() override;
 
@@ -181,8 +178,6 @@ namespace Yap
 		virtual bool UpdateProperties(IPropertyEnumerator * params) override;
 
 		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) override;
-		virtual bool Input(const wchar_t * port, IData * data) override;
-
 
 	protected:
 		bool CanLink(const wchar_t * source_output_name, IProcessor * next, const wchar_t * next_input_name);

@@ -220,3 +220,15 @@ arma::cx_mat CGrappa::FitCoef(complex<double> * subsampled_data,
 	cx_mat coef = pinv(temp2) * temp1;
 	return coef;
 }
+
+Yap::IProcessor * Yap::CGrappa::Clone()
+{
+	try
+	{
+		return new CGrappa();
+	}
+	catch (std::bad_alloc&)
+	{
+		return nullptr;
+	}
+}

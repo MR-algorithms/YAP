@@ -31,7 +31,7 @@ extern "C"
 		processor_manager->AddProcessor(new CGrappa);
 		processor_manager->AddProcessor(new CModulePhase);
 		processor_manager->AddProcessor(new CJpegExporter);
-		
+		 
 		return processor_manager;
 	}
 }

@@ -28,7 +28,8 @@ int main()
 		constructor.LoadModule(L"BasicRecon.dll");
 		constructor.CreateProcessor(L"CmrRawDataReader", L"reader");
 		constructor.SetProperty(L"reader", L"DataPath",
-			L"D:\\test_data\\1.3.6.1.4.1.31636.24815489.151224005\\1");
+			L".\\Data\\HeadGibbs\\ExportCmrData-20151224\\MriRawData\\1.3.6.1.4.1.31636.24815489.151224005\\1");
+
 		constructor.SetProperty(L"reader", L"ChannelCount", L"4");
 		constructor.SetProperty(L"reader", L"ChannelSwitch", L"15"); // use all four channels.
 

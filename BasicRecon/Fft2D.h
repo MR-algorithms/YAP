@@ -30,5 +30,7 @@ namespace Yap
 		bool Fft2D(std::complex<double> * data, std::complex<double> * result, size_t width, size_t height, bool inverse = false);
 		void Plan(size_t width, size_t height, bool inverse, bool in_place);
 
+		virtual IProcessor * Clone() override;
+
 	};
 }

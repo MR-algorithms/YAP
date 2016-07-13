@@ -136,3 +136,16 @@ void CFft2D::Plan(size_t width, size_t height, bool inverse, bool in_place)
 	_plan_inverse = inverse;
 	_plan_in_place = in_place;
 }
+
+Yap::IProcessor * Yap::CFft2D::Clone()
+{
+	try
+	{
+		return new CFft2D;
+	}
+	catch (std::bad_alloc&)
+	{
+		return nullptr;
+	}
+
+}

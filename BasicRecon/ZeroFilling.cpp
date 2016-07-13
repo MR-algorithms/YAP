@@ -90,6 +90,17 @@ bool CZeroFilling::Input(const wchar_t * port, IData * data)
 	return true;
 }
 
+Yap::IProcessor * Yap::CZeroFilling::Clone()
+{
+	try
+	{
+		return new CZeroFilling;
+	}
+	catch (std::bad_alloc&)
+	{
+		return nullptr;
+	}
+}
 
 
 

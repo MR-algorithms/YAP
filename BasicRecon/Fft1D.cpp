@@ -143,3 +143,15 @@ bool CFft1D::Fft1D(std::complex<double> * data,
 
 	return true;
 }
+
+Yap::IProcessor * Yap::CFft1D::Clone()
+{
+	try
+	{
+		return new CFft1D;
+	}
+	catch (std::bad_alloc&)
+	{
+		return nullptr;
+	}
+}

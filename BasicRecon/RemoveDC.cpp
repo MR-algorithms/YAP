@@ -4,7 +4,6 @@
 #include "DataHelper.h"
 #include "..\Interface\DataImp.h"
 
-
 using namespace std;
 using namespace Yap;
 
@@ -132,4 +131,16 @@ bool CRemoveDC::Input(const wchar_t * port, IData * data)
 	}
 
 	return true;
+}
+
+Yap::IProcessor * Yap::CRemoveDC::Clone()
+{
+	try
+	{
+		return new CRemoveDC;
+	}
+	catch (bad_alloc&)
+	{
+		return nullptr;
+	}
 }

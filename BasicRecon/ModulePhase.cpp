@@ -130,4 +130,15 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 	return true;
 }
 
+Yap::IProcessor * Yap::CModulePhase::Clone()
+{
+	try
+	{
+		return new CModulePhase;
+	}
+	catch (std::bad_alloc&)
+	{
+		return nullptr;
+	}
+}
 

@@ -15,6 +15,9 @@ namespace Yap
 	protected:
 
 		virtual ~CZeroFilling();
+
+		virtual IProcessor * Clone() override;
+
 	};
 
 }
