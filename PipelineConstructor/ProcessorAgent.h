@@ -1,5 +1,5 @@
 #pragma once
-#include "D:\Projects\YAP\Interface\YapInterfaces.h"
+#include "..\Interface\YapInterfaces.h"
 
 namespace Yap
 {
