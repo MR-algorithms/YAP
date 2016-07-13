@@ -15,12 +15,10 @@ using namespace Yap;
 #include "ProcessorDebugger.h"
 #include "../PipelineConstructor/PipelineConstructor.h"
 #include "../PipelineConstructor/CompositeProcessor.h"
+#include "../PipelineConstructor/PipelineCompiler.h"
 
-int main()
+void ConstructorTest()
 {
-	CProcessorDebugger debugger;
-	debugger.DebugPlugin(L"BasicRecon.dll");
-
 	try
 	{
 		CPipelineConstructor constructor;
@@ -61,20 +59,21 @@ int main()
 	{
 		wcout << e.GetErrorMessage() << std::endl;
 	}
+}
 
+int main()
+{
+	// CProcessorDebugger debugger;
+	// debugger.DebugPlugin(L"BasicRecon.dll");
 
-// 	vector<double> image(256 * 256);
-// 	for (unsigned int i = 0; i < image.size(); ++i)
-// 	{
-// 		image[i] = 1.0;
-// 	}
-// 	Yap::CDimensions dimension;
-// 	dimension(DimensionReadout, 0, 256)
-// 		(DimensionPhaseEncoding, 0, 256);
-// 
-// 	auto * data = new Yap::CDoubleData(image.data(), dimension, nullptr, false);
+	// ConstructorTest();
 
-	// processor->Input(L"Input", data);
+	CPipelineCompiler compiler;
+	auto pipeline = compiler.CompileFile(L"test.pipeline");
+	if (pipeline)
+	{
+		pipeline->Input(L"Input", nullptr);
+	}
 
     return 0;
 }
