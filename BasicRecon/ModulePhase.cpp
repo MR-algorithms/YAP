@@ -68,8 +68,10 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 
 	if (data->GetDataType() != DataTypeComplexDouble && data->GetDataType() != DataTypeComplexFloat)
 		return false;
+
 	CDataHelper input_data(data);
-	if (input_data.GetDimensionCount() != 2)
+
+	if (input_data.GetActualDimensionCount() != 2)
 		return false;
 
 	CDimensionsImp dims;
@@ -130,4 +132,15 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 	return true;
 }
 
+Yap::IProcessor * Yap::CModulePhase::Clone()
+{
+	try
+	{
+		return new CModulePhase;
+	}
+	catch (std::bad_alloc&)
+	{
+		return nullptr;
+	}
+}
 

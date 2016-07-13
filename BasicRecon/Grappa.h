@@ -29,6 +29,9 @@ namespace Yap
 
 		std::vector<std::complex<double>> GetAcsData(std::complex<double> * data, 
 			size_t r, size_t acs, size_t width, size_t height, size_t num_coil, size_t slice_cout);
+
+		virtual IProcessor * Clone() override;
+
 	};
 }
 

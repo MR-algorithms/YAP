@@ -18,5 +18,8 @@ namespace Yap
 		void Split(std::complex<double> * data, double * real, double * imaginary, size_t size);
 		void ExtractReal(std::complex<double> * data, double * real, size_t size);
 		void ExtractImaginary(std::complex<double> * data, double * imaginary, size_t size);
+
+		virtual IProcessor * Clone() override;
+
 	};
 }

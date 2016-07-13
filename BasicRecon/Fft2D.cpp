@@ -36,9 +36,10 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 		return false;
 
 	CDataHelper input_data(data);
-	if (input_data.GetDataType() != DataTypeComplexDouble)
+	if (input_data.GetDataType() != DataTypeComplexFloat )
 		return false;
-	if (input_data.GetDimensionCount() != 2)
+
+	if (input_data.GetActualDimensionCount() != 2)
 		return false;
 
 	auto width = input_data.GetWidth();
@@ -46,9 +47,8 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 
 	if (GetBool(L"InPlace"))
 	{
-
-		Fft2D(reinterpret_cast<complex<double>*>(input_data.GetData()),
-			reinterpret_cast<complex<double>*>(input_data.GetData()),
+		Fft2D(reinterpret_cast<complex<float>*>(input_data.GetData()),
+			reinterpret_cast<complex<float>*>(input_data.GetData()),
 			width, height, GetBool(L"Inverse"));
 		Feed(L"Output", data);
 	}
@@ -60,39 +60,39 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 			(DimensionPhaseEncoding, 0, height);
 		auto output = CSmartPtr<CComplexDoubleData>(new CComplexDoubleData(&dims));
 
-		Fft2D(reinterpret_cast<complex<double>*>(input_data.GetData()),
-			reinterpret_cast<complex<double>*>(output->GetData()),
+		Fft2D(reinterpret_cast<complex<float>*>(input_data.GetData()),
+			reinterpret_cast<complex<float>*>(output->GetData()),
 			width, height, GetBool(L"Inverse"));
 		Feed(L"Output", output.get());
 	}
 	return true;
 }
 
-void CFft2D::FftShift(std::complex<double>* data, size_t  width, size_t height)
+void CFft2D::FftShift(std::complex<float>* data, size_t  width, size_t height)
 {
 	SwapBlock(data, data + height / 2 * width + width / 2, width / 2, height / 2, width);
 	SwapBlock(data + width / 2, data + height / 2 * width, width / 2, height / 2, width);
 }
 
-void CFft2D::SwapBlock(std::complex<double>* block1, std::complex<double>* block2, size_t width, size_t height, size_t line_stride)
+void CFft2D::SwapBlock(std::complex<float>* block1, std::complex<float>* block2, size_t width, size_t height, size_t line_stride)
 {
-	std::vector<std::complex<double>> swap_buffer;
+	std::vector<std::complex<float>> swap_buffer;
 	swap_buffer.resize(width);
 
 	auto cursor1 = block1;
 	auto cursor2 = block2;
 	for (unsigned int row = 0; row < height; ++row)
 	{
-		memcpy(swap_buffer.data(), cursor1, width * sizeof(std::complex<double>));
-		memcpy(cursor1, cursor2, width * sizeof(std::complex<double>));
-		memcpy(cursor2, swap_buffer.data(), width * sizeof(std::complex<double>));
+		memcpy(swap_buffer.data(), cursor1, width * sizeof(std::complex<float>));
+		memcpy(cursor1, cursor2, width * sizeof(std::complex<float>));
+		memcpy(cursor2, swap_buffer.data(), width * sizeof(std::complex<float>));
 
 		cursor1 += line_stride;
 		cursor2 += line_stride;
 	}
 }
 
-bool CFft2D::Fft2D(std::complex<double> * data, std::complex<double> * result_data, size_t width, size_t height, bool inverse)
+bool CFft2D::Fft2D(std::complex<float> * data, std::complex<float> * result_data, size_t width, size_t height, bool inverse)
 {
 	
 	bool in_place = (data == result_data);
@@ -100,7 +100,7 @@ bool CFft2D::Fft2D(std::complex<double> * data, std::complex<double> * result_da
 	{
 		Plan(width, height, inverse, in_place);
 	}
-	fftw_execute_dft(_fft_plan, (fftw_complex*)data, (fftw_complex*)result_data);
+	fftwf_execute_dft(_fft_plan, (fftwf_complex*)data, (fftwf_complex*)result_data);
 
 	for (auto data = result_data; data < result_data + width * height; ++data)
 	{
@@ -114,19 +114,20 @@ bool CFft2D::Fft2D(std::complex<double> * data, std::complex<double> * result_da
 
 void CFft2D::Plan(size_t width, size_t height, bool inverse, bool in_place)
 {
-	vector<fftw_complex> data(width * height);
+	vector<fftwf_complex> data(width * height);
+
 	if (in_place)
 	{
-		_fft_plan = fftw_plan_dft_2d(_plan_data_width, _plan_data_height, (fftw_complex*)data.data(),
-			(fftw_complex*)data.data(),
+		_fft_plan = fftwf_plan_dft_2d(width, height, (fftwf_complex*)data.data(),
+			(fftwf_complex*)data.data(),
 			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
 			FFTW_MEASURE);
 	}
 	else
 	{
-		vector<fftw_complex> result(width * height);
-		_fft_plan = fftw_plan_dft_2d(_plan_data_width, _plan_data_height,  (fftw_complex*)data.data(),
-			(fftw_complex*)result.data(),
+		vector<fftwf_complex> result(width * height);
+		_fft_plan = fftwf_plan_dft_2d(width, height,  (fftwf_complex*)data.data(),
+			(fftwf_complex*)result.data(),
 			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
 			FFTW_MEASURE);
 	}
@@ -135,4 +136,17 @@ void CFft2D::Plan(size_t width, size_t height, bool inverse, bool in_place)
 	_plan_data_height = static_cast<unsigned int> (height);
 	_plan_inverse = inverse;
 	_plan_in_place = in_place;
+}
+
+Yap::IProcessor * Yap::CFft2D::Clone()
+{
+	try
+	{
+		return new CFft2D;
+	}
+	catch (std::bad_alloc&)
+	{
+		return nullptr;
+	}
+
 }

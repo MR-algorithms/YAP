@@ -77,6 +77,18 @@ void Yap::CComplexSplitter::Split(std::complex<double> * data,
 	}
 }
 
+Yap::IProcessor * Yap::CComplexSplitter::Clone()
+{
+	try
+	{
+		return new CComplexSplitter;
+	}
+	catch (std::bad_alloc&)
+	{
+		return nullptr;
+	}
+}
+
 void CComplexSplitter::ExtractReal(std::complex<double> * data, double * real, size_t size)
 {
 	assert(data != nullptr && real != nullptr);

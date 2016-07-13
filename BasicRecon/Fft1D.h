@@ -32,6 +32,8 @@ namespace Yap
 			size_t size, bool inverse = false);
 		void Plan(size_t size, bool inverse, bool in_place);
 
+		virtual IProcessor * Clone() override;
+
 	};
 }
 

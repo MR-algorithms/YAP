@@ -41,7 +41,8 @@ bool CFft1D::Input(const wchar_t * port, IData * data)
 	CDataHelper input_data(data);
 	if (input_data.GetDataType() != DataTypeComplexDouble)
 		return false;
-	if (input_data.GetDimensionCount() != 1)
+
+	if (input_data.GetActualDimensionCount() != 1)
 		return false;
 
 	auto size = input_data.GetWidth();
@@ -142,4 +143,16 @@ bool CFft1D::Fft1D(std::complex<double> * data,
 	FFTShift(result_data, size);
 
 	return true;
+}
+
+Yap::IProcessor * Yap::CFft1D::Clone()
+{
+	try
+	{
+		return new CFft1D;
+	}
+	catch (std::bad_alloc&)
+	{
+		return nullptr;
+	}
 }

@@ -26,18 +26,6 @@ Yap::CProcessorImp::CProcessorImp(const CProcessorImp& rhs) :
 	_property_links.clear();
 }
 
-Yap::IProcessor * Yap::CProcessorImp::Clone()
-{
-	try
-	{
-		return new CProcessorImp(*this);
-	}
-	catch (bad_alloc&)
-	{
-		return nullptr;
-	}
-}
-
 void Yap::CProcessorImp::Release()
 {
 	delete this;
@@ -46,7 +34,6 @@ void Yap::CProcessorImp::Release()
 CProcessorImp::~CProcessorImp()
 {
 }
-
 
 IPortEnumerator * CProcessorImp::GetInputPortEnumerator()
 {
@@ -62,12 +49,6 @@ bool CProcessorImp::Init()
 {
 	return OnInit();
 }
-
-bool CProcessorImp::Input(const wchar_t * port, IData * data)
-{
-	return true;
-}
-
 
 bool CProcessorImp::Link(const wchar_t * out_port, IProcessor* next_processor, const wchar_t * in_port)
 {
