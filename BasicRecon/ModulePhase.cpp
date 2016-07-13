@@ -8,6 +8,38 @@
 using namespace Yap;
 using namespace std;
 
+
+template <typename T>
+bool GetModule(complex<T>* input,
+	T* module,
+	size_t size)
+{
+	assert(input != nullptr && module != nullptr);
+
+	auto input_end = input + size;
+	while (input != input_end)
+	{
+		*(module++) = abs(*(input++));
+	}
+
+	return true;
+}
+
+template <typename T>
+bool GetPhase(complex<T>* input, T* phase,
+	size_t size)
+{
+	assert(input != nullptr && phase != nullptr);
+
+	auto input_end = input + size;
+	while (input != input_end)
+	{
+		*(phase++) = arg(*(input++));
+	}
+
+	return true;
+}
+
 CModulePhase::CModulePhase() :
 	CProcessorImp(L"ModulePhase")
 {
@@ -34,9 +66,9 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 	auto is_module = GetBool(L"CreateModule");
 	auto is_phase = GetBool(L"CreatePhase");
 
-	CDataHelper input_data(data);
-	if (input_data.GetDataType() != DataTypeComplexDouble)
+	if (data->GetDataType() != DataTypeComplexDouble && data->GetDataType() != DataTypeComplexFloat)
 		return false;
+	CDataHelper input_data(data);
 	if (input_data.GetDimensionCount() != 2)
 		return false;
 
@@ -46,54 +78,56 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 
 	if (is_module)
 	{
-		auto module = CSmartPtr<CDoubleData>(new CDoubleData(&dims));
+		if (data->GetDataType() == DataTypeComplexDouble)
+		{
+			auto module = CSmartPtr<CDoubleData>(new CDoubleData(&dims));
 
-		GetModule(reinterpret_cast<complex<double>*>(input_data.GetData()),
-			reinterpret_cast<double*>(module->GetData()),
-			input_data.GetDataSize());
+			GetModule(reinterpret_cast<complex<double>*>(input_data.GetData()),
+				reinterpret_cast<double*>(module->GetData()),
+				input_data.GetDataSize());
 
-		Feed(L"Module", module.get());
+			Feed(L"Module", module.get());
+		}
+		
+		else
+		{
+			auto module = CSmartPtr<CFloatData>(new CFloatData(&dims));
+
+			GetModule(reinterpret_cast<complex<float>*>(input_data.GetData()),
+				reinterpret_cast<float*>(module->GetData()),
+				input_data.GetDataSize());
+
+			Feed(L"Module", module.get());
+		}
+
 	}
 
 	if (is_phase)
 	{
-		auto phase = CSmartPtr<CDoubleData>(new CDoubleData(&dims));
+		if (data->GetDataType() == DataTypeComplexDouble)
+		{
+			auto phase = CSmartPtr<CDoubleData>(new CDoubleData(&dims));
 
-		GetPhase(reinterpret_cast<complex<double>*>(input_data.GetData()), 
-			reinterpret_cast<double*>(phase->GetData()),
-			input_data.GetDataSize());
+			GetPhase(reinterpret_cast<complex<double>*>(input_data.GetData()),
+				reinterpret_cast<double*>(phase->GetData()),
+				input_data.GetDataSize());
 
-		Feed(L"Phase", phase.get());
+			Feed(L"Phase", phase.get());
+		}
+		else
+		{
+			auto phase = CSmartPtr<CFloatData>(new CFloatData(&dims));
+
+			GetPhase(reinterpret_cast<complex<float>*>(input_data.GetData()),
+				reinterpret_cast<float*>(phase->GetData()),
+				input_data.GetDataSize());
+
+			Feed(L"Phase", phase.get());
+		}
+		
 	}
 
 	return true;
 }
 
-bool CModulePhase::GetModule(std::complex<double>* input, 
-	double* module,
-	size_t size)
-{
-	assert(input != nullptr && module != nullptr);
 
-	auto input_end = input + size;
-	while (input != input_end)
-	{
-		*(module++) = abs(*(input++));
-	}
-
-	return true;
-}
-
-bool CModulePhase::GetPhase(std::complex<double>* input, double* phase,
-	size_t size)
-{
-	assert(input != nullptr && phase != nullptr);
-
-	auto input_end = input + size;
-	while (input != input_end)
-	{
-		*(phase++) = arg(*(input++));
-	}
-
-	return true;
-}
