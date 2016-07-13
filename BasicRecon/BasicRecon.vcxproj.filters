@@ -19,6 +19,7 @@
     <ClCompile Include="JpegExporter.cpp" />
     <ClCompile Include="ChannelMerger.cpp" />
     <ClCompile Include="SliceIterator.cpp" />
+    <ClCompile Include="Difference.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataHelper.h" />
@@ -37,6 +38,7 @@
     <ClInclude Include="JpegExporter.h" />
     <ClInclude Include="ChannelMerger.h" />
     <ClInclude Include="SliceIterator.h" />
+    <ClInclude Include="Difference.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
