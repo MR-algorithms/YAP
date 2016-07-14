@@ -82,7 +82,7 @@ std::wstring CStatement::GetLiteralValue()
 		throw CCompileError(*_iter, CompileErrorValueExpected, L"Property value expected.");
 	}
 
-	return _iter->text;
+	return (_iter++)->text;
 }
 
 /// 试图提取处理器/成员（属性或者端口）对，迭代器移动到提取内容之后。
@@ -273,6 +273,12 @@ bool CStatement::ProcessPortLink()
 	auto dest_processor = GetId();
 
 	wstring dest_port(L"Input");
+
+	if (AtEnd())
+	{
+		return _constructor.Link(source_processor.c_str(), source_port.empty() ? L"Output" : source_port.c_str(),
+			dest_processor.c_str(), dest_port.empty() ? L"Input" : dest_port.c_str());
+	}
 
 	if (GetCurrentToken().type == TokenOperatorDot)
 	{
