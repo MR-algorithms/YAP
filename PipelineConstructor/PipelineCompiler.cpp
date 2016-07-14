@@ -274,13 +274,8 @@ bool CStatement::ProcessPortLink()
 
 	wstring dest_port(L"Input");
 
-	if (AtEnd())
-	{
-		return _constructor.Link(source_processor.c_str(), source_port.empty() ? L"Output" : source_port.c_str(),
-			dest_processor.c_str(), dest_port.empty() ? L"Input" : dest_port.c_str());
-	}
 
-	if (GetCurrentToken().type == TokenOperatorDot)
+	if (!AtEnd() && GetCurrentToken().type == TokenOperatorDot)
 	{
 		++_iter;
 		dest_port = GetId();
