@@ -22,13 +22,12 @@ void Difference(T * input_data,
 
 
 CDifference::CDifference() : CProcessorImp(L"Difference"),
-	_reference_data(nullptr),
-	_is_reference(false)
+	_reference_data(nullptr)
 {
-	AddInputPort(L"Input", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
-	AddInputPort(L"Reference", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
+	AddInputPort(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
+	AddInputPort(L"Reference", YAP_ANY_DIMENSION, DataTypeAll);
 
-	AddOutputPort(L"Output", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
+	AddOutputPort(L"Output", YAP_ANY_DIMENSION, DataTypeAll);
 }
 
 
@@ -38,87 +37,61 @@ CDifference::~CDifference()
 
 bool Yap::CDifference::Input(const wchar_t * port, IData * data)
 {
-	if (wstring(port) != L"Input")
-		return false;
-
-	if (data->GetDataType() != DataTypeDouble && data->GetDataType() != DataTypeFloat)
-		return false;
-
-	if (!_is_reference)
-		return false;    //need a reference data.
-
-	CDataHelper input_data(data);
-	CDataHelper reference_data(_reference_data);
-
-	if (input_data.GetDimensionCount() != reference_data.GetDimensionCount())
-		return false;
-
-	if (input_data.GetDataType() != reference_data.GetDataType())
-		return false;
-
-	//check every dimension size
-	auto ref_dim = _reference_data->GetDimensions();
-	auto input_dim = data->GetDimensions();
-	DimensionType ref_dim_type, input_dim_type;
-	unsigned int ref_start, input_start, ref_length, input_length;
-
-	for (unsigned int i = 0; i < input_data.GetDimensionCount(); i++)
+	if (wstring(port) == L"Reference")
 	{
-		ref_dim->GetDimensionInfo(i, ref_dim_type, ref_start, ref_length);
-		input_dim->GetDimensionInfo(i, input_dim_type, input_start, input_length);
+		_reference_data = data;
+	}
+	else if (wstring(port) == L"Input")
+	{
+		if (_reference_data == nullptr)
+			return false;   //need a reference data.
 
-		if (ref_length != input_length)
+		CDataHelper input_data(data);
+		CDataHelper reference_data(_reference_data);
+
+		if (input_data.GetDimensionCount() != reference_data.GetDimensionCount())
 			return false;
+
+		if (input_data.GetDataType() != reference_data.GetDataType())
+			return false;
+
+		//check every dimension size
+		auto ref_dim = _reference_data->GetDimensions();
+		auto input_dim = data->GetDimensions();
+		DimensionType ref_dim_type, input_dim_type;
+		unsigned int ref_start, input_start, ref_length, input_length;
+
+		for (unsigned int i = 0; i < input_data.GetDimensionCount(); i++)
+		{
+			ref_dim->GetDimensionInfo(i, ref_dim_type, ref_start, ref_length);
+			input_dim->GetDimensionInfo(i, input_dim_type, input_start, input_length);
+
+			if (ref_length != input_length)
+				return false;
+		}
+
+		//more data type?
+		if (data->GetDataType() == DataTypeFloat)
+		{
+			auto output_data = CSmartPtr<CFloatData>(new CFloatData(data->GetDimensions()));
+
+			Difference(reinterpret_cast<float*>(input_data.GetData()),
+				reinterpret_cast<float*>(reference_data.GetData()),
+				reinterpret_cast<float*>(output_data->GetData()),
+				input_data.GetDataSize());
+			Feed(L"Output", output_data.get());
+		}
+		else
+		{
+			auto output_data = CSmartPtr<CDoubleData>(new CDoubleData(data->GetDimensions()));
+
+			Difference(reinterpret_cast<double*>(input_data.GetData()),
+				reinterpret_cast<double*>(reference_data.GetData()),
+				reinterpret_cast<double*>(output_data->GetData()),
+				input_data.GetDataSize());
+			Feed(L"Output", output_data.get());
+		}
 	}
-
-
-	if (data->GetDataType() == DataTypeFloat)
-	{
-		auto output_data = CSmartPtr<CFloatData>(new CFloatData(data->GetDimensions()));
-
-		Difference(reinterpret_cast<float*>(input_data.GetData()),
-			reinterpret_cast<float*>(reference_data.GetData()),
-			reinterpret_cast<float*>(output_data->GetData()),
-			input_data.GetDataSize());
-		Feed(L"Output", output_data.get());
-	}
-	else
-	{
-		auto output_data = CSmartPtr<CDoubleData>(new CDoubleData(data->GetDimensions()));
-
-		Difference(reinterpret_cast<double*>(input_data.GetData()),
-			reinterpret_cast<double*>(reference_data.GetData()),
-			reinterpret_cast<double*>(output_data->GetData()),
-			input_data.GetDataSize());
-		Feed(L"Output", output_data.get());
-	}
-
-	return true;
-}
-
-bool Yap::CDifference::SetReferenceData(const wchar_t * port, IData * reference_data)
-{
-	if (wstring(port) != L"Reference")
-		return false;
-
-	if (reference_data->GetDataType() != DataTypeDouble && reference_data->GetDataType() != DataTypeFloat)
-		return false;
-
-	_reference_data = reference_data;
-	_is_reference = true;
-
-	return true;
-}
-
-IData * Yap::CDifference::GetReferenceData()
-{
-	return _reference_data;
-}
-
-bool Yap::CDifference::ResetReferenceData()
-{
-	_reference_data = nullptr;  //会不会存在问题？
-	_is_reference = false;
 
 	return true;
 }
