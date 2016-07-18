@@ -1,6 +1,7 @@
 #pragma once
 #include "ProcessorImp.h"
 #include <complex>
+#include "..\Interface\SmartPtr.h"
 
 namespace Yap 
 {
@@ -14,7 +15,7 @@ namespace Yap
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
 	protected:
-		IData * _reference_data;
+		CSmartPtr2<IData, IMemory> _reference_data;
 	};
 }
 

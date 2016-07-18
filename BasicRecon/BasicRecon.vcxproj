@@ -152,6 +152,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Algorithm2DWrapper.h" />
     <ClInclude Include="ChannelMerger.h" />
     <ClInclude Include="CmrDataReader.h" />
     <ClInclude Include="ComplexSplitter.h" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Fft1D.h" />
     <ClInclude Include="Fft2D.h" />
     <ClInclude Include="Grappa.h" />
+    <ClInclude Include="imageProcessing.h" />
     <ClInclude Include="JpegExporter.h" />
     <ClInclude Include="ModulePhase.h" />
     <ClInclude Include="ProcessorImp.h" />

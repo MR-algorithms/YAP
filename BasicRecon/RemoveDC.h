@@ -1,6 +1,5 @@
 #pragma once
 #include "ProcessorImp.h"
-#include <complex>
 
 namespace Yap
 {

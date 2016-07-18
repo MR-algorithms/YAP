@@ -3,6 +3,7 @@
 #define OUT
 #define IN
 #endif
+#include <complex>
 
 namespace Yap
 {
@@ -19,6 +20,23 @@ namespace Yap
 	const int DataTypeComplexDouble	= 0x00000200;	///< complex<double> (16)
 	const int DataTypeBool			= 0x00000400;	///< bool
 	const int DataTypeAll			= 0xFFFFFFFF;	///< 若为此类型，说明此处理器对什么类型都接受。
+
+	template<typename T> struct type_id
+	{
+		static const int type;
+	};
+
+	template <> struct type_id<double> { static const int type = DataTypeDouble; };
+	template <> struct type_id<char> { static const int type = DataTypeChar; };
+	template <> struct type_id<unsigned char> { static const int type = DataTypeUnsignedChar; };
+	template <> struct type_id<short> { static const int type = DataTypeShort; };
+	template <> struct type_id <unsigned short> { static const int type = DataTypeUnsignedShort; };
+	template <> struct type_id <float> { static const int type = DataTypeFloat; };
+	template <> struct type_id <unsigned int> { static const int type = DataTypeUnsignedInt; };
+	template <> struct type_id <int> { static const int type = DataTypeInt; };
+	template <> struct type_id <std::complex<float>> { static const int type = DataTypeComplexFloat; };
+	template <> struct type_id <std::complex<double>> { static const int type = DataTypeComplexFloat; };
+	template <> struct type_id <bool> { static const int type = DataTypeBool; };
 
 	struct IPort
 	{

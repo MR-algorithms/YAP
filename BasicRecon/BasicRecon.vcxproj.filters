@@ -39,6 +39,8 @@
     <ClInclude Include="ChannelMerger.h" />
     <ClInclude Include="SliceIterator.h" />
     <ClInclude Include="Difference.h" />
+    <ClInclude Include="Algorithm2DWrapper.h" />
+    <ClInclude Include="imageProcessing.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

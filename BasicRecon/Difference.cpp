@@ -39,15 +39,15 @@ bool Yap::CDifference::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) == L"Reference")
 	{
-		_reference_data = data;
+		_reference_data = CSmartPtr2<IData, IMemory>(data);
 	}
 	else if (wstring(port) == L"Input")
 	{
-		if (_reference_data == nullptr)
+		if (!_reference_data)
 			return false;   //need a reference data.
 
 		CDataHelper input_data(data);
-		CDataHelper reference_data(_reference_data);
+		CDataHelper reference_data(_reference_data.get());
 
 		if (input_data.GetDimensionCount() != reference_data.GetDimensionCount())
 			return false;
@@ -91,6 +91,10 @@ bool Yap::CDifference::Input(const wchar_t * port, IData * data)
 				input_data.GetDataSize());
 			Feed(L"Output", output_data.get());
 		}
+	}
+	else
+	{
+		return false;
 	}
 
 	return true;
