@@ -41,7 +41,7 @@ namespace Yap
 		std::vector<Dimension> _dimension_info;
 	};
 
-	template<typename T, int DATA_TYPE>
+	template<typename T>
 	class CDataImp : public IData, public IMemory
 	{
 	public:
@@ -137,7 +137,7 @@ namespace Yap
 
 		virtual int GetDataType() override
 		{
-			return DATA_TYPE;
+			return type_id<T>::type;
 		}
 
 		T * _data;
@@ -149,9 +149,9 @@ namespace Yap
 		CSmartPtr<IMemory> _parent;
 	};
 
-	typedef CDataImp<double, DataTypeDouble> CDoubleData;
-	typedef CDataImp<float, DataTypeFloat> CFloatData;
-	typedef CDataImp<std::complex<double>, DataTypeComplexDouble> CComplexDoubleData;
-	typedef CDataImp<std::complex<float>, DataTypeComplexFloat> CComplexFloatData;
+	typedef CDataImp<double> CDoubleData;
+	typedef CDataImp<float> CFloatData;
+	typedef CDataImp<std::complex<double>> CComplexDoubleData;
+	typedef CDataImp<std::complex<float>> CComplexFloatData;
 };
 

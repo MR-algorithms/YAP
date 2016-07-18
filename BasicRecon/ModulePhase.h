@@ -11,7 +11,6 @@ namespace Yap
 		virtual ~CModulePhase();
 
 		virtual bool Input(const wchar_t * port, IData * data) override;
-
 		virtual IProcessor * Clone() override;
 
 	};

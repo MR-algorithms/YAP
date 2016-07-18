@@ -54,7 +54,6 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 	}
 	else
 	{
-
 		Yap::CDimensionsImp dims;
 		dims(DimensionReadout, 0, width)
 			(DimensionPhaseEncoding, 0, height);

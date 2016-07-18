@@ -12,6 +12,8 @@
 #include "CmrDataReader.h"
 #include "JpegExporter.h"
 #include "SliceIterator.h"
+#include "imageProcessing.h"
+#include "Algorithm2DWrapper.h"
 
 using namespace Yap;
 
@@ -31,6 +33,8 @@ extern "C"
 		processor_manager->AddProcessor(new CGrappa);
 		processor_manager->AddProcessor(new CModulePhase);
 		processor_manager->AddProcessor(new CJpegExporter);
+
+		processor_manager->AddProcessor(new CInPlaceAlgorithm2DWrapper<float>(hflip<float>, L"HFlipFloat"));
 		 
 		return processor_manager;
 	}
