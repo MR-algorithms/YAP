@@ -21,6 +21,7 @@
     <ClCompile Include="SliceIterator.cpp" />
     <ClCompile Include="Difference.cpp" />
     <ClCompile Include="SliceSelector.cpp" />
+    <ClCompile Include="SamplingTypeGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataHelper.h" />
@@ -43,6 +44,7 @@
     <ClInclude Include="Algorithm2DWrapper.h" />
     <ClInclude Include="imageProcessing.h" />
     <ClInclude Include="SliceSelector.h" />
+    <ClInclude Include="SamplingTypeGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

@@ -15,6 +15,7 @@ CSliceSelector::CSliceSelector(void):
 	AddOutputPort(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
 	AddProperty(PropertyInt, L"SliceIndex", L"The index of the slice you want to get.");
+	SetInt(L"SliceIndex", 0);
 }
 
 Yap::CSliceSelector::CSliceSelector(const CSliceSelector & rhs)
@@ -51,8 +52,7 @@ bool Yap::CSliceSelector::Input(const wchar_t * name, IData * data)
 	CDimensionsImp data_dimentions(data->GetDimensions());
 	unsigned int slice_block_size = input_data.GetBlockSize(DimensionSlice);
 	if (data_dimentions.GetDimensionCount() <= 3)
-	{
-		
+	{		
 		data_dimentions.ModifyDimension(DimensionSlice, 1, slice_index);
 		auto output = CSmartPtr<CComplexFloatData>(new CComplexFloatData(reinterpret_cast<std::complex<float>*>(data->GetData())
 			+ slice_index * slice_block_size, data_dimentions));
@@ -83,7 +83,7 @@ bool Yap::CSliceSelector::Input(const wchar_t * name, IData * data)
 			(Dimension4, 0U, input_data.GetDim4())
 			(DimensionChannel, 0U, input_data.GetCoilCount());
 		CSmartPtr<CComplexFloatData> outdata(new CComplexFloatData(
-			reinterpret_cast<complex<float>*>(slice_channel_data), dimensions, nullptr, true));
+			slice_channel_data, dimensions, nullptr, true));
 		Feed(L"Output", outdata.get());
 	}
 

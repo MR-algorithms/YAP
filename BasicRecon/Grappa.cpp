@@ -14,8 +14,11 @@ CGrappa::CGrappa() :
 	CProcessorImp(L"Grappa")
 {
 	AddProperty(PropertyInt, L"Rate", L"The acceleration factor.");
+	SetInt(L"Rate", 2);
 	AddProperty(PropertyInt, L"AcsCount", L"The auto-calibration signal.");
+	SetInt(L"AcsCount", 16);
 	AddProperty(PropertyInt, L"Block", L"The number of blocks.");
+	SetInt(L"Block", 4);
 
 	AddInputPort(L"Input", 3, DataTypeComplexDouble | DataTypeComplexFloat);
 	AddOutputPort(L"Output", 3, DataTypeComplexDouble | DataTypeComplexFloat);
