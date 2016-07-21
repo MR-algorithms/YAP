@@ -168,6 +168,7 @@
     <ClInclude Include="ProcessorManagerImp.h" />
     <ClInclude Include="RemoveDC.h" />
     <ClInclude Include="SliceIterator.h" />
+    <ClInclude Include="SliceSelector.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ZeroFilling.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="ProcessorManagerImp.cpp" />
     <ClCompile Include="RemoveDC.cpp" />
     <ClCompile Include="SliceIterator.cpp" />
+    <ClCompile Include="SliceSelector.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

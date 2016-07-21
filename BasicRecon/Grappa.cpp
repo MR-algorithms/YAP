@@ -17,8 +17,8 @@ CGrappa::CGrappa() :
 	AddProperty(PropertyInt, L"AcsCount", L"The auto-calibration signal.");
 	AddProperty(PropertyInt, L"Block", L"The number of blocks.");
 
-	AddInputPort(L"Input", 4, DataTypeComplexDouble);
-	AddOutputPort(L"Output", 4, DataTypeComplexDouble);
+	AddInputPort(L"Input", 3, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddOutputPort(L"Output", 3, DataTypeComplexDouble | DataTypeComplexFloat);
 }
 
 
@@ -36,13 +36,13 @@ bool CGrappa::Input(const wchar_t * port, IData * data)
 	auto Block = GetInt(L"Block");
 
 	CDataHelper input_data(data);  //输入数据为欠采添零的K空间数据
-	if (input_data.GetDataType() != DataTypeComplexDouble)
+	if (input_data.GetDataType() != DataTypeComplexDouble && input_data.GetDataType() != DataTypeComplexFloat)
 		return false;
-	if (input_data.GetActualDimensionCount() != 4)
+	if (input_data.GetActualDimensionCount() != 3)
 		return false;
 
 	Recon(reinterpret_cast<complex<double>*>(input_data.GetData()), R, Acs, Block, 
-		input_data.GetWidth(), input_data.GetHeight(), input_data.GetCoilCount(), input_data.GetSlice());
+		input_data.GetWidth(), input_data.GetHeight(), input_data.GetCoilCount());
 
 	Feed(L"Output", data);
 
@@ -50,35 +50,30 @@ bool CGrappa::Input(const wchar_t * port, IData * data)
 }
 
 std::vector<std::complex<double>> CGrappa::GetAcsData(std::complex<double> * data, 
-	size_t r, size_t acs, size_t width, size_t height, size_t num_coil, size_t slice_cout)
+	size_t r, size_t acs, size_t width, size_t height, size_t num_coil)
 {
 	unsigned int first = static_cast<unsigned int> (((height - acs) / (2 * r)) * r + 1);
-	vector<complex<double>> acs_data(acs * width * slice_cout * num_coil, 0);	
+	vector<complex<double>> acs_data(acs * width * num_coil, 0);	
 	for (unsigned int coil_index = 0; coil_index < num_coil; ++num_coil)
 	{
-		for (unsigned int slice_index = 0; slice_index < slice_cout; ++slice_index)
-		{
 			for (unsigned int k = 0; k < acs; ++k)
 			{
-				auto acs_position = width * height * slice_cout * coil_index + width * height * slice_index + (first + k) * width;
-				memcpy(acs_data.data() + width * acs * slice_cout * coil_index + width * acs * slice_index +
+				auto acs_position = width * height * coil_index + (first + k) * width;
+				memcpy(acs_data.data()  + width * acs * coil_index +
 					k * width, data + acs_position, width * sizeof(complex<double>));
 			}
-		}
 	}
 	return acs_data;
 }
 
 
 bool CGrappa::Recon(std::complex<double> * subsampled_data, 
-	size_t r, size_t acs, size_t Block, size_t width, size_t height, size_t Num_coil, size_t slice_cout)
+	size_t r, size_t acs, size_t Block, size_t width, size_t height, size_t Num_coil)
 {
 	unsigned int block = static_cast<unsigned int> (Block);
 	unsigned int num_coil = static_cast<unsigned int> (Num_coil);
-	vector<complex<double>> acs_data = GetAcsData(subsampled_data, r, acs, width, height, Num_coil, slice_cout);
-	for (unsigned int slice_index = 0; slice_index < slice_cout; ++slice_index)
-	{
-		cx_mat coef = FitCoef(subsampled_data, r, acs, Block, width, height, Num_coil, slice_index);
+	vector<complex<double>> acs_data = GetAcsData(subsampled_data, r, acs, width, height, Num_coil);
+		cx_mat coef = FitCoef(subsampled_data, r, acs, Block, width, height, Num_coil);
 		cx_rowvec Temp(1, block * num_coil * 3);
 		Temp.zeros();
 		for (unsigned int n = 0; n < floor(height / r); ++n)
@@ -97,7 +92,7 @@ bool CGrappa::Recon(std::complex<double> * subsampled_data,
 							}
 							else
 							{
-								auto src_point = width * height * num_coil * slice_index + width * height * coil_index + 
+								auto src_point =width * height * coil_index + 
 									width * (1 + n * r - block_l * r - 1) + readout_index;
 								Temp[coil_index + block_l * num_coil + shift * block * num_coil] = *(subsampled_data - 1 + shift);
 							}
@@ -113,7 +108,7 @@ bool CGrappa::Recon(std::complex<double> * subsampled_data,
 							}
 							else
 							{
-								auto src_point = width * height * num_coil * slice_index + width * height * coil_index + 
+								auto src_point =width * height * coil_index + 
 									width * (1 + n * r + block_r * r + 1) + readout_index;
 								Temp[coil_index + (block_r + 2) * num_coil + shift * num_coil] = *(subsampled_data - 1 + shift);
 							}
@@ -124,7 +119,7 @@ bool CGrappa::Recon(std::complex<double> * subsampled_data,
 					{
 						for (unsigned int coil_index = 0; coil_index < num_coil; ++coil_index)
 						{
-							auto recon_point = width * height * num_coil * slice_index + width * height * coil_index + 
+							auto recon_point =width * height * coil_index + 
 								width * (r * n + 1 + b) + readout_index;
 							*(subsampled_data + recon_point) = Recon_Data[coil_index + b * num_coil];
 						}
@@ -133,27 +128,23 @@ bool CGrappa::Recon(std::complex<double> * subsampled_data,
 			}
 		}
 
-		MakeFidelity(subsampled_data, acs_data, r, acs, width, height, num_coil, slice_cout);
-	}
+		MakeFidelity(subsampled_data, acs_data, r, acs, width, height, num_coil);
 	return true;
 }
 
 
 complex<double> * CGrappa::MakeFidelity(complex<double> * recon_data, vector<complex<double>> acs_data, 
-	size_t r, size_t acs, size_t width, size_t height, size_t num_coil, size_t slice_cout)
+	size_t r, size_t acs, size_t width, size_t height, size_t num_coil)
 {
 	unsigned int first = static_cast<unsigned int> (((height - acs) / (2 * r)) * r + 1);
 	for (unsigned int coil_index = 0; coil_index < num_coil; ++coil_index)
 	{
-		for (unsigned int slice_index = 0; slice_index < slice_cout; ++slice_index)
-		{
 			for (unsigned int k = 0; k < acs; ++k)
 			{
-				auto acs_position = width * height * slice_cout * coil_index + width * height * slice_index + (first + k) * width;
-					memcpy(recon_data + acs_position, acs_data.data() + width * acs * slice_cout * coil_index + 
-						width * acs * slice_index + k * width, width * sizeof(complex<double>));
+				auto acs_position = width * height * coil_index + (first + k) * width;
+					memcpy(recon_data + acs_position, acs_data.data() + 
+						width * acs * coil_index + k * width, width * sizeof(complex<double>));
 			}
-		}
 	}
 	return recon_data;
 }
@@ -161,7 +152,7 @@ complex<double> * CGrappa::MakeFidelity(complex<double> * recon_data, vector<com
 
 
 arma::cx_mat CGrappa::FitCoef(complex<double> * subsampled_data, 
-	size_t R, size_t acs, size_t Block, size_t Width, size_t height, size_t Num_coil, size_t slice_index)
+	size_t R, size_t acs, size_t Block, size_t Width, size_t height, size_t Num_coil)
 {
 	unsigned int width = static_cast<unsigned int> (Width);
 	unsigned int num_coil = static_cast<unsigned int> (Num_coil);
@@ -179,7 +170,7 @@ arma::cx_mat CGrappa::FitCoef(complex<double> * subsampled_data,
 			{
 				for (unsigned int coil_index = 0; coil_index < num_coil; ++coil_index)
 				{
-					auto acs_point = width * height * num_coil * slice_index + width * height * coil_index + width * (first + k * r + b) + readout_index;
+					auto acs_point = width * height * coil_index + width * (first + k * r + b) + readout_index;
 					temp1((k * (width - 2) + readout_index - 1), coil_index + b * num_coil) = *(subsampled_data + acs_point);
 				}
 			}
@@ -198,7 +189,7 @@ arma::cx_mat CGrappa::FitCoef(complex<double> * subsampled_data,
 				{
 					for (unsigned int coil_index = 0; coil_index < num_coil; ++coil_index)
 					{
-						auto src_point = width * height * num_coil * slice_index + width * height * coil_index + 
+						auto src_point =width * height * coil_index + 
 							width * (first + k * r - block_l * r - 1) + readout_index;
 						temp2((k * (width - 2) + readout_index - 1), coil_index + block_l * num_coil + shift * block * num_coil)=
 							*(subsampled_data + src_point - 1 + shift);
@@ -208,7 +199,7 @@ arma::cx_mat CGrappa::FitCoef(complex<double> * subsampled_data,
 				{
 					for (unsigned int coil_index = 0; coil_index < num_coil; ++coil_index)
 					{
-						auto src_point = width * height * num_coil * slice_index + width * height * coil_index + 
+						auto src_point =width * height * coil_index + 
 							width * (first + k * r + block_r * r + 1) + readout_index;
 						temp2((k * (width - 2) + readout_index - 1), coil_index + (block_r + 2) * num_coil + shift * block * num_coil) =
 							*(subsampled_data + src_point - 1 + shift);
