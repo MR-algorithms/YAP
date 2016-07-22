@@ -119,7 +119,7 @@ bool Yap::CSamplingTypeGenerator::Input(const wchar_t * name, IData * data)
 		sampling_pattern[first] = 1;
 		while (first <= last)
 		{
-			first++;
+			++first;
 			sampling_pattern[first] = 1;
 		}
 
