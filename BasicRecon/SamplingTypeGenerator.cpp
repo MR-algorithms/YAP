@@ -19,8 +19,8 @@ CSamplingTypeGenerator::CSamplingTypeGenerator(void):
 	_try_count(10),
 	_tolerance(3)
 {
-	AddInputPort(L"Input", 0, DataTypeUnknown);
-	AddOutputPort(L"Output", 1, DataTypeFloat);
+	AddInputPort(L"Input", YAP_ANY_DIMENSION, DataTypeUnknown);
+	AddOutputPort(L"Output", 1, DataTypeChar);
 
 	AddProperty(PropertyFloat, L"pow", L"");
 	SetFloat(L"pow", 3.0f);
@@ -28,10 +28,14 @@ CSamplingTypeGenerator::CSamplingTypeGenerator(void):
 	SetFloat(L"sample_percent", 0.4);
 	AddProperty(PropertyFloat, L"radius", L"");
 	SetFloat(L"radius", 0.2f);
-	AddProperty(PropertyBool, L"equal_unsampling", L"");
-	SetBool(L"equal_unsampling", false);
-	AddProperty(PropertyBool, L"random_unsampling", L"");
-	SetBool(L"random_unsampling", true);
+	AddProperty(PropertyBool, L"equal_subsampling", L"");
+	SetBool(L"equal_subsampling", false);
+	AddProperty(PropertyBool, L"random_subsampling", L"");
+	SetBool(L"random_subsampling", true);
+	AddProperty(PropertyInt, L"Rate", L"");
+	SetInt(L"Rate", 2);
+	AddProperty(PropertyInt, L"AcsCount", L"");
+	SetInt(L"AcsCount", 16);
 }
 
 Yap::CSamplingTypeGenerator::CSamplingTypeGenerator(const CSamplingTypeGenerator & rhs)
@@ -66,7 +70,7 @@ bool Yap::CSamplingTypeGenerator::Input(const wchar_t * name, IData * data)
 		return false;
 
 	CDataHelper input_data(data);
-	if (GetBool(L"random_unsampling"))
+	if (GetBool(L"random_subsampling"))
 	{
 		auto row_count = input_data.GetHeight();
 		float pow = static_cast<float> (GetFloat(L"pow"));
@@ -94,10 +98,49 @@ bool Yap::CSamplingTypeGenerator::Input(const wchar_t * name, IData * data)
 	}
 	else
 	{
+		vector<unsigned char> sampling_pattern;
+		unsigned int r = GetInt(L"Rate");
+		unsigned int acs = GetInt(L"AcsCount");
+		auto height = input_data.GetHeight();
+		for (unsigned int i = 0; i <= height - r - 1; ++i)
+		{
+			if (i % r == 0)
+			{
+				sampling_pattern.push_back(1);
+			}
+			else
+			{
+				sampling_pattern.push_back(0);
+			}
+		}
 
+		unsigned int first = static_cast<unsigned int>((floor((height - acs) / (2 * r))) * r + 1);
+		unsigned int last = first + acs;
+		sampling_pattern[first] = 1;
+		while (first <= last)
+		{
+			first++;
+			sampling_pattern[first] = 1;
+		}
+
+		char * sampling_type = nullptr;
+		try
+		{
+			sampling_type = new char[height];
+		}
+		catch (bad_alloc&)
+		{
+			return false;
+		}
+		memcpy(sampling_type, sampling_pattern.data(), sizeof(char));
+
+		CDimensionsImp dimensions;
+		dimensions(DimensionReadout, 0U, 1)
+			(DimensionPhaseEncoding, 0U, height);
+		CSmartPtr<CCharData> outdata(new CCharData(sampling_type, dimensions, nullptr, true));
+
+		Feed(L"Output", outdata.get());
 	}
-	
-
 	return true;
 }
 
