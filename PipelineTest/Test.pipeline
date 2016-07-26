@@ -1,6 +1,6 @@
 import "BasicRecon.dll";
 
-CmrRawDataReader reader(DataPath = ".\\Data\\HeadGibbs\\ExportCmrData-20151224\\MriRawData\\1.3.6.1.4.1.31636.24815489.151224005\\1",
+CmrRawDataReader reader(DataPath = "D:\\test_data\\1.3.6.1.4.1.31636.24815489.151224005\\1",
 	ChannelCount = 4, ChannelSwitch = 15);
 SliceIterator slice_iterator;
 RemoveDC dc_remover;

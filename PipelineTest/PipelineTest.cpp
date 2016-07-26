@@ -26,7 +26,7 @@ void ConstructorTest()
 		constructor.LoadModule(L"BasicRecon.dll");
 		constructor.CreateProcessor(L"CmrRawDataReader", L"reader");
 		constructor.SetProperty(L"reader", L"DataPath",
-			L".\\Data\\HeadGibbs\\ExportCmrData-20151224\\MriRawData\\1.3.6.1.4.1.31636.24815489.151224005\\1");
+			L"D:\\test_data\\1.3.6.1.4.1.31636.24815489.151224005\\1");
 
 		constructor.SetProperty(L"reader", L"ChannelCount", L"4");
 		constructor.SetProperty(L"reader", L"ChannelSwitch", L"15"); // use all four channels.
@@ -66,10 +66,11 @@ int main()
 	// CProcessorDebugger debugger;
 	// debugger.DebugPlugin(L"BasicRecon.dll");
 
-	// ConstructorTest();
+//	 ConstructorTest();
+
 
 	CPipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"test.pipeline");
+	auto pipeline = compiler.CompileFile(L"D:\\YAP\\YAP\\PipelineTest\\Test.pipeline");
 	if (pipeline)
 	{
 		pipeline->Input(L"Input", nullptr);

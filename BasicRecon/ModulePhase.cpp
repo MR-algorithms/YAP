@@ -47,11 +47,6 @@ CModulePhase::CModulePhase() :
 	AddOutputPort(L"Module", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
 	AddOutputPort(L"Phase", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
 
-	AddProperty(PropertyBool, L"CreateModule", L"If true, the processor will output Modules of the input data.");
-	SetBool(L"CreateModule", true);
-
-	AddProperty(PropertyBool, L"CreatePhase", L"If true, the processor will output Phases of the input data.");
-	SetBool(L"CreatePhase", false);
 }
 
 CModulePhase::~CModulePhase()
@@ -63,13 +58,13 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 	if (std::wstring(port) != L"Input")
 		return false;
 
-	auto is_module = GetBool(L"CreateModule");
-	auto is_phase = GetBool(L"CreatePhase");
-
 	if (data->GetDataType() != DataTypeComplexDouble && data->GetDataType() != DataTypeComplexFloat)
 		return false;
 
 	CDataHelper input_data(data);
+
+	auto want_module = OutportLinked(L"Module");
+	auto want_phase = OutportLinked(L"Phase");
 
 	if (input_data.GetActualDimensionCount() != 2)
 		return false;
@@ -78,7 +73,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 	dims(DimensionReadout, 0, input_data.GetWidth())
 		(DimensionPhaseEncoding, 0, input_data.GetHeight());
 
-	if (is_module)
+	if (want_module)
 	{
 		if (data->GetDataType() == DataTypeComplexDouble)
 		{
@@ -104,7 +99,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 
 	}
 
-	if (is_phase)
+	if (want_phase)
 	{
 		if (data->GetDataType() == DataTypeComplexDouble)
 		{
