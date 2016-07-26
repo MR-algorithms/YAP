@@ -274,6 +274,7 @@ bool CStatement::ProcessPortLink()
 
 	wstring dest_port(L"Input");
 
+
 	if (!AtEnd() && GetCurrentToken().type == TokenOperatorDot)
 	{
 		++_iter;

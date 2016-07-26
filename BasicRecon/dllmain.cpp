@@ -14,6 +14,7 @@
 #include "SliceIterator.h"
 #include "imageProcessing.h"
 #include "Algorithm2DWrapper.h"
+#include "SliceSelector.h"
 
 using namespace Yap;
 
@@ -33,6 +34,7 @@ extern "C"
 		processor_manager->AddProcessor(new CGrappa);
 		processor_manager->AddProcessor(new CModulePhase);
 		processor_manager->AddProcessor(new CJpegExporter);
+		processor_manager->AddProcessor(new CSliceSelector);
 
 		processor_manager->AddProcessor(new CInPlaceAlgorithm2DWrapper<float>(hflip<float>, L"HFlipFloat"));
 		 

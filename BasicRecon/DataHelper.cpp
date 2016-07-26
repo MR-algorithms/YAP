@@ -122,6 +122,17 @@ unsigned int CDataHelper::GetCoilCount()
 	return length;
 }
 
+unsigned int Yap::CDataHelper::GetDim4()
+{
+	auto dimension = _data_interface.GetDimensions();
+	DimensionType dimension_type;
+	unsigned int start, length;
+
+	dimension->GetDimensionInfo(3, dimension_type, start, length);
+
+	return length;
+}
+
 /**
 获得指定维度的一块数据所包含的数据元素的个数。例如当type等于DimensionSlice时，
 返回一个slice中的元素个数。

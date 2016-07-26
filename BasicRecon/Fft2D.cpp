@@ -103,7 +103,7 @@ bool CFft2D::Fft2D(std::complex<float> * data, std::complex<float> * result_data
 
 	for (auto data = result_data; data < result_data + width * height; ++data)
 	{
-		*data /=  sqrt(width * height);
+		*data /=  float(sqrt(width * height));
 	}
 
 	FftShift(result_data, width, height);
@@ -117,7 +117,7 @@ void CFft2D::Plan(size_t width, size_t height, bool inverse, bool in_place)
 
 	if (in_place)
 	{
-		_fft_plan = fftwf_plan_dft_2d(width, height, (fftwf_complex*)data.data(),
+		_fft_plan = fftwf_plan_dft_2d(int(width), int(height), (fftwf_complex*)data.data(),
 			(fftwf_complex*)data.data(),
 			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
 			FFTW_MEASURE);
@@ -125,7 +125,7 @@ void CFft2D::Plan(size_t width, size_t height, bool inverse, bool in_place)
 	else
 	{
 		vector<fftwf_complex> result(width * height);
-		_fft_plan = fftwf_plan_dft_2d(width, height,  (fftwf_complex*)data.data(),
+		_fft_plan = fftwf_plan_dft_2d(int(width), int(height),  (fftwf_complex*)data.data(),
 			(fftwf_complex*)result.data(),
 			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
 			FFTW_MEASURE);
