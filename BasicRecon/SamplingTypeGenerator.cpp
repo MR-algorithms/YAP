@@ -28,10 +28,12 @@ CSamplingTypeGenerator::CSamplingTypeGenerator(void):
 	SetFloat(L"sample_percent", 0.4);
 	AddProperty(PropertyFloat, L"radius", L"");
 	SetFloat(L"radius", 0.2f);
+
 	AddProperty(PropertyBool, L"equal_subsampling", L"");
 	SetBool(L"equal_subsampling", false);
 	AddProperty(PropertyBool, L"random_subsampling", L"");
 	SetBool(L"random_subsampling", true);
+
 	AddProperty(PropertyInt, L"Rate", L"");
 	SetInt(L"Rate", 2);
 	AddProperty(PropertyInt, L"AcsCount", L"");
@@ -87,7 +89,7 @@ bool Yap::CSamplingTypeGenerator::Input(const wchar_t * name, IData * data)
 		{
 			return false;
 		}
-		memcpy(sampling_type, sampling_pattern.data(), sizeof(char));
+		memcpy(sampling_type, sampling_pattern.data(), row_count * sizeof(char));
 
 		CDimensionsImp dimensions;
 		dimensions(DimensionReadout, 0U, 1)
@@ -132,7 +134,7 @@ bool Yap::CSamplingTypeGenerator::Input(const wchar_t * name, IData * data)
 		{
 			return false;
 		}
-		memcpy(sampling_type, sampling_pattern.data(), sizeof(char));
+		memcpy(sampling_type, sampling_pattern.data(), height * sizeof(char));
 
 		CDimensionsImp dimensions;
 		dimensions(DimensionReadout, 0U, 1)
