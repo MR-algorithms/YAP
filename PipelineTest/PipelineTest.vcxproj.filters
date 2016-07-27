@@ -52,5 +52,6 @@
     <None Include="Test.pipeline">
       <Filter>Data Files</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
