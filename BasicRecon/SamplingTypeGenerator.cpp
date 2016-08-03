@@ -4,11 +4,11 @@
 #include "DataHelper.h"
 #include <algorithm>
 #include <numeric>
-#include "../FFTW-64/include/fftw3.h"
+#include <fftw3.h>
 
-#pragma comment(lib, "../FFTW-64/lib/libfftw3-3.lib")
-#pragma comment(lib, "../FFTW-64/lib/libfftw3f-3.lib")
-#pragma comment(lib, "../FFTW-64/lib/libfftw3l-3.lib")
+#pragma comment(lib, "libfftw3-3.lib")
+#pragma comment(lib, "libfftw3f-3.lib")
+#pragma comment(lib, "libfftw3l-3.lib")
 
 
 using namespace Yap;
