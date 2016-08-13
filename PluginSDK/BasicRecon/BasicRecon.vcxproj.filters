@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="BasicRecon.cpp" />
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Fft1D.cpp" />
+    <ClCompile Include="Fft2D.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Grappa.cpp" />
+    <ClCompile Include="ZeroFilling.cpp" />
+    <ClCompile Include="ComplexSplitter.cpp" />
+    <ClCompile Include="RemoveDC.cpp" />
+    <ClCompile Include="ModulePhase.cpp" />
+    <ClCompile Include="CmrDataReader.cpp" />
+    <ClCompile Include="JpegExporter.cpp" />
+    <ClCompile Include="ChannelMerger.cpp" />
+    <ClCompile Include="SliceIterator.cpp" />
+    <ClCompile Include="Difference.cpp" />
+    <ClCompile Include="SliceSelector.cpp" />
+    <ClCompile Include="SamplingTypeGenerator.cpp" />
+    <ClCompile Include="..\Tools\CompositeProcessor.cpp" />
+    <ClCompile Include="..\Tools\ProcessorImp.cpp" />
+    <ClCompile Include="..\Tools\ProcessorManagerImp.cpp" />
+    <ClCompile Include="..\..\Shared\Interface\DataImp.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Fft1D.h" />
+    <ClInclude Include="Fft2D.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Grappa.h" />
+    <ClInclude Include="ZeroFilling.h" />
+    <ClInclude Include="ComplexSplitter.h" />
+    <ClInclude Include="RemoveDC.h" />
+    <ClInclude Include="ModulePhase.h" />
+    <ClInclude Include="CmrDataReader.h" />
+    <ClInclude Include="JpegExporter.h" />
+    <ClInclude Include="ChannelMerger.h" />
+    <ClInclude Include="SliceIterator.h" />
+    <ClInclude Include="Difference.h" />
+    <ClInclude Include="Algorithm2DWrapper.h" />
+    <ClInclude Include="imageProcessing.h" />
+    <ClInclude Include="SliceSelector.h" />
+    <ClInclude Include="SamplingTypeGenerator.h" />
+    <ClInclude Include="..\Tools\CompositeProcessor.h" />
+    <ClInclude Include="..\Tools\ProcessorImp.h" />
+    <ClInclude Include="..\Tools\ProcessorManagerImp.h" />
+    <ClInclude Include="..\..\Shared\Interface\DataImp.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>
