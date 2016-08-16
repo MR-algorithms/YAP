@@ -1,8 +1,8 @@
 #include "ZeroFilling.h"
 
 #include "Interface\SmartPtr.h"
-#include "Yap/DataHelper.h"
-#include "Interface\DataImp.h"
+#include "Interface/Client/DataHelper.h"
+#include "Interface/Implement/DataImp.h"
 
 #include <string>
 #include <complex>

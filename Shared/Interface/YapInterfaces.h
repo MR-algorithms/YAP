@@ -126,6 +126,15 @@ namespace Yap
 		virtual void SetValue(const wchar_t * value) = 0;
 	};
 
+	struct Dimension
+	{
+		DimensionType type;
+		unsigned int start_index;
+		unsigned int length;
+		Dimension();
+		Dimension(DimensionType type, unsigned start_index, unsigned int length);
+	};
+
 	struct IDimensions
 	{
 		virtual unsigned int GetDimensionCount() = 0;

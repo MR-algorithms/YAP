@@ -8,7 +8,7 @@
 #include <string>
 #include <memory>
 #include "Utilities/macros.h"
-#include "interface/DataImp.h"
+#include "interface/Implement/DataImp.h"
 
 namespace Yap
 {
@@ -139,7 +139,6 @@ namespace Yap
 	protected:
 		std::map<std::wstring, IProperty*> _properties;
 		std::map<std::wstring, IProperty*>::iterator _current;
-
 	};
 
 

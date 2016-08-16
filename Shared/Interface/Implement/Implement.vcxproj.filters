@@ -15,14 +15,37 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SmartPtr.h">
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CompositeProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataImp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessorImp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessorManagerImp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CompositeProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="YapInterfaces.h">
+    <ClInclude Include="DataImp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessorImp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessorManagerImp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

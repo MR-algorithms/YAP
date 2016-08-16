@@ -3,8 +3,8 @@
 #ifndef ChannelMerger_h__20160813
 #define ChannelMerger_h__20160813
 
-#include "Tools/processorimp.h"
-#include "Yap/DataHelper.h"
+#include "Interface/Implement/processorimp.h"
+#include "Interface/Client/DataHelper.h"
 #include "Interface/SmartPtr.h"
 
 namespace Yap

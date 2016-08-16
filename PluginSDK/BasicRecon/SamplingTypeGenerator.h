@@ -3,7 +3,7 @@
 #ifndef SamplingTypeGenerator_h__20160814
 #define SamplingTypeGenerator_h__20160814
 
-#include "Tools/ProcessorImp.h"
+#include "Interface/Implement/ProcessorImp.h"
 #include <vector>
 
 namespace Yap

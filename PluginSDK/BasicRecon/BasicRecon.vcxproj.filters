@@ -18,10 +18,6 @@
     <ClCompile Include="Difference.cpp" />
     <ClCompile Include="SliceSelector.cpp" />
     <ClCompile Include="SamplingTypeGenerator.cpp" />
-    <ClCompile Include="..\Tools\CompositeProcessor.cpp" />
-    <ClCompile Include="..\Tools\ProcessorImp.cpp" />
-    <ClCompile Include="..\Tools\ProcessorManagerImp.cpp" />
-    <ClCompile Include="..\..\Shared\Interface\DataImp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Fft1D.h" />
@@ -42,10 +38,6 @@
     <ClInclude Include="imageProcessing.h" />
     <ClInclude Include="SliceSelector.h" />
     <ClInclude Include="SamplingTypeGenerator.h" />
-    <ClInclude Include="..\Tools\CompositeProcessor.h" />
-    <ClInclude Include="..\Tools\ProcessorImp.h" />
-    <ClInclude Include="..\Tools\ProcessorManagerImp.h" />
-    <ClInclude Include="..\..\Shared\Interface\DataImp.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

@@ -1,7 +1,7 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "stdafx.h"
 
-#include "Tools/ProcessorManagerImp.h"
+#include "Interface/Implement/ProcessorManagerImp.h"
 #include "Fft1D.h"
 #include "Fft2D.h"
 #include "ZeroFilling.h"

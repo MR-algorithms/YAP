@@ -44,6 +44,7 @@ namespace Yap
 		bool SetFloat(const wchar_t * property_name, double value);
 		bool SetString(const wchar_t* property_name, const wchar_t* value);
 
+		operator bool();
 	protected:
 		IProcessor * _processor;
 	};

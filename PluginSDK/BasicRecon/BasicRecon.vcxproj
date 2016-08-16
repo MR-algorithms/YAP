@@ -106,6 +106,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win64_MTd.lib;lapack_win64_MTd.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(YAP_ROOT)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -120,8 +121,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win64_MTd.lib;lapack_win64_MTd.lib;Yap64d.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(SolutionDir)..\$(Platform)\Lib\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Implement64d.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win64_MTd.lib;lapack_win64_MTd.lib;Yap64d.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(YAP_ROOT)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
@@ -141,6 +142,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(YAP_ROOT)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -159,18 +161,14 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win64_MTd.lib;lapack_win64_MTd.lib;Yap64.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\$(Platform)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Implement64.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win64_MTd.lib;lapack_win64_MTd.lib;Yap64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(YAP_ROOT)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Shared\Interface\DataImp.h" />
-    <ClInclude Include="..\Tools\CompositeProcessor.h" />
-    <ClInclude Include="..\Tools\ProcessorImp.h" />
-    <ClInclude Include="..\Tools\ProcessorManagerImp.h" />
     <ClInclude Include="Algorithm2DWrapper.h" />
     <ClInclude Include="ChannelMerger.h" />
     <ClInclude Include="CmrDataReader.h" />
@@ -191,28 +189,6 @@
     <ClInclude Include="ZeroFilling.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Shared\Interface\DataImp.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\Tools\CompositeProcessor.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\Tools\ProcessorImp.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\Tools\ProcessorManagerImp.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="BasicRecon.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>

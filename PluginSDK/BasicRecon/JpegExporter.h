@@ -3,7 +3,7 @@
 #ifndef JpegExporter_h__20160814
 #define JpegExporter_h__20160814
 
-#include "Tools/ProcessorImp.h"
+#include "Interface/Implement/ProcessorImp.h"
 
 namespace Yap
 {

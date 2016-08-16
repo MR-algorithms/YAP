@@ -73,11 +73,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)..\$(Platform)\Lib\</OutDir>
+    <OutDir>$(YAP_ROOT)\LIB\</OutDir>
     <TargetName>$(ProjectName)64d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)..\$(Platform)\Lib\</OutDir>
+    <OutDir>$(YAP_ROOT)\LIB\</OutDir>
     <TargetName>$(ProjectName)64</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

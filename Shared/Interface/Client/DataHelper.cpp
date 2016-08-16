@@ -1,6 +1,7 @@
 #include "DataHelper.h"
 #include "Utilities/macros.h"
-#include "Interface/DataImp.h"
+
+#include <cassert>
 
 using namespace Yap;
 

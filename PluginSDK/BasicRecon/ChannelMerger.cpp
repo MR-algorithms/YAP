@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "ChannelMerger.h"
-#include "Yap/DataHelper.h"
+#include "Interface/Client/DataHelper.h"
 #include "Interface\YapInterfaces.h"
 #include <utility>
 

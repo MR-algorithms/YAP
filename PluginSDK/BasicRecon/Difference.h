@@ -3,7 +3,7 @@
 #ifndef Difference_h__20160816
 #define Difference_h__20160816
 
-#include "Tools/ProcessorImp.h"
+#include "Interface/Implement/ProcessorImp.h"
 #include "Interface/SmartPtr.h"
 
 namespace Yap 

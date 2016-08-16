@@ -1,6 +1,6 @@
 #include "SliceSelector.h"
-#include "Yap/DataHelper.h"
-#include "interface/DataImp.h"
+#include "interface/Client/DataHelper.h"
+#include "Interface/Implement/DataImp.h"
 #include "Interface\YapInterfaces.h"
 
 #include <complex>

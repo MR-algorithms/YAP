@@ -71,11 +71,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)..\$(Platform)\Lib\</OutDir>
+    <OutDir>$(YAP_ROOT)\Lib\</OutDir>
     <TargetName>$(ProjectName)64d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)..\$(Platform)\Lib\</OutDir>
+    <OutDir>$(YAP_ROOT)\Lib\</OutDir>
     <TargetName>$(ProjectName)64</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -109,6 +109,10 @@
     <Link>
       <SubSystem>Windows</SubSystem>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(YAP_ROOT)\LIB\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Implement64d.lib;client64d.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -143,20 +147,15 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(YAP_ROOT)\LIB\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Implement64.lib;client64.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\PluginSDK\Tools\CompositeProcessor.cpp" />
-    <ClCompile Include="..\..\PluginSDK\Tools\ProcessorImp.cpp" />
-    <ClCompile Include="..\..\PluginSDK\Tools\ProcessorManagerImp.cpp" />
-    <ClCompile Include="DataHelper.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="ModuleManager.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -189,10 +188,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\PluginSDK\Tools\CompositeProcessor.h" />
-    <ClInclude Include="..\..\PluginSDK\Tools\ProcessorImp.h" />
-    <ClInclude Include="..\..\PluginSDK\Tools\ProcessorManagerImp.h" />
-    <ClInclude Include="DataHelper.h" />
     <ClInclude Include="ModuleManager.h" />
     <ClInclude Include="PipelineCompiler.h" />
     <ClInclude Include="PipelineConstructor.h" />

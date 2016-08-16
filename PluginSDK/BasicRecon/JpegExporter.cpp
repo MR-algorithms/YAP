@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "JpegExporter.h"
-#include "Yap/DataHelper.h"
+#include "Interface/Client/DataHelper.h"
 
 #define min(a, b) (a) < (b) ? (a) : (b)
 #define max(a, b) (a) > (b) ? (a) : (b)

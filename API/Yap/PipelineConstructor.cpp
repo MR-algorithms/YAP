@@ -1,7 +1,7 @@
 #include "PipelineConstructor.h"
 #include "ModuleManager.h"
 #include "ProcessorAgent.h"
-#include "Tools/CompositeProcessor.h"
+#include "Interface/Implement/CompositeProcessor.h"
 
 using namespace Yap;
 using namespace std;
@@ -78,22 +78,22 @@ const wchar_t * Yap::CPipelineConstructor::GetPluginFolder() const
 	return _plugin_folder.c_str();
 }
 
-std::shared_ptr<CProcessorAgent> Yap::CPipelineConstructor::CreateProcessor(const wchar_t * class_id,
+IProcessor * Yap::CPipelineConstructor::CreateProcessor(const wchar_t * class_id,
 	const wchar_t * instance_id)
 {
 	assert(_pipeline);
 	auto processor = _module_manager->CreateProcessor(class_id, instance_id);
 	if (processor == nullptr)
 	{
+
 		throw CConstructError(0, ConstructErrorCreateProcessor, L"Failed to create processor instance.");
 	}
 
 	try
 	{
-		shared_ptr<CProcessorAgent> processor_agent(new CProcessorAgent(processor));
-		_pipeline->AddProcessor(processor_agent);
+		_pipeline->AddProcessor(processor);
 
-		return processor_agent;
+		return processor;
 	}
 	catch (bad_alloc&)
 	{
@@ -134,7 +134,7 @@ bool Yap::CPipelineConstructor::Link(const wchar_t * source,
 		dest_port = L"Input";
 	}
 
-	if (!source_processor->Link(source_port, dest_processor.get(), dest_port))
+	if (!source_processor->Link(source_port, dest_processor, dest_port))
 	{
 		wstring message(L"Failed to add link. Source: ");
 		message = message + source + L"." + source_port + L" Dest: " + dest + L"." + dest_port;
@@ -171,14 +171,15 @@ bool CPipelineConstructor::SetProperty(const wchar_t * processor_id,
 {
 	assert(_pipeline != nullptr);
 
-	auto processor = _pipeline->GetProcessor(processor_id);
+	CProcessorAgent processor(_pipeline->GetProcessor(processor_id));
+
 	if (!processor)
 	{
 		auto output = wstring(L"Processor not found£º") + processor_id;
 		throw CConstructError(0, ConstructErrorProcessorNotFound, output.c_str());
 	}
 
-	auto properties = processor->GetProperties();
+	auto properties = processor.GetProperties();
 	if (properties == nullptr)
 	{
 		throw CConstructError(0, ConstructErrorPropertiesNotFound, L"No property enumerator found in processor.");
@@ -200,22 +201,22 @@ bool CPipelineConstructor::SetProperty(const wchar_t * processor_id,
 	{
 		if (wcscmp(value, L"true") == 0)
 		{
-			result = processor->SetBool(property_id, true);
+			result = processor.SetBool(property_id, true);
 		}
 		else if (wcscmp(value, L"false") == 0)
 		{
-			result = processor->SetBool(property_id, false);
+			result = processor.SetBool(property_id, false);
 		}
 	}
 	break;
 	case PropertyInt:
 	{
-		result = processor->SetInt(property_id, _wtoi(value));
+		result = processor.SetInt(property_id, _wtoi(value));
 	}
 	break;
 	case PropertyFloat:
 	{
-		result = processor->SetFloat(property_id, _wtof(value));
+		result = processor.SetFloat(property_id, _wtof(value));
 	}
 	break;
 	case PropertyString:
@@ -227,7 +228,7 @@ bool CPipelineConstructor::SetProperty(const wchar_t * processor_id,
 			throw CConstructError(0, ConstructErrorPropertyValueNotString, output.c_str());
 		}
 
-		result = processor->SetString(property_id, value);
+		result = processor.SetString(property_id, value);
 	}
 	break;
 	default:

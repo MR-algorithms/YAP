@@ -11,7 +11,6 @@ CProcessorAgent::CProcessorAgent(IProcessor* processor) :
 
 CProcessorAgent::~CProcessorAgent()
 {
-	Release();
 }
 
 Yap::IProcessor * Yap::CProcessorAgent::Clone()
@@ -162,5 +161,10 @@ bool Yap::CProcessorAgent::SetString(const wchar_t* property_name,
 	string_property->SetValue(value);
 
 	return true;
+}
+
+Yap::CProcessorAgent::operator bool()
+{
+	return _processor != nullptr;
 }
 

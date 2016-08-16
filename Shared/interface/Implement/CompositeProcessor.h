@@ -11,8 +11,6 @@
 
 namespace Yap
 {
-	class CProcessorAgent;
-
 	class CCompositeProcessor :
 		public CProcessorImp
 	{
@@ -31,10 +29,10 @@ namespace Yap
 		bool AssignInPort(const wchar_t * port, const wchar_t * inner_processor, const wchar_t * inner_port);
 		bool AssignOutPort(const wchar_t * port, const wchar_t * inner_processor, const wchar_t * inner_port);
 
-		bool AddProcessor(std::shared_ptr<CProcessorAgent> processor);
-		std::shared_ptr<CProcessorAgent> GetProcessor(const wchar_t * instance_id);
+		bool AddProcessor(IProcessor * processor);
+		IProcessor * GetProcessor(const wchar_t * instance_id);
 	protected:
-		std::map<std::wstring, std::shared_ptr<CProcessorAgent>> _processors;
+		std::map<std::wstring, IProcessor *> _processors;
 		std::map<std::wstring, Anchor> _out_ports;
 		std::map<std::wstring, Anchor> _in_ports;
 	};

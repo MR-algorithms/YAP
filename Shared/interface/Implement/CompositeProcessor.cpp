@@ -1,5 +1,4 @@
 #include "CompositeProcessor.h"
-#include "Yap/ProcessorAgent.h"
 
 #include <utility>
 
@@ -10,7 +9,6 @@ CCompositeProcessor::CCompositeProcessor(const wchar_t * class_id) :
 	CProcessorImp(class_id)
 {
 }
-
 
 CCompositeProcessor::~CCompositeProcessor()
 {
@@ -69,7 +67,7 @@ bool Yap::CCompositeProcessor::AssignInPort(const wchar_t * port,
 	if (!processor)
 		return false;
 
-	_in_ports.insert(make_pair(port, Anchor(processor.get(), inner_port)));
+	_in_ports.insert(make_pair(port, Anchor(processor, inner_port)));
 	return true;
 }
 
@@ -84,11 +82,11 @@ bool Yap::CCompositeProcessor::AssignOutPort(const wchar_t * port,
 	if (!processor)
 		return false;
 
-	_out_ports.insert(make_pair(port, Anchor(processor.get(), inner_port)));
+	_out_ports.insert(make_pair(port, Anchor(processor, inner_port)));
 	return true;
 }
 
-bool Yap::CCompositeProcessor::AddProcessor(std::shared_ptr<CProcessorAgent> processor)
+bool Yap::CCompositeProcessor::AddProcessor(IProcessor * processor)
 {
 	assert(processor);
 	if (_processors.find(processor->GetInstanceId()) != _processors.end())
@@ -99,11 +97,11 @@ bool Yap::CCompositeProcessor::AddProcessor(std::shared_ptr<CProcessorAgent> pro
 	return true;
 }
 
-std::shared_ptr<CProcessorAgent> Yap::CCompositeProcessor::GetProcessor(const wchar_t * instance_id)
+IProcessor * Yap::CCompositeProcessor::GetProcessor(const wchar_t * instance_id)
 {
 	auto iter = _processors.find(instance_id);
 	if (iter == _processors.end())
-		return shared_ptr<CProcessorAgent>();
+		return nullptr;
 
 	return iter->second;
 }

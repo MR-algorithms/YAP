@@ -1,8 +1,8 @@
 #include "SliceIterator.h"
 
-#include "Yap/DataHelper.h"
+#include "Interface/Client/DataHelper.h"
 #include <complex>
-#include "interface/DataImp.h"
+#include "Interface/Implement/DataImp.h"
 #include "Interface\YapInterfaces.h"
 
 using namespace Yap;

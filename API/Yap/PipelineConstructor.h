@@ -42,6 +42,7 @@ namespace Yap
 	class CCompositeProcessor;
 	class CModuleManager;
 	class CProcessorAgent;
+	struct IProcessor;
 
 	class CPipelineConstructor
 	{
@@ -54,7 +55,7 @@ namespace Yap
 		void SetPluginFolder(const wchar_t * path);
 		const wchar_t * GetPluginFolder() const;
 
-		std::shared_ptr<CProcessorAgent> CreateProcessor(const wchar_t * class_id, const wchar_t * instance_id);
+		IProcessor * CreateProcessor(const wchar_t * class_id, const wchar_t * instance_id);
 		bool Link(const wchar_t * source, const wchar_t * source_port, const wchar_t * dest, const wchar_t * dest_port);
 		bool Link(const wchar_t * source, const wchar_t * dest);
 		bool SetProperty(const wchar_t * processor_id, const wchar_t * property_id, const wchar_t * value);
@@ -63,6 +64,7 @@ namespace Yap
 		bool AssignPipelineInPort(const wchar_t * pipeline_port, const wchar_t * inner_processor, const wchar_t * inner_port);
 		bool AssignPipelineOutPort(const wchar_t * pipeline_port, const wchar_t * inner_processor, const wchar_t * inner_port);
 		bool InstanceIdExists(const wchar_t * id);
+
 		std::shared_ptr<CCompositeProcessor> GetPipeline();
 
 	protected:

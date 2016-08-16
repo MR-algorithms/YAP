@@ -3,8 +3,8 @@
 #ifndef ComplexSplitter_h__20160813
 #define ComplexSplitter_h__20160813
 
-#include "tools/ProcessorImp.h"
-#include "Yap/DataHelper.h"
+#include "Interface/Implement/ProcessorImp.h"
+#include "Interface/Client/DataHelper.h"
 
 namespace Yap
 {

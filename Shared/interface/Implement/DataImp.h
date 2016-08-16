@@ -9,14 +9,6 @@
 
 namespace Yap
 {
-	struct Dimension
-	{
-		DimensionType type;
-		unsigned int start_index;
-		unsigned int length;
-		Dimension();
-		Dimension(DimensionType type, unsigned start_index, unsigned int length);
-	};
 
 	class CDimensionsImp : public IDimensions
 	{

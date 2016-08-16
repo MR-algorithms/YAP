@@ -5,7 +5,7 @@
 #include <winbase.h>
 #include <iostream>
 #include "Interface/YapInterfaces.h"
-#include "Interface/DataImp.h"
+#include "Interface/Implement/DataImp.h"
 #include <string>
 #include <vector>
 
@@ -15,7 +15,7 @@ using namespace Yap;
 #include "ProcessorDebugger.h"
 #include "Yap/PipelineConstructor.h"
 #include "Yap/PipelineCompiler.h"
-#include "Tools/CompositeProcessor.h"
+#include "Interface/Implement/CompositeProcessor.h"
 
 void ConstructorTest()
 {

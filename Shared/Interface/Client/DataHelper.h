@@ -1,8 +1,7 @@
 #ifndef DATAHELPER_H_20160813
 #define DATAHELPER_H_20160813
 
-#include "Interface/YapInterfaces.h"
-#include "Interface/DataImp.h"
+#include "../YapInterfaces.h"
 
 namespace Yap
 {
