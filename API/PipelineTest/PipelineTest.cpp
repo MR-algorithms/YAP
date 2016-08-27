@@ -2,20 +2,19 @@
 //
 
 #include "stdafx.h"
-#include <winbase.h>
-#include <iostream>
-#include "Interface/YapInterfaces.h"
-#include "Interface/Implement/DataImp.h"
-#include <string>
-#include <vector>
-
-using namespace std;
-using namespace Yap;
 
 #include "ProcessorDebugger.h"
 #include "Yap/PipelineConstructor.h"
 #include "Yap/PipelineCompiler.h"
 #include "Interface/Implement/CompositeProcessor.h"
+#include "Interface/Implement/DataImp.h"
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+using namespace Yap;
 
 void ConstructorTest()
 {

@@ -1,6 +1,5 @@
 #include "ZeroFilling.h"
 
-#include "Interface\SmartPtr.h"
 #include "Interface/Client/DataHelper.h"
 #include "Interface/Implement/DataImp.h"
 
@@ -70,7 +69,7 @@ bool CZeroFilling::Input(const wchar_t * port, IData * data)
 
 	if (data->GetDataType() == DataTypeComplexDouble)
 	{
-		auto output = CSmartPtr<CComplexDoubleData>(new CComplexDoubleData(&dims));
+		auto output = SmartPtr<CComplexDoubleData>(new CComplexDoubleData(&dims));
 		ZeroFilling(reinterpret_cast<complex<double>*>(output->GetData()), dest_width, dest_height,
 			reinterpret_cast<complex<double>*>(input_data.GetData()), input_data.GetWidth(), input_data.GetHeight());
 
@@ -79,14 +78,13 @@ bool CZeroFilling::Input(const wchar_t * port, IData * data)
 
 	else
 	{
-		auto output = CSmartPtr<CComplexFloatData>(new CComplexFloatData(&dims));
+		auto output = SmartPtr<CComplexFloatData>(new CComplexFloatData(&dims));
 		ZeroFilling(reinterpret_cast<complex<float>*>(output->GetData()), dest_width, dest_height,
 			reinterpret_cast<complex<float>*>(input_data.GetData()), input_data.GetWidth(), input_data.GetHeight());
 
 		Feed(L"Output", output.get());
 	}
 	
-
 	return true;
 }
 

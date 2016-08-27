@@ -1,7 +1,6 @@
 #include "SliceSelector.h"
 #include "interface/Client/DataHelper.h"
 #include "Interface/Implement/DataImp.h"
-#include "Interface\YapInterfaces.h"
 
 #include <complex>
 
@@ -54,7 +53,7 @@ bool Yap::CSliceSelector::Input(const wchar_t * name, IData * data)
 	if (data_dimentions.GetDimensionCount() <= 3)
 	{		
 		data_dimentions.ModifyDimension(DimensionSlice, 1, slice_index);
-		auto output = CSmartPtr<CComplexFloatData>(new CComplexFloatData(reinterpret_cast<std::complex<float>*>(data->GetData())
+		auto output = SmartPtr<CComplexFloatData>(new CComplexFloatData(reinterpret_cast<std::complex<float>*>(data->GetData())
 			+ slice_index * slice_block_size, data_dimentions));
 		Feed(L"Output", output.get());
 	}
@@ -82,7 +81,7 @@ bool Yap::CSliceSelector::Input(const wchar_t * name, IData * data)
 			(DimensionSlice, slice_index, 1)
 			(Dimension4, 0U, input_data.GetDim4())
 			(DimensionChannel, 0U, input_data.GetCoilCount());
-		CSmartPtr<CComplexFloatData> outdata(new CComplexFloatData(
+		SmartPtr<CComplexFloatData> outdata(new CComplexFloatData(
 			slice_channel_data, dimensions, nullptr, true));
 		Feed(L"Output", outdata.get());
 	}

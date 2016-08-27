@@ -1,13 +1,15 @@
+#pragma once
+
 #ifndef ProcessorAgent_h__20160813
 #define ProcessorAgent_h__20160813
 
-
-#include "Interface\YapInterfaces.h"
+#include "Interface/IProcessor.h"
+#include "Interface/IMemory.h"
 
 namespace Yap
 {
 	class CProcessorAgent :
-		public IProcessor
+		public IProcessor, public IDynamicObject
 	{
 	public:
 		CProcessorAgent(IProcessor * processor);
@@ -15,7 +17,7 @@ namespace Yap
 
 		virtual IProcessor * Clone() override;
 
-		virtual void Release() override;
+		virtual void Delete() override;
 
 		virtual const wchar_t * GetClassId() override;
 

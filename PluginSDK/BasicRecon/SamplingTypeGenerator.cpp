@@ -94,7 +94,7 @@ bool Yap::CSamplingTypeGenerator::Input(const wchar_t * name, IData * data)
 		CDimensionsImp dimensions;
 		dimensions(DimensionReadout, 0U, 1)
 			(DimensionPhaseEncoding, 0U, row_count);
-		CSmartPtr<CCharData> outdata(new CCharData(sampling_type, dimensions, nullptr, true));
+		SmartPtr<CCharData> outdata(new CCharData(sampling_type, dimensions, nullptr, true));
 
 		Feed(L"Output", outdata.get());
 	}
@@ -139,7 +139,7 @@ bool Yap::CSamplingTypeGenerator::Input(const wchar_t * name, IData * data)
 		CDimensionsImp dimensions;
 		dimensions(DimensionReadout, 0U, 1)
 			(DimensionPhaseEncoding, 0U, height);
-		CSmartPtr<CCharData> outdata(new CCharData(sampling_type, dimensions, nullptr, true));
+		SmartPtr<CCharData> outdata(new CCharData(sampling_type, dimensions, nullptr, true));
 
 		Feed(L"Output", outdata.get());
 	}

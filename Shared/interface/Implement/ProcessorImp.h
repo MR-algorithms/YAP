@@ -2,16 +2,20 @@
 #define ProcessorImp_h__20160813
 
 #pragma once
-#include "Interface/YapInterfaces.h"
+#include "Interface/IProcessor.h"
 
 #include <map>
 #include <string>
 #include <memory>
 #include "Utilities/macros.h"
 #include "interface/Implement/DataImp.h"
+#include "Interface/IProperties.h"
+#include "Interface/IMemory.h"
 
 namespace Yap
 {
+	class CPropertyEnumeratorImp;
+
 	class CPort : public IPort
 	{
 	public:
@@ -50,98 +54,6 @@ namespace Yap
 	};
 
 
-	class CProperty : public IProperty
-	{
-	public:
-		CProperty(PropertyType type, const wchar_t * name, const wchar_t * description);
-		virtual const wchar_t * GetName() override;
-
-		virtual PropertyType GetType() override;
-
-		virtual const wchar_t * GetDescription() override;
-	private:
-		std::wstring _name;
-		std::wstring _description;
-		PropertyType _type;
-	};
-
-	class CFloatProperty : public CProperty, public IFloatValue
-	{
-	public:
-		CFloatProperty(const wchar_t * name, const wchar_t * description, double value = 0.0)
-			: CProperty(PropertyFloat, name, description), _value(value) {}
-		virtual double GetValue() { return _value; }
-		virtual void SetValue(double value) { _value = value; }
-
-	protected:
-		double _value;
-	};
-
-	class CIntProperty : public CProperty, public IIntValue
-	{
-	public:
-		CIntProperty(const wchar_t * name, const wchar_t * description, int value = 0)
-			: CProperty(PropertyInt, name, description), _value(value) {}
-		virtual int GetValue() { return _value; }
-		virtual void SetValue(int value) { _value = value; }
-
-	protected:
-		int _value;
-	};
-
-	class CBoolProperty : public CProperty, public IBoolValue
-	{
-	public:
-		CBoolProperty(const wchar_t * name, const wchar_t * description, bool value = 0)
-			: CProperty(PropertyBool, name, description), _value(value) {}
-		virtual bool GetValue() { return _value; }
-		virtual void SetValue(bool value) { _value = value; }
-
-	protected:
-		bool _value;
-	};
-
-	class CStringProperty : public CProperty, public IStringValue
-	{
-	public:
-		CStringProperty(const wchar_t * name, const wchar_t * description, const wchar_t * value = L"")
-			: CProperty(PropertyString, name, description), _value(value) {}
-		virtual const wchar_t * GetValue() { return _value.c_str(); }
-		virtual void SetValue(const wchar_t * value) { _value = value; }
-
-	protected:
-		std::wstring _value;
-	};
-
-	class CPropertyEnumeratorImp : public IPropertyEnumerator
-	{
-	public:
-		virtual IProperty * GetFirst() override;
-		virtual IProperty * GetNext() override;
-		virtual IProperty * GetProperty(const wchar_t * name) override;
-
-		bool AddProperty(IProperty * property) {
-			if (property == nullptr)
-				return false;
-
-			if (_properties.find(property->GetName()) != _properties.end())
-				return false;
-
-			_properties.insert(std::make_pair(property->GetName(), property));
-			return true;
-		}
-
-		bool GetBool(const wchar_t * id) const;
-//		double GetFloat(const wchar_t * id) const;
-//		const wchar_t * GetString(const wchar_t * id) const;
-//		const GetInt(const wchar_t * id) const;
-
-	protected:
-		std::map<std::wstring, IProperty*> _properties;
-		std::map<std::wstring, IProperty*>::iterator _current;
-	};
-
-
 	struct PropertyException
 	{
 		enum Type
@@ -155,14 +67,14 @@ namespace Yap
 	};
 
 	class CProcessorImp :
-		public IProcessor
+		public IProcessor, public IDynamicObject
 	{
 	public:
 		explicit CProcessorImp(const wchar_t * class_id);
 		CProcessorImp(const CProcessorImp& rhs);
 
 		/// 释放当前Processor的资源。
-		virtual void Release() override;
+		virtual void Delete() override;
 
 		virtual IPortEnumerator * GetInputPortEnumerator() override;
 		virtual IPortEnumerator * GetOutputPortEnumerator() override;
@@ -203,7 +115,8 @@ namespace Yap
 
 		CPortEnumerator _input_ports;
 		CPortEnumerator _output_ports;
-		CPropertyEnumeratorImp _properties;
+
+		std::shared_ptr<CPropertyEnumeratorImp> _properties;
 
 		std::multimap<std::wstring, Anchor> _links;
 		std::map<std::wstring, std::wstring> _property_links;

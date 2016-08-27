@@ -38,7 +38,7 @@ bool Yap::CDifference::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) == L"Reference")
 	{
-		_reference_data = CSmartPtr2<IData, IMemory>(data);
+		_reference_data = SmartPtr<IData>(data);
 	}
 	else if (wstring(port) == L"Input")
 	{
@@ -72,7 +72,7 @@ bool Yap::CDifference::Input(const wchar_t * port, IData * data)
 		//more data type?
 		if (data->GetDataType() == DataTypeFloat)
 		{
-			auto output_data = CSmartPtr<CFloatData>(new CFloatData(data->GetDimensions()));
+			auto output_data = SmartPtr<CFloatData>(new CFloatData(data->GetDimensions()));
 
 			Difference(reinterpret_cast<float*>(input_data.GetData()),
 				reinterpret_cast<float*>(reference_data.GetData()),
@@ -82,7 +82,7 @@ bool Yap::CDifference::Input(const wchar_t * port, IData * data)
 		}
 		else
 		{
-			auto output_data = CSmartPtr<CDoubleData>(new CDoubleData(data->GetDimensions()));
+			auto output_data = SmartPtr<CDoubleData>(new CDoubleData(data->GetDimensions()));
 
 			Difference(reinterpret_cast<double*>(input_data.GetData()),
 				reinterpret_cast<double*>(reference_data.GetData()),

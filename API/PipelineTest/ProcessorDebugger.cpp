@@ -3,8 +3,10 @@
 #include "ProcessorDebugger.h"
 
 #include <iostream>
-#include "Interface/YapInterfaces.h"
+
 #include "Interface/Implement/DataImp.h"
+#include "Interface/IProcessor.h"
+#include "Interface/IProperties.h"
 
 using namespace Yap;
 using namespace std;

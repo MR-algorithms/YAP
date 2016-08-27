@@ -4,9 +4,6 @@
 #pragma once
 #include "ProcessorManagerAgent.h"
 
-#include "Interface/YapInterfaces.h"
-#include "Interface/SmartPtr.h"
-
 #include <map>
 #include <memory>
 

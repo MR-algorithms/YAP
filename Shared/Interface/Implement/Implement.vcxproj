@@ -157,6 +157,7 @@
     <ClInclude Include="DataImp.h" />
     <ClInclude Include="ProcessorImp.h" />
     <ClInclude Include="ProcessorManagerImp.h" />
+    <ClInclude Include="PropertyImp.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

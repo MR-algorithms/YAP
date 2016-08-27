@@ -1,8 +1,12 @@
+#ifndef IData_h__20160825
+#define IData_h__20160825
+
 #pragma once
 #ifndef OUT
 #define OUT
 #define IN
 #endif
+
 #include <complex>
 
 namespace Yap
@@ -38,19 +42,6 @@ namespace Yap
 	template <> struct type_id <std::complex<double>> { static const int type = DataTypeComplexFloat; };
 	template <> struct type_id <bool> { static const int type = DataTypeBool; };
 
-	struct IPort
-	{
-		virtual const wchar_t * GetName() = 0;
-		virtual unsigned int GetDimensions() = 0;
-		virtual int GetDataType() = 0;
-	};
-
-	struct IPortEnumerator
-	{
-		virtual IPort * GetFirstPort() = 0;
-		virtual IPort * GetNextPort() = 0;
-		virtual IPort * GetPort(const wchar_t * name) = 0;
-	};
 
 	/// 定义了磁共振图像数据中的常用的维度。
 	/**
@@ -78,53 +69,7 @@ namespace Yap
 		DimensionInvalid = 100,
 	};
 
-	enum PropertyType
-	{
-		PropertyBool,
-		PropertyInt,
-		PropertyFloat,
-		PropertyString,
-	};
-
 	const unsigned int YAP_ANY_DIMENSION = 0xffffffff;
-
-	struct IProperty
-	{
-		virtual const wchar_t * GetName() = 0;
-		virtual PropertyType GetType() = 0;
-		virtual const wchar_t * GetDescription() = 0;
-	};
-
-	struct IPropertyEnumerator
-	{
-		virtual IProperty * GetFirst() = 0;
-		virtual IProperty * GetNext() = 0;
-		virtual IProperty * GetProperty(const wchar_t * name) = 0;
-	};
-
-	struct IFloatValue
-	{
-		virtual double GetValue() = 0;
-		virtual void SetValue(double value) = 0;
-	};
-
-	struct IBoolValue
-	{
-		virtual bool GetValue() = 0;
-		virtual void SetValue(bool value) = 0;
-	};
-
-	struct IIntValue
-	{
-		virtual int GetValue() = 0;
-		virtual void SetValue(int value) = 0;
-	};
-
-	struct IStringValue
-	{
-		virtual const wchar_t * GetValue() = 0;
-		virtual void SetValue(const wchar_t * value) = 0;
-	};
 
 	struct Dimension
 	{
@@ -142,15 +87,8 @@ namespace Yap
 			OUT unsigned int& start_index, OUT unsigned int& length) = 0;
 	};
 
-	struct IMemory
+	struct IGeometry
 	{
-		virtual void Lock() = 0;
-		virtual void Release() = 0;
-	};
-
-	struct ILocalization
-	{
-		virtual ILocalization* Clone() = 0;
 		virtual void GetSpacing(double& x, double& y, double& z) = 0;
 		virtual void GetRowVector(double& x, double& y, double& z) = 0;
 		virtual void GetColumnVector(double& x, double& y, double& z) = 0;
@@ -179,43 +117,5 @@ namespace Yap
 		virtual int GetDataType() = 0;			///< 返回数据元素的类型
 		virtual IDimensions * GetDimensions() = 0;	///< 获得数据的维度信息。
 	};
-
-	struct IProcessor
-	{
-		/// 复制当前Processor的实例。
-		virtual IProcessor * Clone() = 0;
-		/// 释放当前Processor的资源。
-		virtual void Release() = 0;
-
-		virtual const wchar_t * GetClassId() = 0;
-		virtual void SetClassId(const wchar_t * id) = 0;
-		virtual const wchar_t * GetInstanceId() = 0;
-		virtual void SetInstanceId(const wchar_t * instance_id) = 0;
-
-		virtual IPortEnumerator * GetInputPortEnumerator() = 0;
-		virtual IPortEnumerator * GetOutputPortEnumerator() = 0;
-
-		/// 获得属性访问接口。
-		virtual IPropertyEnumerator * GetProperties() = 0;
-
-		/// 将指定名称的属性与参数空间的参数相关联。
-		virtual bool LinkProperty(const wchar_t * property_id, const wchar_t * param_id) = 0;
-
-		/// 接口用户调用这个函数来通知模块利用参数空间中的参数更新属性。
-		virtual bool UpdateProperties(IPropertyEnumerator * params) = 0;
-
-		/// 将指定处理模块的输入端口链接到当前模块指定的输出端口上。
-		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) = 0;
-
-		/// 向当前处理模块馈送数据。
-		virtual bool Input(const wchar_t * name, IData * data) = 0;
-	};
-
-	struct IProcessorManager
-	{
-		virtual IProcessor * GetFirstProcessor() = 0;
-		virtual IProcessor * GetNextProcessor() = 0;
-		virtual IProcessor * GetProcessor(const wchar_t * name) = 0;
-		virtual void Release() = 0;
-	};
 }
+#endif // IData_h__

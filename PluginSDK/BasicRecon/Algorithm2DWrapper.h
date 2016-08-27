@@ -5,7 +5,6 @@
 
 
 #include "Interface/Implement/ProcessorImp.h"
-#include "Interface/YapInterfaces.h"
 #include <complex>
 
 namespace Yap

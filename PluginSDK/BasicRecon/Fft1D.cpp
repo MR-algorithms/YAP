@@ -1,6 +1,5 @@
 #include "Fft1D.h"
 
-#include "Interface/SmartPtr.h"
 #include "Interface/Client/DataHelper.h"
 #include "Interface/Implement/DataImp.h"
 
@@ -58,7 +57,7 @@ bool CFft1D::Input(const wchar_t * port, IData * data)
 	{
 		Yap::CDimensionsImp dims;
 		dims(DimensionReadout, 0, size);
-		auto output = CSmartPtr<CComplexDoubleData>(new CComplexDoubleData(&dims));
+		auto output = SmartPtr<CComplexDoubleData>(new CComplexDoubleData(&dims));
 		Fft1D(reinterpret_cast<complex<double>*>(input_data.GetData()),
 			reinterpret_cast<complex<double>*>(output->GetData()),
 			size, GetBool(L"Inverse"));

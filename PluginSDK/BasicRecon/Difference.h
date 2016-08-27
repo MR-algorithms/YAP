@@ -4,7 +4,6 @@
 #define Difference_h__20160816
 
 #include "Interface/Implement/ProcessorImp.h"
-#include "Interface/SmartPtr.h"
 
 namespace Yap 
 {
@@ -18,7 +17,7 @@ namespace Yap
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
 	protected:
-		CSmartPtr2<IData, IMemory> _reference_data;
+		SmartPtr<IData> _reference_data;
 	};
 }
 

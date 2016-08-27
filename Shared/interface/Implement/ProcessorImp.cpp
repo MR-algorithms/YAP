@@ -1,18 +1,20 @@
 #include "ProcessorImp.h"
 
-#include "Interface/YapInterfaces.h"
-
 #include <iostream>
 #include <algorithm>
 #include <assert.h>
+#include "PropertyImp.h"
+#include "Interface/IMemory.h"
 
 using namespace std;
 using namespace Yap;
 
 CProcessorImp::CProcessorImp(const wchar_t * class_id) :
 	_system_variables(nullptr),
-	_class_id(class_id)
+	_class_id(class_id),
+	_properties(new CPropertyEnumeratorImp, DeleteYapDynamicObject<IPropertyEnumerator>)
 {
+
 }
 
 Yap::CProcessorImp::CProcessorImp(const CProcessorImp& rhs) :
@@ -27,7 +29,7 @@ Yap::CProcessorImp::CProcessorImp(const CProcessorImp& rhs) :
 	_property_links.clear();
 }
 
-void Yap::CProcessorImp::Release()
+void Yap::CProcessorImp::Delete()
 {
 	delete this;
 }
@@ -100,13 +102,13 @@ bool CProcessorImp::AddProperty(PropertyType type,
 		switch (type)
 		{
 		case PropertyBool:
-			return _properties.AddProperty(new CBoolProperty(name, description));
+			return _properties->AddProperty(new CBoolProperty(name, description));
 		case PropertyInt:
-			return _properties.AddProperty(new CIntProperty(name, description));
+			return _properties->AddProperty(new CIntProperty(name, description));
 		case PropertyFloat:
-			return _properties.AddProperty(new CFloatProperty(name, description));
+			return _properties->AddProperty(new CFloatProperty(name, description));
 		case PropertyString:
-			return _properties.AddProperty(new CStringProperty(name, description));
+			return _properties->AddProperty(new CStringProperty(name, description));
 		default:
 			return false;
 		}
@@ -119,14 +121,14 @@ bool CProcessorImp::AddProperty(PropertyType type,
 
 IPropertyEnumerator * CProcessorImp::GetProperties()
 {
-	return &_properties;
+	return _properties.get();
 }
 
 void CProcessorImp::SetInt(const wchar_t * name, int value)
 {
 	assert(name != nullptr && name[0] != 0);
 
-	auto property = _properties.GetProperty(name);
+	auto property = _properties->GetProperty(name);
 	if (property == nullptr)
 		throw PropertyException(name, PropertyException::PropertyNotFound);
 
@@ -142,7 +144,7 @@ int CProcessorImp::GetInt(const wchar_t * name)
 {
 	assert(name != nullptr && name[0] != 0);
 
-	auto property = _properties.GetProperty(name);
+	auto property = _properties->GetProperty(name);
 	if (property == nullptr)
 		throw PropertyException(name, PropertyException::PropertyNotFound);
 
@@ -159,7 +161,7 @@ void CProcessorImp::SetFloat(const wchar_t * name, double value)
 {
 	assert(name != nullptr && name[0] != 0);
 
-	auto property = _properties.GetProperty(name);
+	auto property = _properties->GetProperty(name);
 	if (property == nullptr)
 		throw PropertyException(name, PropertyException::PropertyNotFound);
 
@@ -175,7 +177,7 @@ double CProcessorImp::GetFloat(const wchar_t * name)
 {
 	assert(name != nullptr && name[0] != 0);
 
-	auto property = _properties.GetProperty(name);
+	auto property = _properties->GetProperty(name);
 	if (property == nullptr)
 		throw PropertyException(name, PropertyException::PropertyNotFound);
 
@@ -192,7 +194,7 @@ void CProcessorImp::SetBool(const wchar_t * name, bool value)
 {
 	assert(name != nullptr && name[0] != 0);
 
-	auto property = _properties.GetProperty(name);
+	auto property = _properties->GetProperty(name);
 	if (property == nullptr)
 		throw PropertyException(name, PropertyException::PropertyNotFound);
 
@@ -209,7 +211,7 @@ void CProcessorImp::SetString(const wchar_t * name, const wchar_t * value)
 {
 	assert(name != nullptr && name[0] != 0);
 
-	auto property = _properties.GetProperty(name);
+	auto property = _properties->GetProperty(name);
 	if (property == nullptr)
 		throw PropertyException(name, PropertyException::PropertyNotFound);
 
@@ -226,7 +228,7 @@ const wchar_t * CProcessorImp::GetString(const wchar_t * name)
 {
 	assert(name != nullptr && name[0] != 0);
 
-	auto property = _properties.GetProperty(name);
+	auto property = _properties->GetProperty(name);
 	if (property == nullptr)
 		throw PropertyException(name, PropertyException::PropertyNotFound);
 
@@ -260,7 +262,7 @@ void Yap::CProcessorImp::SetInstanceId(const wchar_t * instance_id)
 
 bool Yap::CProcessorImp::LinkProperty(const wchar_t * property_id, const wchar_t * param_id)
 {
-	if (_properties.GetProperty(property_id) != nullptr)
+	if (_properties->GetProperty(property_id) != nullptr)
 	{
 		return false;
 	}
@@ -274,7 +276,7 @@ bool Yap::CProcessorImp::UpdateProperties(IPropertyEnumerator * params)
 {
 	for (auto link : _property_links)
 	{
-		auto property = _properties.GetProperty(link.first.c_str());
+		auto property = _properties->GetProperty(link.first.c_str());
 		if (property == nullptr)
 			return false;
 
@@ -428,6 +430,18 @@ IProperty * CPropertyEnumeratorImp::GetProperty(const wchar_t * name)
 	return (iter != _properties.end()) ? iter->second : nullptr;
 }
 
+bool Yap::CPropertyEnumeratorImp::AddProperty(IProperty * property) 
+{
+	if (property == nullptr)
+		return false;
+
+	if (_properties.find(property->GetName()) != _properties.end())
+		return false;
+
+	_properties.insert(std::make_pair(property->GetName(), property));
+	return true;
+}
+
 bool Yap::CPropertyEnumeratorImp::GetBool(const wchar_t * id) const
 {
 	assert(id != nullptr && id[0] != 0);
@@ -446,11 +460,16 @@ bool Yap::CPropertyEnumeratorImp::GetBool(const wchar_t * id) const
 	return bool_value->GetValue();
 }
 
+void Yap::CPropertyEnumeratorImp::Delete()
+{
+	delete this;
+}
+
 bool CProcessorImp::GetBool(const wchar_t * name)
 {
 	assert(name != nullptr && name[0] != 0);
 
-	auto property = _properties.GetProperty(name);
+	auto property = _properties->GetProperty(name);
 	if (property == nullptr)
 		throw PropertyException(name, PropertyException::PropertyNotFound);
 

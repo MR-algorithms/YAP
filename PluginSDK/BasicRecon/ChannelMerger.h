@@ -5,7 +5,6 @@
 
 #include "Interface/Implement/processorimp.h"
 #include "Interface/Client/DataHelper.h"
-#include "Interface/SmartPtr.h"
 
 namespace Yap
 {
@@ -21,7 +20,7 @@ namespace Yap
 	protected:
 		struct MergeBuffer
 		{
-			CSmartPtr<CFloatData> buffer;
+			SmartPtr<CFloatData> buffer;
 			unsigned int count;
 
 			MergeBuffer() : count(0){}

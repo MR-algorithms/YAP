@@ -1,7 +1,6 @@
 #include "Grappa.h"
 #include <string>
 
-#include "Interface\SmartPtr.h"
 #include "Interface/Client/DataHelper.h"
 #include "Interface/Implement/DataImp.h"
 

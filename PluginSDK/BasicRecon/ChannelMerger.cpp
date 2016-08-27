@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "ChannelMerger.h"
 #include "Interface/Client/DataHelper.h"
-#include "Interface\YapInterfaces.h"
 #include <utility>
 
 using namespace Yap;
@@ -68,7 +67,7 @@ bool CChannelMerger::Input(const wchar_t * name, IData * data)
 		}
 
 		MergeBuffer merge_buffer;
-		merge_buffer.buffer = CSmartPtr<CFloatData>(new CFloatData(&merge_dimensions));
+		merge_buffer.buffer = SmartPtr<CFloatData>(new CFloatData(&merge_dimensions));
 
 		// merge_buffer.buffer->SetLocalization(CLocalization(*data->GetLocalization()));
 		memcpy(merge_buffer.buffer->GetData(), data->GetData(), helper.GetBlockSize(DimensionChannel) * sizeof(float));

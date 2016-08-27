@@ -13,7 +13,11 @@ CProcessorManagerAgent::CProcessorManagerAgent() :
 
 CProcessorManagerAgent::~CProcessorManagerAgent()
 {
-	Release();
+	_manager.reset();
+	if (_module)
+	{
+		::FreeModule(_module);
+	}
 }
 
 bool Yap::CProcessorManagerAgent::Load(const wchar_t * plugin_path)
@@ -39,8 +43,8 @@ bool Yap::CProcessorManagerAgent::Load(const wchar_t * plugin_path)
 		return false;
 	}
 
-	_manager = create_func();
-	if (_manager == nullptr)
+	_manager = SmartPtr<IProcessorManager>(create_func());
+	if (!_manager)
 	{
 		::FreeLibrary(_module);
 		_module = 0;
@@ -53,26 +57,17 @@ bool Yap::CProcessorManagerAgent::Load(const wchar_t * plugin_path)
 Yap::IProcessor * Yap::CProcessorManagerAgent::GetFirstProcessor()
 {
 	assert(_manager);
-	return _manager != nullptr ? _manager->GetFirstProcessor() : nullptr;
+	return _manager ? _manager->GetFirstProcessor() : nullptr;
 }
 
 Yap::IProcessor * Yap::CProcessorManagerAgent::GetNextProcessor()
 {
 	assert(_manager);
-	return _manager != nullptr ? _manager->GetNextProcessor() : nullptr;
+	return _manager ? _manager->GetNextProcessor() : nullptr;
 }
 
 Yap::IProcessor * Yap::CProcessorManagerAgent::GetProcessor(const wchar_t * name)
 {
 	assert(_manager);
-	return _manager != nullptr ? _manager->GetProcessor(name) : nullptr;
-}
-
-void Yap::CProcessorManagerAgent::Release()
-{
-	if (_manager != nullptr)
-	{
-		_manager->Release();
-	}
-	_manager = nullptr;
+	return _manager ? _manager->GetProcessor(name) : nullptr;
 }

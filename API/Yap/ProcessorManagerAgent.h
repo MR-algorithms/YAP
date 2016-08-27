@@ -1,8 +1,11 @@
+#pragma once
+
 #ifndef ProcessorManagerAgent_h__20160813
 #define ProcessorManagerAgent_h__20160813
 
-#pragma once
-#include "Interface\YapInterfaces.h"
+#include "Interface/IProcessor.h"
+#include "Interface/IMemory.h"
+
 #include <wtypes.h>
 
 namespace Yap
@@ -20,13 +23,12 @@ namespace Yap
 		virtual IProcessor * GetNextProcessor() override;
 
 		virtual IProcessor * GetProcessor(const wchar_t * name) override;
-
-		virtual void Release() override;
 		~CProcessorManagerAgent();
 
 	protected:
+
 		HINSTANCE _module;
-		IProcessorManager * _manager;
+		SmartPtr<IProcessorManager> _manager;
 	};
 
 }

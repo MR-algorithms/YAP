@@ -44,11 +44,11 @@ bool CProcessorManagerImp::AddProcessor(IProcessor * processor)
 	return true;
 }
 
-void Yap::CProcessorManagerImp::Release()
+void Yap::CProcessorManagerImp::Delete()
 {
 	for (auto item : _processors)
 	{
-		item.second->Release();
+		item.second->Delete();
 	}
 	_processors.clear();
 	_current = _processors.begin();

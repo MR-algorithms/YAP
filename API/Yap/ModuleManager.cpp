@@ -26,11 +26,6 @@ CModuleManager::CModuleManager()
 
 CModuleManager::~CModuleManager()
 {
-	for (auto module : _modules)
-	{
-		module.second->Release();
-	}
-	_modules.clear();
 }
 
 Yap::IProcessor * Yap::CModuleManager::GetFirstProcessor()

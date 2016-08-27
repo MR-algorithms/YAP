@@ -143,8 +143,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="YapInterfaces.h" />
-    <ClInclude Include="SmartPtr.h" />
+    <ClInclude Include="IProcessor.h" />
+    <ClInclude Include="IData.h" />
+    <ClInclude Include="IMemory.h" />
+    <ClInclude Include="IProperties.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

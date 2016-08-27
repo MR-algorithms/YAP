@@ -4,7 +4,6 @@
 #include <sstream>
 #include <iostream>
 #include <boost\assign\list_of.hpp>
-#include "Interface/SmartPtr.h"
 #include <iomanip>
 #include <fstream>
 
@@ -136,7 +135,7 @@ bool CCmrDataReader::ReadRawData(unsigned int channel_index)
 			  (Dimension4, 0U, dim4)
 			  (DimensionChannel, channel_index, 1);
 
-	CSmartPtr<CComplexFloatData> data (new CComplexFloatData(
+	SmartPtr<CComplexFloatData> data (new CComplexFloatData(
 		reinterpret_cast<complex<float>*>(raw_data_buffer), dimensions, nullptr, true));
 
 	Feed(L"Output", data.get());

@@ -1,7 +1,8 @@
+#pragma once
+
 #ifndef PipelineConstructor_h__20160813
 #define PipelineConstructor_h__20160813
 
-#pragma once
 #include <memory>
 #include <string>
 

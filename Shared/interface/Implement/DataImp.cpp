@@ -36,7 +36,7 @@ bool Yap::CDimensionsImp::GetDimensionInfo(unsigned int dimension_index,
 	return true;
 }
 
-IDimensions * Yap::CDimensionsImp::Clone()
+IClonable * Yap::CDimensionsImp::Clone()
 {
 	try
 	{
@@ -48,7 +48,7 @@ IDimensions * Yap::CDimensionsImp::Clone()
 	}
 }
 
-void Yap::CDimensionsImp::Release()
+void Yap::CDimensionsImp::Delete()
 {
 	throw std::logic_error("The method or operation is not implemented.");
 }

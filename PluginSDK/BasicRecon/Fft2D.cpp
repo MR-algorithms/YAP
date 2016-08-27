@@ -1,8 +1,9 @@
 #include "Fft2D.h"
-#include <string>
-#include "Interface/SmartPtr.h"
+
 #include "Interface/Client/DataHelper.h"
 #include "Interface/Implement/DataImp.h"
+
+#include <string>
 
 using namespace std;
 using namespace Yap;
@@ -56,7 +57,7 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 		Yap::CDimensionsImp dims;
 		dims(DimensionReadout, 0, width)
 			(DimensionPhaseEncoding, 0, height);
-		auto output = CSmartPtr<CComplexDoubleData>(new CComplexDoubleData(&dims));
+		auto output = SmartPtr<CComplexDoubleData>(new CComplexDoubleData(&dims));
 
 		Fft2D(reinterpret_cast<complex<float>*>(input_data.GetData()),
 			reinterpret_cast<complex<float>*>(output->GetData()),

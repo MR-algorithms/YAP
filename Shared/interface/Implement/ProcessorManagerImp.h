@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include "Interface/YapInterfaces.h"
+#include "Interface/IProcessor.h"
 #include <map>
 
 namespace Yap
 {
 	class CProcessorManagerImp :
-		public IProcessorManager
+		public IProcessorManager, public IDynamicObject
 	{
 	public:
 		CProcessorManagerImp();
@@ -18,7 +18,7 @@ namespace Yap
 		virtual IProcessor * GetFirstProcessor() override;
 		virtual IProcessor * GetNextProcessor() override;
 		virtual IProcessor * GetProcessor(const wchar_t * name) override;
-		virtual void Release() override;
+		virtual void Delete() override;
 
 		bool AddProcessor(IProcessor * processor);
 

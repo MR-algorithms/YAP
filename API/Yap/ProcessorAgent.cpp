@@ -1,5 +1,6 @@
 #include "ProcessorAgent.h"
 #include <cassert>
+#include "Interface\IProperties.h"
 
 using namespace Yap;
 
@@ -19,11 +20,11 @@ Yap::IProcessor * Yap::CProcessorAgent::Clone()
 	return _processor->Clone();
 }
 
-void Yap::CProcessorAgent::Release()
+void Yap::CProcessorAgent::Delete()
 {
 	if (_processor != nullptr)
 	{
-		_processor->Release();
+		_processor->Delete();
 		_processor = nullptr;
 	}
 }

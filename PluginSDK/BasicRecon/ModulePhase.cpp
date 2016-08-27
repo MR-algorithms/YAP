@@ -1,7 +1,6 @@
 #include "ModulePhase.h"
 
 #include "Interface/Client/DataHelper.h"
-#include "Interface/SmartPtr.h"
 
 #include <math.h>
 #include <complex>
@@ -77,7 +76,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 	{
 		if (data->GetDataType() == DataTypeComplexDouble)
 		{
-			auto module = CSmartPtr<CDoubleData>(new CDoubleData(&dims));
+			auto module = SmartPtr<CDoubleData>(new CDoubleData(&dims));
 
 			GetModule(reinterpret_cast<complex<double>*>(input_data.GetData()),
 				reinterpret_cast<double*>(module->GetData()),
@@ -88,7 +87,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 		
 		else
 		{
-			auto module = CSmartPtr<CFloatData>(new CFloatData(&dims));
+			auto module = SmartPtr<CFloatData>(new CFloatData(&dims));
 
 			GetModule(reinterpret_cast<complex<float>*>(input_data.GetData()),
 				reinterpret_cast<float*>(module->GetData()),
@@ -103,7 +102,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 	{
 		if (data->GetDataType() == DataTypeComplexDouble)
 		{
-			auto phase = CSmartPtr<CDoubleData>(new CDoubleData(&dims));
+			auto phase = SmartPtr<CDoubleData>(new CDoubleData(&dims));
 
 			GetPhase(reinterpret_cast<complex<double>*>(input_data.GetData()),
 				reinterpret_cast<double*>(phase->GetData()),
@@ -113,7 +112,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 		}
 		else
 		{
-			auto phase = CSmartPtr<CFloatData>(new CFloatData(&dims));
+			auto phase = SmartPtr<CFloatData>(new CFloatData(&dims));
 
 			GetPhase(reinterpret_cast<complex<float>*>(input_data.GetData()),
 				reinterpret_cast<float*>(phase->GetData()),

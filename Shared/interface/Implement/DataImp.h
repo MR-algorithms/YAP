@@ -1,22 +1,25 @@
 #pragma once
 
-#include "Interface\YapInterfaces.h"
+#include "Interface\IData.h"
 #include <complex>
 #include <vector>
 // #include "Localization.h"
-#include "interface\SmartPtr.h"
+#include "interface\IMemory.h"
 #include <assert.h>
 
 namespace Yap
 {
 
-	class CDimensionsImp : public IDimensions
+	class CDimensionsImp : 
+		public IDimensions, 
+		public IDynamicObject, 
+		public IClonable
 	{
 	public:
 		CDimensionsImp();
 		explicit CDimensionsImp(unsigned int dimension_count);
 		CDimensionsImp(const CDimensionsImp& source);
-		CDimensionsImp(IDimensions * source);
+		explicit CDimensionsImp(IDimensions * source);
 
 		bool ModifyDimension(DimensionType type, unsigned int length, unsigned int start_index = 0);
 		unsigned int GetLength(unsigned int dimension_index);
@@ -26,31 +29,33 @@ namespace Yap
 		virtual bool SetDimensionInfo(unsigned int dimension_index, DimensionType dimension_type, 
 			unsigned int start_index, unsigned int length);
 
-		virtual IDimensions * Clone();
-		virtual void Release();
+		virtual IClonable * Clone() override;
+		virtual void Delete() override;
 		CDimensionsImp & operator() (DimensionType type, unsigned int index, unsigned int length);
 	private:
 		std::vector<Dimension> _dimension_info;
 	};
 
 	template<typename T>
-	class CDataImp : public IData, public IMemory
+	class CDataImp : 
+		public IData, 
+		public ISharedObject
 	{
 	public:
-		CDataImp(T* data, const CDimensionsImp& dimensions, IMemory * parent = nullptr, bool own_data = false) :
+		CDataImp(T* data, const CDimensionsImp& dimensions, ISharedObject * parent = nullptr, bool own_data = false) :
 			_data(data), _own_memory(own_data), _use_count(0), _parent(parent)
 		{
 			assert(data != nullptr);
 			_dimensions = dimensions;
 		}
 		
-		CDataImp(T* data, IDimensions * dimensions, IMemory * parent = nullptr, bool own_data = false) : 
+		CDataImp(T* data, IDimensions * dimensions, ISharedObject * parent = nullptr, bool own_data = false) : 
 			_data(data), _own_memory(own_data), _dimensions(dimensions), _use_count(0), _parent(parent)
 		{
 			assert(data != nullptr);
 		}
 
-		CDataImp(IDimensions * dimensions) : _own_memory(true), _dimensions(dimensions), _use_count(0)
+		explicit CDataImp(IDimensions * dimensions) : _own_memory(true), _dimensions(dimensions), _use_count(0)
 		{
 			unsigned int total_size = 1;
 
@@ -61,27 +66,6 @@ namespace Yap
 
 			_data = new T[total_size];
 		}
-
-
-// 		void SetLocalization(CLocalization& localization)
-// 		{
-// 			_localization = localization;
-// 		}
-// 
-// 		void SetSliceLocalization(IParams* param, unsigned int image_index) // index为image_index, 初步设计
-// 		{
-// 			_localization = C2dLocalization(param, image_index);
-// 		}
-
-// 		void SetSlabLocalization(IParams* param, unsigned int slab_index)
-// 		{
-// 			_localization = C3dLocalization(param, slab_index);
-// 		}
-// 
-// 		virtual ILocalization * GetLocalization()
-// 		{
-// 			return &_localization;
-// 		}
 
 		virtual IDimensions * GetDimensions() override
 		{
@@ -104,17 +88,19 @@ namespace Yap
 
 		virtual void Release()
 		{
-			assert(_use_count > 0);
-			--_use_count;
-
 			if (_parent)
 			{
 				_parent->Release();
 			}
+			assert(_use_count > 0 && "Logic error. Forget to Lock()?");
 
-			if (_use_count == 0)
+			if (_use_count == 0 || --_use_count == 0)
 			{
-				delete this;
+
+				if (_use_count == 0)
+				{
+					delete this;
+				}
 			}
 		}
 
@@ -138,7 +124,7 @@ namespace Yap
 
 		unsigned int _use_count;
 		bool _own_memory;
-		CSmartPtr<IMemory> _parent;
+		SmartPtr<ISharedObject> _parent;
 	};
 
 	typedef CDataImp<double> CDoubleData;
