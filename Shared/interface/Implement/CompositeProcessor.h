@@ -30,7 +30,7 @@ namespace Yap
 		bool AssignOutPort(const wchar_t * port, const wchar_t * inner_processor, const wchar_t * inner_port);
 
 		bool AddProcessor(IProcessor * processor);
-		IProcessor * GetProcessor(const wchar_t * instance_id);
+		IProcessor * Find(const wchar_t * instance_id);
 	protected:
 		std::map<std::wstring, IProcessor *> _processors;
 		std::map<std::wstring, Anchor> _out_ports;

@@ -37,7 +37,7 @@ bool Yap::CDifference::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) == L"Reference")
 	{
-		_reference_data = YapSharedObject(data);
+		_reference_data = YapShared(data);
 	}
 	else if (wstring(port) == L"Input")
 	{
@@ -71,7 +71,7 @@ bool Yap::CDifference::Input(const wchar_t * port, IData * data)
 		//more data type?
 		if (data->GetDataType() == DataTypeFloat)
 		{
-			auto output_data = YapSharedObject(new CFloatData(data->GetDimensions()));
+			auto output_data = YapShared(new CFloatData(data->GetDimensions()));
 
 			Difference(reinterpret_cast<float*>(input_data.GetData()),
 				reinterpret_cast<float*>(reference_data.GetData()),
@@ -81,7 +81,7 @@ bool Yap::CDifference::Input(const wchar_t * port, IData * data)
 		}
 		else
 		{
-			auto output_data = YapSharedObject(new CDoubleData(data->GetDimensions()));
+			auto output_data = YapShared(new CDoubleData(data->GetDimensions()));
 
 			Difference(reinterpret_cast<double*>(input_data.GetData()),
 				reinterpret_cast<double*>(reference_data.GetData()),

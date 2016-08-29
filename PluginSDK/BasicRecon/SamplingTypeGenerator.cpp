@@ -95,7 +95,7 @@ bool Yap::CSamplingTypeGenerator::Input(const wchar_t * name, IData * data)
 		dimensions(DimensionReadout, 0U, 1)
 			(DimensionPhaseEncoding, 0U, row_count);
 
-		auto outdata = YapSharedObject(new CCharData(sampling_type, dimensions, nullptr, true));
+		auto outdata = YapShared(new CCharData(sampling_type, dimensions, nullptr, true));
 
 		Feed(L"Output", outdata.get());
 	}
@@ -141,7 +141,7 @@ bool Yap::CSamplingTypeGenerator::Input(const wchar_t * name, IData * data)
 		dimensions(DimensionReadout, 0U, 1)
 			(DimensionPhaseEncoding, 0U, height);
 
-		auto outdata = YapSharedObject(new CCharData(sampling_type, dimensions, nullptr, true));
+		auto outdata = YapShared(new CCharData(sampling_type, dimensions, nullptr, true));
 
 		Feed(L"Output", outdata.get());
 	}

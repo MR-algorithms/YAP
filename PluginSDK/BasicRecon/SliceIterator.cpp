@@ -40,7 +40,7 @@ IProcessor* CSliceIterator::Clone()
 bool CSliceIterator::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && data->GetData() != nullptr);
-	assert(GetInputPorts()->GetPort(name) != nullptr);
+	assert(GetInputPorts()->Find(name) != nullptr);
 
 	CDataHelper helper(data);
 
@@ -54,7 +54,7 @@ bool CSliceIterator::Input(const wchar_t * name, IData * data)
 		CDimensionsImpl slice_data_dimensions(data->GetDimensions());
 		slice_data_dimensions.ModifyDimension(DimensionSlice, 1, i);
 
-		auto output = YapSharedObject(	new CComplexFloatData (
+		auto output = YapShared(new CComplexFloatData (
 			reinterpret_cast<std::complex<float>*>(data->GetData()) + i * slice_block_size, slice_data_dimensions));
 		// output->SetSliceLocalization(GetParams(), i);
 

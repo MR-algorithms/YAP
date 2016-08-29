@@ -42,7 +42,7 @@ bool Yap::ModuleAgent::Load(const wchar_t * plugin_path)
 		return false;
 	}
 
-	_manager = YapDynamicObject(create_func());
+	_manager = YapDynamic(create_func());
 	if (!_manager)
 	{
 		::FreeLibrary(_module);
@@ -59,9 +59,9 @@ Yap::IProcessorIter * Yap::ModuleAgent::GetIterator()
 	return _manager ? _manager->GetIterator() : nullptr;
 }
 
-Yap::IProcessor * Yap::ModuleAgent::GetProcessor(const wchar_t * name)
+Yap::IProcessor * Yap::ModuleAgent::Find(const wchar_t * name)
 {
 	assert(_manager);
-	return _manager ? _manager->GetProcessor(name) : nullptr;
+	return _manager ? _manager->Find(name) : nullptr;
 }
 

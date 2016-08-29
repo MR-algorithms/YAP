@@ -69,7 +69,7 @@ bool CZeroFilling::Input(const wchar_t * port, IData * data)
 
 	if (data->GetDataType() == DataTypeComplexDouble)
 	{
-		auto output = YapSharedObject(new CComplexDoubleData(&dims));
+		auto output = YapShared(new CComplexDoubleData(&dims));
 		ZeroFilling(reinterpret_cast<complex<double>*>(output->GetData()), dest_width, dest_height,
 			reinterpret_cast<complex<double>*>(input_data.GetData()), input_data.GetWidth(), input_data.GetHeight());
 
@@ -78,7 +78,7 @@ bool CZeroFilling::Input(const wchar_t * port, IData * data)
 
 	else
 	{
-		auto output = YapSharedObject(new CComplexFloatData(&dims));
+		auto output = YapShared(new CComplexFloatData(&dims));
 		ZeroFilling(reinterpret_cast<complex<float>*>(output->GetData()), dest_width, dest_height,
 					reinterpret_cast<complex<float>*>(input_data.GetData()), input_data.GetWidth(), input_data.GetHeight());
 

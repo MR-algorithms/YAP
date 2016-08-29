@@ -6,11 +6,23 @@
 #include <string>
 #include <map>
 
-#include "Interface/IProperties.h"
+#include "Interface/IProperty.h"
 #include "Interface/IMemory.h"
 
 namespace Yap
 {
+	
+	struct PropertyException
+	{
+		enum Type
+		{
+			PropertyNotFound,
+			TypeNotMatch,
+		};
+		std::wstring property_name;
+		Type type;
+		PropertyException(const wchar_t * name, Type type_) : property_name(name), type(type_) {}
+	};
 
 	class CProperty : public IProperty
 	{
@@ -73,7 +85,8 @@ namespace Yap
 	};
 
 
-	class PropertyContainerImpl : public IPropertyContainer,
+	class PropertyContainerImpl : 
+		public IPropertyContainer,
 		public IDynamicObject
 	{
 		class PropertyIterImpl : public IIterator<IProperty>, public IDynamicObject
@@ -92,7 +105,7 @@ namespace Yap
 		};
 
 	public:
-		virtual IProperty * GetProperty(const wchar_t * name) override;
+		virtual IProperty * Find(const wchar_t * name) override;
 
 		bool AddProperty(IProperty * property);
 

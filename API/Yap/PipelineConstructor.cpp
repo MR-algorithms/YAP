@@ -111,14 +111,14 @@ bool Yap::CPipelineConstructor::Link(const wchar_t * source,
 	const wchar_t * dest, 
 	const wchar_t * dest_port)
 {
-	auto source_processor = _pipeline->GetProcessor(source);
+	auto source_processor = _pipeline->Find(source);
 	if (!source_processor)
 	{
 		wstring message(L"Source processor not found: ");
 		throw CConstructError(0, ConstructErrorProcessorNotFound, message + source);
 	}
 
-	auto dest_processor = _pipeline->GetProcessor(dest);
+	auto dest_processor = _pipeline->Find(dest);
 	if (!dest_processor)
 	{
 		wstring message(L"Destination processor not found.");
@@ -171,7 +171,7 @@ bool CPipelineConstructor::SetProperty(const wchar_t * processor_id,
 {
 	assert(_pipeline != nullptr);
 
-	CProcessorAgent processor(_pipeline->GetProcessor(processor_id));
+	CProcessorAgent processor(_pipeline->Find(processor_id));
 
 	if (!processor)
 	{
@@ -185,7 +185,7 @@ bool CPipelineConstructor::SetProperty(const wchar_t * processor_id,
 		throw CConstructError(0, ConstructErrorPropertiesNotFound, L"No property enumerator found in processor.");
 	}
 
-	auto property = properties->GetProperty(property_id);
+	auto property = properties->Find(property_id);
 	if (property == nullptr)
 	{
 		wostringstream output;
@@ -248,7 +248,7 @@ bool CPipelineConstructor::SetProperty(const wchar_t * processor_id,
 
 bool CPipelineConstructor::InstanceIdExists(const wchar_t * id)
 {
-	return _pipeline->GetProcessor(id) != nullptr;
+	return _pipeline->Find(id) != nullptr;
 }
 
 bool CPipelineConstructor::LinkProperty(const wchar_t * processor_id,
@@ -257,7 +257,7 @@ bool CPipelineConstructor::LinkProperty(const wchar_t * processor_id,
 {
 	assert(_pipeline);
 
-	auto processor = _pipeline->GetProcessor(processor_id);
+	auto processor = _pipeline->Find(processor_id);
 	if (!processor)
 	{
 		auto output = wstring(L"failed to find processor:") + processor_id;

@@ -63,7 +63,7 @@ bool Yap::CCompositeProcessor::AssignInPort(const wchar_t * port,
 	if (_in_ports.find(port) != _in_ports.end())
 		return false;
 
-	auto processor = GetProcessor(inner_processor);
+	auto processor = Find(inner_processor);
 	if (!processor)
 		return false;
 
@@ -78,7 +78,7 @@ bool Yap::CCompositeProcessor::AssignOutPort(const wchar_t * port,
 	if (_out_ports.find(port) == _out_ports.end())
 		return false;
 
-	auto processor = GetProcessor(inner_processor);
+	auto processor = Find(inner_processor);
 	if (!processor)
 		return false;
 
@@ -97,7 +97,7 @@ bool Yap::CCompositeProcessor::AddProcessor(IProcessor * processor)
 	return true;
 }
 
-IProcessor * Yap::CCompositeProcessor::GetProcessor(const wchar_t * instance_id)
+IProcessor * Yap::CCompositeProcessor::Find(const wchar_t * instance_id)
 {
 	auto iter = _processors.find(instance_id);
 	if (iter == _processors.end())

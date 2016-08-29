@@ -18,7 +18,7 @@ namespace Yap
 
 		bool Load(const wchar_t * plugin_path);
 
-		virtual IProcessor * GetProcessor(const wchar_t * name) override;
+		virtual IProcessor * Find(const wchar_t * name) override;
 		virtual IProcessorIter * GetIterator() override;
 
 		~ModuleAgent();

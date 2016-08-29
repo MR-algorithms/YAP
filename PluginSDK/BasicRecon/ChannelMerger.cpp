@@ -42,7 +42,7 @@ IProcessor* CChannelMerger::Clone()
 bool CChannelMerger::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && data->GetData() != nullptr);
-	assert(GetInputPorts()->GetPort(name) != nullptr);
+	assert(GetInputPorts()->Find(name) != nullptr);
 
 	CDataHelper helper(data);
 	
@@ -52,8 +52,8 @@ bool CChannelMerger::Input(const wchar_t * name, IData * data)
 	{
 		CDimensionsImpl merge_dimensions(helper.GetDimensionCount() - 1); // œ˚≥˝DimensionChannel’‚“ªŒ¨
 
-		DimensionType type;
-		unsigned int index, length;
+		DimensionType type = DimensionInvalid;
+		unsigned int index = 0, length = 0;
 		unsigned int dest_dimension_index = 0;
 
 		for (unsigned int i = 0; i < helper.GetDimensionCount(); ++i)
@@ -67,7 +67,7 @@ bool CChannelMerger::Input(const wchar_t * name, IData * data)
 		}
 
 		MergeBuffer merge_buffer;
-		merge_buffer.buffer = YapSharedObject(new CFloatData(&merge_dimensions));
+		merge_buffer.buffer = YapShared(new CFloatData(&merge_dimensions));
 
 		// merge_buffer.buffer->SetLocalization(CLocalization(*data->GetLocalization()));
 		memcpy(merge_buffer.buffer->GetData(), data->GetData(), helper.GetBlockSize(DimensionChannel) * sizeof(float));

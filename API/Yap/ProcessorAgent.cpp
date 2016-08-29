@@ -1,5 +1,5 @@
 #include "ProcessorAgent.h"
-#include "Interface\IProperties.h"
+#include "Interface\IProperty.h"
 
 #include <cassert>
 
@@ -102,7 +102,7 @@ bool Yap::CProcessorAgent::SetInt(const wchar_t * property_name,
 	auto properties = _processor->GetProperties();
 	assert(properties != nullptr);
 
-	IProperty * property = properties->GetProperty(property_name);
+	IProperty * property = properties->Find(property_name);
 	assert(property != nullptr && property->GetType() == PropertyInt);
 
 	IInt * int_property = dynamic_cast<IInt*>(property);
@@ -119,7 +119,7 @@ bool Yap::CProcessorAgent::SetBool(const wchar_t * property_name, bool value)
 	auto properties = _processor->GetProperties();
 	assert(properties != nullptr);
 
-	IProperty * property = properties->GetProperty(property_name);
+	IProperty * property = properties->Find(property_name);
 	assert(property != nullptr && property->GetType() == PropertyBool);
 	IBoolean * bool_property = dynamic_cast<IBoolean*>(property);
 	assert(bool_property != nullptr);
@@ -135,7 +135,7 @@ bool Yap::CProcessorAgent::SetFloat(const wchar_t * property_name, double value)
 	auto properties = _processor->GetProperties();
 	assert(properties != nullptr);
 
-	IProperty * property = properties->GetProperty(property_name);
+	IProperty * property = properties->Find(property_name);
 	assert(property != nullptr && property->GetType() == PropertyFloat);
 
 	IDouble * float_property = dynamic_cast<IDouble*>(property);
@@ -153,7 +153,7 @@ bool Yap::CProcessorAgent::SetString(const wchar_t* property_name,
 	auto properties = _processor->GetProperties();
 	assert(properties != nullptr);
 
-	IProperty * property = properties->GetProperty(property_name);
+	IProperty * property = properties->Find(property_name);
 	assert(property != nullptr && property->GetType() == PropertyString);
 
 	IString * string_property = dynamic_cast<IString*>(property);

@@ -27,7 +27,7 @@ namespace Yap
 		ProcessorContainerImpl();
 		~ProcessorContainerImpl();
 
-		virtual IProcessor * GetProcessor(const wchar_t * name) override;
+		virtual IProcessor * Find(const wchar_t * name) override;
 		virtual IProcessorIter * GetIterator() override;
 		virtual void DeleteThis() override;
 

@@ -57,7 +57,7 @@ bool CFft1D::Input(const wchar_t * port, IData * data)
 	{
 		Yap::CDimensionsImpl dims;
 		dims(DimensionReadout, 0, size);
-		auto output = YapSharedObject(new CComplexDoubleData(&dims));
+		auto output = YapShared(new CComplexDoubleData(&dims));
 		Fft1D(reinterpret_cast<complex<double>*>(input_data.GetData()),
 			reinterpret_cast<complex<double>*>(output->GetData()),
 			size, GetBool(L"Inverse"));

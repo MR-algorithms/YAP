@@ -122,3 +122,55 @@ void PropertyContainerImpl::PropertyIterImpl::DeleteThis()
 	delete this;
 }
 
+IProperty * PropertyContainerImpl::Find(const wchar_t * name)
+	{
+		auto iter = _properties.find(name);
+		return (iter != _properties.end()) ? iter->second : nullptr;
+	}
+
+	bool Yap::PropertyContainerImpl::AddProperty(IProperty * property)
+	{
+		if (property == nullptr)
+			return false;
+
+		if (_properties.find(property->GetName()) != _properties.end())
+			return false;
+
+		_properties.insert(std::make_pair(property->GetName(), property));
+		return true;
+	}
+
+bool Yap::PropertyContainerImpl::GetBool(const wchar_t * id) const
+{
+	assert(id != nullptr && id[0] != 0);
+
+	auto iter = _properties.find(id);
+	if (iter == _properties.end())
+		throw PropertyException(id, PropertyException::PropertyNotFound);
+
+	auto property = iter->second;
+	if (property->GetType() != PropertyBool)
+		throw PropertyException(id, PropertyException::TypeNotMatch);
+
+	auto bool_value = dynamic_cast<IBoolean*>(property);
+	assert(bool_value != nullptr);
+
+	return bool_value->GetBool();
+}
+
+void Yap::PropertyContainerImpl::DeleteThis()
+{
+	delete this;
+}
+
+IPropertyIter * Yap::PropertyContainerImpl::GetIterator()
+{
+	try
+	{
+		return new PropertyIterImpl(*this);
+	}
+	catch (std::bad_alloc&)
+	{
+		return nullptr;
+	}
+}

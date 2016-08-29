@@ -36,7 +36,7 @@ namespace Yap
 		~ModuleManager();
 
 
-		virtual IProcessor * GetProcessor(const wchar_t * name) override;
+		virtual IProcessor * Find(const wchar_t * name) override;
 		virtual IProcessorIter * GetIterator() override;
 
 		bool LoadModule(const wchar_t * module_path);

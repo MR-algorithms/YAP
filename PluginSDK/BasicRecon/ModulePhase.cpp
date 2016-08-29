@@ -76,7 +76,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 	{
 		if (data->GetDataType() == DataTypeComplexDouble)
 		{
-			auto module = YapSharedObject(new CDoubleData(&dims));
+			auto module = YapShared(new CDoubleData(&dims));
 
 			GetModule(reinterpret_cast<complex<double>*>(input_data.GetData()),
 				reinterpret_cast<double*>(module->GetData()),
@@ -87,7 +87,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 		
 		else
 		{
-			auto module = YapSharedObject(new CFloatData(&dims));
+			auto module = YapShared(new CFloatData(&dims));
 
 			GetModule(reinterpret_cast<complex<float>*>(input_data.GetData()),
 				reinterpret_cast<float*>(module->GetData()),
@@ -102,7 +102,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 	{
 		if (data->GetDataType() == DataTypeComplexDouble)
 		{
-			auto phase = YapSharedObject(new CDoubleData(&dims));
+			auto phase = YapShared(new CDoubleData(&dims));
 
 			GetPhase(reinterpret_cast<complex<double>*>(input_data.GetData()),
 				reinterpret_cast<double*>(phase->GetData()),
@@ -112,7 +112,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 		}
 		else
 		{
-			auto phase = YapSharedObject(new CFloatData(&dims));
+			auto phase = YapShared(new CFloatData(&dims));
 
 			GetPhase(reinterpret_cast<complex<float>*>(input_data.GetData()),
 				reinterpret_cast<float*>(phase->GetData()),

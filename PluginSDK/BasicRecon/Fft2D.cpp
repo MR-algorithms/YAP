@@ -13,7 +13,8 @@ CFft2D::CFft2D():
 	_plan_data_width(0),
 	_plan_data_height(0),
 	_plan_inverse(false),
-	_plan_in_place(false)
+	_plan_in_place(false),
+	_fft_plan(nullptr)
 {
 	AddProperty(PropertyBool, L"Inverse", L"The direction of FFT2D.");
 	AddProperty(PropertyBool, L"InPlace", L"The position of FFT2D.");
@@ -57,7 +58,7 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 		Yap::CDimensionsImpl dims;
 		dims(DimensionReadout, 0, width)
 			(DimensionPhaseEncoding, 0, height);
-		auto output = YapSharedObject(new CComplexDoubleData(&dims));
+		auto output = YapShared(new CComplexDoubleData(&dims));
 
 		Fft2D(reinterpret_cast<complex<float>*>(input_data.GetData()),
 			reinterpret_cast<complex<float>*>(output->GetData()),

@@ -11,6 +11,15 @@ namespace Yap
 		virtual ELEMENT_TYPE * GetNext() = 0;
 	};
 
+	template <typename ELEMENT_TYPE>
+	struct IContainer
+	{
+		typedef IIterator<ELEMENT_TYPE> iterator;
+
+		virtual ELEMENT_TYPE * Find(const wchar_t * name) = 0;
+		virtual iterator * GetIterator() = 0;
+	};
+
 	struct IPort;
 	struct IProcessor;
 

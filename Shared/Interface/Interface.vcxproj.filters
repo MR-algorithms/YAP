@@ -24,10 +24,10 @@
     <ClInclude Include="IData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IProperties.h">
+    <ClInclude Include="IContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IIterator.h">
+    <ClInclude Include="IProperties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

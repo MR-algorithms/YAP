@@ -6,7 +6,7 @@
 
 #include "Interface/Implement/DataImpl.h"
 #include "Interface/IProcessor.h"
-#include "Interface/IProperties.h"
+#include "Interface/IProperty.h"
 
 using namespace Yap;
 using namespace std;
@@ -28,7 +28,7 @@ void CProcessorDebugger::DebugOutput(IProcessor& processor)
 	if (in_ports != nullptr)
 	{
 		wcout << L"In port(s): \n";
-		auto iter = YapDynamicObject(in_ports->GetIterator());
+		auto iter = YapDynamic(in_ports->GetIterator());
 		if (iter)
 		{
 			DebugPort(*iter);
@@ -43,7 +43,7 @@ void CProcessorDebugger::DebugOutput(IProcessor& processor)
 	if (out_ports != nullptr)
 	{
 		wcout << L"Out port(s): \n";
-		auto iter = YapDynamicObject(out_ports->GetIterator());
+		auto iter = YapDynamic(out_ports->GetIterator());
 		if (iter)
 		{
 			DebugPort(*iter);
@@ -121,13 +121,13 @@ bool CProcessorDebugger::DebugPlugin(const wchar_t * path)
 		return false;
 	}
 
-	auto processor_iter = YapDynamicObject(processor_manager->GetIterator());
+	auto processor_iter = YapDynamic(processor_manager->GetIterator());
 	for (auto processor = processor_iter->GetFirst(); processor != nullptr;
 		processor = processor_iter->GetNext())
 	{	
 		DebugOutput(*processor);
 		auto properties = processor->GetProperties();
-		auto property_iter = YapDynamicObject(properties->GetIterator());
+		auto property_iter = YapDynamic(properties->GetIterator());
 	
 		assert(property_iter);
 

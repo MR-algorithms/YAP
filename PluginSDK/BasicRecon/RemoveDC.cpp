@@ -103,7 +103,7 @@ bool CRemoveDC::Input(const wchar_t * port, IData * data)
 		}
 		else
 		{
-			auto output_data = YapSharedObject(new CComplexFloatData(data->GetDimensions()));
+			auto output_data = YapShared(new CComplexFloatData(data->GetDimensions()));
 
 			RemoveDC(reinterpret_cast<complex<float>*>(input_data.GetData()),
 				reinterpret_cast<complex<float>*>(output_data->GetData()),
@@ -122,7 +122,7 @@ bool CRemoveDC::Input(const wchar_t * port, IData * data)
 		}
 		else
 		{
-			auto output_data = YapSharedObject(new CComplexDoubleData(data->GetDimensions()));
+			auto output_data = YapShared(new CComplexDoubleData(data->GetDimensions()));
 
 			RemoveDC(reinterpret_cast<complex<double>*>(input_data.GetData()),
 				reinterpret_cast<complex<double>*>(output_data->GetData()),

@@ -3,7 +3,7 @@
 #ifndef yapParam_h__20160818
 #define yapParam_h__20160818
 
-#include "IIterator.h"
+#include "IContainer.h"
 
 namespace Yap
 {
@@ -24,13 +24,8 @@ namespace Yap
 		virtual PropertyType GetType() = 0;
 	};
 
-	typedef IIterator<IProperty> IPropertyIter;
-
-	struct IPropertyContainer
-	{
-		virtual IPropertyIter * GetIterator() = 0;
-		virtual IProperty * GetProperty(const wchar_t * name) = 0;
-	};
+	typedef IContainer<IProperty> IPropertyContainer;
+	typedef IPropertyContainer::iterator IPropertyIter;
 
 	struct IDouble
 	{

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Interface/IProperties.h"
+#include "Interface/IProperty.h"
 #include "Interface/IProcessor.h"
 
 namespace Yap

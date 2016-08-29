@@ -62,7 +62,16 @@ struct ISharedObject
 };
 
 /**
-	TYPE class should implement ISharedObject or the pointer should pointer to an object of 
+	SmartPtr is used to wrap ISharedObject object. It's similar to std::smart_ptr, however, it 
+	calles ISharedObject::Lock() to add reference, and calles ISharedObject::Release() when SmartPtr
+	itself is destroyed.
+
+	The pointer SmartPtr wraps need not to be a pointer to SmartPtr. Instead, it 
+	only need to point to an object which implements ISharedObject.
+
+	@note You must use YapShared() function to create a SmartPtr wrapping a raw pointer.
+
+	@remarks TYPE class should implement ISharedObject or the pointer should pointer to an object of 
 	a class derived from both ISharedObject and TYPE. 
 */
 template <typename TYPE>
@@ -198,14 +207,17 @@ private:
 			shared_object->Lock();
 		}
 	}
-	template<typename TYPE> friend SmartPtr<TYPE> YapSharedObject(TYPE * object);
+	template<typename TYPE> friend SmartPtr<TYPE> YapShared(TYPE * object);
 };
 
+/**
+	This is the factory function to create an SmartPtr to wrap a pointer to an ISharedObject object.
+*/
 template <typename TYPE>
-SmartPtr<TYPE> YapSharedObject(TYPE * object)
+SmartPtr<TYPE> YapShared(TYPE * object)
 {
 	assert(dynamic_cast<ISharedObject*>(object) != nullptr &&
-		   "Only pointers to object implementing ISharedObject can be wrapped using YapSharedObject().");
+		   "Only pointers to object implementing ISharedObject can be wrapped using YapShared().");
 
 	return Yap::SmartPtr<TYPE>(object);
 }
@@ -222,7 +234,7 @@ SmartPtr<TYPE> YapSharedObject(TYPE * object)
 */
 
 template <typename TYPE>
-std::shared_ptr<TYPE> YapDynamicObject(TYPE * object)
+std::shared_ptr<TYPE> YapDynamic(TYPE * object)
 {
 	assert(dynamic_cast<IDynamicObject*>(object) != nullptr &&
 		   "Only pointers to object implementing IDynamicObject can be wrapped using YapDynamicObject().");

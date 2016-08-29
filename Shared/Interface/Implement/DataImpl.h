@@ -44,7 +44,7 @@ namespace Yap
 	public:
 		CDataImp(T* data, const CDimensionsImpl& dimensions, ISharedObject * parent = nullptr, bool own_data = false) :
 			_data(data), _own_memory(own_data), _use_count(0), 
-			_parent(YapSharedObject(parent))
+			_parent(YapShared(parent))
 		{
 			assert(data != nullptr);
 			_dimensions = dimensions;

@@ -4,13 +4,12 @@
 #define IProcessor_h__20160818
 
 #include "IMemory.h"
-#include "IIterator.h"
+#include "IContainer.h"
+#include "IProperty.h"
 
 namespace Yap
 {
 	struct IData;
-	struct IParam;
-	struct IPropertyContainer;
 
 	struct IPort
 	{
@@ -19,14 +18,10 @@ namespace Yap
 		virtual int GetDataType() = 0;
 	};
 
-	typedef IIterator<IPort> IPortIter;
-
-	struct IPortContainer
-	{
-		virtual IPort * GetPort(const wchar_t * name) = 0;
-		virtual IPortIter * GetIterator() = 0;
-	};
-
+	typedef IContainer<IPort> IPortContainer;
+	typedef IPortContainer::iterator IPortIter;
+	
+	
 	struct IProcessor 
 	{
 		/// Return a cloned copy of this object.
@@ -60,14 +55,8 @@ namespace Yap
 		virtual bool Input(const wchar_t * name, IData * data) = 0;
 	};
 
-	typedef IIterator<IProcessor> IProcessorIter;
-
-	struct IProcessorContainer
-	{
-		virtual IProcessor * GetProcessor(const wchar_t * name) = 0;
-		virtual IProcessorIter * GetIterator() = 0;
-	};
-
+	typedef IContainer<IProcessor> IProcessorContainer;
+	typedef IProcessorContainer::iterator IProcessorIter;
 }
 
 

@@ -135,7 +135,7 @@ bool CCmrDataReader::ReadRawData(unsigned int channel_index)
 			  (Dimension4, 0U, dim4)
 			  (DimensionChannel, channel_index, 1);
 
-	auto data = YapSharedObject(new CComplexFloatData(
+	auto data = YapShared(new CComplexFloatData(
 		reinterpret_cast<complex<float>*>(raw_data_buffer), dimensions, nullptr, true));
 
 	Feed(L"Output", data.get());

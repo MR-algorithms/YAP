@@ -30,7 +30,7 @@ ModuleManager::~ModuleManager()
 {
 }
 
-Yap::IProcessor * Yap::ModuleManager::GetProcessor(const wchar_t * name)
+Yap::IProcessor * Yap::ModuleManager::Find(const wchar_t * name)
 {
 	// BasicRecon::ZeroFilling
 	wstring name_string(name);
@@ -41,7 +41,7 @@ Yap::IProcessor * Yap::ModuleManager::GetProcessor(const wchar_t * name)
 		if (iter == _modules.end())
 			return nullptr;
 
-		return iter->second->GetProcessor(name_string.substr(pos + 2).c_str());
+		return iter->second->Find(name_string.substr(pos + 2).c_str());
 	}
 	else
 	{
@@ -66,7 +66,7 @@ Yap::IProcessor * Yap::ModuleManager::FindProcessorInAllModules(const wchar_t * 
 	vector<IProcessor*> processors;
 	for (auto& module : _modules)
 	{
-		auto processor = module.second->GetProcessor(name);
+		auto processor = module.second->Find(name);
 		if (processor != nullptr)
 		{
 			processors.push_back(processor);
@@ -85,7 +85,7 @@ Yap::IProcessor * Yap::ModuleManager::FindProcessorInAllModules(const wchar_t * 
 Yap::IProcessor * Yap::ModuleManager::CreateProcessor(const wchar_t * class_id, 
 													  const wchar_t * instance_id)
 {
-	auto processor = GetProcessor(class_id);
+	auto processor = Find(class_id);
 	if (processor == nullptr)
 		return nullptr;
 
@@ -125,7 +125,7 @@ IProcessor * Yap::ModuleManager::ProcessorIterator::GetFirst()
 	_current_module = _manager._modules.begin();
 	if (_current_module != _manager._modules.end())
 	{
-		_current_module_processors = YapDynamicObject(_current_module->second->GetIterator());
+		_current_module_processors = YapDynamic(_current_module->second->GetIterator());
 		return _current_module_processors ? _current_module_processors->GetFirst() : nullptr;
 	}
 	else
@@ -157,7 +157,7 @@ IProcessor * Yap::ModuleManager::ProcessorIterator::GetNext()
 			assert(_current_module->second != nullptr && 
 					"nullptr should not have never been added to module containers.");
 
-			_current_module_processors = YapDynamicObject(_current_module->second->GetIterator());
+			_current_module_processors = YapDynamic(_current_module->second->GetIterator());
 
 			return _current_module_processors ? _current_module_processors->GetFirst() : nullptr;
 		}

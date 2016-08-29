@@ -9,7 +9,7 @@
 #include <memory>
 #include "Utilities/macros.h"
 #include "interface/Implement/DataImpl.h"
-#include "Interface/IProperties.h"
+#include "Interface/IProperty.h"
 #include "Interface/IMemory.h"
 
 namespace Yap
@@ -21,19 +21,6 @@ namespace Yap
 		IProcessor * processor;
 		std::wstring port;
 		Anchor(IProcessor* processor_, const wchar_t * in_port_) : processor(processor_), port(in_port_) {}
-	};
-
-
-	struct PropertyException
-	{
-		enum Type
-		{
-			PropertyNotFound,
-			TypeNotMatch,
-		};
-		std::wstring property_name;
-		Type type;
-		PropertyException(const wchar_t * name, Type type_) : property_name(name), type(type_) {}
 	};
 
 	namespace Details

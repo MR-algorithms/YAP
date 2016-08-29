@@ -95,7 +95,7 @@ namespace Details
 			return true;
 		}
 
-		virtual IPort * GetPort(const wchar_t * name) override
+		virtual IPort * Find(const wchar_t * name) override
 		{
 			auto iter = _ports.find(name);
 			return (iter != _ports.end()) ? iter->second.get() : nullptr;
@@ -125,7 +125,7 @@ using namespace Details;
 	ProcessorImpl::ProcessorImpl(const wchar_t * class_id) :
 		_system_variables(nullptr),
 		_class_id(class_id),
-		_properties(YapDynamicObject(new PropertyContainerImpl)),
+		_properties(YapDynamic(new PropertyContainerImpl)),
 		_input(new PortContainer),
 		_output(new PortContainer)
 	{
@@ -245,7 +245,7 @@ using namespace Details;
 	{
 		assert(name != nullptr && name[0] != 0);
 
-		auto property = _properties->GetProperty(name);
+		auto property = _properties->Find(name);
 		if (property == nullptr)
 			throw PropertyException(name, PropertyException::PropertyNotFound);
 
@@ -261,7 +261,7 @@ using namespace Details;
 	{
 		assert(name != nullptr && name[0] != 0);
 
-		auto property = _properties->GetProperty(name);
+		auto property = _properties->Find(name);
 		if (property == nullptr)
 			throw PropertyException(name, PropertyException::PropertyNotFound);
 
@@ -278,7 +278,7 @@ using namespace Details;
 	{
 		assert(name != nullptr && name[0] != 0);
 
-		auto property = _properties->GetProperty(name);
+		auto property = _properties->Find(name);
 		if (property == nullptr)
 			throw PropertyException(name, PropertyException::PropertyNotFound);
 
@@ -294,7 +294,7 @@ using namespace Details;
 	{
 		assert(name != nullptr && name[0] != 0);
 
-		auto property = _properties->GetProperty(name);
+		auto property = _properties->Find(name);
 		if (property == nullptr)
 			throw PropertyException(name, PropertyException::PropertyNotFound);
 
@@ -311,7 +311,7 @@ using namespace Details;
 	{
 		assert(name != nullptr && name[0] != 0);
 
-		auto property = _properties->GetProperty(name);
+		auto property = _properties->Find(name);
 		if (property == nullptr)
 			throw PropertyException(name, PropertyException::PropertyNotFound);
 
@@ -328,7 +328,7 @@ using namespace Details;
 	{
 		assert(name != nullptr && name[0] != 0);
 
-		auto property = _properties->GetProperty(name);
+		auto property = _properties->Find(name);
 		if (property == nullptr)
 			throw PropertyException(name, PropertyException::PropertyNotFound);
 
@@ -345,7 +345,7 @@ using namespace Details;
 	{
 		assert(name != nullptr && name[0] != 0);
 
-		auto property = _properties->GetProperty(name);
+		auto property = _properties->Find(name);
 		if (property == nullptr)
 			throw PropertyException(name, PropertyException::PropertyNotFound);
 
@@ -379,7 +379,7 @@ using namespace Details;
 
 	bool Yap::ProcessorImpl::LinkProperty(const wchar_t * property_id, const wchar_t * param_id)
 	{
-		if (_properties->GetProperty(property_id) != nullptr)
+		if (_properties->Find(property_id) != nullptr)
 		{
 			return false;
 		}
@@ -393,11 +393,11 @@ using namespace Details;
 	{
 		for (auto link : _property_links)
 		{
-			auto property = _properties->GetProperty(link.first.c_str());
+			auto property = _properties->Find(link.first.c_str());
 			if (property == nullptr)
 				return false;
 
-			auto system_variable = params->GetProperty(link.second.c_str());
+			IProperty * system_variable = params->Find(link.second.c_str());
 			if (system_variable == nullptr)
 				return false;
 
@@ -441,7 +441,7 @@ using namespace Details;
 		assert(wcslen(source_output_name) != 0);
 		assert(wcslen(next_input_name) != 0);
 
-		auto out_port = _output->GetPort(source_output_name);
+		auto out_port = _output->Find(source_output_name);
 		if (out_port == nullptr)
 			return false;
 
@@ -449,7 +449,7 @@ using namespace Details;
 		if (in_ports == nullptr)
 			return false;
 
-		auto in_port = in_ports->GetPort(next_input_name);
+		auto in_port = in_ports->Find(next_input_name);
 		if (in_port == nullptr)
 			return false;
 
@@ -468,23 +468,11 @@ using namespace Details;
 		return (_links.find(out_port_name) != _links.end());
 	}
 
-	IPropertyIter * Yap::PropertyContainerImpl::GetIterator()
-	{
-		try
-		{
-			return new PropertyIterImpl(*this);
-		}
-		catch (std::bad_alloc&)
-		{
-			return nullptr;
-		}
-	}
-
 	bool ProcessorImpl::GetBool(const wchar_t * name)
 	{
 		assert(name != nullptr && name[0] != 0);
 
-		auto property = _properties->GetProperty(name);
+		auto property = _properties->Find(name);
 		if (property == nullptr)
 			throw PropertyException(name, PropertyException::PropertyNotFound);
 
@@ -498,45 +486,6 @@ using namespace Details;
 	}
 
 
-	IProperty * PropertyContainerImpl::GetProperty(const wchar_t * name)
-	{
-		auto iter = _properties.find(name);
-		return (iter != _properties.end()) ? iter->second : nullptr;
-	}
-
-	bool Yap::PropertyContainerImpl::AddProperty(IProperty * property)
-	{
-		if (property == nullptr)
-			return false;
-
-		if (_properties.find(property->GetName()) != _properties.end())
-			return false;
-
-		_properties.insert(std::make_pair(property->GetName(), property));
-		return true;
-	}
-
-	bool Yap::PropertyContainerImpl::GetBool(const wchar_t * id) const
-	{
-		assert(id != nullptr && id[0] != 0);
-
-		auto iter = _properties.find(id);
-		if (iter == _properties.end())
-			throw PropertyException(id, PropertyException::PropertyNotFound);
-
-		auto property = iter->second;
-		if (property->GetType() != PropertyBool)
-			throw PropertyException(id, PropertyException::TypeNotMatch);
-
-		auto bool_value = dynamic_cast<IBoolean*>(property);
-		assert(bool_value != nullptr);
-
-		return bool_value->GetBool();
-	}
-
-	void Yap::PropertyContainerImpl::DeleteThis()
-	{
-		delete this;
-	}
+	
 };
 
