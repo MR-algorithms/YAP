@@ -10,25 +10,23 @@
 
 namespace Yap
 {
-	class CProcessorManagerAgent :
-		public IProcessorManager
+	class ModuleAgent :
+		public IProcessorContainer
 	{
 	public:
-		CProcessorManagerAgent();
+		ModuleAgent();
 
 		bool Load(const wchar_t * plugin_path);
 
-		virtual IProcessor * GetFirstProcessor() override;
-
-		virtual IProcessor * GetNextProcessor() override;
-
 		virtual IProcessor * GetProcessor(const wchar_t * name) override;
-		~CProcessorManagerAgent();
+		virtual IProcessorIter * GetIterator() override;
+
+		~ModuleAgent();
 
 	protected:
 
 		HINSTANCE _module;
-		SmartPtr<IProcessorManager> _manager;
+		std::shared_ptr<IProcessorContainer> _manager;
 	};
 
 }

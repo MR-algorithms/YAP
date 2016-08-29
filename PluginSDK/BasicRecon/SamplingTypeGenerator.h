@@ -3,13 +3,13 @@
 #ifndef SamplingTypeGenerator_h__20160814
 #define SamplingTypeGenerator_h__20160814
 
-#include "Interface/Implement/ProcessorImp.h"
+#include "Interface/Implement/ProcessorImpl.h"
 #include <vector>
 
 namespace Yap
 {
 	class CSamplingTypeGenerator :
-		public CProcessorImp
+		public ProcessorImpl
 	{
 	public:
 		CSamplingTypeGenerator(void);

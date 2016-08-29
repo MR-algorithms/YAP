@@ -10,16 +10,16 @@
 namespace Yap
 {
 
-	class CDimensionsImp : 
+	class CDimensionsImpl : 
 		public IDimensions, 
 		public IDynamicObject, 
 		public IClonable
 	{
 	public:
-		CDimensionsImp();
-		explicit CDimensionsImp(unsigned int dimension_count);
-		CDimensionsImp(const CDimensionsImp& source);
-		explicit CDimensionsImp(IDimensions * source);
+		CDimensionsImpl();
+		explicit CDimensionsImpl(unsigned int dimension_count);
+		CDimensionsImpl(const CDimensionsImpl& source);
+		explicit CDimensionsImpl(IDimensions * source);
 
 		bool ModifyDimension(DimensionType type, unsigned int length, unsigned int start_index = 0);
 		unsigned int GetLength(unsigned int dimension_index);
@@ -30,8 +30,8 @@ namespace Yap
 			unsigned int start_index, unsigned int length);
 
 		virtual IClonable * Clone() override;
-		virtual void Delete() override;
-		CDimensionsImp & operator() (DimensionType type, unsigned int index, unsigned int length);
+		virtual void DeleteThis() override;
+		CDimensionsImpl & operator() (DimensionType type, unsigned int index, unsigned int length);
 	private:
 		std::vector<Dimension> _dimension_info;
 	};
@@ -42,15 +42,17 @@ namespace Yap
 		public ISharedObject
 	{
 	public:
-		CDataImp(T* data, const CDimensionsImp& dimensions, ISharedObject * parent = nullptr, bool own_data = false) :
-			_data(data), _own_memory(own_data), _use_count(0), _parent(parent)
+		CDataImp(T* data, const CDimensionsImpl& dimensions, ISharedObject * parent = nullptr, bool own_data = false) :
+			_data(data), _own_memory(own_data), _use_count(0), 
+			_parent(YapSharedObject(parent))
 		{
 			assert(data != nullptr);
 			_dimensions = dimensions;
 		}
 		
 		CDataImp(T* data, IDimensions * dimensions, ISharedObject * parent = nullptr, bool own_data = false) : 
-			_data(data), _own_memory(own_data), _dimensions(dimensions), _use_count(0), _parent(parent)
+			_data(data), _own_memory(own_data), _dimensions(dimensions), _use_count(0), 
+			_parent(SmartPtr::Make(parent))
 		{
 			assert(data != nullptr);
 		}
@@ -119,7 +121,7 @@ namespace Yap
 		}
 
 		T * _data;
-		CDimensionsImp _dimensions;
+		CDimensionsImpl _dimensions;
 //		CLocalization _localization;
 
 		unsigned int _use_count;

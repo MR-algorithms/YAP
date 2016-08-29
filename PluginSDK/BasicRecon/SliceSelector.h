@@ -3,12 +3,12 @@
 #ifndef SliceSelector_h__20160814
 #define SliceSelector_h__20160814
 
-#include "Interface/Implement/ProcessorImp.h"
+#include "Interface/Implement/ProcessorImpl.h"
 
 namespace Yap
 {
 	class CSliceSelector :
-		public CProcessorImp
+		public ProcessorImpl
 	{
 	public:
 		CSliceSelector(void);

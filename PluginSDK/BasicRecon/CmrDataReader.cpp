@@ -13,12 +13,12 @@ using boost::assign::list_of;
 
 
 CCmrDataReader::CCmrDataReader(void) :
-	CProcessorImp(L"CmrRawDataReader")
+	ProcessorImpl(L"CmrRawDataReader")
 {
 }
 
 CCmrDataReader::CCmrDataReader(const CCmrDataReader& rhs)
-	: CProcessorImp(rhs)
+	: ProcessorImpl(rhs)
 {
 	AddInputPort(L"Input", 0, DataTypeUnknown);
 	AddOutputPort(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
@@ -128,14 +128,14 @@ bool CCmrDataReader::ReadRawData(unsigned int channel_index)
 	}
 	
 
-	CDimensionsImp dimensions;
+	CDimensionsImpl dimensions;
 	dimensions(DimensionReadout, 0U, width)
 			  (DimensionPhaseEncoding, 0U, height)
 			  (DimensionSlice, 0U, total_slice_count)
 			  (Dimension4, 0U, dim4)
 			  (DimensionChannel, channel_index, 1);
 
-	SmartPtr<CComplexFloatData> data (new CComplexFloatData(
+	auto data = YapSharedObject(new CComplexFloatData(
 		reinterpret_cast<complex<float>*>(raw_data_buffer), dimensions, nullptr, true));
 
 	Feed(L"Output", data.get());

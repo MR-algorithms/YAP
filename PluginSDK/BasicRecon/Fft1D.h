@@ -2,7 +2,7 @@
 #define Fft1D_h__20160813
 
 #pragma once
-#include "Interface/Implement/ProcessorImp.h"
+#include "Interface/Implement/ProcessorImpl.h"
 #include "Interface/Client/DataHelper.h"
 #include "fftw3.h"
 #include <complex>
@@ -11,7 +11,7 @@
 namespace Yap
 {
 	class CFft1D :
-		public CProcessorImp
+		public ProcessorImpl
 	{
 	public:
 		CFft1D();

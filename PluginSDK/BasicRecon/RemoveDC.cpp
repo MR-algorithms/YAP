@@ -1,7 +1,7 @@
 #include "RemoveDC.h"
 
 #include "Interface/Client/DataHelper.h"
-#include "Interface/Implement/DataImp.h"
+#include "Interface/Implement/DataImpl.h"
 
 #include <string>
 
@@ -57,7 +57,7 @@ void RemoveDC(T * input_data,
 }
 
 CRemoveDC::CRemoveDC() :
-	CProcessorImp(L"RemoveDC")
+	ProcessorImpl(L"RemoveDC")
 {
 	AddInputPort(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 	
@@ -103,7 +103,7 @@ bool CRemoveDC::Input(const wchar_t * port, IData * data)
 		}
 		else
 		{
-			auto output_data = SmartPtr<CComplexFloatData>(new CComplexFloatData(data->GetDimensions()));
+			auto output_data = YapSharedObject(new CComplexFloatData(data->GetDimensions()));
 
 			RemoveDC(reinterpret_cast<complex<float>*>(input_data.GetData()),
 				reinterpret_cast<complex<float>*>(output_data->GetData()),
@@ -122,7 +122,7 @@ bool CRemoveDC::Input(const wchar_t * port, IData * data)
 		}
 		else
 		{
-			auto output_data = SmartPtr<CComplexDoubleData>(new CComplexDoubleData(data->GetDimensions()));
+			auto output_data = YapSharedObject(new CComplexDoubleData(data->GetDimensions()));
 
 			RemoveDC(reinterpret_cast<complex<double>*>(input_data.GetData()),
 				reinterpret_cast<complex<double>*>(output_data->GetData()),

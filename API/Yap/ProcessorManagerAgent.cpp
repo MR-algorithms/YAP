@@ -4,14 +4,13 @@
 
 using namespace Yap;
 
-CProcessorManagerAgent::CProcessorManagerAgent() :
-	_module(0),
-	_manager(nullptr)
+ModuleAgent::ModuleAgent() :
+	_module(0)
 {
 }
 
 
-CProcessorManagerAgent::~CProcessorManagerAgent()
+ModuleAgent::~ModuleAgent()
 {
 	_manager.reset();
 	if (_module)
@@ -20,7 +19,7 @@ CProcessorManagerAgent::~CProcessorManagerAgent()
 	}
 }
 
-bool Yap::CProcessorManagerAgent::Load(const wchar_t * plugin_path)
+bool Yap::ModuleAgent::Load(const wchar_t * plugin_path)
 {
 	if (_module != 0)
 	{
@@ -34,7 +33,7 @@ bool Yap::CProcessorManagerAgent::Load(const wchar_t * plugin_path)
 		return false;
 	}
 
-	auto create_func = (Yap::IProcessorManager*(*)())::GetProcAddress(
+	auto create_func = (Yap::IProcessorContainer*(*)())::GetProcAddress(
 		_module, "GetProcessorManager");
 	if (create_func == nullptr)
 	{
@@ -43,7 +42,7 @@ bool Yap::CProcessorManagerAgent::Load(const wchar_t * plugin_path)
 		return false;
 	}
 
-	_manager = SmartPtr<IProcessorManager>(create_func());
+	_manager = YapDynamicObject(create_func());
 	if (!_manager)
 	{
 		::FreeLibrary(_module);
@@ -54,20 +53,15 @@ bool Yap::CProcessorManagerAgent::Load(const wchar_t * plugin_path)
 	return true;
 }
 
-Yap::IProcessor * Yap::CProcessorManagerAgent::GetFirstProcessor()
+Yap::IProcessorIter * Yap::ModuleAgent::GetIterator()
 {
 	assert(_manager);
-	return _manager ? _manager->GetFirstProcessor() : nullptr;
+	return _manager ? _manager->GetIterator() : nullptr;
 }
 
-Yap::IProcessor * Yap::CProcessorManagerAgent::GetNextProcessor()
-{
-	assert(_manager);
-	return _manager ? _manager->GetNextProcessor() : nullptr;
-}
-
-Yap::IProcessor * Yap::CProcessorManagerAgent::GetProcessor(const wchar_t * name)
+Yap::IProcessor * Yap::ModuleAgent::GetProcessor(const wchar_t * name)
 {
 	assert(_manager);
 	return _manager ? _manager->GetProcessor(name) : nullptr;
 }
+

@@ -40,7 +40,7 @@ bool GetPhase(complex<T>* input, T* phase,
 }
 
 CModulePhase::CModulePhase() :
-	CProcessorImp(L"ModulePhase")
+	ProcessorImpl(L"ModulePhase")
 {
 	AddInputPort(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 	AddOutputPort(L"Module", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
@@ -68,7 +68,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 	if (input_data.GetActualDimensionCount() != 2)
 		return false;
 
-	CDimensionsImp dims;
+	CDimensionsImpl dims;
 	dims(DimensionReadout, 0, input_data.GetWidth())
 		(DimensionPhaseEncoding, 0, input_data.GetHeight());
 
@@ -76,7 +76,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 	{
 		if (data->GetDataType() == DataTypeComplexDouble)
 		{
-			auto module = SmartPtr<CDoubleData>(new CDoubleData(&dims));
+			auto module = YapSharedObject(new CDoubleData(&dims));
 
 			GetModule(reinterpret_cast<complex<double>*>(input_data.GetData()),
 				reinterpret_cast<double*>(module->GetData()),
@@ -87,7 +87,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 		
 		else
 		{
-			auto module = SmartPtr<CFloatData>(new CFloatData(&dims));
+			auto module = YapSharedObject(new CFloatData(&dims));
 
 			GetModule(reinterpret_cast<complex<float>*>(input_data.GetData()),
 				reinterpret_cast<float*>(module->GetData()),
@@ -102,7 +102,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 	{
 		if (data->GetDataType() == DataTypeComplexDouble)
 		{
-			auto phase = SmartPtr<CDoubleData>(new CDoubleData(&dims));
+			auto phase = YapSharedObject(new CDoubleData(&dims));
 
 			GetPhase(reinterpret_cast<complex<double>*>(input_data.GetData()),
 				reinterpret_cast<double*>(phase->GetData()),
@@ -112,7 +112,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 		}
 		else
 		{
-			auto phase = SmartPtr<CFloatData>(new CFloatData(&dims));
+			auto phase = YapSharedObject(new CFloatData(&dims));
 
 			GetPhase(reinterpret_cast<complex<float>*>(input_data.GetData()),
 				reinterpret_cast<float*>(phase->GetData()),

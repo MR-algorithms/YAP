@@ -3,7 +3,7 @@
 #ifndef CompositeProcessor_h__20160813
 #define CompositeProcessor_h__20160813
 
-#include "ProcessorImp.h"
+#include "ProcessorImpl.h"
 
 #include <string>
 #include <memory>
@@ -12,7 +12,7 @@
 namespace Yap
 {
 	class CCompositeProcessor :
-		public CProcessorImp
+		public ProcessorImpl
 	{
 	public:
 		CCompositeProcessor(const wchar_t * class_id);
@@ -21,7 +21,7 @@ namespace Yap
 
 		virtual IProcessor * Clone() override;
 
-		virtual bool UpdateProperties(IPropertyEnumerator * params) override;
+		virtual bool UpdateProperties(IPropertyContainer * params) override;
 
 		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) override;
 		virtual bool Input(const wchar_t * port, IData * data) override;

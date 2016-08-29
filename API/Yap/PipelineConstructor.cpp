@@ -37,7 +37,7 @@ wstring CConstructError::GetErrorMessage() const
 
 CPipelineConstructor::CPipelineConstructor()
 {
-	_module_manager = std::shared_ptr<CModuleManager>(new CModuleManager);
+	_module_manager = std::shared_ptr<ModuleManager>(new ModuleManager);
 
 }
 

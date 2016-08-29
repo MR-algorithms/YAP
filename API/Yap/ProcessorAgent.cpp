@@ -1,6 +1,7 @@
 #include "ProcessorAgent.h"
-#include <cassert>
 #include "Interface\IProperties.h"
+
+#include <cassert>
 
 using namespace Yap;
 
@@ -8,7 +9,6 @@ CProcessorAgent::CProcessorAgent(IProcessor* processor) :
 	_processor(processor)
 {
 }
-
 
 CProcessorAgent::~CProcessorAgent()
 {
@@ -20,11 +20,11 @@ Yap::IProcessor * Yap::CProcessorAgent::Clone()
 	return _processor->Clone();
 }
 
-void Yap::CProcessorAgent::Delete()
+void Yap::CProcessorAgent::DeleteThis()
 {
 	if (_processor != nullptr)
 	{
-		_processor->Delete();
+		_processor->DeleteThis();
 		_processor = nullptr;
 	}
 }
@@ -53,19 +53,19 @@ void Yap::CProcessorAgent::SetInstanceId(const wchar_t * instance_id)
 	_processor->SetInstanceId(instance_id);
 }
 
-Yap::IPortEnumerator * Yap::CProcessorAgent::GetInputPortEnumerator()
+Yap::IPortContainer * Yap::CProcessorAgent::GetInputPorts()
 {
 	assert(_processor != nullptr);
-	return _processor->GetInputPortEnumerator();
+	return _processor->GetInputPorts();
 }
 
-Yap::IPortEnumerator * Yap::CProcessorAgent::GetOutputPortEnumerator()
+Yap::IPortContainer * Yap::CProcessorAgent::GetOutputPorts()
 {
 	assert(_processor != nullptr);
-	return _processor->GetOutputPortEnumerator();
+	return _processor->GetOutputPorts();
 }
 
-Yap::IPropertyEnumerator * Yap::CProcessorAgent::GetProperties()
+Yap::IPropertyContainer * Yap::CProcessorAgent::GetProperties()
 {
 	assert(_processor != nullptr);
 	return _processor->GetProperties();
@@ -77,7 +77,7 @@ bool Yap::CProcessorAgent::LinkProperty(const wchar_t * property_id, const wchar
 	return _processor->LinkProperty(property_id, param_id);
 }
 
-bool Yap::CProcessorAgent::UpdateProperties(IPropertyEnumerator * params)
+bool Yap::CProcessorAgent::UpdateProperties(IPropertyContainer * params)
 {
 	assert(_processor != nullptr);
 	return _processor->UpdateProperties(params);
@@ -105,10 +105,10 @@ bool Yap::CProcessorAgent::SetInt(const wchar_t * property_name,
 	IProperty * property = properties->GetProperty(property_name);
 	assert(property != nullptr && property->GetType() == PropertyInt);
 
-	IIntValue * int_property = dynamic_cast<IIntValue*>(property);
+	IInt * int_property = dynamic_cast<IInt*>(property);
 	assert(int_property != nullptr);
 
-	int_property->SetValue(value);
+	int_property->SetInt(value);
 
 	return true;
 }
@@ -121,10 +121,10 @@ bool Yap::CProcessorAgent::SetBool(const wchar_t * property_name, bool value)
 
 	IProperty * property = properties->GetProperty(property_name);
 	assert(property != nullptr && property->GetType() == PropertyBool);
-	IBoolValue * bool_property = dynamic_cast<IBoolValue*>(property);
+	IBoolean * bool_property = dynamic_cast<IBoolean*>(property);
 	assert(bool_property != nullptr);
 
-	bool_property->SetValue(value);
+	bool_property->SetBool(value);
 
 	return true;
 }
@@ -138,10 +138,10 @@ bool Yap::CProcessorAgent::SetFloat(const wchar_t * property_name, double value)
 	IProperty * property = properties->GetProperty(property_name);
 	assert(property != nullptr && property->GetType() == PropertyFloat);
 
-	IFloatValue * float_property = dynamic_cast<IFloatValue*>(property);
+	IDouble * float_property = dynamic_cast<IDouble*>(property);
 	assert(float_property != nullptr);
 
-	float_property->SetValue(value);
+	float_property->SetDouble(value);
 
 	return true;
 }
@@ -156,10 +156,10 @@ bool Yap::CProcessorAgent::SetString(const wchar_t* property_name,
 	IProperty * property = properties->GetProperty(property_name);
 	assert(property != nullptr && property->GetType() == PropertyString);
 
-	IStringValue * string_property = dynamic_cast<IStringValue*>(property);
+	IString * string_property = dynamic_cast<IString*>(property);
 	assert(string_property != nullptr);
 
-	string_property->SetValue(value);
+	string_property->SetString(value);
 
 	return true;
 }

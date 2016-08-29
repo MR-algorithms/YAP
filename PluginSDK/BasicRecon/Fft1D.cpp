@@ -1,7 +1,7 @@
 #include "Fft1D.h"
 
 #include "Interface/Client/DataHelper.h"
-#include "Interface/Implement/DataImp.h"
+#include "Interface/Implement/DataImpl.h"
 
 #include <string.h>
 
@@ -13,7 +13,7 @@ using namespace std;
 using namespace Yap;
 
 CFft1D::CFft1D() : 
-	CProcessorImp(L"Fft1D"),
+	ProcessorImpl(L"Fft1D"),
 	_plan_data_size(0),
 	_plan_inverse(false),
 	_plan_in_place(false)
@@ -55,9 +55,9 @@ bool CFft1D::Input(const wchar_t * port, IData * data)
 	}
 	else
 	{
-		Yap::CDimensionsImp dims;
+		Yap::CDimensionsImpl dims;
 		dims(DimensionReadout, 0, size);
-		auto output = SmartPtr<CComplexDoubleData>(new CComplexDoubleData(&dims));
+		auto output = YapSharedObject(new CComplexDoubleData(&dims));
 		Fft1D(reinterpret_cast<complex<double>*>(input_data.GetData()),
 			reinterpret_cast<complex<double>*>(output->GetData()),
 			size, GetBool(L"Inverse"));

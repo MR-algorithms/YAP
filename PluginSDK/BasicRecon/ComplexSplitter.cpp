@@ -4,7 +4,7 @@ using namespace std;
 using namespace Yap;
 
 CComplexSplitter::CComplexSplitter() :
-	CProcessorImp(L"ComplexSplitter")
+	ProcessorImpl(L"ComplexSplitter")
 {
 	// ANY  DIMENSION
 	AddInputPort(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble);

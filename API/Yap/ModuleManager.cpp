@@ -1,5 +1,7 @@
 #include "ModuleManager.h"
 #include "ProcessorManagerAgent.h"
+#include "Interface/IMemory.h"
+
 #include <utility>
 #include <vector>
 
@@ -19,46 +21,16 @@ std::wstring GetFileNameFromPath(const wchar_t * path)
 	return path_string.substr(start_pos, end_pos - start_pos - 1);
 }
 
-CModuleManager::CModuleManager()
+ModuleManager::ModuleManager()
 {
 }
 
 
-CModuleManager::~CModuleManager()
+ModuleManager::~ModuleManager()
 {
 }
 
-Yap::IProcessor * Yap::CModuleManager::GetFirstProcessor()
-{
-	auto _current_module = _modules.begin();
-	if (!_modules.empty())
-	{
-		return _current_module->second->GetFirstProcessor();
-	}
-	else
-	{
-		return nullptr;
-	}
-}
-
-Yap::IProcessor * Yap::CModuleManager::GetNextProcessor()
-{
-	if (_current_module == _modules.end())
-		return nullptr;
-
-	auto processor = _current_module->second->GetNextProcessor();
-	if (processor == nullptr)
-	{
-		if (++_current_module == _modules.end())
-			return nullptr;
-
-		processor = _current_module->second->GetFirstProcessor();
-	}
-
-	return processor;
-}
-
-Yap::IProcessor * Yap::CModuleManager::GetProcessor(const wchar_t * name)
+Yap::IProcessor * Yap::ModuleManager::GetProcessor(const wchar_t * name)
 {
 	// BasicRecon::ZeroFilling
 	wstring name_string(name);
@@ -77,7 +49,19 @@ Yap::IProcessor * Yap::CModuleManager::GetProcessor(const wchar_t * name)
 	}
 }
 
-Yap::IProcessor * Yap::CModuleManager::FindProcessorInAllModules(const wchar_t * name)
+IProcessorIter * Yap::ModuleManager::GetIterator()
+{
+	try
+	{
+		return new ProcessorIterator(*this);
+	}
+	catch (bad_alloc&)
+	{
+		return nullptr;
+	}
+}
+
+Yap::IProcessor * Yap::ModuleManager::FindProcessorInAllModules(const wchar_t * name)
 {
 	vector<IProcessor*> processors;
 	for (auto& module : _modules)
@@ -98,7 +82,8 @@ Yap::IProcessor * Yap::CModuleManager::FindProcessorInAllModules(const wchar_t *
 	return processors[0];
 }
 
-Yap::IProcessor * Yap::CModuleManager::CreateProcessor(const wchar_t * class_id, const wchar_t * instance_id)
+Yap::IProcessor * Yap::ModuleManager::CreateProcessor(const wchar_t * class_id, 
+													  const wchar_t * instance_id)
 {
 	auto processor = GetProcessor(class_id);
 	if (processor == nullptr)
@@ -113,15 +98,14 @@ Yap::IProcessor * Yap::CModuleManager::CreateProcessor(const wchar_t * class_id,
 	return new_processor;
 }
 
-void Yap::CModuleManager::Reset()
+void Yap::ModuleManager::Reset()
 {
 	_modules.clear();
-	_current_module = _modules.begin();
 }
 
-bool Yap::CModuleManager::LoadModule(const wchar_t * module_path)
+bool Yap::ModuleManager::LoadModule(const wchar_t * module_path)
 {
-	shared_ptr<CProcessorManagerAgent> processor_manager_agent(new CProcessorManagerAgent);
+	shared_ptr<ModuleAgent> processor_manager_agent(new ModuleAgent);
 	if (!processor_manager_agent->Load(module_path))
 		return false;
 
@@ -130,3 +114,56 @@ bool Yap::CModuleManager::LoadModule(const wchar_t * module_path)
 	return true;
 }
 
+Yap::ModuleManager::ProcessorIterator::ProcessorIterator(ModuleManager & manager) :
+	_manager(manager),
+	_current_module(_manager._modules.end())
+{
+}
+
+IProcessor * Yap::ModuleManager::ProcessorIterator::GetFirst()
+{
+	_current_module = _manager._modules.begin();
+	if (_current_module != _manager._modules.end())
+	{
+		_current_module_processors = YapDynamicObject(_current_module->second->GetIterator());
+		return _current_module_processors ? _current_module_processors->GetFirst() : nullptr;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+IProcessor * Yap::ModuleManager::ProcessorIterator::GetNext()
+{
+	if (_current_module == _manager._modules.end())
+		return nullptr;
+
+	assert(_current_module_processors && 
+		   "IProcessorIter for the current module should always be available.");
+
+	if (!_current_module_processors)
+		return nullptr;
+
+	auto processor = _current_module_processors->GetNext();
+	if (processor != nullptr)
+	{
+		return processor;
+	}
+	else // end of the current module.
+	{
+		if (++_current_module != _manager._modules.end())
+		{
+			assert(_current_module->second != nullptr && 
+					"nullptr should not have never been added to module containers.");
+
+			_current_module_processors = YapDynamicObject(_current_module->second->GetIterator());
+
+			return _current_module_processors ? _current_module_processors->GetFirst() : nullptr;
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+}

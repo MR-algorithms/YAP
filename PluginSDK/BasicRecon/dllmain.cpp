@@ -1,7 +1,7 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "stdafx.h"
 
-#include "Interface/Implement/ProcessorManagerImp.h"
+#include "Interface/Implement/ProcessorContainerImpl.h"
 #include "Fft1D.h"
 #include "Fft2D.h"
 #include "ZeroFilling.h"
@@ -20,9 +20,9 @@ using namespace Yap;
 
 extern "C"
 {
-	__declspec(dllexport) IProcessorManager * GetProcessorManager()
+	__declspec(dllexport) IProcessorContainer * GetProcessorManager()
 	{
-		auto processor_manager = new CProcessorManagerImp;
+		auto processor_manager = new ProcessorContainerImpl;
 
 		processor_manager->AddProcessor(new CCmrDataReader);
 		processor_manager->AddProcessor(new CSliceIterator);

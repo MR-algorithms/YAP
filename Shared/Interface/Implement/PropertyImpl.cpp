@@ -1,0 +1,124 @@
+#include "PropertyImpl.h"
+
+using namespace Yap;
+
+Yap::CProperty::CProperty(PropertyType type, const wchar_t * name, const wchar_t * description) :
+	_type(type),
+	_name(name),
+	_description(description)
+{
+}
+
+const wchar_t * Yap::CProperty::GetName()
+{
+	return _name.c_str();
+}
+
+Yap::PropertyType Yap::CProperty::GetType()
+{
+	return _type;
+}
+
+const wchar_t * Yap::CProperty::GetDescription()
+{
+	return _description.c_str();
+}
+
+Yap::StringProperty::StringProperty(const wchar_t * name, 
+									const wchar_t * description, 
+									const wchar_t * value): 
+	CProperty(PropertyString, name, description), 
+	_value(value) 
+{
+}
+
+const wchar_t * Yap::StringProperty::GetString()
+{
+	return _value.c_str(); 
+}
+
+void Yap::StringProperty::SetString(const wchar_t * value)
+{
+	_value = value; 
+}
+
+Yap::BoolProperty::BoolProperty(const wchar_t * name, const wchar_t * description, bool value)
+	: CProperty(PropertyBool, name, description), _value(value) {}
+
+inline bool Yap::BoolProperty::GetBool() 
+{
+	return _value;
+}
+
+void Yap::BoolProperty::SetBool(bool value) 
+{
+	_value = value;
+}
+
+Yap::DoubleProperty::DoubleProperty(const wchar_t * name, 
+									const wchar_t * description, 
+									double value):
+	CProperty(PropertyFloat, name, description), 
+	_value(value)
+{
+}
+
+double Yap::DoubleProperty::GetDouble() 
+{
+	return _value;
+}
+
+void Yap::DoubleProperty::SetDouble(double value) 
+{
+	_value = value; 
+}
+
+Yap::IntProperty::IntProperty(const wchar_t * name, const wchar_t * description, int value)
+	: CProperty(PropertyInt, name, description), _value(value) 
+{
+}
+
+int Yap::IntProperty::GetInt() 
+{
+	return _value;
+}
+
+void Yap::IntProperty::SetInt(int value)
+{ 
+	_value = value; 
+}
+
+PropertyContainerImpl::PropertyIterImpl::PropertyIterImpl(PropertyContainerImpl & container) :
+	_container(container),
+	_current(container._properties.begin())
+{
+}
+
+IProperty * PropertyContainerImpl::PropertyIterImpl::GetFirst()
+{
+	if (_container._properties.empty())
+		return nullptr;
+
+	_current = _container._properties.begin();
+
+	return _current->second;
+}
+
+IProperty * PropertyContainerImpl::PropertyIterImpl::GetNext()
+{
+	if (_container._properties.empty() || _current == _container._properties.end() ||
+		++_current == _container._properties.end())
+	{
+		return nullptr;
+	}
+	else
+	{
+		return _current->second;
+	}
+}
+
+void PropertyContainerImpl::PropertyIterImpl::DeleteThis()
+{
+	delete this;
+}
+

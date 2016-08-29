@@ -3,14 +3,14 @@
 #ifndef JpegExporter_h__20160814
 #define JpegExporter_h__20160814
 
-#include "Interface/Implement/ProcessorImp.h"
+#include "Interface/Implement/ProcessorImpl.h"
 
 namespace Yap
 {
 	namespace Implementation { class CJpegExporterImp; }
 
 	class CJpegExporter :
-		public CProcessorImp
+		public ProcessorImpl
 	{
 	public:
 		CJpegExporter();

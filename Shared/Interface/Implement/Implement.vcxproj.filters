@@ -21,13 +21,16 @@
     <ClCompile Include="CompositeProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DataImp.cpp">
+    <ClCompile Include="PropertyImpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessorImp.cpp">
+    <ClCompile Include="DataImpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessorManagerImp.cpp">
+    <ClCompile Include="ProcessorImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessorContainerImpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,16 +38,16 @@
     <ClInclude Include="CompositeProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DataImp.h">
+    <ClInclude Include="PropertyImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessorImp.h">
+    <ClInclude Include="DataImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessorManagerImp.h">
+    <ClInclude Include="ProcessorImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PropertyImp.h">
+    <ClInclude Include="ProcessorContainerImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

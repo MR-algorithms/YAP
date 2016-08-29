@@ -1,7 +1,7 @@
 #include "ZeroFilling.h"
 
 #include "Interface/Client/DataHelper.h"
-#include "Interface/Implement/DataImp.h"
+#include "Interface/Implement/DataImpl.h"
 
 #include <string>
 #include <complex>
@@ -26,7 +26,7 @@ bool ZeroFilling(T* dest, unsigned int dest_width, unsigned int dest_height,
 	return true;
 }
 
-CZeroFilling::CZeroFilling() : CProcessorImp(L"ZeroFilling")
+CZeroFilling::CZeroFilling() : ProcessorImpl(L"ZeroFilling")
 {
 	AddInputPort(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 	AddOutputPort(L"Output", 2, DataTypeComplexDouble | DataTypeComplexFloat);
@@ -63,13 +63,13 @@ bool CZeroFilling::Input(const wchar_t * port, IData * data)
 	if (dest_width < input_data.GetWidth() || dest_height < input_data.GetHeight())
 		return false;
 
-	Yap::CDimensionsImp dims;
+	Yap::CDimensionsImpl dims;
 	dims(DimensionReadout, 0, dest_width)
 		(DimensionPhaseEncoding, 0, dest_height);
 
 	if (data->GetDataType() == DataTypeComplexDouble)
 	{
-		auto output = SmartPtr<CComplexDoubleData>(new CComplexDoubleData(&dims));
+		auto output = YapSharedObject(new CComplexDoubleData(&dims));
 		ZeroFilling(reinterpret_cast<complex<double>*>(output->GetData()), dest_width, dest_height,
 			reinterpret_cast<complex<double>*>(input_data.GetData()), input_data.GetWidth(), input_data.GetHeight());
 
@@ -78,9 +78,9 @@ bool CZeroFilling::Input(const wchar_t * port, IData * data)
 
 	else
 	{
-		auto output = SmartPtr<CComplexFloatData>(new CComplexFloatData(&dims));
+		auto output = YapSharedObject(new CComplexFloatData(&dims));
 		ZeroFilling(reinterpret_cast<complex<float>*>(output->GetData()), dest_width, dest_height,
-			reinterpret_cast<complex<float>*>(input_data.GetData()), input_data.GetWidth(), input_data.GetHeight());
+					reinterpret_cast<complex<float>*>(input_data.GetData()), input_data.GetWidth(), input_data.GetHeight());
 
 		Feed(L"Output", output.get());
 	}

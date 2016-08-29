@@ -1,7 +1,7 @@
 #include "Fft2D.h"
 
 #include "Interface/Client/DataHelper.h"
-#include "Interface/Implement/DataImp.h"
+#include "Interface/Implement/DataImpl.h"
 
 #include <string>
 
@@ -9,7 +9,7 @@ using namespace std;
 using namespace Yap;
 
 CFft2D::CFft2D():
-	CProcessorImp(L"Fft2D"),
+	ProcessorImpl(L"Fft2D"),
 	_plan_data_width(0),
 	_plan_data_height(0),
 	_plan_inverse(false),
@@ -54,10 +54,10 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 	}
 	else
 	{
-		Yap::CDimensionsImp dims;
+		Yap::CDimensionsImpl dims;
 		dims(DimensionReadout, 0, width)
 			(DimensionPhaseEncoding, 0, height);
-		auto output = SmartPtr<CComplexDoubleData>(new CComplexDoubleData(&dims));
+		auto output = YapSharedObject(new CComplexDoubleData(&dims));
 
 		Fft2D(reinterpret_cast<complex<float>*>(input_data.GetData()),
 			reinterpret_cast<complex<float>*>(output->GetData()),

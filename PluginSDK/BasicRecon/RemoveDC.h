@@ -3,12 +3,12 @@
 #ifndef RemoveDC_h__20160814
 #define RemoveDC_h__20160814
 
-#include "Interface/Implement/ProcessorImp.h"
+#include "Interface/Implement/ProcessorImpl.h"
 
 namespace Yap
 {
 	class CRemoveDC :
-		public CProcessorImp
+		public ProcessorImpl
 	{
 	public:
 		CRemoveDC();

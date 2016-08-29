@@ -3,7 +3,7 @@
 #ifndef Grappa_h__20160814
 #define Grappa_h__20160814
 
-#include "Interface/Implement/ProcessorImp.h"
+#include "Interface/Implement/ProcessorImpl.h"
 #include "Interface/Client/DataHelper.h"
 #include <complex>
 #include <armadillo>
@@ -11,7 +11,7 @@
 namespace Yap
 {
 	class CGrappa :
-		public CProcessorImp
+		public ProcessorImpl
 	{
 	public:
 		CGrappa();

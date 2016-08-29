@@ -1,6 +1,6 @@
 #include "SliceSelector.h"
 #include "interface/Client/DataHelper.h"
-#include "Interface/Implement/DataImp.h"
+#include "Interface/Implement/DataImpl.h"
 
 #include <complex>
 
@@ -8,7 +8,7 @@ using namespace std;
 using namespace Yap;
 
 CSliceSelector::CSliceSelector(void):
-	CProcessorImp(L"SliceSelector")
+	ProcessorImpl(L"SliceSelector")
 {
 	AddInputPort(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddOutputPort(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
@@ -18,7 +18,7 @@ CSliceSelector::CSliceSelector(void):
 }
 
 Yap::CSliceSelector::CSliceSelector(const CSliceSelector & rhs)
-	: CProcessorImp(rhs)
+	: ProcessorImpl(rhs)
 {
 }
 
@@ -43,17 +43,17 @@ IProcessor * Yap::CSliceSelector::Clone()
 bool Yap::CSliceSelector::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && data->GetData() != nullptr);
-	assert(GetInputPortEnumerator()->GetPort(name) != nullptr);
+	assert(GetInputPorts()->GetPort(name) != nullptr);
 
 	int slice_index = GetInt(L"SliceIndex");
 
 	CDataHelper input_data(data);
-	CDimensionsImp data_dimentions(data->GetDimensions());
+	CDimensionsImpl data_dimentions(data->GetDimensions());
 	unsigned int slice_block_size = input_data.GetBlockSize(DimensionSlice);
 	if (data_dimentions.GetDimensionCount() <= 3)
 	{		
 		data_dimentions.ModifyDimension(DimensionSlice, 1, slice_index);
-		auto output = SmartPtr<CComplexFloatData>(new CComplexFloatData(reinterpret_cast<std::complex<float>*>(data->GetData())
+		auto output = YapSharedObject(new CComplexFloatData(reinterpret_cast<std::complex<float>*>(data->GetData())
 			+ slice_index * slice_block_size, data_dimentions));
 		Feed(L"Output", output.get());
 	}
@@ -75,14 +75,15 @@ bool Yap::CSliceSelector::Input(const wchar_t * name, IData * data)
 			memcpy(slice_channel_data + i * slice_block_size, data + slice_index * slice_block_size + i * channel_block_size, 
 				slice_block_size * sizeof(complex<float>));
 		}
-		CDimensionsImp dimensions;
+		CDimensionsImpl dimensions;
 		dimensions(DimensionReadout, 0U, input_data.GetWidth())
 			(DimensionPhaseEncoding, 0U, input_data.GetHeight())
 			(DimensionSlice, slice_index, 1)
 			(Dimension4, 0U, input_data.GetDim4())
 			(DimensionChannel, 0U, input_data.GetCoilCount());
-		SmartPtr<CComplexFloatData> outdata(new CComplexFloatData(
+		auto outdata = YapSharedObject(new CComplexFloatData(
 			slice_channel_data, dimensions, nullptr, true));
+
 		Feed(L"Output", outdata.get());
 	}
 

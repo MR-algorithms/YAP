@@ -3,7 +3,7 @@
 #ifndef CmrDataReader_h__20160813
 #define CmrDataReader_h__20160813
 
-#include "Interface/Implement/processorImp.h"
+#include "Interface/Implement/processorImpl.h"
 
 namespace Yap
 {
@@ -19,7 +19,7 @@ namespace Yap
 		"Output" data will be of type ComplexFloat.
 	*/
 	class CCmrDataReader :
-		public CProcessorImp
+		public ProcessorImpl
 	{
 	public:
 		CCmrDataReader(void);

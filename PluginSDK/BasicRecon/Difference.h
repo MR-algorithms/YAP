@@ -3,12 +3,12 @@
 #ifndef Difference_h__20160816
 #define Difference_h__20160816
 
-#include "Interface/Implement/ProcessorImp.h"
+#include "Interface/Implement/ProcessorImpl.h"
 
 namespace Yap 
 {
 	class CDifference :
-		public CProcessorImp
+		public ProcessorImpl
 	{
 	public:
 		CDifference();

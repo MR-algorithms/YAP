@@ -15,7 +15,7 @@ using namespace Yap;
 using namespace std;
 
 CSamplingTypeGenerator::CSamplingTypeGenerator(void):
-	CProcessorImp(L"SamplingTypeGenerator"),
+	ProcessorImpl(L"SamplingTypeGenerator"),
 	_try_count(10),
 	_tolerance(3)
 {
@@ -41,7 +41,7 @@ CSamplingTypeGenerator::CSamplingTypeGenerator(void):
 }
 
 Yap::CSamplingTypeGenerator::CSamplingTypeGenerator(const CSamplingTypeGenerator & rhs)
-	:CProcessorImp(rhs)
+	:ProcessorImpl(rhs)
 {	
 }
 
@@ -91,10 +91,11 @@ bool Yap::CSamplingTypeGenerator::Input(const wchar_t * name, IData * data)
 		}
 		memcpy(sampling_type, sampling_pattern.data(), row_count * sizeof(char));
 
-		CDimensionsImp dimensions;
+		CDimensionsImpl dimensions;
 		dimensions(DimensionReadout, 0U, 1)
 			(DimensionPhaseEncoding, 0U, row_count);
-		SmartPtr<CCharData> outdata(new CCharData(sampling_type, dimensions, nullptr, true));
+
+		auto outdata = YapSharedObject(new CCharData(sampling_type, dimensions, nullptr, true));
 
 		Feed(L"Output", outdata.get());
 	}
@@ -136,10 +137,11 @@ bool Yap::CSamplingTypeGenerator::Input(const wchar_t * name, IData * data)
 		}
 		memcpy(sampling_type, sampling_pattern.data(), height * sizeof(char));
 
-		CDimensionsImp dimensions;
+		CDimensionsImpl dimensions;
 		dimensions(DimensionReadout, 0U, 1)
 			(DimensionPhaseEncoding, 0U, height);
-		SmartPtr<CCharData> outdata(new CCharData(sampling_type, dimensions, nullptr, true));
+
+		auto outdata = YapSharedObject(new CCharData(sampling_type, dimensions, nullptr, true));
 
 		Feed(L"Output", outdata.get());
 	}

@@ -6,7 +6,7 @@ using namespace Yap;
 using namespace std;
 
 CCompositeProcessor::CCompositeProcessor(const wchar_t * class_id) :
-	CProcessorImp(class_id)
+	ProcessorImpl(class_id)
 {
 }
 
@@ -15,7 +15,7 @@ CCompositeProcessor::~CCompositeProcessor()
 }
 
 Yap::CCompositeProcessor::CCompositeProcessor(CCompositeProcessor& rhs) :
-	CProcessorImp(rhs.GetClassId())
+	ProcessorImpl(rhs.GetClassId())
 {
 
 }
@@ -25,7 +25,7 @@ Yap::IProcessor * Yap::CCompositeProcessor::Clone()
 	throw std::logic_error("The method or operation is not implemented.");
 }
 
-bool Yap::CCompositeProcessor::UpdateProperties(IPropertyEnumerator * params)
+bool Yap::CCompositeProcessor::UpdateProperties(IPropertyContainer * params)
 {
 	for (auto processor : _processors)
 	{

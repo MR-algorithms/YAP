@@ -41,7 +41,7 @@ namespace Yap
 	};
 
 	class CCompositeProcessor;
-	class CModuleManager;
+	class ModuleManager;
 	class CProcessorAgent;
 	struct IProcessor;
 
@@ -70,7 +70,7 @@ namespace Yap
 
 	protected:
 		std::shared_ptr<CCompositeProcessor> _pipeline;
-		std::shared_ptr<CModuleManager> _module_manager;
+		std::shared_ptr<ModuleManager> _module_manager;
 		std::wstring _plugin_folder;
 	};
 

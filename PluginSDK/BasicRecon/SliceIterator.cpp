@@ -2,19 +2,19 @@
 
 #include "Interface/Client/DataHelper.h"
 #include <complex>
-#include "Interface/Implement/DataImp.h"
+#include "Interface/Implement/DataImpl.h"
 
 using namespace Yap;
 
 CSliceIterator::CSliceIterator(void) :
-	CProcessorImp(L"SliceIterator")
+	ProcessorImpl(L"SliceIterator")
 {
 	AddInputPort(L"Input", 3, DataTypeComplexFloat);
 	AddOutputPort(L"Output", 2, DataTypeComplexFloat);
 }
 
 CSliceIterator::CSliceIterator( const CSliceIterator& rhs)
-	: CProcessorImp(rhs)
+	: ProcessorImpl(rhs)
 {
 
 }
@@ -40,7 +40,7 @@ IProcessor* CSliceIterator::Clone()
 bool CSliceIterator::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && data->GetData() != nullptr);
-	assert(GetInputPortEnumerator()->GetPort(name) != nullptr);
+	assert(GetInputPorts()->GetPort(name) != nullptr);
 
 	CDataHelper helper(data);
 
@@ -51,10 +51,10 @@ bool CSliceIterator::Input(const wchar_t * name, IData * data)
 	
 	for (unsigned int i = slice_dimension.start_index; i < slice_dimension.start_index + slice_dimension.length; ++i)
 	{
-		CDimensionsImp slice_data_dimensions(data->GetDimensions());
+		CDimensionsImpl slice_data_dimensions(data->GetDimensions());
 		slice_data_dimensions.ModifyDimension(DimensionSlice, 1, i);
 
-		auto output = SmartPtr<CComplexFloatData>(	new CComplexFloatData (
+		auto output = YapSharedObject(	new CComplexFloatData (
 			reinterpret_cast<std::complex<float>*>(data->GetData()) + i * slice_block_size, slice_data_dimensions));
 		// output->SetSliceLocalization(GetParams(), i);
 

@@ -1,18 +1,18 @@
 #pragma once
 
+#include "Interface/IProperties.h"
+#include "Interface/IProcessor.h"
+
 namespace Yap
 {
-	struct IPortEnumerator;
-	struct IProcessor;
-	struct IPropertyEnumerator;
-	
 	class CProcessorDebugger
 	{
 	public:
-		void DebugPort(IPortEnumerator& ports);
+		void DebugPort(IPortIter& ports);
+	
 		void DebugOutput(IProcessor& processor);
 
-		bool DebugProperties(IPropertyEnumerator * properties);
+		bool DebugProperties(IPropertyIter& properties);
 
 		bool DebugPlugin(const wchar_t * path);
 

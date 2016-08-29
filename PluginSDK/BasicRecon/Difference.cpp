@@ -20,8 +20,7 @@ void Difference(T * input_data,
 }
 
 
-CDifference::CDifference() : CProcessorImp(L"Difference"),
-	_reference_data(nullptr)
+CDifference::CDifference() : ProcessorImpl(L"Difference")
 {
 	AddInputPort(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
 	AddInputPort(L"Reference", YAP_ANY_DIMENSION, DataTypeAll);
@@ -38,7 +37,7 @@ bool Yap::CDifference::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) == L"Reference")
 	{
-		_reference_data = SmartPtr<IData>(data);
+		_reference_data = YapSharedObject(data);
 	}
 	else if (wstring(port) == L"Input")
 	{
@@ -72,7 +71,7 @@ bool Yap::CDifference::Input(const wchar_t * port, IData * data)
 		//more data type?
 		if (data->GetDataType() == DataTypeFloat)
 		{
-			auto output_data = SmartPtr<CFloatData>(new CFloatData(data->GetDimensions()));
+			auto output_data = YapSharedObject(new CFloatData(data->GetDimensions()));
 
 			Difference(reinterpret_cast<float*>(input_data.GetData()),
 				reinterpret_cast<float*>(reference_data.GetData()),
@@ -82,7 +81,7 @@ bool Yap::CDifference::Input(const wchar_t * port, IData * data)
 		}
 		else
 		{
-			auto output_data = SmartPtr<CDoubleData>(new CDoubleData(data->GetDimensions()));
+			auto output_data = YapSharedObject(new CDoubleData(data->GetDimensions()));
 
 			Difference(reinterpret_cast<double*>(input_data.GetData()),
 				reinterpret_cast<double*>(reference_data.GetData()),

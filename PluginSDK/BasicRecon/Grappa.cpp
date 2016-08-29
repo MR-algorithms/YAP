@@ -2,7 +2,7 @@
 #include <string>
 
 #include "Interface/Client/DataHelper.h"
-#include "Interface/Implement/DataImp.h"
+#include "Interface/Implement/DataImpl.h"
 
 #include <vector>
 
@@ -11,7 +11,7 @@ using namespace arma;
 using namespace Yap;
 
 CGrappa::CGrappa() :
-	CProcessorImp(L"Grappa")
+	ProcessorImpl(L"Grappa")
 {
 	AddProperty(PropertyInt, L"Rate", L"The acceleration factor.");
 	SetInt(L"Rate", 2);

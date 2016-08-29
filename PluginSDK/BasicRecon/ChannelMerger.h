@@ -3,13 +3,13 @@
 #ifndef ChannelMerger_h__20160813
 #define ChannelMerger_h__20160813
 
-#include "Interface/Implement/processorimp.h"
+#include "Interface/Implement/processorimpl.h"
 #include "Interface/Client/DataHelper.h"
 
 namespace Yap
 {
 	class CChannelMerger :
-		public CProcessorImp
+		public ProcessorImpl
 	{
 	public:
 		CChannelMerger(void);

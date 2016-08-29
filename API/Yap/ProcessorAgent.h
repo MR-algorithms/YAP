@@ -8,6 +8,8 @@
 
 namespace Yap
 {
+	struct IPropertyContainer;
+
 	class CProcessorAgent :
 		public IProcessor, public IDynamicObject
 	{
@@ -17,7 +19,7 @@ namespace Yap
 
 		virtual IProcessor * Clone() override;
 
-		virtual void Delete() override;
+		virtual void DeleteThis() override;
 
 		virtual const wchar_t * GetClassId() override;
 
@@ -27,15 +29,15 @@ namespace Yap
 
 		virtual void SetInstanceId(const wchar_t * instance_id) override;
 
-		virtual IPortEnumerator * GetInputPortEnumerator() override;
+		virtual IPortContainer * GetInputPorts() override;
 
-		virtual IPortEnumerator * GetOutputPortEnumerator() override;
+		virtual IPortContainer * GetOutputPorts() override;
 
-		virtual IPropertyEnumerator * GetProperties() override;
+		virtual IPropertyContainer * GetProperties() override;
 
 		virtual bool LinkProperty(const wchar_t * property_id, const wchar_t * param_id) override;
 
-		virtual bool UpdateProperties(IPropertyEnumerator * params) override;
+		virtual bool UpdateProperties(IPropertyContainer * params) override;
 
 		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) override;
 

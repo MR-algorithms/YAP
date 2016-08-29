@@ -4,6 +4,7 @@
 #define yapMemory_h__20160817
 
 #include <cassert>
+#include <memory>
 
 namespace Yap {
 
@@ -17,7 +18,7 @@ namespace Yap {
 	1. The object are created in free store in the original module, and its ownership is transfered to 
 	one client module. In this case the client should not delete the interface pointer directly, since the
 	client module might be using a different C runtime. Instead, the object should implement IDynamicObject
-	interface and the client can call IDynamicObject::Delete() to delete the object when it's finished 
+	interface and the client can call IDynamicObject::DeleteThis() to delete the object when it's finished 
 	with the object.
 
 	2. The object is created in free store in the original module. However, different from case 1, the object
@@ -36,15 +37,15 @@ namespace Yap {
 
 /**
 	If an object is created dynamically in one module and then its ownship is transferred to another module, then
-	the object should implement this interface, so that the client module can call Delete() to safely deallocate
+	the object should implement this interface, so that the client module can call DeleteThis() to safely deallocate
 	the object.
 	
-	Normally, the object should use 'delete this' to delete itself when implementing Delete().
+	Normally, the object should use 'delete this' to delete itself when implementing DeleteThis().
 */
 struct IDynamicObject
 {
 	/// Client of the object should call this function to delete the object, instead of delete the interface pointer directly.
-	virtual void Delete() = 0;	
+	virtual void DeleteThis() = 0;	
 };
 
 /**
@@ -69,15 +70,6 @@ class SmartPtr
 {
 public:
 	SmartPtr() : _pointer(nullptr) {}
-
-	explicit SmartPtr(TYPE * pointer) : _pointer(pointer)
-	{
-		auto shared_object = dynamic_cast<ISharedObject*>(pointer);
-		if (shared_object != nullptr) 
-		{
-			shared_object->Lock();
-		}
-	}
 
 	SmartPtr(SmartPtr<TYPE>& source) : _pointer(source._pointer) 
 	{
@@ -197,7 +189,26 @@ public:
 	}
 private:
 	TYPE * _pointer;
+
+	explicit SmartPtr(TYPE * pointer) : _pointer(pointer)
+	{
+		auto shared_object = dynamic_cast<ISharedObject*>(pointer);
+		if (shared_object != nullptr) 
+		{
+			shared_object->Lock();
+		}
+	}
+	template<typename TYPE> friend SmartPtr<TYPE> YapSharedObject(TYPE * object);
 };
+
+template <typename TYPE>
+SmartPtr<TYPE> YapSharedObject(TYPE * object)
+{
+	assert(dynamic_cast<ISharedObject*>(object) != nullptr &&
+		   "Only pointers to object implementing ISharedObject can be wrapped using YapSharedObject().");
+
+	return Yap::SmartPtr<TYPE>(object);
+}
 
 /**
 	This function should be used to help to wrap an interface pointer which is dynamically 
@@ -206,18 +217,21 @@ private:
 	TYPE class should implement IDynamicObject or the pointer should pointer to an object of
 	a class derived from both IDynamicObject and TYPE.
 
-	std::shared_ptr<IData> data(pointer_to_idata_interface, DeleteDynamicObject);
-
-	then the data object (shared_ptr) can be copied and used freely in the current module.
+	Returned shared_ptr can be copied and used freely in the current module.
 	However, the shared_ptr SHALL NOT be passed to other modules.
 */
-template <typename TYPE>
-void DeleteYapDynamicObject(TYPE * pointer)
-{
-	auto dynamic_object = dynamic_cast<IDynamicObject*>(pointer);
-	assert(dynamic_object != nullptr);
 
-	dynamic_object->Delete();
+template <typename TYPE>
+std::shared_ptr<TYPE> YapDynamicObject(TYPE * object)
+{
+	assert(dynamic_cast<IDynamicObject*>(object) != nullptr &&
+		   "Only pointers to object implementing IDynamicObject can be wrapped using YapDynamicObject().");
+
+	return std::shared_ptr<TYPE>(object, [](TYPE* pointer) {
+		auto dynamic_object = dynamic_cast<IDynamicObject*>(pointer);
+		assert(dynamic_object != nullptr);
+
+		dynamic_object->DeleteThis(); });
 }
 
 /**

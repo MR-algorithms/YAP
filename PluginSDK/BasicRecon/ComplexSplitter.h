@@ -3,12 +3,12 @@
 #ifndef ComplexSplitter_h__20160813
 #define ComplexSplitter_h__20160813
 
-#include "Interface/Implement/ProcessorImp.h"
+#include "Interface/Implement/ProcessorImpl.h"
 #include "Interface/Client/DataHelper.h"
 
 namespace Yap
 {
-	class CComplexSplitter :public CProcessorImp
+	class CComplexSplitter :public ProcessorImpl
 	{
 
 	public:

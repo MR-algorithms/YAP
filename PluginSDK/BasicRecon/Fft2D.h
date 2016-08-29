@@ -3,7 +3,7 @@
 #ifndef fft2d_h_20160813
 #define fft2d_h_20160813
 
-#include "Interface/Implement/ProcessorImp.h"
+#include "Interface/Implement/ProcessorImpl.h"
 #include "Interface/Client/DataHelper.h"
 #include <fftw3.h>
 #include <complex>
@@ -11,7 +11,7 @@
 namespace Yap
 {
 	class CFft2D :
-		public CProcessorImp
+		public ProcessorImpl
 	{
 	public:
 		CFft2D();

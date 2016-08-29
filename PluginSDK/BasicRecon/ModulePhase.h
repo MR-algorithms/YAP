@@ -3,12 +3,12 @@
 #ifndef ModulePhase_h__20160814
 #define ModulePhase_h__20160814
 
-#include "Interface/Implement/ProcessorImp.h"
+#include "Interface/Implement/ProcessorImpl.h"
 
 namespace Yap
 {
 	class CModulePhase :
-		public CProcessorImp
+		public ProcessorImpl
 	{
 	public:
 		CModulePhase();

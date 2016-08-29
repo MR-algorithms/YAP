@@ -7,28 +7,46 @@
 #include <map>
 #include <memory>
 
+#include "Interface/IProcessor.h"
+
 namespace Yap
 {
-	class CModuleManager
+	class ModuleManager : public IProcessorContainer
 	{
+		typedef std::map<std::wstring, std::shared_ptr<ModuleAgent>> ModuleContainer;
+		typedef ModuleContainer::iterator ModuleIter;
+
+		class ProcessorIterator : public IProcessorIter
+		{
+			explicit ProcessorIterator(ModuleManager& manager);
+			// Inherited via IIterator
+			virtual IProcessor * GetFirst() override;
+			virtual IProcessor * GetNext() override;
+
+			ModuleManager& _manager;
+
+			ModuleIter _current_module;
+			std::shared_ptr<IProcessorIter> _current_module_processors;
+
+			friend class ModuleManager;
+		};
+
 	public:
-		CModuleManager();
-		~CModuleManager();
+		ModuleManager();
+		~ModuleManager();
 
-		IProcessor * GetFirstProcessor();
 
-		IProcessor * GetNextProcessor();
-
-		IProcessor * GetProcessor(const wchar_t * name);
+		virtual IProcessor * GetProcessor(const wchar_t * name) override;
+		virtual IProcessorIter * GetIterator() override;
 
 		bool LoadModule(const wchar_t * module_path);
 
 		IProcessor * FindProcessorInAllModules(const wchar_t * name);
 		IProcessor * CreateProcessor(const wchar_t * class_id, const wchar_t * instance_id);
+
 		void Reset();
 	protected:
-		std::map<std::wstring, std::shared_ptr<CProcessorManagerAgent>> _modules;
-		decltype(_modules)::iterator _current_module;
+		ModuleContainer _modules;
 	};
 }
 #endif // ModuleManager_h__

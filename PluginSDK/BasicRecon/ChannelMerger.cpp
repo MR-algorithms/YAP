@@ -7,7 +7,7 @@ using namespace Yap;
 using namespace std;
 
 CChannelMerger::CChannelMerger(void) :
-	CProcessorImp(L"ChannelMerger")
+	ProcessorImpl(L"ChannelMerger")
 {
 	AddOutputPort(L"Output", 2, DataTypeFloat);
 	AddInputPort(L"Input", 2, DataTypeFloat);
@@ -17,7 +17,7 @@ CChannelMerger::CChannelMerger(void) :
 }
 
 CChannelMerger::CChannelMerger( const CChannelMerger& rhs )
-	: CProcessorImp(rhs)
+	: ProcessorImpl(rhs)
 {
 
 }
@@ -42,7 +42,7 @@ IProcessor* CChannelMerger::Clone()
 bool CChannelMerger::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && data->GetData() != nullptr);
-	assert(GetInputPortEnumerator()->GetPort(name) != nullptr);
+	assert(GetInputPorts()->GetPort(name) != nullptr);
 
 	CDataHelper helper(data);
 	
@@ -50,7 +50,7 @@ bool CChannelMerger::Input(const wchar_t * name, IData * data)
 	auto iter = _merge_buffers.find(key);
 	if (iter == _merge_buffers.end())
 	{
-		CDimensionsImp merge_dimensions(helper.GetDimensionCount() - 1); // 消除DimensionChannel这一维
+		CDimensionsImpl merge_dimensions(helper.GetDimensionCount() - 1); // 消除DimensionChannel这一维
 
 		DimensionType type;
 		unsigned int index, length;
@@ -67,7 +67,7 @@ bool CChannelMerger::Input(const wchar_t * name, IData * data)
 		}
 
 		MergeBuffer merge_buffer;
-		merge_buffer.buffer = SmartPtr<CFloatData>(new CFloatData(&merge_dimensions));
+		merge_buffer.buffer = YapSharedObject(new CFloatData(&merge_dimensions));
 
 		// merge_buffer.buffer->SetLocalization(CLocalization(*data->GetLocalization()));
 		memcpy(merge_buffer.buffer->GetData(), data->GetData(), helper.GetBlockSize(DimensionChannel) * sizeof(float));

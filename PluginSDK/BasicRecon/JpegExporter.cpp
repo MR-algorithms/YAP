@@ -128,7 +128,7 @@ namespace Yap { namespace Implementation
 using namespace Yap::Implementation;
 
 CJpegExporter::CJpegExporter() :
-	CProcessorImp(L"JpegExporter")
+	ProcessorImpl(L"JpegExporter")
 {
 	AddInputPort(L"Input", 2, DataTypeFloat);
 	AddProperty(PropertyString, L"ExportFolder", L"Set folder used to hold exported images.");
@@ -137,7 +137,7 @@ CJpegExporter::CJpegExporter() :
 }
 
 CJpegExporter::CJpegExporter(const CJpegExporter& rhs)
-	: CProcessorImp(rhs)
+	: ProcessorImpl(rhs)
 {
 	_impl = std::shared_ptr<CJpegExporterImp>(new CJpegExporterImp(*rhs._impl));
 }

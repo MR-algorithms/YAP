@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="IIterator.h" />
     <ClInclude Include="IProcessor.h" />
     <ClInclude Include="IData.h" />
     <ClInclude Include="IMemory.h" />

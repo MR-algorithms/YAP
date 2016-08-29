@@ -8,43 +8,13 @@
 #include <string>
 #include <memory>
 #include "Utilities/macros.h"
-#include "interface/Implement/DataImp.h"
+#include "interface/Implement/DataImpl.h"
 #include "Interface/IProperties.h"
 #include "Interface/IMemory.h"
 
 namespace Yap
 {
-	class CPropertyEnumeratorImp;
-
-	class CPort : public IPort
-	{
-	public:
-		CPort(const wchar_t * name, unsigned int dimensions, int data_type);
-		virtual const wchar_t * GetName() override;
-		virtual unsigned int GetDimensions() override;
-		virtual int GetDataType() override;
-
-	protected:
-		std::wstring _name;
-		unsigned int _dimensions;
-		int _data_type;
-
-	};
-
-	class CPortEnumerator : public IPortEnumerator
-	{
-	public:
-		bool AddPort(const wchar_t * name, unsigned int dimensions, int data_type);
-
-		virtual IPort * GetFirstPort() override;
-		virtual IPort * GetNextPort() override;
-
-		virtual IPort * GetPort(const wchar_t * name) override;
-
-	protected:
-		std::map<std::wstring, std::shared_ptr<IPort>> _ports;
-		std::map<std::wstring, std::shared_ptr<IPort>>::iterator _current_port;
-	};
+	class PropertyContainerImpl;
 
 	struct Anchor
 	{
@@ -66,18 +36,23 @@ namespace Yap
 		PropertyException(const wchar_t * name, Type type_) : property_name(name), type(type_) {}
 	};
 
-	class CProcessorImp :
+	namespace Details
+	{
+		class PortContainer;
+	};
+
+	class ProcessorImpl :
 		public IProcessor, public IDynamicObject
 	{
 	public:
-		explicit CProcessorImp(const wchar_t * class_id);
-		CProcessorImp(const CProcessorImp& rhs);
+		explicit ProcessorImpl(const wchar_t * class_id);
+		ProcessorImpl(const ProcessorImpl& rhs);
 
 		/// 释放当前Processor的资源。
-		virtual void Delete() override;
+		virtual void DeleteThis() override;
 
-		virtual IPortEnumerator * GetInputPortEnumerator() override;
-		virtual IPortEnumerator * GetOutputPortEnumerator() override;
+		virtual IPortContainer * GetInputPorts() override;
+		virtual IPortContainer * GetOutputPorts() override;
 
 		bool Init();
 		virtual bool OnInit() { return true; };
@@ -86,10 +61,10 @@ namespace Yap
 		virtual const wchar_t * GetInstanceId() override;
 		virtual void SetInstanceId(const wchar_t * instance_id) override;
 
-		virtual IPropertyEnumerator * GetProperties() override;
+		virtual IPropertyContainer * GetProperties() override;
 
 		virtual bool LinkProperty(const wchar_t * property_id, const wchar_t * param_id) override;
-		virtual bool UpdateProperties(IPropertyEnumerator * params) override;
+		virtual bool UpdateProperties(IPropertyContainer * params) override;
 
 		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) override;
 
@@ -113,23 +88,23 @@ namespace Yap
 		void SetString(const wchar_t * name, const wchar_t * value);
 		const wchar_t * GetString(const wchar_t * name);
 
-		CPortEnumerator _input_ports;
-		CPortEnumerator _output_ports;
+		std::shared_ptr<Details::PortContainer> _input;
+		std::shared_ptr<Details::PortContainer> _output;
 
-		std::shared_ptr<CPropertyEnumeratorImp> _properties;
+		std::shared_ptr<PropertyContainerImpl> _properties;
 
 		std::multimap<std::wstring, Anchor> _links;
 		std::map<std::wstring, std::wstring> _property_links;
 
 		std::wstring _instance_id;
 		std::wstring _class_id;
-		IPropertyEnumerator * _system_variables;
+		IPropertyContainer * _system_variables;
 
-		virtual ~CProcessorImp();
+		virtual ~ProcessorImpl();
 	private:
-		CProcessorImp(const CProcessorImp&& rhs);
-		const CProcessorImp& operator = (CProcessorImp&& rhs);
-		const CProcessorImp& operator = (const CProcessorImp& rhs);
+		ProcessorImpl(const ProcessorImpl&& rhs);
+		const ProcessorImpl& operator = (ProcessorImpl&& rhs);
+		const ProcessorImpl& operator = (const ProcessorImpl& rhs);
 	};
 };
 
