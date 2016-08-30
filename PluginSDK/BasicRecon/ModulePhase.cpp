@@ -78,8 +78,8 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 		{
 			auto module = YapShared(new CDoubleData(&dims));
 
-			GetModule(reinterpret_cast<complex<double>*>(input_data.GetData()),
-				reinterpret_cast<double*>(module->GetData()),
+			GetModule(GetDataArray<complex<double>>(data),
+				GetDataArray<double>(module.get()),
 				input_data.GetDataSize());
 
 			Feed(L"Module", module.get());
@@ -89,8 +89,8 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 		{
 			auto module = YapShared(new CFloatData(&dims));
 
-			GetModule(reinterpret_cast<complex<float>*>(input_data.GetData()),
-				reinterpret_cast<float*>(module->GetData()),
+			GetModule(GetDataArray<complex<float>>(data),
+				GetDataArray<float>(module.get()),
 				input_data.GetDataSize());
 
 			Feed(L"Module", module.get());
@@ -104,8 +104,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 		{
 			auto phase = YapShared(new CDoubleData(&dims));
 
-			GetPhase(reinterpret_cast<complex<double>*>(input_data.GetData()),
-				reinterpret_cast<double*>(phase->GetData()),
+			GetPhase(GetDataArray<complex<double>>(data), GetDataArray<double>(phase.get()),
 				input_data.GetDataSize());
 
 			Feed(L"Phase", phase.get());
@@ -114,8 +113,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 		{
 			auto phase = YapShared(new CFloatData(&dims));
 
-			GetPhase(reinterpret_cast<complex<float>*>(input_data.GetData()),
-				reinterpret_cast<float*>(phase->GetData()),
+			GetPhase(GetDataArray<complex<float>>(data), GetDataArray<float>(phase.get()),
 				input_data.GetDataSize());
 
 			Feed(L"Phase", phase.get());

@@ -42,8 +42,8 @@ IProcessor * Yap::CSliceSelector::Clone()
 
 bool Yap::CSliceSelector::Input(const wchar_t * name, IData * data)
 {
-	assert((data != nullptr) && data->GetData() != nullptr);
-	assert(GetInputPorts()->Find(name) != nullptr);
+	assert((data != nullptr) && Yap::GetDataArray<complex<float>>(data) != nullptr);
+	assert(Inputs()->Find(name) != nullptr);
 
 	int slice_index = GetInt(L"SliceIndex");
 
@@ -53,7 +53,7 @@ bool Yap::CSliceSelector::Input(const wchar_t * name, IData * data)
 	if (data_dimentions.GetDimensionCount() <= 3)
 	{		
 		data_dimentions.ModifyDimension(DimensionSlice, 1, slice_index);
-		auto output = YapShared(new CComplexFloatData(reinterpret_cast<std::complex<float>*>(data->GetData())
+		auto output = YapShared(new CComplexFloatData(Yap::GetDataArray<complex<float>>(data)
 			+ slice_index * slice_block_size, data_dimentions));
 		Feed(L"Output", output.get());
 	}

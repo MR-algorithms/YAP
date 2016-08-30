@@ -31,32 +31,26 @@ bool CComplexSplitter::Input(const wchar_t * port, IData * data)
 
 	//one, two and three dimension(s), ANY¡¡DIMENSION
 	auto size = static_cast<unsigned int> (input_data.GetDataSize());
-
+	auto data_array = GetDataArray<complex<double>>(data);
 	if (want_real && want_imaginary)
 	{
 		auto * real_data = new Yap::CDoubleData(data->GetDimensions());
 		auto * imaginary_data = new Yap::CDoubleData(data->GetDimensions());
-		Split(reinterpret_cast<std::complex<double> *>(input_data.GetData()),
-			reinterpret_cast<double*>(real_data->GetData()),
-			reinterpret_cast<double*>(imaginary_data->GetData()),
-			size);
+		Split(data_array, GetDataArray<double>(real_data), GetDataArray<double>(imaginary_data), size);
+
 		Feed(L"Real", real_data);
 		Feed(L"Imaginary", imaginary_data);
 	}
 	else if (want_real)
 	{
 		auto * real_data = new Yap::CDoubleData(data->GetDimensions());
-		ExtractReal(reinterpret_cast<std::complex<double> *>(input_data.GetData()),
-			reinterpret_cast<double*>(real_data->GetData()),
-			size);
+		ExtractReal(data_array, GetDataArray<double>(real_data), size);
 		Feed(L"Real", real_data);
 	}
 	else if (want_imaginary)
 	{
 		auto * imaginary_data = new Yap::CDoubleData(data->GetDimensions());
-		ExtractImaginary(reinterpret_cast<std::complex<double> *>(input_data.GetData()),
-			reinterpret_cast<double*>(imaginary_data->GetData()),
-			size);
+		ExtractImaginary(data_array, GetDataArray<double>(imaginary_data), size);
 		Feed(L"Imaginary", imaginary_data);
 	}
 
@@ -68,8 +62,9 @@ void Yap::CComplexSplitter::Split(std::complex<double> * data,
 	double * imaginary, size_t size)
 {
 	assert(data != nullptr && real != nullptr && imaginary != nullptr);
+	BUG(Review the pointer algorithms in this file.);
 
-	for (auto cursor = reinterpret_cast<double*>(data); cursor != reinterpret_cast<double*>(data + size); )
+	for (auto cursor = reinterpret_cast<double*>(data); cursor != reinterpret_cast<double*>(data) + size; )
 	{
 		*real++ = *cursor++;
 		*imaginary++ = *cursor++;
@@ -102,7 +97,7 @@ void CComplexSplitter::ExtractImaginary(std::complex<double> * data, double * im
 {
 	assert(data != nullptr && imaginary != nullptr);
 
-	for (double * cursor = reinterpret_cast<double*>(data) + 1; cursor != reinterpret_cast<double*>(data + size) + 1; cursor += 2)
+	for (double * cursor = reinterpret_cast<double*>(data) + 1; cursor != reinterpret_cast<double*>(data) + size + 1; cursor += 2)
 	{
 		*imaginary++ = *cursor;
 	}

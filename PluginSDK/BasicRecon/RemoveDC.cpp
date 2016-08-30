@@ -97,7 +97,7 @@ bool CRemoveDC::Input(const wchar_t * port, IData * data)
 	{
 		if (inplace)
 		{
-			RemoveDC<complex<float>>(reinterpret_cast<complex<float>*>(input_data.GetData()),
+			RemoveDC<complex<float>>(GetDataArray<complex<float>>(data),
 				nullptr, width, height, inplace, corner_size);
 			Feed(L"Output", data);
 		}
@@ -105,8 +105,7 @@ bool CRemoveDC::Input(const wchar_t * port, IData * data)
 		{
 			auto output_data = YapShared(new CComplexFloatData(data->GetDimensions()));
 
-			RemoveDC(reinterpret_cast<complex<float>*>(input_data.GetData()),
-				reinterpret_cast<complex<float>*>(output_data->GetData()),
+			RemoveDC(GetDataArray<complex<float>>(data), GetDataArray<complex<float>>(output_data.get()),
 				width, height, inplace, corner_size);
 			Feed(L"Output", output_data.get());
 		}
@@ -116,7 +115,7 @@ bool CRemoveDC::Input(const wchar_t * port, IData * data)
 	{
 		if (inplace)
 		{
-			RemoveDC<complex<double>>(reinterpret_cast<complex<double>*>(input_data.GetData()),
+			RemoveDC<complex<double>>(GetDataArray<complex<double>>(data),
 				nullptr, width, height, inplace, corner_size);
 			Feed(L"Output", data);
 		}
@@ -124,8 +123,7 @@ bool CRemoveDC::Input(const wchar_t * port, IData * data)
 		{
 			auto output_data = YapShared(new CComplexDoubleData(data->GetDimensions()));
 
-			RemoveDC(reinterpret_cast<complex<double>*>(input_data.GetData()),
-				reinterpret_cast<complex<double>*>(output_data->GetData()),
+			RemoveDC(GetDataArray<complex<double>>(data), GetDataArray<complex<double>>(output_data.get()),
 				width, height, inplace, corner_size);
 			Feed(L"Output", output_data.get());
 		}

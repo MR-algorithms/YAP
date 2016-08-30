@@ -23,7 +23,6 @@ namespace Yap
 		unsigned int GetWidth();
 		unsigned int GetHeight();
 
-		void * GetData();
 		size_t GetDataSize() const;
 		unsigned int GetBlockSize(DimensionType type) const;
 
@@ -34,6 +33,15 @@ namespace Yap
 	protected:
 		IData & _data_interface;
 	};
-}
+
+	template <typename T>
+	T * GetDataArray(IData * data)
+	{
+		auto * data_array = dynamic_cast<IDataArray<T> *>(data);
+		return (data_array != nullptr) ? data_array->GetData() : nullptr;
+	}
+
+} // namespace Yap.
+
 
 #endif

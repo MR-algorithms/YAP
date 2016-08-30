@@ -45,12 +45,10 @@ bool CFft1D::Input(const wchar_t * port, IData * data)
 		return false;
 
 	auto size = input_data.GetWidth();
-
+	auto data_array = GetDataArray<complex<double>>(data);
 	if (GetBool(L"InPlace"))
 	{
-		Fft1D(reinterpret_cast<complex<double>*>(input_data.GetData()),
-			reinterpret_cast<complex<double>*>(input_data.GetData()),
-			size, GetBool(L"Inverse"));
+		Fft1D(data_array, data_array, size, GetBool(L"Inverse"));
 		Feed(L"Output", data);
 	}
 	else
@@ -58,9 +56,7 @@ bool CFft1D::Input(const wchar_t * port, IData * data)
 		Yap::CDimensionsImpl dims;
 		dims(DimensionReadout, 0, size);
 		auto output = YapShared(new CComplexDoubleData(&dims));
-		Fft1D(reinterpret_cast<complex<double>*>(input_data.GetData()),
-			reinterpret_cast<complex<double>*>(output->GetData()),
-			size, GetBool(L"Inverse"));
+		Fft1D(data_array, GetDataArray<complex<double>>(output.get()), size, GetBool(L"Inverse"));
 		Feed(L"Output", output.get());
 	}
 

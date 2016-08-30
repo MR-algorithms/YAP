@@ -9,6 +9,7 @@
 #include <memory>
 #include "Utilities/macros.h"
 #include "interface/Implement/DataImpl.h"
+#include "Interface/Implement/SharedObjectImpl.h"
 #include "Interface/IProperty.h"
 #include "Interface/IMemory.h"
 
@@ -29,17 +30,14 @@ namespace Yap
 	};
 
 	class ProcessorImpl :
-		public IProcessor, public IDynamicObject
+		public IProcessor, public SharedObjectImpl
 	{
 	public:
 		explicit ProcessorImpl(const wchar_t * class_id);
 		ProcessorImpl(const ProcessorImpl& rhs);
 
-		/// 释放当前Processor的资源。
-		virtual void DeleteThis() override;
-
-		virtual IPortContainer * GetInputPorts() override;
-		virtual IPortContainer * GetOutputPorts() override;
+		virtual IPortContainer * Inputs() override;
+		virtual IPortContainer * Outputs() override;
 
 		bool Init();
 		virtual bool OnInit() { return true; };

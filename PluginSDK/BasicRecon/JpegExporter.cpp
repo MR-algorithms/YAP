@@ -166,13 +166,13 @@ bool CJpegExporter::OnInit()
 
 bool CJpegExporter::Input( const wchar_t * name, IData * data)
 {
-	assert((data != nullptr) && (data->GetData() != nullptr));
+	assert((data != nullptr) && (GetDataArray<float>(data) != nullptr));
 	assert(_impl);
 
 	TODO(What if the data is not of float type ? );
 
 	CDataHelper data_helper(data);
-	_impl->ExportImage(reinterpret_cast<float*>(data_helper.GetData()),
+	_impl->ExportImage(GetDataArray<float>(data),
 		data_helper.GetWidth(), data_helper.GetHeight(),
 		GetString(L"ExportFolder"));
 

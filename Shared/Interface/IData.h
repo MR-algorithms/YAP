@@ -108,14 +108,17 @@ namespace Yap
 		virtual bool IsValid() = 0;
 	};
 
-	struct IData
+	template <typename T> struct IDataArray
 	{
 		/// 返回数组的起始地址。
-		/** 获得数据后必须进行强制类型转换后使用. */
-		virtual void * GetData() = 0;
+		virtual T * GetData() = 0;
+	};
 
+	struct IData
+	{
 		virtual int GetDataType() = 0;			///< 返回数据元素的类型
 		virtual IDimensions * GetDimensions() = 0;	///< 获得数据的维度信息。
 	};
+
 }
 #endif // IData_h__

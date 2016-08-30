@@ -36,7 +36,7 @@ namespace Yap
 			if (wstring(port) != L"Input")
 				return false;
 
-			if (data->GetDataType() != type_id<INPUT_TYPE>)
+			if (data->GetDataType() != type_id<INPUT_TYPE>::type)
 				return false;
 
 			CDataHelper input_data(data);
@@ -48,8 +48,8 @@ namespace Yap
 
 			auto output_data = CSmartPtr<CDataImp<OUTPUT_TYPE>>(new CDataImp<OUTPUT_TYPE>(data->GetDimensions()));
 
-			_func(reinterpret_cast<INPUT_TYPE *>(input_data.GetData()),
-				reinterpret_cast<OUTPUT_TYPE *>(output_data->GetData()),
+			_func(GetDataArray<INPUT_TYPE>(data),
+				GetDataArray<OUTPUT_TYPE(output_data.get()),
 				width, height);
 			Feed(L"Output", output_data.get());
 		}
@@ -99,7 +99,7 @@ namespace Yap
 			unsigned int width = input_data.GetWidth();
 			unsigned int height = input_data.GetHeight();
 
-			_func(reinterpret_cast<T *>(input_data.GetData()), width, height);
+			_func(GetDataArray<T>(data), width, height);
 			Feed(L"Output", data);
 
 			return true;

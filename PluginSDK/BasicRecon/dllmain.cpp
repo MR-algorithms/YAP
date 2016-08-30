@@ -1,7 +1,7 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "stdafx.h"
 
-#include "Interface/Implement/ProcessorContainerImpl.h"
+#include "Interface/Implement/ContainerImpl.h"
 #include "Fft1D.h"
 #include "Fft2D.h"
 #include "ZeroFilling.h"
@@ -15,32 +15,23 @@
 #include "imageProcessing.h"
 #include "Algorithm2DWrapper.h"
 #include "SliceSelector.h"
+#include "Interface\Implement\YapImplement.h"
 
 using namespace Yap;
 
-extern "C"
-{
-	__declspec(dllexport) IProcessorContainer * GetProcessorManager()
-	{
-		auto processor_manager = new ProcessorContainerImpl;
-
-		processor_manager->AddProcessor(new CCmrDataReader);
-		processor_manager->AddProcessor(new CSliceIterator);
-		processor_manager->AddProcessor(new CRemoveDC);
-		processor_manager->AddProcessor(new CFft1D);
-		processor_manager->AddProcessor(new CFft2D);
-		processor_manager->AddProcessor(new CZeroFilling);
-		processor_manager->AddProcessor(new CComplexSplitter);
-		processor_manager->AddProcessor(new CGrappa);
-		processor_manager->AddProcessor(new CModulePhase);
-		processor_manager->AddProcessor(new CJpegExporter);
-		processor_manager->AddProcessor(new CSliceSelector);
-
-		processor_manager->AddProcessor(new CInPlaceAlgorithm2DWrapper<float>(hflip<float>, L"HFlipFloat"));
-		 
-		return processor_manager;
-	}
-}
+BEGIN_DECL_PROCESSORS
+	ADD_PROCESSOR(CSliceIterator)
+	ADD_PROCESSOR(CRemoveDC)
+	ADD_PROCESSOR(CFft1D)
+	ADD_PROCESSOR(CFft2D)
+	ADD_PROCESSOR(CZeroFilling)
+	ADD_PROCESSOR(CComplexSplitter)
+	ADD_PROCESSOR(CGrappa)
+	ADD_PROCESSOR(CModulePhase)
+	ADD_PROCESSOR(CJpegExporter)
+	ADD_PROCESSOR(CSliceSelector)
+	ADD(L"HFlipFloat", new CInPlaceAlgorithm2DWrapper<float>(hflip<float>, L"HFlipFloat"))
+END_DECL_PROCESSORS
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,

@@ -6,19 +6,18 @@
 #include "Interface/IProcessor.h"
 #include "Interface/IMemory.h"
 #include "Interface/IProperty.h"
+#include "Interface/Implement/SharedObjectImpl.h"
 
 namespace Yap
 {
 	class CProcessorAgent :
-		public IProcessor, public IDynamicObject
+		public IProcessor, public SharedObjectImpl
 	{
 	public:
 		CProcessorAgent(IProcessor * processor);
 		virtual ~CProcessorAgent();
 
 		virtual IProcessor * Clone() override;
-
-		virtual void DeleteThis() override;
 
 		virtual const wchar_t * GetClassId() override;
 
@@ -28,9 +27,9 @@ namespace Yap
 
 		virtual void SetInstanceId(const wchar_t * instance_id) override;
 
-		virtual IPortContainer * GetInputPorts() override;
+		virtual IPortContainer * Inputs() override;
 
-		virtual IPortContainer * GetOutputPorts() override;
+		virtual IPortContainer * Outputs() override;
 
 		virtual IPropertyContainer * GetProperties() override;
 
@@ -49,7 +48,7 @@ namespace Yap
 
 		operator bool();
 	protected:
-		IProcessor * _processor;
+		SmartPtr<IProcessor> _processor;
 	};
 }
 

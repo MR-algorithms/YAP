@@ -24,11 +24,11 @@ void CProcessorDebugger::DebugOutput(IProcessor& processor)
 {
 	auto processor_id = processor.GetClassId();
 	wcout << L"Processor: " << wstring(processor_id) << endl;
-	auto in_ports = processor.GetInputPorts();
-	if (in_ports != nullptr)
+	auto inputs = processor.Inputs();
+	if (inputs != nullptr)
 	{
 		wcout << L"In port(s): \n";
-		auto iter = YapDynamic(in_ports->GetIterator());
+		auto iter = YapDynamic(inputs->GetIterator());
 		if (iter)
 		{
 			DebugPort(*iter);
@@ -39,11 +39,11 @@ void CProcessorDebugger::DebugOutput(IProcessor& processor)
 		wcout << "No in port found.\n";
 	}
 
-	auto out_ports = processor.GetOutputPorts();
-	if (out_ports != nullptr)
+	auto outputs = processor.Outputs();
+	if (outputs != nullptr)
 	{
 		wcout << L"Out port(s): \n";
-		auto iter = YapDynamic(out_ports->GetIterator());
+		auto iter = YapDynamic(outputs->GetIterator());
 		if (iter)
 		{
 			DebugPort(*iter);

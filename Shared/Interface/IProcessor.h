@@ -27,17 +27,14 @@ namespace Yap
 		/// Return a cloned copy of this object.
 		virtual IProcessor * Clone() = 0;
 
-		/// DeleteThis this object.
-		virtual void DeleteThis() = 0;
-
 		virtual const wchar_t * GetClassId() = 0;
 		virtual void SetClassId(const wchar_t * id) = 0;
 
 		virtual const wchar_t * GetInstanceId() = 0;
 		virtual void SetInstanceId(const wchar_t * instance_id) = 0;
 
-		virtual IPortContainer * GetInputPorts() = 0;
-		virtual IPortContainer * GetOutputPorts() = 0;
+		virtual IPortContainer * Inputs() = 0;
+		virtual IPortContainer * Outputs() = 0;
 
 		/// 获得属性访问接口。
 		virtual IPropertyContainer * GetProperties() = 0;

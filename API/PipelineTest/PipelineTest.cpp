@@ -62,8 +62,8 @@ void ConstructorTest()
 
 int main()
 {
-	// CProcessorDebugger debugger;
-	// debugger.DebugPlugin(L"BasicRecon.dll");
+	CProcessorDebugger debugger;
+	debugger.DebugPlugin(L"BasicRecon.dll");
 
 //	 ConstructorTest();
 

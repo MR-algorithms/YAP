@@ -69,10 +69,6 @@ unsigned int CDataHelper::GetSlice()
 	return length;
 }
 
-void * CDataHelper::GetData()
-{
-	return _data_interface.GetData();
-}
 
 Yap::Dimension Yap::CDataHelper::GetDimension(DimensionType dimension_type)
 {

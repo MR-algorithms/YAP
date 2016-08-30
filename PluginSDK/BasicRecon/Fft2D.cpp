@@ -46,11 +46,11 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 	auto width = input_data.GetWidth();
 	auto height = input_data.GetHeight();
 
+	auto data_array = GetDataArray<complex<float>>(data);
+
 	if (GetBool(L"InPlace"))
 	{
-		Fft2D(reinterpret_cast<complex<float>*>(input_data.GetData()),
-			reinterpret_cast<complex<float>*>(input_data.GetData()),
-			width, height, GetBool(L"Inverse"));
+		Fft2D(data_array, data_array, width, height, GetBool(L"Inverse"));
 		Feed(L"Output", data);
 	}
 	else
@@ -60,8 +60,7 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 			(DimensionPhaseEncoding, 0, height);
 		auto output = YapShared(new CComplexDoubleData(&dims));
 
-		Fft2D(reinterpret_cast<complex<float>*>(input_data.GetData()),
-			reinterpret_cast<complex<float>*>(output->GetData()),
+		Fft2D(data_array, GetDataArray<complex<float>>(output.get()),
 			width, height, GetBool(L"Inverse"));
 		Feed(L"Output", output.get());
 	}
