@@ -216,7 +216,7 @@ private:
 template <typename TYPE>
 SmartPtr<TYPE> YapShared(TYPE * object)
 {
-	assert(dynamic_cast<ISharedObject*>(object) != nullptr &&
+	assert(object == nullptr || dynamic_cast<ISharedObject*>(object) != nullptr &&
 		   "Only pointers to object implementing ISharedObject can be wrapped using YapShared().");
 
 	return Yap::SmartPtr<TYPE>(object);
@@ -236,7 +236,7 @@ SmartPtr<TYPE> YapShared(TYPE * object)
 template <typename TYPE>
 std::shared_ptr<TYPE> YapDynamic(TYPE * object)
 {
-	assert(dynamic_cast<IDynamicObject*>(object) != nullptr &&
+	assert((object == nullptr || dynamic_cast<IDynamicObject*>(object) != nullptr) &&
 		   "Only pointers to object implementing IDynamicObject can be wrapped using YapDynamicObject().");
 
 	return std::shared_ptr<TYPE>(object, [](TYPE* pointer) {

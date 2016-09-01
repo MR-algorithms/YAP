@@ -149,16 +149,18 @@
   <ItemGroup>
     <ClCompile Include="CompositeProcessor.cpp" />
     <ClCompile Include="DataImpl.cpp" />
-    <ClCompile Include="ProcessorContainerImpl.cpp" />
     <ClCompile Include="ProcessorImpl.cpp" />
     <ClCompile Include="PropertyImpl.cpp" />
+    <ClCompile Include="SharedObjectImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CompositeProcessor.h" />
+    <ClInclude Include="ContainerImpl.h" />
     <ClInclude Include="DataImpl.h" />
-    <ClInclude Include="ProcessorContainerImpl.h" />
     <ClInclude Include="ProcessorImpl.h" />
     <ClInclude Include="PropertyImpl.h" />
+    <ClInclude Include="SharedObjectImpl.h" />
+    <ClInclude Include="YapImplement.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

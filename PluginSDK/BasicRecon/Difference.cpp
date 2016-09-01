@@ -73,20 +73,17 @@ bool Yap::CDifference::Input(const wchar_t * port, IData * data)
 		{
 			auto output_data = YapShared(new CFloatData(data->GetDimensions()));
 
-			Difference(reinterpret_cast<float*>(input_data.GetData()),
-				reinterpret_cast<float*>(reference_data.GetData()),
-				reinterpret_cast<float*>(output_data->GetData()),
-				input_data.GetDataSize());
+			Difference(GetDataArray<float>(data), GetDataArray<float>(_reference_data.get()),
+				GetDataArray<float>(output_data.get()), input_data.GetDataSize());
+
 			Feed(L"Output", output_data.get());
 		}
 		else
 		{
 			auto output_data = YapShared(new CDoubleData(data->GetDimensions()));
 
-			Difference(reinterpret_cast<double*>(input_data.GetData()),
-				reinterpret_cast<double*>(reference_data.GetData()),
-				reinterpret_cast<double*>(output_data->GetData()),
-				input_data.GetDataSize());
+			Difference(GetDataArray<double>(data), GetDataArray<double>(_reference_data.get()),
+				GetDataArray<double>(output_data.get()), input_data.GetDataSize());
 			Feed(L"Output", output_data.get());
 		}
 	}

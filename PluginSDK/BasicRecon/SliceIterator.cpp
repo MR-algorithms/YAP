@@ -5,6 +5,7 @@
 #include "Interface/Implement/DataImpl.h"
 
 using namespace Yap;
+using namespace std;
 
 CSliceIterator::CSliceIterator(void) :
 	ProcessorImpl(L"SliceIterator")
@@ -39,8 +40,8 @@ IProcessor* CSliceIterator::Clone()
 
 bool CSliceIterator::Input(const wchar_t * name, IData * data)
 {
-	assert((data != nullptr) && data->GetData() != nullptr);
-	assert(GetInputPorts()->Find(name) != nullptr);
+	assert((data != nullptr) && Yap::GetDataArray<complex<float>>(data) != nullptr);
+	assert(Inputs()->Find(name) != nullptr);
 
 	CDataHelper helper(data);
 
@@ -55,7 +56,8 @@ bool CSliceIterator::Input(const wchar_t * name, IData * data)
 		slice_data_dimensions.ModifyDimension(DimensionSlice, 1, i);
 
 		auto output = YapShared(new CComplexFloatData (
-			reinterpret_cast<std::complex<float>*>(data->GetData()) + i * slice_block_size, slice_data_dimensions));
+			Yap::GetDataArray<complex<float>>(data) + i * slice_block_size, slice_data_dimensions));
+
 		// output->SetSliceLocalization(GetParams(), i);
 
 		Feed(L"Output", output.get());

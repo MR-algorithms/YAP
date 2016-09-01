@@ -53,7 +53,7 @@ namespace Details
 
 	class PortContainer : public IPortContainer
 	{
-		class PortIterator : public IPortIter
+		class PortIterator : public IPortIter, public IDynamicObject
 		{
 			explicit PortIterator(PortContainer& container) :
 				_container(container)
@@ -77,6 +77,12 @@ namespace Details
 			std::map<std::wstring, std::shared_ptr<IPort>>::iterator _current;
 
 			friend class PortContainer;
+
+			// Inherited via IDynamicObject
+			virtual void DeleteThis() override
+			{
+				delete this;
+			}
 		};
 
 	public:
@@ -144,21 +150,16 @@ using namespace Details;
 		_property_links.clear();
 	}
 
-	void Yap::ProcessorImpl::DeleteThis()
-	{
-		delete this;
-	}
-
 	ProcessorImpl::~ProcessorImpl()
 	{
 	}
 
-	IPortContainer * ProcessorImpl::GetInputPorts()
+	IPortContainer * ProcessorImpl::Inputs()
 	{
 		return _input.get();
 	}
 
-	IPortContainer * ProcessorImpl::GetOutputPorts()
+	IPortContainer * ProcessorImpl::Outputs()
 	{
 		return _output.get();
 	}
@@ -445,7 +446,7 @@ using namespace Details;
 		if (out_port == nullptr)
 			return false;
 
-		auto in_ports = next->GetInputPorts();
+		auto in_ports = next->Inputs();
 		if (in_ports == nullptr)
 			return false;
 

@@ -24,13 +24,13 @@
     <ClCompile Include="PropertyImpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DataImpl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ProcessorImpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessorContainerImpl.cpp">
+    <ClCompile Include="DataImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SharedObjectImpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,7 +47,13 @@
     <ClInclude Include="ProcessorImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessorContainerImpl.h">
+    <ClInclude Include="ContainerImpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="YapImplement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedObjectImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

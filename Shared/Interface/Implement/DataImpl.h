@@ -37,12 +37,13 @@ namespace Yap
 	};
 
 	template<typename T>
-	class CDataImp : 
+	class DataImpl : 
 		public IData, 
+		public IDataArray<T>,
 		public ISharedObject
 	{
 	public:
-		CDataImp(T* data, const CDimensionsImpl& dimensions, ISharedObject * parent = nullptr, bool own_data = false) :
+		DataImpl(T* data, const CDimensionsImpl& dimensions, ISharedObject * parent = nullptr, bool own_data = false) :
 			_data(data), _own_memory(own_data), _use_count(0), 
 			_parent(YapShared(parent))
 		{
@@ -50,14 +51,14 @@ namespace Yap
 			_dimensions = dimensions;
 		}
 		
-		CDataImp(T* data, IDimensions * dimensions, ISharedObject * parent = nullptr, bool own_data = false) : 
+		DataImpl(T* data, IDimensions * dimensions, ISharedObject * parent = nullptr, bool own_data = false) : 
 			_data(data), _own_memory(own_data), _dimensions(dimensions), _use_count(0), 
 			_parent(SmartPtr::Make(parent))
 		{
 			assert(data != nullptr);
 		}
 
-		explicit CDataImp(IDimensions * dimensions) : _own_memory(true), _dimensions(dimensions), _use_count(0)
+		explicit DataImpl(IDimensions * dimensions) : _own_memory(true), _dimensions(dimensions), _use_count(0)
 		{
 			unsigned int total_size = 1;
 
@@ -74,7 +75,7 @@ namespace Yap
 			return &_dimensions;
 		}
 
-		virtual void * GetData()
+		virtual T * GetData()
 		{
 			return _data;
 		}
@@ -107,7 +108,7 @@ namespace Yap
 		}
 
 	private:
-		~CDataImp()
+		~DataImpl()
 		{
 			if (_own_memory)
 			{
@@ -129,10 +130,10 @@ namespace Yap
 		SmartPtr<ISharedObject> _parent;
 	};
 
-	typedef CDataImp<double> CDoubleData;
-	typedef CDataImp<float> CFloatData;
-	typedef CDataImp<char> CCharData;
-	typedef CDataImp<std::complex<double>> CComplexDoubleData;
-	typedef CDataImp<std::complex<float>> CComplexFloatData;
+	typedef DataImpl<double> CDoubleData;
+	typedef DataImpl<float> CFloatData;
+	typedef DataImpl<char> CCharData;
+	typedef DataImpl<std::complex<double>> CComplexDoubleData;
+	typedef DataImpl<std::complex<float>> CComplexFloatData;
 };
 

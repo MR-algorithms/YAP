@@ -41,8 +41,8 @@ IProcessor* CChannelMerger::Clone()
 
 bool CChannelMerger::Input(const wchar_t * name, IData * data)
 {
-	assert((data != nullptr) && data->GetData() != nullptr);
-	assert(GetInputPorts()->Find(name) != nullptr);
+	assert(data != nullptr);
+	assert(Inputs()->Find(name) != nullptr);
 
 	CDataHelper helper(data);
 	
@@ -70,7 +70,8 @@ bool CChannelMerger::Input(const wchar_t * name, IData * data)
 		merge_buffer.buffer = YapShared(new CFloatData(&merge_dimensions));
 
 		// merge_buffer.buffer->SetLocalization(CLocalization(*data->GetLocalization()));
-		memcpy(merge_buffer.buffer->GetData(), data->GetData(), helper.GetBlockSize(DimensionChannel) * sizeof(float));
+		auto * data_array = Yap::GetDataArray<float>(data);
+		memcpy(merge_buffer.buffer->GetData(), data_array, helper.GetBlockSize(DimensionChannel) * sizeof(float));
 		merge_buffer.count = 1;
 
 		auto result = _merge_buffers.insert(make_pair(key, merge_buffer));
@@ -79,7 +80,9 @@ bool CChannelMerger::Input(const wchar_t * name, IData * data)
 	else
 	{
 		float * merge_cursor = reinterpret_cast<float*>(iter->second.buffer->GetData());
-		float * source_cursor = reinterpret_cast<float*>(data->GetData());
+
+		auto * source_data_array = Yap::GetDataArray<float>(data);
+		float * source_cursor = source_data_array;
 		float * source_end = source_cursor + helper.GetBlockSize(DimensionChannel);
 		++iter->second.count;
 		for (; source_cursor < source_end; ++source_cursor, ++merge_cursor)
@@ -124,4 +127,10 @@ std::vector<unsigned int> CChannelMerger::GetKey(IDimensions * dimensions)
 	}
 
 	return result;
+}
+
+template<typename T>
+T * GetData(IData * data)
+{
+
 }

@@ -44,7 +44,7 @@ bool CGrappa::Input(const wchar_t * port, IData * data)
 	if (input_data.GetActualDimensionCount() != 3)
 		return false;
 
-	Recon(reinterpret_cast<complex<double>*>(input_data.GetData()), R, Acs, Block, 
+	Recon(GetDataArray<complex<double>>(data), R, Acs, Block, 
 		input_data.GetWidth(), input_data.GetHeight(), input_data.GetCoilCount());
 
 	Feed(L"Output", data);
