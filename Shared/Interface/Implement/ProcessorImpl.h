@@ -10,13 +10,12 @@
 #include "Utilities/macros.h"
 #include "interface/Implement/DataImpl.h"
 #include "Interface/Implement/SharedObjectImpl.h"
+#include "Interface/Implement/ContainerImpl.h"
 #include "Interface/IProperty.h"
 #include "Interface/IMemory.h"
 
 namespace Yap
 {
-	class PropertyContainerImpl;
-
 	struct Anchor
 	{
 		IProcessor * processor;
@@ -57,8 +56,8 @@ namespace Yap
 		bool CanLink(const wchar_t * source_output_name, IProcessor * next, const wchar_t * next_input_name);
 		bool OutportLinked(const wchar_t * out_port_name) const;
 
-		bool AddInputPort(const wchar_t * name, unsigned int dimensions, int data_type);
-		bool AddOutputPort(const wchar_t * name, unsigned int dimensions, int data_type);
+		bool AddInput(const wchar_t * name, unsigned int dimensions, int data_type);
+		bool AddOutput(const wchar_t * name, unsigned int dimensions, int data_type);
 
 		bool Feed(const wchar_t * name, IData * data);
 
@@ -73,16 +72,17 @@ namespace Yap
 		void SetString(const wchar_t * name, const wchar_t * value);
 		const wchar_t * GetString(const wchar_t * name);
 
-		std::shared_ptr<Details::PortContainer> _input;
-		std::shared_ptr<Details::PortContainer> _output;
+		SmartPtr<ContainerImpl<IPort>> _input;
+		SmartPtr<ContainerImpl<IPort>> _output;
 
-		std::shared_ptr<PropertyContainerImpl> _properties;
+		SmartPtr<ContainerImpl<IProperty>> _properties;
 
 		std::multimap<std::wstring, Anchor> _links;
 		std::map<std::wstring, std::wstring> _property_links;
 
 		std::wstring _instance_id;
 		std::wstring _class_id;
+
 		IPropertyContainer * _system_variables;
 
 		virtual ~ProcessorImpl();

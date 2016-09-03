@@ -28,8 +28,8 @@ bool ZeroFilling(T* dest, unsigned int dest_width, unsigned int dest_height,
 
 CZeroFilling::CZeroFilling() : ProcessorImpl(L"ZeroFilling")
 {
-	AddInputPort(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
-	AddOutputPort(L"Output", 2, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddInput(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddOutput(L"Output", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 
 	AddProperty(PropertyInt, L"DestWidth", L"Destination width.");
 	SetInt(L"DestWidth", 512);

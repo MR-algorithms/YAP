@@ -10,8 +10,8 @@ using namespace Yap;
 CSliceSelector::CSliceSelector(void):
 	ProcessorImpl(L"SliceSelector")
 {
-	AddInputPort(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
-	AddOutputPort(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
+	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
 	AddProperty(PropertyInt, L"SliceIndex", L"The index of the slice you want to get.");
 	SetInt(L"SliceIndex", 0);

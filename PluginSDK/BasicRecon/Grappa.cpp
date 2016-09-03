@@ -20,8 +20,8 @@ CGrappa::CGrappa() :
 	AddProperty(PropertyInt, L"Block", L"The number of blocks.");
 	SetInt(L"Block", 4);
 
-	AddInputPort(L"Input", 3, DataTypeComplexDouble | DataTypeComplexFloat);
-	AddOutputPort(L"Output", 3, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddInput(L"Input", 3, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddOutput(L"Output", 3, DataTypeComplexDouble | DataTypeComplexFloat);
 }
 
 

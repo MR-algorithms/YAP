@@ -5,6 +5,7 @@
 #include <vector>
 // #include "Localization.h"
 #include "interface\IMemory.h"
+#include "Interface/Implement/SharedObjectImpl.h"
 #include <assert.h>
 
 namespace Yap
@@ -12,7 +13,7 @@ namespace Yap
 
 	class CDimensionsImpl : 
 		public IDimensions, 
-		public IDynamicObject, 
+		public SharedObjectImpl, 
 		public IClonable
 	{
 	public:
@@ -24,13 +25,15 @@ namespace Yap
 		bool ModifyDimension(DimensionType type, unsigned int length, unsigned int start_index = 0);
 		unsigned int GetLength(unsigned int dimension_index);
 
-		virtual unsigned int GetDimensionCount();
-		virtual bool GetDimensionInfo(unsigned int dimension_index, DimensionType & dimension_type, unsigned int& start_index, unsigned int& length);
+		virtual unsigned int GetDimensionCount() override;
+
+		virtual bool GetDimensionInfo(unsigned int dimension_index,
+			DimensionType & dimension_type, unsigned int& start_index, unsigned int& length) override;
+
 		virtual bool SetDimensionInfo(unsigned int dimension_index, DimensionType dimension_type, 
 			unsigned int start_index, unsigned int length);
 
 		virtual IClonable * Clone() override;
-		virtual void DeleteThis() override;
 		CDimensionsImpl & operator() (DimensionType type, unsigned int index, unsigned int length);
 	private:
 		std::vector<Dimension> _dimension_info;

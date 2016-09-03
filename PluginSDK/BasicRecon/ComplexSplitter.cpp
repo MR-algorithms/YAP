@@ -7,9 +7,9 @@ CComplexSplitter::CComplexSplitter() :
 	ProcessorImpl(L"ComplexSplitter")
 {
 	// ANY  DIMENSION
-	AddInputPort(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble);
-	AddOutputPort(L"Real", YAP_ANY_DIMENSION, DataTypeDouble);
-	AddOutputPort(L"Imaginary", YAP_ANY_DIMENSION, DataTypeDouble);
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble);
+	AddOutput(L"Real", YAP_ANY_DIMENSION, DataTypeDouble);
+	AddOutput(L"Imaginary", YAP_ANY_DIMENSION, DataTypeDouble);
 }
 
 CComplexSplitter::~CComplexSplitter()

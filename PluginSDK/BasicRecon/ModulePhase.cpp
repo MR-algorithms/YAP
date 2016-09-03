@@ -42,9 +42,9 @@ bool GetPhase(complex<T>* input, T* phase,
 CModulePhase::CModulePhase() :
 	ProcessorImpl(L"ModulePhase")
 {
-	AddInputPort(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
-	AddOutputPort(L"Module", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
-	AddOutputPort(L"Phase", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddOutput(L"Module", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
+	AddOutput(L"Phase", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
 
 }
 

@@ -19,8 +19,8 @@ CSamplingTypeGenerator::CSamplingTypeGenerator(void):
 	_try_count(10),
 	_tolerance(3)
 {
-	AddInputPort(L"Input", YAP_ANY_DIMENSION, DataTypeUnknown);
-	AddOutputPort(L"Output", 1, DataTypeChar);
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeUnknown);
+	AddOutput(L"Output", 1, DataTypeChar);
 
 	AddProperty(PropertyFloat, L"pow", L"");
 	SetFloat(L"pow", 3.0f);

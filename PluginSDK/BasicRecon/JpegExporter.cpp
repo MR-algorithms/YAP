@@ -22,7 +22,7 @@ using namespace std;
 
 namespace Yap { namespace Implementation 
 {
-	INT GetEncoderClsid(const WCHAR *format, CLSID *pClsid)
+	static INT GetEncoderClsid(const WCHAR *format, CLSID *pClsid)
 	{
 		UINT  num = 0;          // number of image encoders
 		UINT  size = 0;         // size of the image encoder array in bytes
@@ -130,7 +130,7 @@ using namespace Yap::Implementation;
 CJpegExporter::CJpegExporter() :
 	ProcessorImpl(L"JpegExporter")
 {
-	AddInputPort(L"Input", 2, DataTypeFloat);
+	AddInput(L"Input", 2, DataTypeFloat);
 	AddProperty(PropertyString, L"ExportFolder", L"Set folder used to hold exported images.");
 
 	_impl = shared_ptr<CJpegExporterImp>(new CJpegExporterImp);

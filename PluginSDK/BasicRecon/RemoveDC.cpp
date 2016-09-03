@@ -59,14 +59,14 @@ void RemoveDC(T * input_data,
 CRemoveDC::CRemoveDC() :
 	ProcessorImpl(L"RemoveDC")
 {
-	AddInputPort(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddInput(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 	
 	AddProperty(PropertyBool, L"Inplace", L"If the processed data will be stored in place.");
 	SetBool(L"Inplace", true);
 	AddProperty(PropertyInt, L"CornerSize", L"Size of the corners used to estimate noise level.");
 	SetInt(L"CornerSize", 10);
 
-	AddOutputPort(L"Output", 2, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddOutput(L"Output", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 }
 
 

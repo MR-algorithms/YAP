@@ -10,8 +10,8 @@ using namespace std;
 CSliceIterator::CSliceIterator(void) :
 	ProcessorImpl(L"SliceIterator")
 {
-	AddInputPort(L"Input", 3, DataTypeComplexFloat);
-	AddOutputPort(L"Output", 2, DataTypeComplexFloat);
+	AddInput(L"Input", 3, DataTypeComplexFloat);
+	AddOutput(L"Output", 2, DataTypeComplexFloat);
 }
 
 CSliceIterator::CSliceIterator( const CSliceIterator& rhs)

@@ -49,8 +49,29 @@ namespace Yap
 
 	public:
 		ContainerImpl()	: _use_count(0){}
+		ContainerImpl * Clone() const
+		{
+			auto cloned = new (std::nothrow) ContainerImpl;
+			if (cloned == nullptr)
+				return nullptr;
 
-		virtual IProcessor * Find(const wchar_t * name) override
+			for (auto element : _elements)
+			{
+				auto clonable = dynamic_cast<IClonable*>(element.second.get());
+				if (clonable != nullptr)
+				{
+					auto cloned_element = dynamic_cast<TYPE *>(clonable->Clone());
+					if (cloned_element != nullptr)
+					{
+						cloned->Add(element.first.c_str(), cloned_element);
+					}
+				}
+			}
+
+			return cloned;
+		}
+
+		virtual TYPE * Find(const wchar_t * name) override
 		{
 			auto iter = _elements.find(name);
 			return  (iter != _elements.end()) ? iter->second.get() : nullptr;
