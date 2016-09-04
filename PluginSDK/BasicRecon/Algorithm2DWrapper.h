@@ -20,8 +20,8 @@ namespace Yap
 		explicit CAlgorithm2DWrapper(ProcessingFunc func, const wchar_t * processor_name) :
 			_func(func), ProcessorImpl(processor_name)
 		{
-			AddInputPort(L"Input", 2, type_id<INPUT_TYPE>::type);
-			AddOutputPort(L"Output", 2, type_id<OUTPUT_TYPE>::type);
+			AddInput(L"Input", 2, type_id<INPUT_TYPE>::type);
+			AddOutput(L"Output", 2, type_id<OUTPUT_TYPE>::type);
 		}
 
 		CAlgorithm2DWrapper(const CAlgorithm2DWrapper<INPUT_TYPE, OUTPUT_TYPE>& rhs) :
@@ -73,8 +73,8 @@ namespace Yap
 		explicit CInPlaceAlgorithm2DWrapper(ProcessingFunc func, const wchar_t * processor_name) :
 			_func(func), ProcessorImpl(processor_name)
 		{
-			AddInputPort(L"Input", 2, type_id<T>::type);
-			AddOutputPort(L"Output", 2, type_id<T>::type);
+			AddInput(L"Input", 2, type_id<T>::type);
+			AddOutput(L"Output", 2, type_id<T>::type);
 		}
 
 		CInPlaceAlgorithm2DWrapper(const CInPlaceAlgorithm2DWrapper<T>& rhs) :

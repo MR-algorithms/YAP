@@ -80,7 +80,7 @@ class SmartPtr
 public:
 	SmartPtr() : _pointer(nullptr) {}
 
-	SmartPtr(SmartPtr<TYPE>& source) : _pointer(source._pointer) 
+	SmartPtr(const SmartPtr<TYPE>& source) : _pointer(source._pointer) 
 	{
 		auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
 		if (shared_object != nullptr)
@@ -129,7 +129,7 @@ public:
 		return *this;
 	}
 
-	const SmartPtr<TYPE>& operator = (const SmartPtr<TYPE>&& source) 
+	const SmartPtr<TYPE>& operator = (SmartPtr<TYPE>&& source) 
 	{
 		if (_pointer != source._pointer)
 		{

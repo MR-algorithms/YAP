@@ -9,8 +9,8 @@ using namespace std;
 CChannelMerger::CChannelMerger(void) :
 	ProcessorImpl(L"ChannelMerger")
 {
-	AddOutputPort(L"Output", 2, DataTypeFloat);
-	AddInputPort(L"Input", 2, DataTypeFloat);
+	AddOutput(L"Output", 2, DataTypeFloat);
+	AddInput(L"Input", 2, DataTypeFloat);
 
 	AddProperty(PropertyInt, L"ChannelCount", L"通道数");
 	AddProperty(PropertyInt, L"ChannelSwitch", L"通道开关指示值");

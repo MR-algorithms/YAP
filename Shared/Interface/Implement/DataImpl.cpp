@@ -38,19 +38,7 @@ bool Yap::CDimensionsImpl::GetDimensionInfo(unsigned int dimension_index,
 
 IClonable * Yap::CDimensionsImpl::Clone()
 {
-	try
-	{
-		return new CDimensionsImpl(*this);
-	}
-	catch (std::bad_alloc&)
-	{
-		return nullptr;
-	}
-}
-
-void Yap::CDimensionsImpl::DeleteThis()
-{
-	throw std::logic_error("The method or operation is not implemented.");
+	return new (std::nothrow) CDimensionsImpl(*this);
 }
 
 CDimensionsImpl & Yap::CDimensionsImpl::operator()(DimensionType type, unsigned int index, unsigned int length)

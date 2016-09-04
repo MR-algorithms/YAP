@@ -126,22 +126,22 @@ namespace Details
 	};
 };	// namespace Yap::Details
 
-using namespace Details;
+	using namespace Details;
 
 	ProcessorImpl::ProcessorImpl(const wchar_t * class_id) :
 		_system_variables(nullptr),
 		_class_id(class_id),
-		_properties(YapDynamic(new PropertyContainerImpl)),
-		_input(new PortContainer),
-		_output(new PortContainer)
+		_properties(YapShared(new ContainerImpl<IProperty>)),
+		_input(YapShared(new ContainerImpl<IPort>)),
+		_output(YapShared(new ContainerImpl<IPort>))
 	{
 		
 	}
 
 	Yap::ProcessorImpl::ProcessorImpl(const ProcessorImpl& rhs) :
-		_input(rhs._input),
-		_output(rhs._output),
-		_properties(rhs._properties),
+		_input(YapShared(rhs._input->Clone())),
+		_output(YapShared(rhs._output->Clone())),
+		_properties(YapShared(rhs._properties->Clone())),
 		_instance_id(rhs._instance_id),
 		_class_id(rhs._class_id),
 		_system_variables(nullptr)
@@ -184,14 +184,18 @@ using namespace Details;
 		return true;
 	}
 
-	bool ProcessorImpl::AddInputPort(const wchar_t * name, unsigned int dimensions, int data_type)
+	bool ProcessorImpl::AddInput(const wchar_t * name, 
+								 unsigned int dimensions,
+								 int data_type)
 	{
-		return _input->AddPort(name, dimensions, data_type);
+		return _input->Add(name, new CPort(name, dimensions, data_type));
 	}
 
-	bool ProcessorImpl::AddOutputPort(const wchar_t * name, unsigned int dimensions, int data_type)
+	bool ProcessorImpl::AddOutput(const wchar_t * name,
+								  unsigned int dimensions, 
+								  int data_type)
 	{
-		return _output->AddPort(name, dimensions, data_type);
+		return _output->Add(name, new CPort(name, dimensions, data_type));
 	}
 
 	bool ProcessorImpl::Feed(const wchar_t * out_port, IData * data)
@@ -220,13 +224,13 @@ using namespace Details;
 			switch (type)
 			{
 			case PropertyBool:
-				return _properties->AddProperty(new BoolProperty(name, description));
+				return _properties->Add(name, new BoolProperty(name, description));
 			case PropertyInt:
-				return _properties->AddProperty(new IntProperty(name, description));
+				return _properties->Add(name, new IntProperty(name, description));
 			case PropertyFloat:
-				return _properties->AddProperty(new DoubleProperty(name, description));
+				return _properties->Add(name, new DoubleProperty(name, description));
 			case PropertyString:
-				return _properties->AddProperty(new StringProperty(name, description));
+				return _properties->Add(name, new StringProperty(name, description));
 			default:
 				return false;
 			}
@@ -485,8 +489,6 @@ using namespace Details;
 
 		return bool_value->GetBool();
 	}
-
-
 	
-};
+};	// namepace Yap
 

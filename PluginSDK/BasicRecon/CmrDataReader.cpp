@@ -20,8 +20,8 @@ CCmrDataReader::CCmrDataReader(void) :
 CCmrDataReader::CCmrDataReader(const CCmrDataReader& rhs)
 	: ProcessorImpl(rhs)
 {
-	AddInputPort(L"Input", 0, DataTypeUnknown);
-	AddOutputPort(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
+	AddInput(L"Input", 0, DataTypeUnknown);
+	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
 	AddProperty(PropertyString, L"DataPath",  L"包含原始数据文件的文件夹。");
 	AddProperty(PropertyInt, L"ChannelCount",  L"通道数");

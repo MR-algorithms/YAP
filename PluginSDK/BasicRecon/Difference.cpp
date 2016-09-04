@@ -22,10 +22,10 @@ void Difference(T * input_data,
 
 CDifference::CDifference() : ProcessorImpl(L"Difference")
 {
-	AddInputPort(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
-	AddInputPort(L"Reference", YAP_ANY_DIMENSION, DataTypeAll);
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
+	AddInput(L"Reference", YAP_ANY_DIMENSION, DataTypeAll);
 
-	AddOutputPort(L"Output", YAP_ANY_DIMENSION, DataTypeAll);
+	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeAll);
 }
 
 
