@@ -14,7 +14,7 @@ namespace Yap
 	struct IPort
 	{
 		virtual const wchar_t * GetName() = 0;
-		virtual unsigned int GetDimensions() = 0;
+		virtual unsigned int GetDimensionCount() = 0;
 		virtual int GetDataType() = 0;
 	};
 

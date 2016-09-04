@@ -15,7 +15,7 @@ void CProcessorDebugger::DebugPort(IPortIter& ports)
 {
 	for (auto port = ports.GetFirst(); port != nullptr; port = ports.GetNext())
 	{
-		wcout << "Name: " << port->GetName() << "\t Dimensions: " << port->GetDimensions()
+		wcout << "Name: " << port->GetName() << "\t Dimensions: " << port->GetDimensionCount()
 			<< "\t int: " << port->GetDataType() << endl;
 	}
 }

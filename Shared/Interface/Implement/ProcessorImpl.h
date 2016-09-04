@@ -23,11 +23,6 @@ namespace Yap
 		Anchor(IProcessor* processor_, const wchar_t * in_port_) : processor(processor_), port(in_port_) {}
 	};
 
-	namespace Details
-	{
-		class PortContainer;
-	};
-
 	class ProcessorImpl :
 		public IProcessor, public SharedObjectImpl
 	{

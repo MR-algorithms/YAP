@@ -11,122 +11,44 @@ using namespace Yap;
 
 namespace Yap
 {
-namespace Details
+namespace details
 {
-	class CPort : public IPort
+	class Port : public IPort
 	{
 	public:
-		CPort(const wchar_t * name, unsigned int dimensions, int data_type);
-		virtual const wchar_t * GetName() override;
-		virtual unsigned int GetDimensions() override;
-		virtual int GetDataType() override;
+		Port::Port(const wchar_t * name, unsigned int dimension_count, int data_type) :
+			_name(name),
+			_dimension_count(dimension_count),
+			_data_type(data_type)
+		{
+		}
+	
+		virtual const wchar_t * GetName() override
+		{
+			return _name.c_str();
+		}
+
+		virtual unsigned int GetDimensionCount() override
+		{
+			return _dimension_count;
+		}
+
+		virtual int GetDataType() override
+		{
+			return _data_type;
+		}
 
 	protected:
 		std::wstring _name;
-		unsigned int _dimensions;
+		unsigned int _dimension_count;
 		int _data_type;
 
 	};
 
+	typedef ContainerImpl<IPort> PortContainer;
+};	// namespace Yap::details
 
-	CPort::CPort(const wchar_t * name, unsigned int dimensions, int data_type) :
-		_name(name),
-		_dimensions(dimensions),
-		_data_type(data_type)
-	{
-	}
-
-	const wchar_t * CPort::GetName()
-	{
-		return _name.c_str();
-	}
-
-	unsigned int CPort::GetDimensions()
-	{
-		return _dimensions;
-	}
-
-	int CPort::GetDataType()
-	{
-		return _data_type;
-	}
-
-	class PortContainer : public IPortContainer
-	{
-		class PortIterator : public IPortIter, public IDynamicObject
-		{
-			explicit PortIterator(PortContainer& container) :
-				_container(container)
-			{
-			}
-
-			// Inherited via IIterator
-			virtual IPort * GetFirst() override
-			{
-				_current = _container._ports.begin();
-				return (_current != _container._ports.end()) ? _current->second.get() : nullptr;
-			}
-
-			virtual IPort * GetNext() override
-			{
-				return (_current == _container._ports.end() || ++_current == _container._ports.end()) ?
-					nullptr : _current->second.get();
-			}
-
-			PortContainer& _container;
-			std::map<std::wstring, std::shared_ptr<IPort>>::iterator _current;
-
-			friend class PortContainer;
-
-			// Inherited via IDynamicObject
-			virtual void DeleteThis() override
-			{
-				delete this;
-			}
-		};
-
-	public:
-		bool AddPort(const wchar_t * name, unsigned int dimensions, int data_type)
-		{
-			try
-			{
-				shared_ptr<IPort> port(new CPort(name, dimensions, data_type));
-				_ports.insert(std::make_pair(port->GetName(), port));
-			}
-			catch (bad_alloc&)
-			{
-				return false;
-			}
-
-			return true;
-		}
-
-		virtual IPort * Find(const wchar_t * name) override
-		{
-			auto iter = _ports.find(name);
-			return (iter != _ports.end()) ? iter->second.get() : nullptr;
-		}
-
-		virtual IPortIter * GetIterator() override
-		{
-			try
-			{
-				return new PortIterator(*this);
-			}
-			catch (std::bad_alloc&)
-			{
-				return nullptr;
-			}
-		}
-
-	protected:
-		std::map<std::wstring, std::shared_ptr<IPort>> _ports;
-
-		friend class PortIterator;
-	};
-};	// namespace Yap::Details
-
-	using namespace Details;
+	using namespace details;
 
 	ProcessorImpl::ProcessorImpl(const wchar_t * class_id) :
 		_system_variables(nullptr),
@@ -188,14 +110,14 @@ namespace Details
 								 unsigned int dimensions,
 								 int data_type)
 	{
-		return _input->Add(name, new CPort(name, dimensions, data_type));
+		return _input->Add(name, new Port(name, dimensions, data_type));
 	}
 
 	bool ProcessorImpl::AddOutput(const wchar_t * name,
 								  unsigned int dimensions, 
 								  int data_type)
 	{
-		return _output->Add(name, new CPort(name, dimensions, data_type));
+		return _output->Add(name, new Port(name, dimensions, data_type));
 	}
 
 	bool ProcessorImpl::Feed(const wchar_t * out_port, IData * data)
@@ -463,9 +385,9 @@ namespace Details
 
 		TODO(Refine the processing of YAP_ANY_DIMENSION and support of multiple data type.);
 
-		return (out_port->GetDimensions() == in_port->GetDimensions() ||
-			out_port->GetDimensions() == YAP_ANY_DIMENSION ||
-			in_port->GetDimensions() == YAP_ANY_DIMENSION);
+		return (out_port->GetDimensionCount() == in_port->GetDimensionCount() ||
+			out_port->GetDimensionCount() == YAP_ANY_DIMENSION ||
+			in_port->GetDimensionCount() == YAP_ANY_DIMENSION);
 	}
 
 	bool Yap::ProcessorImpl::OutportLinked(const wchar_t * out_port_name) const
