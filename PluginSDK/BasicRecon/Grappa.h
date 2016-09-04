@@ -3,8 +3,8 @@
 #ifndef Grappa_h__20160814
 #define Grappa_h__20160814
 
-#include "Interface/Implement/ProcessorImpl.h"
-#include "Interface/Client/DataHelper.h"
+#include "../../Shared/Interface/Implement/ProcessorImpl.h"
+#include "../../Shared/Interface/Client/DataHelper.h"
 #include <complex>
 #include <armadillo>
 

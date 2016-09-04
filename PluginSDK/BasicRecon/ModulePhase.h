@@ -3,7 +3,7 @@
 #ifndef ModulePhase_h__20160814
 #define ModulePhase_h__20160814
 
-#include "Interface/Implement/ProcessorImpl.h"
+#include "../../Shared/Interface/Implement/ProcessorImpl.h"
 
 namespace Yap
 {

@@ -1,7 +1,7 @@
 #include "Fft2D.h"
 
-#include "Interface/Client/DataHelper.h"
-#include "Interface/Implement/DataImpl.h"
+#include "../../Shared/Interface/Client/DataHelper.h"
+#include "../../Shared/Interface/Implement/DataImpl.h"
 
 #include <string>
 

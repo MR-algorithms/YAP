@@ -1,7 +1,7 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "stdafx.h"
 
-#include "Interface/Implement/ContainerImpl.h"
+#include "../../Shared/Interface/Implement/ContainerImpl.h"
 #include "Fft1D.h"
 #include "Fft2D.h"
 #include "ZeroFilling.h"
@@ -15,7 +15,7 @@
 #include "imageProcessing.h"
 #include "Algorithm2DWrapper.h"
 #include "SliceSelector.h"
-#include "Interface\Implement\YapImplement.h"
+#include "../../Shared/Interface\Implement\YapImplement.h"
 
 using namespace Yap;
 

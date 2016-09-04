@@ -6,8 +6,8 @@
 #include <string>
 #include <map>
 
-#include "Interface/IProperty.h"
-#include "Interface/IMemory.h"
+#include "../../../Shared/Interface/IProperty.h"
+#include "../../../Shared/Interface/IMemory.h"
 
 namespace Yap
 {

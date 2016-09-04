@@ -3,8 +3,8 @@
 #ifndef ProcessorManagerAgent_h__20160813
 #define ProcessorManagerAgent_h__20160813
 
-#include "Interface/IProcessor.h"
-#include "Interface/IMemory.h"
+#include "../../Shared/Interface/IProcessor.h"
+#include "../../Shared/Interface/IMemory.h"
 
 #include <wtypes.h>
 

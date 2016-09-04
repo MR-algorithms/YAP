@@ -1,5 +1,5 @@
 #include "Difference.h"
-#include "Interface/Client/DataHelper.h"
+#include "../../Shared/Interface/Client/DataHelper.h"
 
 using namespace Yap;
 using namespace std;

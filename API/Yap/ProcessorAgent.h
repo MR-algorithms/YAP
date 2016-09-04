@@ -3,10 +3,10 @@
 #ifndef ProcessorAgent_h__20160813
 #define ProcessorAgent_h__20160813
 
-#include "Interface/IProcessor.h"
-#include "Interface/IMemory.h"
-#include "Interface/IProperty.h"
-#include "Interface/Implement/SharedObjectImpl.h"
+#include "../../Shared/Interface/IProcessor.h"
+#include "../../Shared/Interface/IMemory.h"
+#include "../../Shared/Interface/IProperty.h"
+#include "../../Shared/Interface/Implement/SharedObjectImpl.h"
 
 namespace Yap
 {

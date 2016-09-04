@@ -3,7 +3,7 @@
 #ifndef SharedObjectImpl_h_20160831
 #define SharedObjectImpl_h_20160831
 
-#include "Interface/IMemory.h"
+#include "../../../Shared/Interface/IMemory.h"
 
 namespace Yap
 {

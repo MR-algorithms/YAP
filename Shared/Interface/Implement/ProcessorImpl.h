@@ -2,16 +2,16 @@
 #define ProcessorImp_h__20160813
 
 #pragma once
-#include "Interface/IProcessor.h"
+#include "../../../Shared/Interface/IProcessor.h"
 
 #include <map>
 #include <string>
 #include <memory>
-#include "Utilities/macros.h"
-#include "interface/Implement/DataImpl.h"
-#include "Interface/Implement/SharedObjectImpl.h"
-#include "Interface/IProperty.h"
-#include "Interface/IMemory.h"
+#include "../../../Shared/Utilities/macros.h"
+#include "../../../Shared/interface/Implement/DataImpl.h"
+#include "../../../Shared/Interface/Implement/SharedObjectImpl.h"
+#include "../../../Shared/Interface/IProperty.h"
+#include "../../../Shared/Interface/IMemory.h"
 
 namespace Yap
 {

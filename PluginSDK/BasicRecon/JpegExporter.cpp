@@ -1,13 +1,13 @@
 #include "stdafx.h"
 
 #include "JpegExporter.h"
-#include "Interface/Client/DataHelper.h"
+#include "../../Shared/Interface/Client/DataHelper.h"
 
 #define min(a, b) (a) < (b) ? (a) : (b)
 #define max(a, b) (a) > (b) ? (a) : (b)
 
 #include <boost\smart_ptr\shared_array.hpp>
-#include "Utilities\macros.h"
+#include "../../Shared/Utilities\macros.h"
 
 #include <comdef.h>
 #include <GdiPlus.h>

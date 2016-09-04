@@ -2,8 +2,8 @@
 #define Fft1D_h__20160813
 
 #pragma once
-#include "Interface/Implement/ProcessorImpl.h"
-#include "Interface/Client/DataHelper.h"
+#include "../../Shared/Interface/Implement/ProcessorImpl.h"
+#include "../../Shared/Interface/Client/DataHelper.h"
 #include "fftw3.h"
 #include <complex>
 #include <vector>

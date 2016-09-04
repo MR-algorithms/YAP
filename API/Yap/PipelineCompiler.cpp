@@ -1,7 +1,7 @@
 #include "PipelineCompiler.h"
 #include "PipelineConstructor.h"
 
-#include "Utilities/macros.h"
+#include "../../Shared/Utilities/macros.h"
 
 #include <boost/assign/list_of.hpp>
 

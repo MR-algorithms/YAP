@@ -1,6 +1,6 @@
 #include "ModuleManager.h"
 #include "ProcessorManagerAgent.h"
-#include "Interface/IMemory.h"
+#include "../../Shared/Interface/IMemory.h"
 
 #include <utility>
 #include <vector>

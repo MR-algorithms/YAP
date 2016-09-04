@@ -7,7 +7,7 @@
 #include <map>
 #include <memory>
 
-#include "Interface/IProcessor.h"
+#include "../../Shared/Interface/IProcessor.h"
 
 namespace Yap
 {

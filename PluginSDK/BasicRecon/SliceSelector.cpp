@@ -1,6 +1,6 @@
 #include "SliceSelector.h"
-#include "interface/Client/DataHelper.h"
-#include "Interface/Implement/DataImpl.h"
+#include "../../Shared/interface/Client/DataHelper.h"
+#include "../../Shared/Interface/Implement/DataImpl.h"
 
 #include <complex>
 
