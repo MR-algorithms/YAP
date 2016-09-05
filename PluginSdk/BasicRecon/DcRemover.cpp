@@ -1,4 +1,4 @@
-#include "RemoveDC.h"
+#include "DcRemover.h"
 
 #include "Interface/Client/DataHelper.h"
 #include "Interface/Implement/DataImpl.h"

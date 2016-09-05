@@ -15,7 +15,7 @@ namespace Yap
 	template <typename TYPE>
 	class ContainerImpl :
 		public IContainer<TYPE>, 
-		public ISharedObject,
+		public SharedObjectImpl,
 		public IClonable
 	{
 		template <typename TYPE>
@@ -61,7 +61,8 @@ namespace Yap
 		};
 
 	public:
-		ContainerImpl()	: _use_count(0){}
+		ContainerImpl() {}
+
 		IClonable * Clone() const override
 		{
 			auto cloned = new (std::nothrow) ContainerImpl;
@@ -96,19 +97,6 @@ namespace Yap
 			return new (std::nothrow) Iterator<TYPE>(*this);
 		}
 
-		virtual void Lock() override
-		{
-			++_use_count;
-		}
-
-		virtual void Release() override
-		{
-			if (_use_count == 0 || --_use_count == 0)
-			{
-				delete this;
-			}
-		}
-
 		bool Add(const wchar_t * name, TYPE * element)
 		{
 			if (element == nullptr)
@@ -124,7 +112,6 @@ namespace Yap
 		~ContainerImpl() {}
 
 		std::map<std::wstring, SmartPtr<TYPE>> _elements;
-		unsigned int _use_count;
 	};
 }
 

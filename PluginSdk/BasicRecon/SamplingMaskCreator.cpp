@@ -1,7 +1,8 @@
-#include "stdafx.h"
-#include "SamplingTypeGenerator.h"
-#include <math.h>
+
+#include "SamplingMaskCreator.h"
 #include "Interface/Client/DataHelper.h"
+
+#include <math.h>
 #include <algorithm>
 #include <numeric>
 #include <fftw3.h>
@@ -15,7 +16,7 @@ using namespace Yap;
 using namespace std;
 
 SamplingMaskCreator::SamplingMaskCreator(void):
-	ProcessorImpl(L"SamplingTypeGenerator"),
+	ProcessorImpl(L"SamplingMaskCreator"),
 	_try_count(10),
 	_tolerance(3)
 {

@@ -10,12 +10,12 @@
 
 namespace Yap
 {
-	class CProcessorAgent :
+	class ProcessorAgent :
 		public IProcessor, public SharedObjectImpl
 	{
 	public:
-		CProcessorAgent(IProcessor * processor);
-		virtual ~CProcessorAgent();
+		ProcessorAgent(IProcessor * processor);
+		virtual ~ProcessorAgent();
 
 		virtual IProcessor * Clone() override;
 

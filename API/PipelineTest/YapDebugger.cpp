@@ -11,7 +11,7 @@
 using namespace Yap;
 using namespace std;
 
-void YapDebugger::DebugPort(IPortIter& ports)
+void CProcessorDebugger::DebugPort(IPortIter& ports)
 {
 	for (auto port = ports.GetFirst(); port != nullptr; port = ports.GetNext())
 	{
@@ -20,7 +20,7 @@ void YapDebugger::DebugPort(IPortIter& ports)
 	}
 }
 
-void YapDebugger::DebugOutput(IProcessor& processor)
+void CProcessorDebugger::DebugOutput(IProcessor& processor)
 {
 	auto processor_id = processor.GetClassId();
 	wcout << L"Processor: " << wstring(processor_id) << endl;
@@ -55,7 +55,7 @@ void YapDebugger::DebugOutput(IProcessor& processor)
 	}
 }
 
-bool YapDebugger::DebugProperties(IPropertyIter& properties)
+bool CProcessorDebugger::DebugProperties(IPropertyIter& properties)
 {
 	for (auto property = properties.GetFirst(); property != nullptr;
 		property = properties.GetNext())
@@ -96,7 +96,7 @@ bool YapDebugger::DebugProperties(IPropertyIter& properties)
 	return true;
 }
 
-bool YapDebugger::DebugPlugin(const wchar_t * path)
+bool CProcessorDebugger::DebugPlugin(const wchar_t * path)
 {
 	auto module = ::LoadLibrary(path);
 	if (module == NULL)

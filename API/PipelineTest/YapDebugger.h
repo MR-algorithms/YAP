@@ -5,7 +5,7 @@
 
 namespace Yap
 {
-	class YapDebugger
+	class CProcessorDebugger
 	{
 	public:
 		void DebugPort(IPortIter& ports);

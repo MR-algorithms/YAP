@@ -81,11 +81,11 @@ namespace Yap
 	const int CompileErrorParamIdInvalid			= 1031;
 	const int CompileErrorFailedOpenFile			= 1032;
 
-	class CCompileError
+	class CompileError
 	{
 	public:
-		CCompileError() : _error_number(CompileErrorSuccess) {}
-		CCompileError(const Token& token, int error_number, const std::wstring& error_message) :
+		CompileError() : _error_number(CompileErrorSuccess) {}
+		CompileError(const Token& token, int error_number, const std::wstring& error_message) :
 			_error_message(error_message), _error_number(error_number), _token(token) {}
 
 		const Token& GetToken() const { return _token; }
@@ -107,10 +107,10 @@ namespace Yap
 		StatementAssign,
 	};
 
-	class CStatement
+	class Statement
 	{
 	public:
-		explicit CStatement(PipelineConstructor& constructor);
+		explicit Statement(PipelineConstructor& constructor);
 
 		/// Clear the tokens in the statement.
 		void Reset();
@@ -176,11 +176,11 @@ namespace Yap
 		PipelineConstructor& _constructor;
 	};
 
-	class CPipelineCompiler
+	class PipelineCompiler
 	{
 	public:
-		CPipelineCompiler();
-		~CPipelineCompiler();
+		PipelineCompiler();
+		~PipelineCompiler();
 
 		std::shared_ptr<CompositeProcessor> CompileFile(const wchar_t * path);
 		std::shared_ptr<CompositeProcessor> Compile(const wchar_t * text);
