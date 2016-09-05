@@ -12,11 +12,21 @@
 using namespace std;
 using namespace Yap;
 
-CFft1D::CFft1D() : 
+Fft1D::Fft1D() : 
 	ProcessorImpl(L"Fft1D"),
 	_plan_data_size(0),
 	_plan_inverse(false),
 	_plan_in_place(false)
+{
+
+}
+
+Fft1D::~Fft1D()
+{
+}
+
+
+bool Yap::Fft1D::OnInit()
 {
 	AddProperty(PropertyBool, L"Inverse", L"The direction of FFT1D."); 
 	AddProperty(PropertyBool, L"InPlace", L"The position of FFT1D.");
@@ -26,13 +36,12 @@ CFft1D::CFft1D() :
 
 	AddInput(L"Input", 1, DataTypeComplexDouble);
 	AddOutput(L"Output", 1, DataTypeComplexDouble);
+
+	return true;
 }
 
-CFft1D::~CFft1D()
-{
-}
 
-bool CFft1D::Input(const wchar_t * port, IData * data)
+bool Fft1D::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) != L"Input")
 		return false;
@@ -48,22 +57,22 @@ bool CFft1D::Input(const wchar_t * port, IData * data)
 	auto data_array = GetDataArray<complex<double>>(data);
 	if (GetBool(L"InPlace"))
 	{
-		Fft1D(data_array, data_array, size, GetBool(L"Inverse"));
+		Fft(data_array, data_array, size, GetBool(L"Inverse"));
 		Feed(L"Output", data);
 	}
 	else
 	{
-		Yap::CDimensionsImpl dims;
+		Yap::DimensionsImpl dims;
 		dims(DimensionReadout, 0, size);
 		auto output = YapShared(new CComplexDoubleData(&dims));
-		Fft1D(data_array, GetDataArray<complex<double>>(output.get()), size, GetBool(L"Inverse"));
+		Fft(data_array, GetDataArray<complex<double>>(output.get()), size, GetBool(L"Inverse"));
 		Feed(L"Output", output.get());
 	}
 
 	return true;
 }
 
-void CFft1D::FFTShift(std::complex<double>* data, size_t size)
+void Fft1D::FFTShift(std::complex<double>* data, size_t size)
 {
 	bool is_odd = ((size % 2) != 0);
 	if (is_odd)
@@ -76,7 +85,7 @@ void CFft1D::FFTShift(std::complex<double>* data, size_t size)
 	}
 }
 
-void CFft1D::SwapBlock(std::complex<double>* block1, 
+void Fft1D::SwapBlock(std::complex<double>* block1, 
 	std::complex<double>* block2, 
 	size_t width)
 {
@@ -92,7 +101,7 @@ void CFft1D::SwapBlock(std::complex<double>* block1,
 
 }
 
-void CFft1D::Plan(size_t size, bool inverse, bool in_place)
+void Fft1D::Plan(size_t size, bool inverse, bool in_place)
 {
 	vector<fftw_complex> data(size);
 	if (in_place)
@@ -116,10 +125,10 @@ void CFft1D::Plan(size_t size, bool inverse, bool in_place)
 	_plan_in_place = in_place;
 }
 
-bool CFft1D::Fft1D(std::complex<double> * data, 
-	std::complex<double> * result_data,
-	size_t size, 
-	bool inverse)
+bool Fft1D::Fft(std::complex<double> * data, 
+				std::complex<double> * result_data,
+				size_t size,
+				bool inverse)
 {
 	bool in_place = (data == result_data);
 
@@ -140,14 +149,7 @@ bool CFft1D::Fft1D(std::complex<double> * data,
 	return true;
 }
 
-Yap::IProcessor * Yap::CFft1D::Clone()
+Yap::IProcessor * Yap::Fft1D::Clone()
 {
-	try
-	{
-		return new CFft1D;
-	}
-	catch (std::bad_alloc&)
-	{
-		return nullptr;
-	}
+	return new(nothrow) Fft1D(*this);
 }

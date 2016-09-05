@@ -18,7 +18,7 @@ std::wstring GetFileNameFromPath(const wchar_t * path)
 		end_pos = path_string.length();
 	}
 
-	return path_string.substr(start_pos, end_pos - start_pos - 1);
+	return path_string.substr(start_pos + 1, end_pos - start_pos - 1);
 }
 
 ModuleManager::ModuleManager()

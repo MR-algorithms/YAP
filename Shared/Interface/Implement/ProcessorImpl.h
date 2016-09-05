@@ -24,7 +24,8 @@ namespace Yap
 	};
 
 	class ProcessorImpl :
-		public IProcessor, public SharedObjectImpl
+		public IProcessor, 
+		public SharedObjectImpl
 	{
 	public:
 		explicit ProcessorImpl(const wchar_t * class_id);
@@ -34,7 +35,8 @@ namespace Yap
 		virtual IPortContainer * Outputs() override;
 
 		bool Init();
-		virtual bool OnInit() { return true; };
+		virtual bool OnInit() = 0;
+
 		virtual const wchar_t * GetClassId() override;
 		virtual void SetClassId(const wchar_t * id) override;
 		virtual const wchar_t * GetInstanceId() override;
@@ -48,6 +50,9 @@ namespace Yap
 		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) override;
 
 	protected:
+		/// Protect destructor to prevent this object to be created on stack.
+		~ProcessorImpl();
+
 		bool CanLink(const wchar_t * source_output_name, IProcessor * next, const wchar_t * next_input_name);
 		bool OutportLinked(const wchar_t * out_port_name) const;
 
@@ -80,7 +85,6 @@ namespace Yap
 
 		IPropertyContainer * _system_variables;
 
-		virtual ~ProcessorImpl();
 	private:
 		ProcessorImpl(const ProcessorImpl&& rhs);
 		const ProcessorImpl& operator = (ProcessorImpl&& rhs);

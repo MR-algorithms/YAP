@@ -7,38 +7,37 @@
 using namespace Yap;
 using namespace std;
 
-CSliceIterator::CSliceIterator(void) :
+SliceIterator::SliceIterator(void) :
 	ProcessorImpl(L"SliceIterator")
 {
-	AddInput(L"Input", 3, DataTypeComplexFloat);
-	AddOutput(L"Output", 2, DataTypeComplexFloat);
 }
 
-CSliceIterator::CSliceIterator( const CSliceIterator& rhs)
+SliceIterator::SliceIterator( const SliceIterator& rhs)
 	: ProcessorImpl(rhs)
 {
 
 }
 
 
-CSliceIterator::~CSliceIterator(void)
+SliceIterator::~SliceIterator(void)
 {
 }
 
-IProcessor* CSliceIterator::Clone()
+
+bool Yap::SliceIterator::OnInit()
 {
-	try
-	{
-		auto processor = new CSliceIterator(*this);
-		return processor;
-	}
-	catch (std::bad_alloc&)
-	{
-		return nullptr;
-	}
+	AddInput(L"Input", 3, DataTypeComplexFloat);
+	AddOutput(L"Output", 2, DataTypeComplexFloat);
+
+	return true;
 }
 
-bool CSliceIterator::Input(const wchar_t * name, IData * data)
+IProcessor* SliceIterator::Clone()
+{
+	return new (std::nothrow) SliceIterator(*this);
+}
+
+bool SliceIterator::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && Yap::GetDataArray<complex<float>>(data) != nullptr);
 	assert(Inputs()->Find(name) != nullptr);
@@ -52,7 +51,7 @@ bool CSliceIterator::Input(const wchar_t * name, IData * data)
 	
 	for (unsigned int i = slice_dimension.start_index; i < slice_dimension.start_index + slice_dimension.length; ++i)
 	{
-		CDimensionsImpl slice_data_dimensions(data->GetDimensions());
+		DimensionsImpl slice_data_dimensions(data->GetDimensions());
 		slice_data_dimensions.ModifyDimension(DimensionSlice, 1, i);
 
 		auto output = YapShared(new CComplexFloatData (

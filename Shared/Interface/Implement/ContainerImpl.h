@@ -15,12 +15,19 @@ namespace Yap
 	template <typename TYPE>
 	class ContainerImpl :
 		public IContainer<TYPE>, 
-		public ISharedObject
+		public ISharedObject,
+		public IClonable
 	{
 		template <typename TYPE>
-		class Iterator : public IIterator<TYPE>
+		class Iterator : 
+			public IIterator<TYPE>,
+			public IDynamicObject
 		{
 			explicit Iterator(ContainerImpl& container) : _container(container)
+			{
+			}
+
+			virtual ~Iterator()
 			{
 			}
 
@@ -41,15 +48,21 @@ namespace Yap
 
 			}
 
+			virtual void DeleteThis() override
+			{
+				delete this;
+			}
+
 			ContainerImpl& _container;
 			typename std::map<std::wstring, SmartPtr<TYPE>>::iterator _current;
 
+			
 			friend class ContainerImpl;
 		};
 
 	public:
 		ContainerImpl()	: _use_count(0){}
-		ContainerImpl * Clone() const
+		IClonable * Clone() const override
 		{
 			auto cloned = new (std::nothrow) ContainerImpl;
 			if (cloned == nullptr)
@@ -80,14 +93,7 @@ namespace Yap
 
 		virtual IIterator<TYPE> * GetIterator() override
 		{
-			try
-			{
-				return new Iterator<TYPE>(*this);
-			}
-			catch (std::bad_alloc&)
-			{
-				return nullptr;
-			}
+			return new (std::nothrow) Iterator<TYPE>(*this);
 		}
 
 		virtual void Lock() override

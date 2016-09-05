@@ -13,7 +13,10 @@ namespace Yap
 {
 namespace details
 {
-	class Port : public IPort
+	class Port : 
+		public IPort,
+		public SharedObjectImpl,
+		public IClonable
 	{
 	public:
 		Port::Port(const wchar_t * name, unsigned int dimension_count, int data_type) :
@@ -43,6 +46,13 @@ namespace details
 		unsigned int _dimension_count;
 		int _data_type;
 
+
+		// Inherited via IClonable
+		virtual IClonable * Clone() const override
+		{
+			return new Port(*this);
+		}
+
 	};
 
 	typedef ContainerImpl<IPort> PortContainer;
@@ -61,9 +71,9 @@ namespace details
 	}
 
 	Yap::ProcessorImpl::ProcessorImpl(const ProcessorImpl& rhs) :
-		_input(YapShared(rhs._input->Clone())),
-		_output(YapShared(rhs._output->Clone())),
-		_properties(YapShared(rhs._properties->Clone())),
+		_input(YapShared<ContainerImpl<IPort>>(rhs._input->Clone())),
+		_output(YapShared<ContainerImpl<IPort>>(rhs._output->Clone())),
+		_properties(YapShared<ContainerImpl<IProperty>>(rhs._properties->Clone())),
 		_instance_id(rhs._instance_id),
 		_class_id(rhs._class_id),
 		_system_variables(nullptr)

@@ -26,7 +26,7 @@ namespace Yap
 	protected:
 
 		HINSTANCE _module;
-		std::shared_ptr<IProcessorContainer> _manager;
+		SmartPtr<IProcessorContainer> _manager;
 	};
 
 }

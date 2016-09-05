@@ -11,14 +11,35 @@ using namespace Yap;
 using namespace std;
 using boost::assign::list_of;
 
+namespace Yap
+{
+	namespace details
+	{
 
-CCmrDataReader::CCmrDataReader(void) :
+		/// This structure is used to store version info and sizes of all sections.
+		struct EcnuRawSections
+		{
+			double  FileVersion;
+			int  Section1Size;
+			int  Section2Size;
+			int  Section3Size;
+			int  Section4Size;
+		};
+
+	}
+}
+
+CmrDataReader::CmrDataReader(void) :
 	ProcessorImpl(L"CmrRawDataReader")
 {
 }
 
-CCmrDataReader::CCmrDataReader(const CCmrDataReader& rhs)
+CmrDataReader::CmrDataReader(const CmrDataReader& rhs)
 	: ProcessorImpl(rhs)
+{
+}
+
+bool Yap::CmrDataReader::OnInit()
 {
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
@@ -27,22 +48,16 @@ CCmrDataReader::CCmrDataReader(const CCmrDataReader& rhs)
 	AddProperty(PropertyInt, L"ChannelCount",  L"通道数");
 	AddProperty(PropertyInt, L"ChannelSwitch",  L"通道开关指示值");
 	AddProperty(PropertyInt, L"GroupCount",  L"分组扫描数");
+
+	return true;
 }
 
-IProcessor * CCmrDataReader::Clone()
+IProcessor * CmrDataReader::Clone()
 {
-	try
-	{
-		auto processor = new CCmrDataReader(*this);
-		return processor;
-	}
-	catch (std::bad_alloc&)
-	{
-		return nullptr;
-	}
+	return new(nothrow) CmrDataReader(*this);
 }
 
-bool CCmrDataReader::Input(const wchar_t * name, IData * data)
+bool CmrDataReader::Input(const wchar_t * name, IData * data)
 {
 	// Should not pass in data to start raw data file reading.
 	assert(data == nullptr);
@@ -66,7 +81,7 @@ bool CCmrDataReader::Input(const wchar_t * name, IData * data)
 	return true;
 }
 
-bool CCmrDataReader::ReadRawData(unsigned int channel_index)
+bool CmrDataReader::ReadRawData(unsigned int channel_index)
 {
 	std::wostringstream output;
 	output << GetString(L"DataPath") << L"\\ChannelData"
@@ -128,7 +143,7 @@ bool CCmrDataReader::ReadRawData(unsigned int channel_index)
 	}
 	
 
-	CDimensionsImpl dimensions;
+	DimensionsImpl dimensions;
 	dimensions(DimensionReadout, 0U, width)
 			  (DimensionPhaseEncoding, 0U, height)
 			  (DimensionSlice, 0U, total_slice_count)
@@ -143,16 +158,6 @@ bool CCmrDataReader::ReadRawData(unsigned int channel_index)
 	return true;
 }
 
-/// This structure is used to store version info and sizes of all sections.
-struct EcnuRawSections
-{
-	double  FileVersion;
-	int  Section1Size;
-	int  Section2Size;
-	int  Section3Size;
-	int  Section4Size;
-};
-
 /**
 Read raw data from raw data file.
 @return Pointer to the buffer used to store the raw-data. Should be released by the caller of this function.
@@ -160,7 +165,7 @@ Read raw data from raw data file.
 @param height Output, height of the image.
 @param slices Output, number of slices read.
 */
-float* CCmrDataReader::ReadEcnuFile(const wchar_t * file_path,
+float* CmrDataReader::ReadEcnuFile(const wchar_t * file_path,
 	unsigned int& width,
 	unsigned int& height,
 	unsigned int& slices,
@@ -169,12 +174,12 @@ float* CCmrDataReader::ReadEcnuFile(const wchar_t * file_path,
 	ifstream file(file_path, ios::binary);
 
 	// read raw data header
-	EcnuRawSections sections;
-	if (!file.read(reinterpret_cast<char*>(&sections), sizeof(EcnuRawSections)))
+	details::EcnuRawSections sections;
+	if (!file.read(reinterpret_cast<char*>(&sections), sizeof(details::EcnuRawSections)))
 		return nullptr;
 
 	// read dimension information
-	file.seekg(sizeof(EcnuRawSections) + sections.Section1Size + sections.Section2Size + sections.Section3Size,
+	file.seekg(sizeof(details::EcnuRawSections) + sections.Section1Size + sections.Section2Size + sections.Section3Size,
 		ios::beg);
 
 	// Version 1.5701001以上版本, 允许浮点误差

@@ -40,36 +40,45 @@ namespace Yap
 		unsigned int _line_number;
 	};
 
-	class CCompositeProcessor;
+	class CompositeProcessor;
 	class ModuleManager;
 	class CProcessorAgent;
 	struct IProcessor;
 
-	class CPipelineConstructor
+	class PipelineConstructor
 	{
 	public:
-		CPipelineConstructor();
-		virtual ~CPipelineConstructor();
+		PipelineConstructor();
+		virtual ~PipelineConstructor();
+
 		void Reset(bool reset_module_manager = true);
+
 		bool LoadModule(const wchar_t * module_name);
 
 		void SetPluginFolder(const wchar_t * path);
+
 		const wchar_t * GetPluginFolder() const;
 
 		IProcessor * CreateProcessor(const wchar_t * class_id, const wchar_t * instance_id);
+
 		bool Link(const wchar_t * source, const wchar_t * source_port, const wchar_t * dest, const wchar_t * dest_port);
+
 		bool Link(const wchar_t * source, const wchar_t * dest);
+
 		bool SetProperty(const wchar_t * processor_id, const wchar_t * property_id, const wchar_t * value);
+
 		bool LinkProperty(const wchar_t * processor_id, const wchar_t * property_id, const wchar_t * param_id);
 
-		bool AssignPipelineInPort(const wchar_t * pipeline_port, const wchar_t * inner_processor, const wchar_t * inner_port);
-		bool AssignPipelineOutPort(const wchar_t * pipeline_port, const wchar_t * inner_processor, const wchar_t * inner_port);
+		bool MapInput(const wchar_t * pipeline_port, const wchar_t * inner_processor, const wchar_t * inner_port);
+
+		bool MapOutput(const wchar_t * pipeline_port, const wchar_t * inner_processor, const wchar_t * inner_port);
+
 		bool InstanceIdExists(const wchar_t * id);
 
-		std::shared_ptr<CCompositeProcessor> GetPipeline();
+		std::shared_ptr<CompositeProcessor> GetPipeline();
 
 	protected:
-		std::shared_ptr<CCompositeProcessor> _pipeline;
+		std::shared_ptr<CompositeProcessor> _pipeline;
 		std::shared_ptr<ModuleManager> _module_manager;
 		std::wstring _plugin_folder;
 	};

@@ -35,19 +35,19 @@ wstring CConstructError::GetErrorMessage() const
 	return _error_message;
 }
 
-CPipelineConstructor::CPipelineConstructor()
+PipelineConstructor::PipelineConstructor()
 {
 	_module_manager = std::shared_ptr<ModuleManager>(new ModuleManager);
 
 }
 
-CPipelineConstructor::~CPipelineConstructor()
+PipelineConstructor::~PipelineConstructor()
 {
 }
 
-void CPipelineConstructor::Reset(bool reset_modules)
+void PipelineConstructor::Reset(bool reset_modules)
 {
-	_pipeline = shared_ptr<CCompositeProcessor>(new CCompositeProcessor(L"__PIPELINE"));
+	_pipeline = shared_ptr<CompositeProcessor>(new CompositeProcessor(L"__PIPELINE"));
 	_pipeline->Init();
 
 	if (reset_modules)
@@ -56,7 +56,7 @@ void CPipelineConstructor::Reset(bool reset_modules)
 	}
 }
 
-bool Yap::CPipelineConstructor::LoadModule(const wchar_t * module_name)
+bool Yap::PipelineConstructor::LoadModule(const wchar_t * module_name)
 {
 	wstring plugin_path = L".";
 	if (plugin_path[plugin_path.length() - 1] != L'\\')
@@ -68,17 +68,17 @@ bool Yap::CPipelineConstructor::LoadModule(const wchar_t * module_name)
 	return _module_manager->LoadModule(plugin_path.c_str());
 }
 
-void Yap::CPipelineConstructor::SetPluginFolder(const wchar_t * path)
+void Yap::PipelineConstructor::SetPluginFolder(const wchar_t * path)
 {
 	_plugin_folder = path;
 }
 
-const wchar_t * Yap::CPipelineConstructor::GetPluginFolder() const
+const wchar_t * Yap::PipelineConstructor::GetPluginFolder() const
 {
 	return _plugin_folder.c_str();
 }
 
-IProcessor * Yap::CPipelineConstructor::CreateProcessor(const wchar_t * class_id,
+IProcessor * Yap::PipelineConstructor::CreateProcessor(const wchar_t * class_id,
 	const wchar_t * instance_id)
 {
 	assert(_pipeline);
@@ -101,12 +101,12 @@ IProcessor * Yap::CPipelineConstructor::CreateProcessor(const wchar_t * class_id
 	}
 }
 
-bool CPipelineConstructor::Link(const wchar_t * source, const wchar_t * dest)
+bool PipelineConstructor::Link(const wchar_t * source, const wchar_t * dest)
 {
 	return Link(source, nullptr, dest, nullptr);
 }
 
-bool Yap::CPipelineConstructor::Link(const wchar_t * source, 
+bool Yap::PipelineConstructor::Link(const wchar_t * source, 
 	const wchar_t * source_port, 
 	const wchar_t * dest, 
 	const wchar_t * dest_port)
@@ -144,28 +144,28 @@ bool Yap::CPipelineConstructor::Link(const wchar_t * source,
 	return true;
 }
 
-bool Yap::CPipelineConstructor::AssignPipelineInPort(const wchar_t * pipeline_port, 
+bool Yap::PipelineConstructor::MapInput(const wchar_t * pipeline_port, 
 	const wchar_t * inner_processor, 
 	const wchar_t * inner_port)
 {
 	assert(_pipeline);
-	return _pipeline->AssignInPort(pipeline_port, inner_processor, inner_port);
+	return _pipeline->AddInputMapping(pipeline_port, inner_processor, inner_port);
 }
 
-bool Yap::CPipelineConstructor::AssignPipelineOutPort(const wchar_t * pipeline_port, 
+bool Yap::PipelineConstructor::MapOutput(const wchar_t * pipeline_port, 
 	const wchar_t * inner_processor, 
 	const wchar_t * inner_port)
 {
 	assert(_pipeline);
-	return _pipeline->AssignOutPort(pipeline_port, inner_processor, inner_port);
+	return _pipeline->AddOutputMapping(pipeline_port, inner_processor, inner_port);
 }
 
-std::shared_ptr<CCompositeProcessor> Yap::CPipelineConstructor::GetPipeline()
+std::shared_ptr<CompositeProcessor> Yap::PipelineConstructor::GetPipeline()
 {
 	return _pipeline;
 }
 
-bool CPipelineConstructor::SetProperty(const wchar_t * processor_id,
+bool PipelineConstructor::SetProperty(const wchar_t * processor_id,
 	const wchar_t * property_id,
 	const wchar_t * value)
 {
@@ -246,12 +246,12 @@ bool CPipelineConstructor::SetProperty(const wchar_t * processor_id,
 	return result;
 }
 
-bool CPipelineConstructor::InstanceIdExists(const wchar_t * id)
+bool PipelineConstructor::InstanceIdExists(const wchar_t * id)
 {
 	return _pipeline->Find(id) != nullptr;
 }
 
-bool CPipelineConstructor::LinkProperty(const wchar_t * processor_id,
+bool PipelineConstructor::LinkProperty(const wchar_t * processor_id,
 	const wchar_t * property_id,
 	const wchar_t * param_id)
 {

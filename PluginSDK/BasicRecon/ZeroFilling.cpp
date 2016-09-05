@@ -10,8 +10,12 @@ using namespace std;
 using namespace Yap;
 
 template <typename T>
-bool ZeroFilling(T* dest, unsigned int dest_width, unsigned int dest_height,
-	T* source, unsigned int source_width, unsigned int source_height)
+bool zero_filling(T* dest, 
+				 unsigned int dest_width, 
+				 unsigned int dest_height,
+				 T* source, 
+				 unsigned int source_width, 
+				 unsigned int source_height)
 {
 	assert(dest != nullptr && source != nullptr);
 	assert(dest_width >= source_width && dest_height >= source_height);
@@ -26,7 +30,16 @@ bool ZeroFilling(T* dest, unsigned int dest_width, unsigned int dest_height,
 	return true;
 }
 
-CZeroFilling::CZeroFilling() : ProcessorImpl(L"ZeroFilling")
+ZeroFilling::ZeroFilling() : ProcessorImpl(L"ZeroFilling")
+{
+
+}
+
+ZeroFilling::~ZeroFilling()
+{
+}
+
+bool Yap::ZeroFilling::OnInit()
 {
 	AddInput(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 	AddOutput(L"Output", 2, DataTypeComplexDouble | DataTypeComplexFloat);
@@ -39,13 +52,11 @@ CZeroFilling::CZeroFilling() : ProcessorImpl(L"ZeroFilling")
 	SetInt(L"Left", 0);
 	AddProperty(PropertyInt, L"Top", L"Y coordinate of top left corner of source data in destination data.");
 	SetInt(L"Top", 0);
+
+	return true;
 }
 
-CZeroFilling::~CZeroFilling()
-{
-}
-
-bool CZeroFilling::Input(const wchar_t * port, IData * data)
+bool ZeroFilling::Input(const wchar_t * port, IData * data)
 {
 	if (std::wstring(port) != L"Input")
 		return false;
@@ -63,14 +74,14 @@ bool CZeroFilling::Input(const wchar_t * port, IData * data)
 	if (dest_width < input_data.GetWidth() || dest_height < input_data.GetHeight())
 		return false;
 
-	Yap::CDimensionsImpl dims;
+	Yap::DimensionsImpl dims;
 	dims(DimensionReadout, 0, dest_width)
 		(DimensionPhaseEncoding, 0, dest_height);
 
 	if (data->GetDataType() == DataTypeComplexDouble)
 	{
 		auto output = YapShared(new CComplexDoubleData(&dims));
-		ZeroFilling(Yap::GetDataArray<complex<double>>(output.get()), dest_width, dest_height,
+		zero_filling(Yap::GetDataArray<complex<double>>(output.get()), dest_width, dest_height,
 			Yap::GetDataArray<complex<double>>(data), input_data.GetWidth(), input_data.GetHeight());
 
 		Feed(L"Output", output.get());
@@ -79,7 +90,7 @@ bool CZeroFilling::Input(const wchar_t * port, IData * data)
 	else
 	{
 		auto output = YapShared(new CComplexFloatData(&dims));
-		ZeroFilling(Yap::GetDataArray<complex<float>>(output.get()), dest_width, dest_height,
+		zero_filling(Yap::GetDataArray<complex<float>>(output.get()), dest_width, dest_height,
 					Yap::GetDataArray<complex<float>>(data), input_data.GetWidth(), input_data.GetHeight());
 
 		Feed(L"Output", output.get());
@@ -88,16 +99,9 @@ bool CZeroFilling::Input(const wchar_t * port, IData * data)
 	return true;
 }
 
-Yap::IProcessor * Yap::CZeroFilling::Clone()
+Yap::IProcessor * Yap::ZeroFilling::Clone()
 {
-	try
-	{
-		return new CZeroFilling;
-	}
-	catch (std::bad_alloc&)
-	{
-		return nullptr;
-	}
+	return new (std::nothrow) ZeroFilling(*this);
 }
 
 

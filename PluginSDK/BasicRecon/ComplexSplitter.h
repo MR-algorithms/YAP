@@ -8,12 +8,12 @@
 
 namespace Yap
 {
-	class CComplexSplitter :public ProcessorImpl
+	class ComplexSplitter :public ProcessorImpl
 	{
 
 	public:
-		CComplexSplitter();;
-		~CComplexSplitter();
+		ComplexSplitter();;
+		~ComplexSplitter();
 
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
@@ -25,6 +25,8 @@ namespace Yap
 
 		virtual IProcessor * Clone() override;
 
+		// Inherited via ProcessorImpl
+		virtual bool OnInit() override;
 	};
 }
 #endif // ComplexSplitter_h__

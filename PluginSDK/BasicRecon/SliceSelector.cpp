@@ -7,40 +7,38 @@
 using namespace std;
 using namespace Yap;
 
-CSliceSelector::CSliceSelector(void):
+SliceSelector::SliceSelector(void):
 	ProcessorImpl(L"SliceSelector")
+{
+
+}
+
+Yap::SliceSelector::SliceSelector(const SliceSelector & rhs)
+	: ProcessorImpl(rhs)
+{
+}
+
+SliceSelector::~SliceSelector()
+{
+}
+
+bool Yap::SliceSelector::OnInit()
 {
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
 	AddProperty(PropertyInt, L"SliceIndex", L"The index of the slice you want to get.");
 	SetInt(L"SliceIndex", 0);
+
+	return true;
 }
 
-Yap::CSliceSelector::CSliceSelector(const CSliceSelector & rhs)
-	: ProcessorImpl(rhs)
+IProcessor * Yap::SliceSelector::Clone()
 {
+	return new (std::nothrow) SliceSelector(*this);
 }
 
-
-CSliceSelector::~CSliceSelector()
-{
-}
-
-IProcessor * Yap::CSliceSelector::Clone()
-{
-	try
-	{
-		auto processor = new CSliceSelector(*this);
-		return processor;
-	}
-	catch (std::bad_alloc&)
-	{
-		return nullptr;
-	}
-}
-
-bool Yap::CSliceSelector::Input(const wchar_t * name, IData * data)
+bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && Yap::GetDataArray<complex<float>>(data) != nullptr);
 	assert(Inputs()->Find(name) != nullptr);
@@ -48,7 +46,7 @@ bool Yap::CSliceSelector::Input(const wchar_t * name, IData * data)
 	int slice_index = GetInt(L"SliceIndex");
 
 	CDataHelper input_data(data);
-	CDimensionsImpl data_dimentions(data->GetDimensions());
+	DimensionsImpl data_dimentions(data->GetDimensions());
 	unsigned int slice_block_size = input_data.GetBlockSize(DimensionSlice);
 	if (data_dimentions.GetDimensionCount() <= 3)
 	{		
@@ -75,7 +73,7 @@ bool Yap::CSliceSelector::Input(const wchar_t * name, IData * data)
 			memcpy(slice_channel_data + i * slice_block_size, data + slice_index * slice_block_size + i * channel_block_size, 
 				slice_block_size * sizeof(complex<float>));
 		}
-		CDimensionsImpl dimensions;
+		DimensionsImpl dimensions;
 		dimensions(DimensionReadout, 0U, input_data.GetWidth())
 			(DimensionPhaseEncoding, 0U, input_data.GetHeight())
 			(DimensionSlice, slice_index, 1)

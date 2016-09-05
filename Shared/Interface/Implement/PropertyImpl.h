@@ -7,7 +7,7 @@
 #include <map>
 
 #include "Interface/IProperty.h"
-#include "Interface/IMemory.h"
+#include "Interface/Implement/SharedObjectImpl.h"
 
 namespace Yap
 {
@@ -23,10 +23,12 @@ namespace Yap
 		PropertyException(const wchar_t * name, Type type_) : property_name(name), type(type_) {}
 	};
 
-	class CProperty : public IProperty
+	class PropertyImpl : 
+		public IProperty,
+		public SharedObjectImpl
 	{
 	public:
-		CProperty(PropertyType type, const wchar_t * name, const wchar_t * description);
+		PropertyImpl(PropertyType type, const wchar_t * name, const wchar_t * description);
 		virtual const wchar_t * GetName() override;
 
 		virtual PropertyType GetType() override;
@@ -41,7 +43,7 @@ namespace Yap
 
 
 	class DoubleProperty : 
-		public CProperty, 
+		public PropertyImpl, 
 		public IDouble,
 		public IClonable
 	{
@@ -50,13 +52,13 @@ namespace Yap
 		virtual double GetDouble();
 		virtual void SetDouble(double value);
 
-		virtual IClonable * Clone() override;
+		virtual IClonable * Clone() const override;
 	protected:
 		double _value;
 	};
 
 	class IntProperty : 
-		public CProperty, 
+		public PropertyImpl, 
 		public IInt,
 		public IClonable
 	{
@@ -65,13 +67,13 @@ namespace Yap
 		virtual int GetInt();
 		virtual void SetInt(int value);
 
-		virtual IClonable * Clone() override;
+		virtual IClonable * Clone() const override;
 	protected:
 		int _value;
 	};
 
 	class BoolProperty : 
-		public CProperty, 
+		public PropertyImpl, 
 		public IBoolean,
 		public IClonable
 	{
@@ -80,13 +82,13 @@ namespace Yap
 		virtual bool GetBool();
 		virtual void SetBool(bool value);
 
-		virtual IClonable * Clone() override;
+		virtual IClonable * Clone() const override;
 	protected:
 		bool _value;
 	};
 
 	class StringProperty : 
-		public CProperty, 
+		public PropertyImpl, 
 		public IString,
 		public IClonable
 	{
@@ -95,7 +97,7 @@ namespace Yap
 		virtual const wchar_t * GetString();
 		virtual void SetString(const wchar_t * value);
 
-		virtual IClonable * Clone() override;
+		virtual IClonable * Clone() const override;
 	protected:
 		std::wstring _value;
 	};

@@ -6,40 +6,38 @@
 using namespace Yap;
 using namespace std;
 
-CChannelMerger::CChannelMerger(void) :
+ChannelMerger::ChannelMerger(void) :
 	ProcessorImpl(L"ChannelMerger")
+{
+}
+
+ChannelMerger::ChannelMerger( const ChannelMerger& rhs )
+	: ProcessorImpl(rhs)
+{
+
+}
+
+ChannelMerger::~ChannelMerger(void)
+{
+}
+
+bool Yap::ChannelMerger::OnInit()
 {
 	AddOutput(L"Output", 2, DataTypeFloat);
 	AddInput(L"Input", 2, DataTypeFloat);
 
 	AddProperty(PropertyInt, L"ChannelCount", L"通道数");
 	AddProperty(PropertyInt, L"ChannelSwitch", L"通道开关指示值");
+
+	return true;
 }
 
-CChannelMerger::CChannelMerger( const CChannelMerger& rhs )
-	: ProcessorImpl(rhs)
+IProcessor* ChannelMerger::Clone()
 {
-
+	return new(nothrow) ChannelMerger(*this);
 }
 
-CChannelMerger::~CChannelMerger(void)
-{
-}
-
-IProcessor* CChannelMerger::Clone()
-{
-	try
-	{
-		auto processor = new CChannelMerger(*this);
-		return processor;
-	}
-	catch (std::bad_alloc&)
-	{
-		return nullptr;
-	}
-}
-
-bool CChannelMerger::Input(const wchar_t * name, IData * data)
+bool ChannelMerger::Input(const wchar_t * name, IData * data)
 {
 	assert(data != nullptr);
 	assert(Inputs()->Find(name) != nullptr);
@@ -50,7 +48,7 @@ bool CChannelMerger::Input(const wchar_t * name, IData * data)
 	auto iter = _merge_buffers.find(key);
 	if (iter == _merge_buffers.end())
 	{
-		CDimensionsImpl merge_dimensions(helper.GetDimensionCount() - 1); // 消除DimensionChannel这一维
+		DimensionsImpl merge_dimensions(helper.GetDimensionCount() - 1); // 消除DimensionChannel这一维
 
 		DimensionType type = DimensionInvalid;
 		unsigned int index = 0, length = 0;
@@ -106,7 +104,7 @@ bool CChannelMerger::Input(const wchar_t * name, IData * data)
 	return true;
 }
 
-std::vector<unsigned int> CChannelMerger::GetKey(IDimensions * dimensions) 
+std::vector<unsigned int> ChannelMerger::GetKey(IDimensions * dimensions) 
 {
 	std::vector<unsigned int> result;
 	for (unsigned int i = 0; i < dimensions->GetDimensionCount(); ++i)

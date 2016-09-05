@@ -147,7 +147,7 @@
     <ClInclude Include="IProcessor.h" />
     <ClInclude Include="IData.h" />
     <ClInclude Include="IMemory.h" />
-    <ClInclude Include="IProperties.h" />
+    <ClInclude Include="IProperty.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

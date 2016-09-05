@@ -7,16 +7,20 @@
 
 namespace Yap
 {
-	class CRemoveDC :
+	class DcRemover :
 		public ProcessorImpl
 	{
 	public:
-		CRemoveDC();
-		~CRemoveDC();
+		DcRemover();
+		~DcRemover();
 
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
 		virtual IProcessor * Clone() override;
+
+
+		// Inherited via ProcessorImpl
+		virtual bool OnInit() override;
 
 	};
 }

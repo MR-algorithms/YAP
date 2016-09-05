@@ -6,15 +6,18 @@
 
 namespace Yap
 {
-	class CSliceIterator :
+	class SliceIterator :
 		public ProcessorImpl
 	{
 	public:
-		CSliceIterator(void);
-		CSliceIterator(const CSliceIterator& rhs);
-		~CSliceIterator(void);
+		SliceIterator(void);
+		SliceIterator(const SliceIterator& rhs);
+		~SliceIterator(void);
 		virtual IProcessor* Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
+
+		// Inherited via ProcessorImpl
+		virtual bool OnInit() override;
 	};
 
 }

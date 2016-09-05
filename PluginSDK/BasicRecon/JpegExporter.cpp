@@ -20,7 +20,7 @@ using namespace Yap;
 using namespace std;
 
 
-namespace Yap { namespace Implementation 
+namespace Yap { namespace details 
 {
 	static INT GetEncoderClsid(const WCHAR *format, CLSID *pClsid)
 	{
@@ -53,19 +53,19 @@ namespace Yap { namespace Implementation
 		return -1;  // Failure
 	}
 
-	class CJpegExporterImp
+	class JpegExporterImp
 	{
 	public:
-		~CJpegExporterImp() {
+		~JpegExporterImp() {
 			Gdiplus::GdiplusShutdown(_gdiplusToken);
 		}
 	private:
-		CJpegExporterImp() {
+		JpegExporterImp() {
 			Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 			GdiplusStartup(&_gdiplusToken, &gdiplusStartupInput, NULL);
 		}
 
-		CJpegExporterImp(const CJpegExporterImp& rhs) {
+		JpegExporterImp(const JpegExporterImp& rhs) {
 			Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 			GdiplusStartup(&_gdiplusToken, &gdiplusStartupInput, NULL);
 		}
@@ -121,50 +121,42 @@ namespace Yap { namespace Implementation
 
 		ULONG_PTR _gdiplusToken;
 
-		friend class CJpegExporter;
+		friend class JpegExporter;
 	};
 }}
 
-using namespace Yap::Implementation;
+using namespace Yap::details;
 
-CJpegExporter::CJpegExporter() :
+JpegExporter::JpegExporter() :
 	ProcessorImpl(L"JpegExporter")
+{
+	_impl = shared_ptr<JpegExporterImp>(new JpegExporterImp);
+}
+
+JpegExporter::JpegExporter(const JpegExporter& rhs)
+	: ProcessorImpl(rhs)
+{
+	_impl = std::shared_ptr<JpegExporterImp>(new JpegExporterImp(*rhs._impl));
+}
+
+JpegExporter::~JpegExporter()
+{
+}
+
+IProcessor* JpegExporter::Clone()
+{
+	return new (std::nothrow) JpegExporter(*this);
+}
+
+bool JpegExporter::OnInit()
 {
 	AddInput(L"Input", 2, DataTypeFloat);
 	AddProperty(PropertyString, L"ExportFolder", L"Set folder used to hold exported images.");
 
-	_impl = shared_ptr<CJpegExporterImp>(new CJpegExporterImp);
-}
-
-CJpegExporter::CJpegExporter(const CJpegExporter& rhs)
-	: ProcessorImpl(rhs)
-{
-	_impl = std::shared_ptr<CJpegExporterImp>(new CJpegExporterImp(*rhs._impl));
-}
-
-CJpegExporter::~CJpegExporter()
-{
-}
-
-IProcessor* CJpegExporter::Clone()
-{
-	try
-	{
-		auto processor = new CJpegExporter(*this);
-		return processor;
-	}
-	catch(std::bad_alloc&)
-	{
-		return nullptr;
-	}
-}
-
-bool CJpegExporter::OnInit()
-{
 	return true;
 }
 
-bool CJpegExporter::Input( const wchar_t * name, IData * data)
+bool JpegExporter::Input( const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && (GetDataArray<float>(data) != nullptr));
 	assert(_impl);

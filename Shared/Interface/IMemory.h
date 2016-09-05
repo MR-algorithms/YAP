@@ -61,6 +61,17 @@ struct ISharedObject
 	virtual void Release() = 0;
 };
 
+
+/**
+	Objects of classes implementing this interface can be cloned. The returned ICLonable pointer
+	can be dynamic_cast-ed to appropriate type.
+*/
+struct IClonable
+{
+	virtual IClonable * Clone() const = 0;
+};
+
+
 /**
 	SmartPtr is used to wrap ISharedObject object. It's similar to std::smart_ptr, however, it 
 	calles ISharedObject::Lock() to add reference, and calles ISharedObject::Release() when SmartPtr
@@ -119,10 +130,10 @@ public:
 			}
 
 			_pointer = source._pointer;
-			auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
-			if (shared_object != nullptr)
+			auto shared_object_new = dynamic_cast<ISharedObject*>(_pointer);
+			if (shared_object_new != nullptr)
 			{
-				shared_object->Lock();
+				shared_object_new->Lock();
 			}
 		}
 
@@ -207,7 +218,10 @@ private:
 			shared_object->Lock();
 		}
 	}
+
+
 	template<typename TYPE> friend SmartPtr<TYPE> YapShared(TYPE * object);
+	template<typename TYPE> friend SmartPtr<TYPE> YapShared(IClonable * object);
 };
 
 /**
@@ -246,14 +260,17 @@ std::shared_ptr<TYPE> YapDynamic(TYPE * object)
 		dynamic_object->DeleteThis(); });
 }
 
-/**
-	Objects of classes implementing this interface can be cloned. The returned ICLonable pointer
-	can be dynamic_cast-ed to appropriate type.
-*/
-struct IClonable
+
+template <typename TYPE>
+SmartPtr<TYPE> YapShared(IClonable * clonable)
 {
-	virtual IClonable * Clone() = 0;
-};
+	assert(clonable == nullptr || dynamic_cast<TYPE*>(clonable) != nullptr &&
+		   "Only pointer to classes implemented TYPE interface can be wrapped using YapShared().");
+	assert(clonable == nullptr || dynamic_cast<ISharedObject*>(clonable) != nullptr &&
+		   "Only pointers to object implementing ISharedObject can be wrapped using YapShared().");
+
+	return Yap::SmartPtr<TYPE>(dynamic_cast<TYPE*>(clonable));
+}
 
 }; // namespace YAP
 

@@ -5,6 +5,10 @@ Yap::SharedObjectImpl::SharedObjectImpl() :
 {
 }
 
+Yap::SharedObjectImpl::~SharedObjectImpl()
+{
+}
+
 void Yap::SharedObjectImpl::Lock()
 {
 	++_use_count;

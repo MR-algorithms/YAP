@@ -10,26 +10,24 @@
 namespace Yap
 {
 	template<typename INPUT_TYPE, typename OUTPUT_TYPE>
-	class CAlgorithm2DWrapper :
+	class Algorithm2DWrapper :
 		public ProcessorImpl
 	{
 	public:
 		typedef void (*ProcessingFunc) (INPUT_TYPE * input_data, OUTPUT_TYPE * output_data, 
 			size_t width, size_t height);	
 
-		explicit CAlgorithm2DWrapper(ProcessingFunc func, const wchar_t * processor_name) :
+		explicit Algorithm2DWrapper(ProcessingFunc func, const wchar_t * processor_name) :
 			_func(func), ProcessorImpl(processor_name)
 		{
-			AddInput(L"Input", 2, type_id<INPUT_TYPE>::type);
-			AddOutput(L"Output", 2, type_id<OUTPUT_TYPE>::type);
 		}
 
-		CAlgorithm2DWrapper(const CAlgorithm2DWrapper<INPUT_TYPE, OUTPUT_TYPE>& rhs) :
-			_func(rhs._func)
+		Algorithm2DWrapper(const Algorithm2DWrapper<INPUT_TYPE, OUTPUT_TYPE>& rhs) :
+			_func(rhs._func), ProcessorImpl(rhs)
 		{
 		}
 
-		~CAlgorithm2DWrapper() {}
+		~Algorithm2DWrapper() {}
 
 		virtual bool Input(const wchar_t * port, IData * data) override
 		{
@@ -56,33 +54,40 @@ namespace Yap
 
 		virtual IProcessor * Clone() override
 		{
-			return new CAlgorithm2DWrapper<INPUT_TYPE, OUTPUT_TYPE>(*this);
+			return new(nothrow) Algorithm2DWrapper<INPUT_TYPE, OUTPUT_TYPE>(*this);
 		}
 	protected:
 		ProcessingFunc _func;
+
+		// Inherited via ProcessorImpl
+		virtual bool OnInit() override
+		{
+			AddInput(L"Input", 2, type_id<INPUT_TYPE>::type);
+			AddOutput(L"Output", 2, type_id<OUTPUT_TYPE>::type);
+
+			return true;
+		}
 	};
 
 
 	template<typename T>
-	class CInPlaceAlgorithm2DWrapper :
+	class Algorithm2DInPlaceWrapper :
 		public ProcessorImpl
 	{
 	public:
 		typedef void(*ProcessingFunc) (T * input_data, size_t width, size_t height);
 
-		explicit CInPlaceAlgorithm2DWrapper(ProcessingFunc func, const wchar_t * processor_name) :
+		explicit Algorithm2DInPlaceWrapper(ProcessingFunc func, const wchar_t * processor_name) :
 			_func(func), ProcessorImpl(processor_name)
 		{
-			AddInput(L"Input", 2, type_id<T>::type);
-			AddOutput(L"Output", 2, type_id<T>::type);
 		}
 
-		CInPlaceAlgorithm2DWrapper(const CInPlaceAlgorithm2DWrapper<T>& rhs) :
+		Algorithm2DInPlaceWrapper(const Algorithm2DInPlaceWrapper<T>& rhs) :
 			_func(rhs._func), ProcessorImpl(rhs)
 		{
 		}
 
-		~CInPlaceAlgorithm2DWrapper() {}
+		~Algorithm2DInPlaceWrapper() {}
 
 		virtual bool Input(const wchar_t * port, IData * data) override
 		{
@@ -107,10 +112,19 @@ namespace Yap
 
 		virtual IProcessor * Clone() override
 		{
-			return new CInPlaceAlgorithm2DWrapper<T>(*this);
+			return new (std::nothrow) Algorithm2DInPlaceWrapper<T>(*this);
 		}
 	protected:
 		ProcessingFunc _func;
+
+		// Inherited via ProcessorImpl
+		virtual bool OnInit() override
+		{
+			AddInput(L"Input", 2, type_id<T>::type);
+			AddOutput(L"Output", 2, type_id<T>::type);
+
+			return true;
+		}
 	};
 }
 

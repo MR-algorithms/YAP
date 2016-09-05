@@ -7,21 +7,21 @@
 
 namespace Yap
 {
-	namespace Implementation { class CJpegExporterImp; }
+	namespace details { class JpegExporterImp; }
 
-	class CJpegExporter :
+	class JpegExporter :
 		public ProcessorImpl
 	{
 	public:
-		CJpegExporter();
-		CJpegExporter(const CJpegExporter& rhs);
-		~CJpegExporter();
+		JpegExporter();
+		JpegExporter(const JpegExporter& rhs);
+		~JpegExporter();
 	protected:
 		virtual bool OnInit() override;
 		virtual IProcessor* Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
-		std::shared_ptr<Implementation::CJpegExporterImp> _impl;
+		std::shared_ptr<details::JpegExporterImp> _impl;
 	};
 }
 

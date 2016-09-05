@@ -18,15 +18,17 @@ namespace Yap
 		Feel nullptr to the "Input" port to trigger file reading.
 		"Output" data will be of type ComplexFloat.
 	*/
-	class CCmrDataReader :
+	class CmrDataReader :
 		public ProcessorImpl
 	{
 	public:
-		CCmrDataReader(void);
-		CCmrDataReader(const CCmrDataReader& rhs);
+		CmrDataReader(void);
+		CmrDataReader(const CmrDataReader& rhs);
 	private:
 		virtual bool Input(const wchar_t * name, IData * data);
 		virtual IProcessor * Clone() override;  
+
+		virtual bool OnInit() override;
 
 		bool ReadRawData(unsigned int channel_index);
 		float* ReadEcnuFile(const wchar_t * file_path, unsigned int& width, unsigned int& height,

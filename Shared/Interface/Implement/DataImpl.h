@@ -11,16 +11,16 @@
 namespace Yap
 {
 
-	class CDimensionsImpl : 
+	class DimensionsImpl : 
 		public IDimensions, 
 		public SharedObjectImpl, 
 		public IClonable
 	{
 	public:
-		CDimensionsImpl();
-		explicit CDimensionsImpl(unsigned int dimension_count);
-		CDimensionsImpl(const CDimensionsImpl& source);
-		explicit CDimensionsImpl(IDimensions * source);
+		DimensionsImpl();
+		explicit DimensionsImpl(unsigned int dimension_count);
+		DimensionsImpl(const DimensionsImpl& source);
+		explicit DimensionsImpl(IDimensions * source);
 
 		bool ModifyDimension(DimensionType type, unsigned int length, unsigned int start_index = 0);
 		unsigned int GetLength(unsigned int dimension_index);
@@ -33,8 +33,8 @@ namespace Yap
 		virtual bool SetDimensionInfo(unsigned int dimension_index, DimensionType dimension_type, 
 			unsigned int start_index, unsigned int length);
 
-		virtual IClonable * Clone() override;
-		CDimensionsImpl & operator() (DimensionType type, unsigned int index, unsigned int length);
+		virtual IClonable * Clone() const override;
+		DimensionsImpl & operator() (DimensionType type, unsigned int index, unsigned int length);
 	private:
 		std::vector<Dimension> _dimension_info;
 	};
@@ -46,7 +46,7 @@ namespace Yap
 		public ISharedObject
 	{
 	public:
-		DataImpl(T* data, const CDimensionsImpl& dimensions, ISharedObject * parent = nullptr, bool own_data = false) :
+		DataImpl(T* data, const DimensionsImpl& dimensions, ISharedObject * parent = nullptr, bool own_data = false) :
 			_data(data), _own_memory(own_data), _use_count(0), 
 			_parent(YapShared(parent))
 		{
@@ -125,7 +125,7 @@ namespace Yap
 		}
 
 		T * _data;
-		CDimensionsImpl _dimensions;
+		DimensionsImpl _dimensions;
 //		CLocalization _localization;
 
 		unsigned int _use_count;

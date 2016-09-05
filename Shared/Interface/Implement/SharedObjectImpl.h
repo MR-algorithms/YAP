@@ -11,6 +11,7 @@ namespace Yap
 	{
 	public:
 		SharedObjectImpl();
+		virtual ~SharedObjectImpl();
 	private:
 		// Inherited via ISharedObject
 		virtual void Lock() override;

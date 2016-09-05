@@ -10,12 +10,12 @@
 
 namespace Yap
 {
-	class CGrappa :
+	class Grappa :
 		public ProcessorImpl
 	{
 	public:
-		CGrappa();
-		virtual ~CGrappa();
+		Grappa();
+		virtual ~Grappa();
 
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
@@ -32,6 +32,9 @@ namespace Yap
 			size_t r, size_t acs, size_t width, size_t height, size_t num_coil);
 
 		virtual IProcessor * Clone() override;
+
+		// Inherited via ProcessorImpl
+		virtual bool OnInit() override;
 	};
 }
 #endif // Grappa_h__

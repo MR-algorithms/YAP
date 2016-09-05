@@ -42,7 +42,7 @@ bool Yap::ModuleAgent::Load(const wchar_t * plugin_path)
 		return false;
 	}
 
-	_manager = YapDynamic(create_func());
+	_manager = YapShared(create_func());
 	if (!_manager)
 	{
 		::FreeLibrary(_module);

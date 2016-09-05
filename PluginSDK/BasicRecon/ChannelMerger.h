@@ -8,13 +8,13 @@
 
 namespace Yap
 {
-	class CChannelMerger :
+	class ChannelMerger :
 		public ProcessorImpl
 	{
 	public:
-		CChannelMerger(void);
-		CChannelMerger(const CChannelMerger& rhs);
-		virtual ~CChannelMerger(void);
+		ChannelMerger(void);
+		ChannelMerger(const ChannelMerger& rhs);
+		virtual ~ChannelMerger(void);
 		virtual IProcessor* Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
 	protected:
@@ -32,6 +32,9 @@ namespace Yap
 
 		std::vector<unsigned int> GetKey(IDimensions * dimensions);
 		std::map<std::vector<unsigned int>, MergeBuffer> _merge_buffers; 
+
+		// Inherited via ProcessorImpl
+		virtual bool OnInit() override;
 	};
 }
 

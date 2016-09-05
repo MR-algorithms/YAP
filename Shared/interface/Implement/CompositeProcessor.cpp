@@ -5,27 +5,27 @@
 using namespace Yap;
 using namespace std;
 
-CCompositeProcessor::CCompositeProcessor(const wchar_t * class_id) :
+CompositeProcessor::CompositeProcessor(const wchar_t * class_id) :
 	ProcessorImpl(class_id)
 {
 }
 
-CCompositeProcessor::~CCompositeProcessor()
+CompositeProcessor::~CompositeProcessor()
 {
 }
 
-Yap::CCompositeProcessor::CCompositeProcessor(CCompositeProcessor& rhs) :
+Yap::CompositeProcessor::CompositeProcessor(CompositeProcessor& rhs) :
 	ProcessorImpl(rhs.GetClassId())
 {
 
 }
 
-Yap::IProcessor * Yap::CCompositeProcessor::Clone()
+Yap::IProcessor * Yap::CompositeProcessor::Clone()
 {
 	throw std::logic_error("The method or operation is not implemented.");
 }
 
-bool Yap::CCompositeProcessor::UpdateProperties(IPropertyContainer * params)
+bool Yap::CompositeProcessor::UpdateProperties(IPropertyContainer * params)
 {
 	for (auto processor : _processors)
 	{
@@ -36,72 +36,77 @@ bool Yap::CCompositeProcessor::UpdateProperties(IPropertyContainer * params)
 	return true;
 }
 
-bool Yap::CCompositeProcessor::Link(const wchar_t * output, 
+bool Yap::CompositeProcessor::Link(const wchar_t * output, 
 	IProcessor * next, 
 	const wchar_t * next_input)
 {
-	auto iter = _out_ports.find(output);
-	if (iter == _out_ports.end())
+	auto iter = _output.find(output);
+	if (iter == _output.end())
 		return false;
 
 	return iter->second.processor->Link(iter->second.port.c_str(), next, next_input);
 }
 
-bool Yap::CCompositeProcessor::Input(const wchar_t * port, IData * data)
+bool Yap::CompositeProcessor::Input(const wchar_t * port, IData * data)
 {
-	auto iter = _in_ports.find(port);
-	if (iter == _in_ports.end())
+	auto iter = _inputs.find(port);
+	if (iter == _inputs.end())
 		return false;
 
 	return iter->second.processor->Input(iter->second.port.c_str(), data);
 }
 
-bool Yap::CCompositeProcessor::AssignInPort(const wchar_t * port, 
+bool Yap::CompositeProcessor::AddInputMapping(const wchar_t * port, 
 	const wchar_t * inner_processor, 
 	const wchar_t * inner_port)
 {
-	if (_in_ports.find(port) != _in_ports.end())
+	if (_inputs.find(port) != _inputs.end())
 		return false;
 
 	auto processor = Find(inner_processor);
 	if (!processor)
 		return false;
 
-	_in_ports.insert(make_pair(port, Anchor(processor, inner_port)));
+	_inputs.insert(make_pair(port, Anchor(processor, inner_port)));
 	return true;
 }
 
-bool Yap::CCompositeProcessor::AssignOutPort(const wchar_t * port, 
+bool Yap::CompositeProcessor::AddOutputMapping(const wchar_t * port, 
 	const wchar_t * inner_processor, 
 	const wchar_t * inner_port)
 {
-	if (_out_ports.find(port) == _out_ports.end())
+	if (_output.find(port) == _output.end())
 		return false;
 
 	auto processor = Find(inner_processor);
 	if (!processor)
 		return false;
 
-	_out_ports.insert(make_pair(port, Anchor(processor, inner_port)));
+	_output.insert(make_pair(port, Anchor(processor, inner_port)));
 	return true;
 }
 
-bool Yap::CCompositeProcessor::AddProcessor(IProcessor * processor)
+bool Yap::CompositeProcessor::AddProcessor(IProcessor * processor)
 {
 	assert(processor);
 	if (_processors.find(processor->GetInstanceId()) != _processors.end())
 		return false;
 
-	_processors.insert(make_pair(processor->GetInstanceId(), processor));
+	_processors.insert(make_pair(processor->GetInstanceId(), YapShared(processor)));
 
 	return true;
 }
 
-IProcessor * Yap::CCompositeProcessor::Find(const wchar_t * instance_id)
+IProcessor * Yap::CompositeProcessor::Find(const wchar_t * instance_id)
 {
 	auto iter = _processors.find(instance_id);
 	if (iter == _processors.end())
 		return nullptr;
 
-	return iter->second;
+	return iter->second.get();
+}
+
+bool Yap::CompositeProcessor::OnInit()
+{
+	return true;
 }

@@ -20,7 +20,7 @@ void ConstructorTest()
 {
 	try
 	{
-		CPipelineConstructor constructor;
+		PipelineConstructor constructor;
 		constructor.Reset(true);
 		constructor.LoadModule(L"BasicRecon.dll");
 		constructor.CreateProcessor(L"CmrRawDataReader", L"reader");
@@ -46,7 +46,7 @@ void ConstructorTest()
 		constructor.Link(L"fft", L"module_phase");
 		constructor.Link(L"module_phase", L"Module", L"jpeg_exporter", L"Input");
 
-		constructor.AssignPipelineInPort(L"Input", L"reader", L"Input");
+		constructor.MapInput(L"Input", L"reader", L"Input");
 
 		shared_ptr<IProcessor> pipeline = constructor.GetPipeline();
 		if (pipeline)

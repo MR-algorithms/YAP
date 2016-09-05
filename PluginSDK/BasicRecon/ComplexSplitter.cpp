@@ -3,20 +3,27 @@
 using namespace std;
 using namespace Yap;
 
-CComplexSplitter::CComplexSplitter() :
+ComplexSplitter::ComplexSplitter() :
 	ProcessorImpl(L"ComplexSplitter")
+{
+}
+
+ComplexSplitter::~ComplexSplitter()
+{
+}
+
+
+bool Yap::ComplexSplitter::OnInit()
 {
 	// ANY  DIMENSION
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble);
 	AddOutput(L"Real", YAP_ANY_DIMENSION, DataTypeDouble);
 	AddOutput(L"Imaginary", YAP_ANY_DIMENSION, DataTypeDouble);
+
+	return true;
 }
 
-CComplexSplitter::~CComplexSplitter()
-{
-}
-
-bool CComplexSplitter::Input(const wchar_t * port, IData * data)
+bool ComplexSplitter::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) != L"Input" )
 		return false;
@@ -57,7 +64,7 @@ bool CComplexSplitter::Input(const wchar_t * port, IData * data)
 	return true;
 }
 
-void Yap::CComplexSplitter::Split(std::complex<double> * data, 
+void Yap::ComplexSplitter::Split(std::complex<double> * data, 
 	double * real, 
 	double * imaginary, size_t size)
 {
@@ -71,19 +78,12 @@ void Yap::CComplexSplitter::Split(std::complex<double> * data,
 	}
 }
 
-Yap::IProcessor * Yap::CComplexSplitter::Clone()
+Yap::IProcessor * Yap::ComplexSplitter::Clone()
 {
-	try
-	{
-		return new CComplexSplitter;
-	}
-	catch (std::bad_alloc&)
-	{
-		return nullptr;
-	}
+	return new(nothrow) ComplexSplitter(*this);
 }
 
-void CComplexSplitter::ExtractReal(std::complex<double> * data, double * real, size_t size)
+void ComplexSplitter::ExtractReal(std::complex<double> * data, double * real, size_t size)
 {
 	assert(data != nullptr && real != nullptr);
 
@@ -93,7 +93,7 @@ void CComplexSplitter::ExtractReal(std::complex<double> * data, double * real, s
 	}
 }
 
-void CComplexSplitter::ExtractImaginary(std::complex<double> * data, double * imaginary, size_t size)
+void ComplexSplitter::ExtractImaginary(std::complex<double> * data, double * imaginary, size_t size)
 {
 	assert(data != nullptr && imaginary != nullptr);
 

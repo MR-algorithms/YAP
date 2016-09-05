@@ -11,26 +11,31 @@
 #include "RemoveDC.h"
 #include "CmrDataReader.h"
 #include "JpegExporter.h"
+#include "SamplingTypeGenerator.h"
 #include "SliceIterator.h"
 #include "imageProcessing.h"
 #include "Algorithm2DWrapper.h"
 #include "SliceSelector.h"
+#include "Difference.h"
+
 #include "Interface\Implement\YapImplement.h"
 
 using namespace Yap;
 
 BEGIN_DECL_PROCESSORS
-	ADD_PROCESSOR(CSliceIterator)
-	ADD_PROCESSOR(CRemoveDC)
-	ADD_PROCESSOR(CFft1D)
-	ADD_PROCESSOR(CFft2D)
-	ADD_PROCESSOR(CZeroFilling)
-	ADD_PROCESSOR(CComplexSplitter)
-	ADD_PROCESSOR(CGrappa)
-	ADD_PROCESSOR(CModulePhase)
-	ADD_PROCESSOR(CJpegExporter)
-	ADD_PROCESSOR(CSliceSelector)
-	ADD(L"HFlipFloat", new CInPlaceAlgorithm2DWrapper<float>(hflip<float>, L"HFlipFloat"))
+	ADD_PROCESSOR(CmrDataReader)
+	ADD_PROCESSOR(ComplexSplitter)
+	ADD_PROCESSOR(Fft1D)
+	ADD_PROCESSOR(Fft2D)
+	ADD_PROCESSOR(Grappa)
+	ADD_PROCESSOR(JpegExporter)
+	ADD_PROCESSOR(ModulePhase)
+	ADD_PROCESSOR(DcRemover)
+	ADD_PROCESSOR(SamplingMaskCreator)
+	ADD_PROCESSOR(SliceIterator)
+	ADD_PROCESSOR(SliceSelector)
+	ADD_PROCESSOR(ZeroFilling)
+	ADD(L"HFlipFloat", new Algorithm2DInPlaceWrapper<float>(hflip<float>, L"HFlipFloat"))
 END_DECL_PROCESSORS
 
 BOOL APIENTRY DllMain( HMODULE hModule,

@@ -39,20 +39,27 @@ bool GetPhase(complex<T>* input, T* phase,
 	return true;
 }
 
-CModulePhase::CModulePhase() :
+ModulePhase::ModulePhase() :
 	ProcessorImpl(L"ModulePhase")
+{
+
+}
+
+ModulePhase::~ModulePhase()
+{
+}
+
+
+bool Yap::ModulePhase::OnInit()
 {
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 	AddOutput(L"Module", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
 	AddOutput(L"Phase", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
 
+	return true;
 }
 
-CModulePhase::~CModulePhase()
-{
-}
-
-bool CModulePhase::Input(const wchar_t * port, IData * data)
+bool ModulePhase::Input(const wchar_t * port, IData * data)
 {
 	if (std::wstring(port) != L"Input")
 		return false;
@@ -68,7 +75,7 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 	if (input_data.GetActualDimensionCount() != 2)
 		return false;
 
-	CDimensionsImpl dims;
+	DimensionsImpl dims;
 	dims(DimensionReadout, 0, input_data.GetWidth())
 		(DimensionPhaseEncoding, 0, input_data.GetHeight());
 
@@ -124,15 +131,8 @@ bool CModulePhase::Input(const wchar_t * port, IData * data)
 	return true;
 }
 
-Yap::IProcessor * Yap::CModulePhase::Clone()
+Yap::IProcessor * Yap::ModulePhase::Clone()
 {
-	try
-	{
-		return new CModulePhase;
-	}
-	catch (std::bad_alloc&)
-	{
-		return nullptr;
-	}
+	return new (nothrow) ModulePhase(*this);
 }
 

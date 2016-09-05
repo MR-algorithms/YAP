@@ -10,12 +10,12 @@
 
 namespace Yap
 {
-	class CFft2D :
+	class Fft2D :
 		public ProcessorImpl
 	{
 	public:
-		CFft2D();
-		virtual ~CFft2D();
+		Fft2D();
+		virtual ~Fft2D();
 
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
@@ -30,10 +30,14 @@ namespace Yap
 		bool _plan_in_place;
 		fftwf_plan _fft_plan;
 
-		bool Fft2D(std::complex<float> * data, std::complex<float> * result, size_t width, size_t height, bool inverse = false);
+		bool Fft(std::complex<float> * data, std::complex<float> * result, size_t width, size_t height, bool inverse = false);
 		void Plan(size_t width, size_t height, bool inverse, bool in_place);
 
 		virtual IProcessor * Clone() override;
+
+
+		// Inherited via ProcessorImpl
+		virtual bool OnInit() override;
 
 	};
 }

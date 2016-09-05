@@ -10,12 +10,12 @@
 
 namespace Yap
 {
-	class CFft1D :
+	class Fft1D :
 		public ProcessorImpl
 	{
 	public:
-		CFft1D();
-		virtual ~CFft1D();
+		Fft1D();
+		virtual ~Fft1D();
 
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
@@ -31,11 +31,15 @@ namespace Yap
 		bool _plan_in_place;
 		fftw_plan _fft_plan;
 
-		bool Fft1D(std::complex<double> * data, std::complex<double> * result,
+		bool Fft(std::complex<double> * data, std::complex<double> * result,
 			size_t size, bool inverse = false);
 		void Plan(size_t size, bool inverse, bool in_place);
 
 		virtual IProcessor * Clone() override;
+
+
+		// Inherited via ProcessorImpl
+		virtual bool OnInit() override;
 
 	};
 }

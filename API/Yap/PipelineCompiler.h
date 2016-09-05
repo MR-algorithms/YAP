@@ -11,8 +11,8 @@
 
 namespace Yap
 {
-	class CCompositeProcessor;
-	class CPipelineConstructor;
+	class CompositeProcessor;
+	class PipelineConstructor;
 
 	enum TokenType
 	{
@@ -110,7 +110,7 @@ namespace Yap
 	class CStatement
 	{
 	public:
-		explicit CStatement(CPipelineConstructor& constructor);
+		explicit CStatement(PipelineConstructor& constructor);
 
 		/// Clear the tokens in the statement.
 		void Reset();
@@ -158,7 +158,6 @@ namespace Yap
 		/// Try to extract a variable id from the statement and move to next token.
 		std::wstring GetVariableId();
 
-		/// 试图提取
 		/// 试图提取处理器/成员（属性或者端口）对，迭代器移动到提取内容之后。
 		std::pair<std::wstring, std::wstring> GetProcessorMember(bool empty_member_allowed = false);
 
@@ -174,7 +173,7 @@ namespace Yap
 		StatementType _type;
 		std::vector<Token> _tokens;
 		std::vector<Token>::iterator _iter;
-		CPipelineConstructor& _constructor;
+		PipelineConstructor& _constructor;
 	};
 
 	class CPipelineCompiler
@@ -183,11 +182,11 @@ namespace Yap
 		CPipelineCompiler();
 		~CPipelineCompiler();
 
-		std::shared_ptr<CCompositeProcessor> CompileFile(const wchar_t * path);
-		std::shared_ptr<CCompositeProcessor> Compile(const wchar_t * text);
+		std::shared_ptr<CompositeProcessor> CompileFile(const wchar_t * path);
+		std::shared_ptr<CompositeProcessor> Compile(const wchar_t * text);
 
 	protected:
-		std::shared_ptr<CCompositeProcessor> DoCompile(std::wistream& input);
+		std::shared_ptr<CompositeProcessor> DoCompile(std::wistream& input);
 
 		std::vector<std::wstring> _script_lines;
 		std::vector<Token> _tokens;
@@ -197,7 +196,7 @@ namespace Yap
 		如果类型不一致，或者文件处理完毕后该栈不为空，则说明匹配错误。*/
 		std::stack<Token> _matching_check;
 
-		std::shared_ptr<CPipelineConstructor> _constructor;
+		std::shared_ptr<PipelineConstructor> _constructor;
 
 		bool Preprocess(std::wistream& input_stream);
 		bool PreprocessLine(std::wstring& line, int line_number);

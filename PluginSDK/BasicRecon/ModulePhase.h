@@ -7,16 +7,18 @@
 
 namespace Yap
 {
-	class CModulePhase :
+	class ModulePhase :
 		public ProcessorImpl
 	{
 	public:
-		CModulePhase();
-		virtual ~CModulePhase();
+		ModulePhase();
+		virtual ~ModulePhase();
 
 		virtual bool Input(const wchar_t * port, IData * data) override;
 		virtual IProcessor * Clone() override;
 
+		// Inherited via ProcessorImpl
+		virtual bool OnInit() override;
 	};
 }
 #endif // ModulePhase_h__

@@ -5,7 +5,7 @@ using namespace Yap;
 /**
 	获得相关数据使用的总的维数。
 */
-unsigned int Yap::CDimensionsImpl::GetDimensionCount() 
+unsigned int Yap::DimensionsImpl::GetDimensionCount() 
 {
 	return static_cast<unsigned int>(_dimension_info.size());
 }
@@ -18,7 +18,7 @@ unsigned int Yap::CDimensionsImpl::GetDimensionCount()
 	@param  length 相关的数据在这个维度上的宽度。
 	@return
 */
-bool Yap::CDimensionsImpl::GetDimensionInfo(unsigned int dimension_index, 
+bool Yap::DimensionsImpl::GetDimensionInfo(unsigned int dimension_index, 
 										   DimensionType & dimension_type, 
 	unsigned int& start_index, 
 												  unsigned int& length)
@@ -36,12 +36,12 @@ bool Yap::CDimensionsImpl::GetDimensionInfo(unsigned int dimension_index,
 	return true;
 }
 
-IClonable * Yap::CDimensionsImpl::Clone()
+IClonable * Yap::DimensionsImpl::Clone() const
 {
-	return new (std::nothrow) CDimensionsImpl(*this);
+	return new (std::nothrow) DimensionsImpl(*this);
 }
 
-CDimensionsImpl & Yap::CDimensionsImpl::operator()(DimensionType type, unsigned int index, unsigned int length)
+DimensionsImpl & Yap::DimensionsImpl::operator()(DimensionType type, unsigned int index, unsigned int length)
 {
 	assert(type != DimensionInvalid);
 
@@ -50,16 +50,16 @@ CDimensionsImpl & Yap::CDimensionsImpl::operator()(DimensionType type, unsigned 
 	return *this;
 }
 
-Yap::CDimensionsImpl::CDimensionsImpl()
+Yap::DimensionsImpl::DimensionsImpl()
 {
 }
 
-Yap::CDimensionsImpl::CDimensionsImpl(const CDimensionsImpl& source)
+Yap::DimensionsImpl::DimensionsImpl(const DimensionsImpl& source)
 {
 	_dimension_info = source._dimension_info;
 }
 
-Yap::CDimensionsImpl::CDimensionsImpl(IDimensions * source)
+Yap::DimensionsImpl::DimensionsImpl(IDimensions * source)
 {
 	DimensionType type;
 	unsigned int index, length;
@@ -71,13 +71,13 @@ Yap::CDimensionsImpl::CDimensionsImpl(IDimensions * source)
 	}
 }
 
-Yap::CDimensionsImpl::CDimensionsImpl(unsigned int dimension_count)
+Yap::DimensionsImpl::DimensionsImpl(unsigned int dimension_count)
 {
 	assert(dimension_count < 16);
 	_dimension_info.resize(dimension_count);
 }
 
-bool Yap::CDimensionsImpl::SetDimensionInfo(unsigned int dimension_index, 
+bool Yap::DimensionsImpl::SetDimensionInfo(unsigned int dimension_index, 
 												  DimensionType dimension_type, 
 												  unsigned int start_index, 
 												  unsigned int length)
@@ -91,7 +91,7 @@ bool Yap::CDimensionsImpl::SetDimensionInfo(unsigned int dimension_index,
 	return true;
 }
 
-bool Yap::CDimensionsImpl::ModifyDimension(DimensionType type, 
+bool Yap::DimensionsImpl::ModifyDimension(DimensionType type, 
 												 unsigned int length,
 												 unsigned int start_index)
 {
@@ -108,7 +108,7 @@ bool Yap::CDimensionsImpl::ModifyDimension(DimensionType type,
 	return false;
 }
 
-unsigned int Yap::CDimensionsImpl::GetLength(unsigned int dimension_index)
+unsigned int Yap::DimensionsImpl::GetLength(unsigned int dimension_index)
 {
 	assert(dimension_index < _dimension_info.size());
 

@@ -2,24 +2,26 @@
 
 using namespace Yap;
 
-Yap::CProperty::CProperty(PropertyType type, const wchar_t * name, const wchar_t * description) :
+Yap::PropertyImpl::PropertyImpl(PropertyType type, 
+						  const wchar_t * name, 
+						  const wchar_t * description) :
 	_type(type),
 	_name(name),
 	_description(description)
 {
 }
 
-const wchar_t * Yap::CProperty::GetName()
+const wchar_t * Yap::PropertyImpl::GetName()
 {
 	return _name.c_str();
 }
 
-Yap::PropertyType Yap::CProperty::GetType()
+Yap::PropertyType Yap::PropertyImpl::GetType()
 {
 	return _type;
 }
 
-const wchar_t * Yap::CProperty::GetDescription()
+const wchar_t * Yap::PropertyImpl::GetDescription()
 {
 	return _description.c_str();
 }
@@ -27,7 +29,7 @@ const wchar_t * Yap::CProperty::GetDescription()
 Yap::StringProperty::StringProperty(const wchar_t * name, 
 									const wchar_t * description, 
 									const wchar_t * value): 
-	CProperty(PropertyString, name, description), 
+	PropertyImpl(PropertyString, name, description), 
 	_value(value) 
 {
 }
@@ -42,13 +44,15 @@ void Yap::StringProperty::SetString(const wchar_t * value)
 	_value = value; 
 }
 
-IClonable * Yap::StringProperty::Clone()
+IClonable * Yap::StringProperty::Clone() const 
 {
 	return new(std::nothrow) StringProperty(_name.c_str(), _description.c_str(), _value.c_str());
 }
 
 Yap::BoolProperty::BoolProperty(const wchar_t * name, const wchar_t * description, bool value)
-	: CProperty(PropertyBool, name, description), _value(value) {}
+	: PropertyImpl(PropertyBool, name, description), _value(value)
+{
+}
 
 inline bool Yap::BoolProperty::GetBool() 
 {
@@ -60,7 +64,7 @@ void Yap::BoolProperty::SetBool(bool value)
 	_value = value;
 }
 
-IClonable * Yap::BoolProperty::Clone()
+IClonable * Yap::BoolProperty::Clone() const
 {
 	return new (std::nothrow) BoolProperty(_name.c_str(), _description.c_str(), _value);
 }
@@ -68,7 +72,7 @@ IClonable * Yap::BoolProperty::Clone()
 Yap::DoubleProperty::DoubleProperty(const wchar_t * name, 
 									const wchar_t * description, 
 									double value):
-	CProperty(PropertyFloat, name, description), 
+	PropertyImpl(PropertyFloat, name, description), 
 	_value(value)
 {
 }
@@ -83,13 +87,13 @@ void Yap::DoubleProperty::SetDouble(double value)
 	_value = value; 
 }
 
-IClonable * Yap::DoubleProperty::Clone() 
+IClonable * Yap::DoubleProperty::Clone() const
 {
 	return new(std::nothrow) DoubleProperty(_name.c_str(), _description.c_str(), _value);
 }
 
 Yap::IntProperty::IntProperty(const wchar_t * name, const wchar_t * description, int value)
-	: CProperty(PropertyInt, name, description), _value(value) 
+	: PropertyImpl(PropertyInt, name, description), _value(value) 
 {
 }
 
@@ -103,7 +107,7 @@ void Yap::IntProperty::SetInt(int value)
 	_value = value; 
 }
 
-IClonable * Yap::IntProperty::Clone()
+IClonable * Yap::IntProperty::Clone() const
 {
 	return new IntProperty(_name.c_str(), _description.c_str(), _value);
 }

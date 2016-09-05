@@ -56,8 +56,18 @@ void RemoveDC(T * input_data,
 	}
 }
 
-CRemoveDC::CRemoveDC() :
+DcRemover::DcRemover() :
 	ProcessorImpl(L"RemoveDC")
+{
+}
+
+
+DcRemover::~DcRemover()
+{
+}
+
+
+bool Yap::DcRemover::OnInit()
 {
 	AddInput(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 	
@@ -67,14 +77,12 @@ CRemoveDC::CRemoveDC() :
 	SetInt(L"CornerSize", 10);
 
 	AddOutput(L"Output", 2, DataTypeComplexDouble | DataTypeComplexFloat);
+
+	return true;
 }
 
 
-CRemoveDC::~CRemoveDC()
-{
-}
-
-bool CRemoveDC::Input(const wchar_t * port, IData * data)
+bool DcRemover::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) != L"Input")
 		return false;
@@ -132,14 +140,7 @@ bool CRemoveDC::Input(const wchar_t * port, IData * data)
 	return true;
 }
 
-Yap::IProcessor * Yap::CRemoveDC::Clone()
+Yap::IProcessor * Yap::DcRemover::Clone()
 {
-	try
-	{
-		return new CRemoveDC;
-	}
-	catch (bad_alloc&)
-	{
-		return nullptr;
-	}
+	return new (nothrow) DcRemover(*this);
 }

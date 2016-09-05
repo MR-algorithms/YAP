@@ -10,8 +10,18 @@ using namespace std;
 using namespace arma;
 using namespace Yap;
 
-CGrappa::CGrappa() :
+Grappa::Grappa() :
 	ProcessorImpl(L"Grappa")
+{
+}
+
+
+Grappa::~Grappa()
+{
+}
+
+
+bool Yap::Grappa::OnInit()
 {
 	AddProperty(PropertyInt, L"Rate", L"The acceleration factor.");
 	SetInt(L"Rate", 2);
@@ -22,14 +32,11 @@ CGrappa::CGrappa() :
 
 	AddInput(L"Input", 3, DataTypeComplexDouble | DataTypeComplexFloat);
 	AddOutput(L"Output", 3, DataTypeComplexDouble | DataTypeComplexFloat);
+
+	return true;
 }
 
-
-CGrappa::~CGrappa()
-{
-}
-
-bool CGrappa::Input(const wchar_t * port, IData * data)
+bool Grappa::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) != L"Input")
 		return false;
@@ -52,7 +59,7 @@ bool CGrappa::Input(const wchar_t * port, IData * data)
 	return true;
 }
 
-std::vector<std::complex<double>> CGrappa::GetAcsData(std::complex<double> * data, 
+std::vector<std::complex<double>> Grappa::GetAcsData(std::complex<double> * data, 
 	size_t r, size_t acs, size_t width, size_t height, size_t num_coil)
 {
 	unsigned int first = static_cast<unsigned int> (((height - acs) / (2 * r)) * r + 1);
@@ -70,7 +77,7 @@ std::vector<std::complex<double>> CGrappa::GetAcsData(std::complex<double> * dat
 }
 
 
-bool CGrappa::Recon(std::complex<double> * subsampled_data, 
+bool Grappa::Recon(std::complex<double> * subsampled_data, 
 	size_t r, size_t acs, size_t Block, size_t width, size_t height, size_t Num_coil)
 {
 	unsigned int block = static_cast<unsigned int> (Block);
@@ -136,7 +143,7 @@ bool CGrappa::Recon(std::complex<double> * subsampled_data,
 }
 
 
-complex<double> * CGrappa::MakeFidelity(complex<double> * recon_data, vector<complex<double>> acs_data, 
+complex<double> * Grappa::MakeFidelity(complex<double> * recon_data, vector<complex<double>> acs_data, 
 	size_t r, size_t acs, size_t width, size_t height, size_t num_coil)
 {
 	unsigned int first = static_cast<unsigned int> (((height - acs) / (2 * r)) * r + 1);
@@ -154,7 +161,7 @@ complex<double> * CGrappa::MakeFidelity(complex<double> * recon_data, vector<com
 
 
 
-arma::cx_mat CGrappa::FitCoef(complex<double> * subsampled_data, 
+arma::cx_mat Grappa::FitCoef(complex<double> * subsampled_data, 
 	size_t R, size_t acs, size_t Block, size_t Width, size_t height, size_t Num_coil)
 {
 	unsigned int width = static_cast<unsigned int> (Width);
@@ -215,14 +222,7 @@ arma::cx_mat CGrappa::FitCoef(complex<double> * subsampled_data,
 	return coef;
 }
 
-Yap::IProcessor * Yap::CGrappa::Clone()
+Yap::IProcessor * Yap::Grappa::Clone()
 {
-	try
-	{
-		return new CGrappa();
-	}
-	catch (std::bad_alloc&)
-	{
-		return nullptr;
-	}
+	return new (nothrow) Grappa(*this);
 }

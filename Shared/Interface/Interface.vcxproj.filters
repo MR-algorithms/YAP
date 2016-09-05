@@ -27,7 +27,7 @@
     <ClInclude Include="IContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IProperties.h">
+    <ClInclude Include="IProperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

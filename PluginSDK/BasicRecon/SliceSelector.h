@@ -7,17 +7,20 @@
 
 namespace Yap
 {
-	class CSliceSelector :
+	class SliceSelector :
 		public ProcessorImpl
 	{
 	public:
-		CSliceSelector(void);
-		CSliceSelector(const CSliceSelector& rhs);
-		virtual ~CSliceSelector();
+		SliceSelector(void);
+		SliceSelector(const SliceSelector& rhs);
+		virtual ~SliceSelector();
 
 		virtual IProcessor * Clone() override;
 
 		virtual bool Input(const wchar_t * name, IData * data) override;
+
+		// Inherited via ProcessorImpl
+		virtual bool OnInit() override;
 
 	};
 }

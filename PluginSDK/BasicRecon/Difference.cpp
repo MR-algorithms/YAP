@@ -5,10 +5,10 @@ using namespace Yap;
 using namespace std;
 
 template <typename T>
-void Difference(T * input_data,
-	T * reference_data,
-	T * output_data,
-	size_t size)
+void calc_difference(T * input_data,
+				T * reference_data,
+				T * output_data,
+				size_t size)
 {
 	assert(input_data != nullptr && reference_data != nullptr && output_data != nullptr);
 
@@ -20,20 +20,28 @@ void Difference(T * input_data,
 }
 
 
-CDifference::CDifference() : ProcessorImpl(L"Difference")
+Difference::Difference() : ProcessorImpl(L"Difference")
+{
+
+}
+
+
+Difference::~Difference()
+{
+}
+
+
+bool Yap::Difference::OnInit()
 {
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
 	AddInput(L"Reference", YAP_ANY_DIMENSION, DataTypeAll);
 
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeAll);
+
+	return true;
 }
 
-
-CDifference::~CDifference()
-{
-}
-
-bool Yap::CDifference::Input(const wchar_t * port, IData * data)
+bool Yap::Difference::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) == L"Reference")
 	{
@@ -73,7 +81,7 @@ bool Yap::CDifference::Input(const wchar_t * port, IData * data)
 		{
 			auto output_data = YapShared(new CFloatData(data->GetDimensions()));
 
-			Difference(GetDataArray<float>(data), GetDataArray<float>(_reference_data.get()),
+			calc_difference(GetDataArray<float>(data), GetDataArray<float>(_reference_data.get()),
 				GetDataArray<float>(output_data.get()), input_data.GetDataSize());
 
 			Feed(L"Output", output_data.get());
@@ -82,7 +90,7 @@ bool Yap::CDifference::Input(const wchar_t * port, IData * data)
 		{
 			auto output_data = YapShared(new CDoubleData(data->GetDimensions()));
 
-			Difference(GetDataArray<double>(data), GetDataArray<double>(_reference_data.get()),
+			calc_difference(GetDataArray<double>(data), GetDataArray<double>(_reference_data.get()),
 				GetDataArray<double>(output_data.get()), input_data.GetDataSize());
 			Feed(L"Output", output_data.get());
 		}
@@ -93,4 +101,9 @@ bool Yap::CDifference::Input(const wchar_t * port, IData * data)
 	}
 
 	return true;
+}
+
+IProcessor * Yap::Difference::Clone()
+{
+	return new (std::nothrow) Difference(*this);
 }

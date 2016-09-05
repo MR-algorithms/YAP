@@ -8,13 +8,22 @@
 using namespace std;
 using namespace Yap;
 
-CFft2D::CFft2D():
+Fft2D::Fft2D():
 	ProcessorImpl(L"Fft2D"),
 	_plan_data_width(0),
 	_plan_data_height(0),
 	_plan_inverse(false),
 	_plan_in_place(false),
 	_fft_plan(nullptr)
+{
+}
+
+
+Fft2D::~Fft2D()
+{
+}
+
+bool Yap::Fft2D::OnInit()
 {
 	AddProperty(PropertyBool, L"Inverse", L"The direction of FFT2D.");
 	AddProperty(PropertyBool, L"InPlace", L"The position of FFT2D.");
@@ -24,14 +33,11 @@ CFft2D::CFft2D():
 
 	AddInput(L"Input", 2, DataTypeComplexDouble);
 	AddOutput(L"Output", 2, DataTypeComplexDouble);
+
+	return true;
 }
 
-
-CFft2D::~CFft2D()
-{
-}
-
-bool CFft2D::Input(const wchar_t * port, IData * data)
+bool Fft2D::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) != L"Input")
 		return false;
@@ -50,30 +56,30 @@ bool CFft2D::Input(const wchar_t * port, IData * data)
 
 	if (GetBool(L"InPlace"))
 	{
-		Fft2D(data_array, data_array, width, height, GetBool(L"Inverse"));
+		Fft(data_array, data_array, width, height, GetBool(L"Inverse"));
 		Feed(L"Output", data);
 	}
 	else
 	{
-		Yap::CDimensionsImpl dims;
+		Yap::DimensionsImpl dims;
 		dims(DimensionReadout, 0, width)
 			(DimensionPhaseEncoding, 0, height);
 		auto output = YapShared(new CComplexDoubleData(&dims));
 
-		Fft2D(data_array, GetDataArray<complex<float>>(output.get()),
+		Fft(data_array, GetDataArray<complex<float>>(output.get()),
 			width, height, GetBool(L"Inverse"));
 		Feed(L"Output", output.get());
 	}
 	return true;
 }
 
-void CFft2D::FftShift(std::complex<float>* data, size_t  width, size_t height)
+void Fft2D::FftShift(std::complex<float>* data, size_t  width, size_t height)
 {
 	SwapBlock(data, data + height / 2 * width + width / 2, width / 2, height / 2, width);
 	SwapBlock(data + width / 2, data + height / 2 * width, width / 2, height / 2, width);
 }
 
-void CFft2D::SwapBlock(std::complex<float>* block1, std::complex<float>* block2, size_t width, size_t height, size_t line_stride)
+void Fft2D::SwapBlock(std::complex<float>* block1, std::complex<float>* block2, size_t width, size_t height, size_t line_stride)
 {
 	std::vector<std::complex<float>> swap_buffer;
 	swap_buffer.resize(width);
@@ -91,7 +97,7 @@ void CFft2D::SwapBlock(std::complex<float>* block1, std::complex<float>* block2,
 	}
 }
 
-bool CFft2D::Fft2D(std::complex<float> * data, std::complex<float> * result_data, size_t width, size_t height, bool inverse)
+bool Fft2D::Fft(std::complex<float> * data, std::complex<float> * result_data, size_t width, size_t height, bool inverse)
 {
 	
 	bool in_place = (data == result_data);
@@ -111,7 +117,7 @@ bool CFft2D::Fft2D(std::complex<float> * data, std::complex<float> * result_data
 	return true;
 }
 
-void CFft2D::Plan(size_t width, size_t height, bool inverse, bool in_place)
+void Fft2D::Plan(size_t width, size_t height, bool inverse, bool in_place)
 {
 	vector<fftwf_complex> data(width * height);
 
@@ -137,15 +143,8 @@ void CFft2D::Plan(size_t width, size_t height, bool inverse, bool in_place)
 	_plan_in_place = in_place;
 }
 
-Yap::IProcessor * Yap::CFft2D::Clone()
+Yap::IProcessor * Yap::Fft2D::Clone()
 {
-	try
-	{
-		return new CFft2D;
-	}
-	catch (std::bad_alloc&)
-	{
-		return nullptr;
-	}
-
+	return new (nothrow) Fft2D(*this);
 }
+

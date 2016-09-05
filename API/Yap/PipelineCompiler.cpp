@@ -126,7 +126,7 @@ std::wstring CStatement::GetParamId()
 	return param_id;
 }
 
-Yap::CStatement::CStatement(CPipelineConstructor& constructor) :
+Yap::CStatement::CStatement(PipelineConstructor& constructor) :
 	_constructor(constructor), 
 	_type(StatementUnknown)
 {
@@ -291,12 +291,12 @@ bool CStatement::ProcessPortLink()
 		}
 		else
 		{
-			return _constructor.AssignPipelineInPort(source_port.c_str(), dest_processor.c_str(), dest_port.c_str());
+			return _constructor.MapInput(source_port.c_str(), dest_processor.c_str(), dest_port.c_str());
 		}
 	}
 	else if (dest_processor == L"self")
 	{
-		return _constructor.AssignPipelineOutPort(dest_port.c_str(), source_processor.c_str(), source_port.c_str());
+		return _constructor.MapOutput(dest_port.c_str(), source_processor.c_str(), source_port.c_str());
 	}
 	else
 	{
@@ -453,7 +453,7 @@ CPipelineCompiler::~CPipelineCompiler(void)
 }
 
 
-std::shared_ptr<CCompositeProcessor> Yap::CPipelineCompiler::Compile(const wchar_t * text)
+std::shared_ptr<CompositeProcessor> Yap::CPipelineCompiler::Compile(const wchar_t * text)
 {
 	wistringstream input;
 	input.str(text);
@@ -461,7 +461,7 @@ std::shared_ptr<CCompositeProcessor> Yap::CPipelineCompiler::Compile(const wchar
 	return DoCompile(input);
 }
 
-shared_ptr<CCompositeProcessor> CPipelineCompiler::CompileFile(const wchar_t * path)
+shared_ptr<CompositeProcessor> CPipelineCompiler::CompileFile(const wchar_t * path)
 {
 	wifstream script_file;
 	script_file.open(path);
@@ -470,19 +470,19 @@ shared_ptr<CCompositeProcessor> CPipelineCompiler::CompileFile(const wchar_t * p
 	{
 		wstring message = wstring(L"Failed to open script file: ") + path;
 		// throw CCompileError(Token(), CompileErrorFailedOpenFile, message);
-		return shared_ptr<CCompositeProcessor>();
+		return shared_ptr<CompositeProcessor>();
 	}
 
 	return DoCompile(script_file);
 }
 
-std::shared_ptr<CCompositeProcessor> CPipelineCompiler::DoCompile(std::wistream& input)
+std::shared_ptr<CompositeProcessor> CPipelineCompiler::DoCompile(std::wistream& input)
 {
 	Preprocess(input);
 
 	if (!_constructor)
 	{
-		_constructor = shared_ptr<CPipelineConstructor>(new CPipelineConstructor);
+		_constructor = shared_ptr<PipelineConstructor>(new PipelineConstructor);
 	}
 	_constructor->Reset(true);
 
@@ -493,7 +493,7 @@ std::shared_ptr<CCompositeProcessor> CPipelineCompiler::DoCompile(std::wistream&
 			return _constructor->GetPipeline();
 		}
 
-		return std::shared_ptr<CCompositeProcessor>();
+		return std::shared_ptr<CompositeProcessor>();
 	}
 	catch (CCompileError& e)
 	{
@@ -505,7 +505,7 @@ std::shared_ptr<CCompositeProcessor> CPipelineCompiler::DoCompile(std::wistream&
 
 		wcerr << output.str();
 
-		return std::shared_ptr<CCompositeProcessor>();
+		return std::shared_ptr<CompositeProcessor>();
 	}
 }
 

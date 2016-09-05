@@ -11,13 +11,13 @@
 
 namespace Yap
 {
-	class CCompositeProcessor :
+	class CompositeProcessor :
 		public ProcessorImpl
 	{
 	public:
-		CCompositeProcessor(const wchar_t * class_id);
-		CCompositeProcessor(CCompositeProcessor& rhs);
-		virtual ~CCompositeProcessor();
+		CompositeProcessor(const wchar_t * class_id);
+		CompositeProcessor(CompositeProcessor& rhs);
+		virtual ~CompositeProcessor();
 
 		virtual IProcessor * Clone() override;
 
@@ -26,15 +26,18 @@ namespace Yap
 		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) override;
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
-		bool AssignInPort(const wchar_t * port, const wchar_t * inner_processor, const wchar_t * inner_port);
-		bool AssignOutPort(const wchar_t * port, const wchar_t * inner_processor, const wchar_t * inner_port);
+		bool AddInputMapping(const wchar_t * port, const wchar_t * inner_processor, const wchar_t * inner_port);
+		bool AddOutputMapping(const wchar_t * port, const wchar_t * inner_processor, const wchar_t * inner_port);
 
 		bool AddProcessor(IProcessor * processor);
 		IProcessor * Find(const wchar_t * instance_id);
 	protected:
-		std::map<std::wstring, IProcessor *> _processors;
-		std::map<std::wstring, Anchor> _out_ports;
-		std::map<std::wstring, Anchor> _in_ports;
+		std::map<std::wstring, SmartPtr<IProcessor>> _processors;
+		std::map<std::wstring, Anchor> _output;
+		std::map<std::wstring, Anchor> _inputs;
+
+		// Inherited via ProcessorImpl
+		virtual bool OnInit() override;
 	};
 }
 

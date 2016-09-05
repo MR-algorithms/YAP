@@ -14,10 +14,24 @@
 using namespace Yap;
 using namespace std;
 
-CSamplingTypeGenerator::CSamplingTypeGenerator(void):
+SamplingMaskCreator::SamplingMaskCreator(void):
 	ProcessorImpl(L"SamplingTypeGenerator"),
 	_try_count(10),
 	_tolerance(3)
+{
+}
+
+Yap::SamplingMaskCreator::SamplingMaskCreator(const SamplingMaskCreator & rhs)
+	:ProcessorImpl(rhs)
+{	
+}
+
+
+SamplingMaskCreator::~SamplingMaskCreator()
+{
+}
+
+bool Yap::SamplingMaskCreator::OnInit()
 {
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeUnknown);
 	AddOutput(L"Output", 1, DataTypeChar);
@@ -38,32 +52,16 @@ CSamplingTypeGenerator::CSamplingTypeGenerator(void):
 	SetInt(L"Rate", 2);
 	AddProperty(PropertyInt, L"AcsCount", L"");
 	SetInt(L"AcsCount", 16);
+
+	return true;
 }
 
-Yap::CSamplingTypeGenerator::CSamplingTypeGenerator(const CSamplingTypeGenerator & rhs)
-	:ProcessorImpl(rhs)
-{	
-}
-
-
-CSamplingTypeGenerator::~CSamplingTypeGenerator()
+IProcessor * Yap::SamplingMaskCreator::Clone()
 {
+	return new (nothrow) SamplingMaskCreator(*this);
 }
 
-IProcessor * Yap::CSamplingTypeGenerator::Clone()
-{
-	try
-	{
-		auto processor = new CSamplingTypeGenerator(*this);
-		return processor;
-	}
-	catch (std::bad_alloc&)
-	{
-		return nullptr;
-	}
-}
-
-bool Yap::CSamplingTypeGenerator::Input(const wchar_t * name, IData * data)
+bool Yap::SamplingMaskCreator::Input(const wchar_t * name, IData * data)
 {
 	if (wstring(name) != L"Input")
 		return false;
@@ -91,7 +89,7 @@ bool Yap::CSamplingTypeGenerator::Input(const wchar_t * name, IData * data)
 		}
 		memcpy(sampling_type, sampling_pattern.data(), row_count * sizeof(char));
 
-		CDimensionsImpl dimensions;
+		DimensionsImpl dimensions;
 		dimensions(DimensionReadout, 0U, 1)
 			(DimensionPhaseEncoding, 0U, row_count);
 
@@ -137,7 +135,7 @@ bool Yap::CSamplingTypeGenerator::Input(const wchar_t * name, IData * data)
 		}
 		memcpy(sampling_type, sampling_pattern.data(), height * sizeof(char));
 
-		CDimensionsImpl dimensions;
+		DimensionsImpl dimensions;
 		dimensions(DimensionReadout, 0U, 1)
 			(DimensionPhaseEncoding, 0U, height);
 
@@ -148,7 +146,7 @@ bool Yap::CSamplingTypeGenerator::Input(const wchar_t * name, IData * data)
 	return true;
 }
 
-std::vector<unsigned char> Yap::CSamplingTypeGenerator::GetMinInterferenceSamplingPattern(unsigned int row_count, float pow, float sample_percent, float radius)
+std::vector<unsigned char> Yap::SamplingMaskCreator::GetMinInterferenceSamplingPattern(unsigned int row_count, float pow, float sample_percent, float radius)
 {
 	float min_peak_interference((float)INT_MAX);
 	vector<float> pdf = GeneratePdf(row_count, pow, sample_percent, radius);
@@ -214,7 +212,7 @@ std::vector<unsigned char> Yap::CSamplingTypeGenerator::GetMinInterferenceSampli
 	return min_interference_pattern;
 }
 
-std::vector<float> Yap::CSamplingTypeGenerator::GeneratePdf(unsigned int row_count, float p, float sample_percent, float radius)
+std::vector<float> Yap::SamplingMaskCreator::GeneratePdf(unsigned int row_count, float p, float sample_percent, float radius)
 {
 	float minval = 0.0;
 	float maxval = 1.0;
@@ -283,7 +281,7 @@ std::vector<float> Yap::CSamplingTypeGenerator::GeneratePdf(unsigned int row_cou
 	return pdf_temp;
 }
 
-std::vector<float> Yap::CSamplingTypeGenerator::LineSpace(float begin, float end, unsigned int count)
+std::vector<float> Yap::SamplingMaskCreator::LineSpace(float begin, float end, unsigned int count)
 {
 	std::vector<float> vec;
 	float current_value = begin;
