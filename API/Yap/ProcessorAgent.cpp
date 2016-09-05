@@ -1,5 +1,5 @@
 #include "ProcessorAgent.h"
-#include "../../Shared/Interface\IProperty.h"
+#include "Interface\IProperty.h"
 
 #include <cassert>
 

@@ -15,7 +15,7 @@
 #include "imageProcessing.h"
 #include "Algorithm2DWrapper.h"
 #include "SliceSelector.h"
-#include "../../Shared/Interface\Implement\YapImplement.h"
+#include "Interface\Implement\YapImplement.h"
 
 using namespace Yap;
 

@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <assert.h>
 #include "PropertyImpl.h"
-#include "../../../Shared/Interface/IMemory.h"
+#include "Interface/IMemory.h"
 
 using namespace std;
 using namespace Yap;

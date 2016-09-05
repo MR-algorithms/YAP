@@ -1,8 +1,8 @@
 #include "SliceIterator.h"
 
-#include "../../Shared/Interface/Client/DataHelper.h"
+#include "Interface/Client/DataHelper.h"
 #include <complex>
-#include "../../Shared/Interface/Implement/DataImpl.h"
+#include "Interface/Implement/DataImpl.h"
 
 using namespace Yap;
 using namespace std;

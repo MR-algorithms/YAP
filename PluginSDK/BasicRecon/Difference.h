@@ -3,7 +3,7 @@
 #ifndef Difference_h__20160816
 #define Difference_h__20160816
 
-#include "../../Shared/Interface/Implement/ProcessorImpl.h"
+#include "Interface/Implement/ProcessorImpl.h"
 
 namespace Yap 
 {

@@ -3,7 +3,7 @@
 #ifndef CmrDataReader_h__20160813
 #define CmrDataReader_h__20160813
 
-#include "../../Shared/Interface/Implement/processorImpl.h"
+#include "Interface/Implement/processorImpl.h"
 
 namespace Yap
 {

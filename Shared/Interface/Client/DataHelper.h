@@ -1,7 +1,7 @@
 #ifndef DATAHELPER_H_20160813
 #define DATAHELPER_H_20160813
 
-#include "../../../Shared/Interface/IData.h"
+#include "Interface/IData.h"
 
 namespace Yap
 {

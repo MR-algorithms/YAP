@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../../../Shared/Interface\IData.h"
+#include "Interface\IData.h"
 #include <complex>
 #include <vector>
 // #include "Localization.h"
-#include "../../../Shared/interface\IMemory.h"
+#include "interface\IMemory.h"
 #include <assert.h>
 
 namespace Yap

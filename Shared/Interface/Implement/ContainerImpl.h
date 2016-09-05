@@ -4,8 +4,8 @@
 #ifndef ProcessorImpl_h_20160830
 #define ProcessorImpl_h_20160830
 
-#include "../../../Shared/Interface/IContainer.h"
-#include "../../../Shared/Interface/IMemory.h"
+#include "Interface/IContainer.h"
+#include "Interface/IMemory.h"
 
 #include <map>
 #include <string>

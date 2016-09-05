@@ -4,10 +4,10 @@
 #include "stdafx.h"
 
 #include "ProcessorDebugger.h"
-#include "../Yap/PipelineConstructor.h"
-#include "../Yap/PipelineCompiler.h"
-#include "../../Shared/Interface/Implement/CompositeProcessor.h"
-#include "../../Shared/Interface/Implement/DataImpl.h"
+#include "Yap/PipelineConstructor.h"
+#include "Yap/PipelineCompiler.h"
+#include "Interface/Implement/CompositeProcessor.h"
+#include "Interface/Implement/DataImpl.h"
 
 #include <iostream>
 #include <string>

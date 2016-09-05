@@ -1,6 +1,6 @@
 #include "ModulePhase.h"
 
-#include "../../Shared/Interface/Client/DataHelper.h"
+#include "Interface/Client/DataHelper.h"
 
 #include <math.h>
 #include <complex>

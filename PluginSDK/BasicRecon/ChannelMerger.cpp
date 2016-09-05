@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "ChannelMerger.h"
-#include "../../Shared/Interface/Client/DataHelper.h"
+#include "Interface/Client/DataHelper.h"
 #include <utility>
 
 using namespace Yap;

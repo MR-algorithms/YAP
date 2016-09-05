@@ -4,9 +4,9 @@
 
 #include <iostream>
 
-#include "../../Shared/Interface/Implement/DataImpl.h"
-#include "../../Shared/Interface/IProcessor.h"
-#include "../../Shared/Interface/IProperty.h"
+#include "Interface/Implement/DataImpl.h"
+#include "Interface/IProcessor.h"
+#include "Interface/IProperty.h"
 
 using namespace Yap;
 using namespace std;
