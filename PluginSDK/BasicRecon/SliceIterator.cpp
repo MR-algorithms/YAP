@@ -42,7 +42,7 @@ bool SliceIterator::Input(const wchar_t * name, IData * data)
 	assert((data != nullptr) && Yap::GetDataArray<complex<float>>(data) != nullptr);
 	assert(Inputs()->Find(name) != nullptr);
 
-	CDataHelper helper(data);
+	DataHelper helper(data);
 
 	unsigned int slice_block_size = helper.GetBlockSize(DimensionSlice);
 

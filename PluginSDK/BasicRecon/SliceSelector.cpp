@@ -45,7 +45,7 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 
 	int slice_index = GetInt(L"SliceIndex");
 
-	CDataHelper input_data(data);
+	DataHelper input_data(data);
 	Dimensions data_dimentions(data->GetDimensions());
 	unsigned int slice_block_size = input_data.GetBlockSize(DimensionSlice);
 	if (data_dimentions.GetDimensionCount() <= 3)

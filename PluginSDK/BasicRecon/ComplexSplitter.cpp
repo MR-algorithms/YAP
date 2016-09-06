@@ -31,7 +31,7 @@ bool ComplexSplitter::Input(const wchar_t * port, IData * data)
 	if (data->GetDataType() != DataTypeComplexDouble)
 		return false;
 
-	CDataHelper input_data(data);
+	DataHelper input_data(data);
 
 	auto want_real = OutportLinked(L"Real");
 	auto want_imaginary = OutportLinked(L"Imaginary");

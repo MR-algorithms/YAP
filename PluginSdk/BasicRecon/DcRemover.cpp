@@ -90,7 +90,7 @@ bool DcRemover::Input(const wchar_t * port, IData * data)
 	if (data->GetDataType() != DataTypeComplexDouble && data->GetDataType() != DataTypeComplexFloat)
 		return false;
 
-	CDataHelper input_data(data);
+	DataHelper input_data(data);
 	if (input_data.GetActualDimensionCount() != 2)
 		return false;
 

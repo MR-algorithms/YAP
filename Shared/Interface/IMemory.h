@@ -278,7 +278,7 @@ SmartPtr<TYPE> YapShared(IClonable * clonable)
 	It requires that the object implement IClonable and ISharedObject.
 */
 template <typename TYPE>
-SmartPtr<TPYE> YapClone(TYPE * object)
+SmartPtr<TYPE> YapClone(TYPE * object)
 {
 	assert(object != nullptr);
 	assert(dynamic<IClonable*>(object) != nullptr && "The object must implement IClonable.");

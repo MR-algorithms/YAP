@@ -52,8 +52,8 @@ bool Yap::Difference::Input(const wchar_t * port, IData * data)
 		if (!_reference_data)
 			return false;   //need a reference data.
 
-		CDataHelper input_data(data);
-		CDataHelper reference_data(_reference_data.get());
+		DataHelper input_data(data);
+		DataHelper reference_data(_reference_data.get());
 
 		if (input_data.GetDimensionCount() != reference_data.GetDimensionCount())
 			return false;

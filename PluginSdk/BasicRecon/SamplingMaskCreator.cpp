@@ -70,7 +70,7 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * name, IData * data)
 	if (data->GetDataType() != DataTypeComplexFloat)
 		return false;
 
-	CDataHelper input_data(data);
+	DataHelper input_data(data);
 	if (GetBool(L"random_subsampling"))
 	{
 		auto row_count = input_data.GetHeight();

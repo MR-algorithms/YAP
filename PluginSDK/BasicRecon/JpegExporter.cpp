@@ -163,7 +163,7 @@ bool JpegExporter::Input( const wchar_t * name, IData * data)
 
 	TODO(What if the data is not of float type ? );
 
-	CDataHelper data_helper(data);
+	DataHelper data_helper(data);
 	_impl->ExportImage(GetDataArray<float>(data),
 		data_helper.GetWidth(), data_helper.GetHeight(),
 		GetString(L"ExportFolder"));

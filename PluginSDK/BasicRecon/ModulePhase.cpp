@@ -67,7 +67,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 	if (data->GetDataType() != DataTypeComplexDouble && data->GetDataType() != DataTypeComplexFloat)
 		return false;
 
-	CDataHelper input_data(data);
+	DataHelper input_data(data);
 
 	auto want_module = OutportLinked(L"Module");
 	auto want_phase = OutportLinked(L"Phase");

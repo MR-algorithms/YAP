@@ -45,7 +45,7 @@ bool Grappa::Input(const wchar_t * port, IData * data)
 	auto Acs = GetInt(L"AcsCount");
 	auto Block = GetInt(L"Block");
 
-	CDataHelper input_data(data);  //输入数据为欠采添零的K空间数据
+	DataHelper input_data(data);  //输入数据为欠采添零的K空间数据
 	if (input_data.GetDataType() != DataTypeComplexDouble && input_data.GetDataType() != DataTypeComplexFloat)
 		return false;
 	if (input_data.GetActualDimensionCount() != 3)

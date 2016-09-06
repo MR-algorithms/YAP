@@ -21,7 +21,7 @@ bool zero_filling(T* dest,
 	assert(dest_width >= source_width && dest_height >= source_height);
 
 	memset(dest, 0, dest_width * dest_height * sizeof(T));
-	for (auto row = 0U; row < source_height; ++row)
+	for (int row = 0; row < source_height; ++row)
 	{
 		memcpy(dest + ((dest_height - source_height) / 2 + row) * dest_width + (dest_width - source_width) / 2,
 			source + row * source_width, source_width * sizeof(T));
@@ -61,10 +61,10 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 	if (std::wstring(port) != L"Input")
 		return false;
 
-	auto dest_width = GetInt(L"DestWidth");
-	auto dest_height = GetInt(L"DestHeight");
+	unsigned int dest_width(GetInt(L"DestWidth"));
+	unsigned int dest_height(GetInt(L"DestHeight"));
 
-	CDataHelper input_data(data);
+	DataHelper input_data(data);
 	if (input_data.GetDataType() != DataTypeComplexDouble && input_data.GetDataType() != DataTypeComplexFloat)
 		return false;
 

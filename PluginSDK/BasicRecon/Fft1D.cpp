@@ -46,7 +46,7 @@ bool Fft1D::Input(const wchar_t * port, IData * data)
 	if (wstring(port) != L"Input")
 		return false;
 
-	CDataHelper input_data(data);
+	DataHelper input_data(data);
 	if (input_data.GetDataType() != DataTypeComplexDouble)
 		return false;
 

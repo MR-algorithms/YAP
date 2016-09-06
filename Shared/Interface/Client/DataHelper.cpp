@@ -5,14 +5,14 @@
 
 using namespace Yap;
 
-int CDataHelper::GetDataType()
+int DataHelper::GetDataType()
 {
-	return _data_interface.GetDataType();
+	return _data_object.GetDataType();
 }
 
-unsigned int CDataHelper::GetDimensionCount()
+unsigned int DataHelper::GetDimensionCount()
 {
-	auto dimension = _data_interface.GetDimensions();
+	auto dimension = _data_object.GetDimensions();
 
 	return (dimension != nullptr) ? dimension->GetDimensionCount() : 0;
 }
@@ -21,16 +21,16 @@ unsigned int CDataHelper::GetDimensionCount()
 返回数据的实际维数。例如，对于三维空间中的平面，其实际维数应该是两维，虽然所用的空间坐标是三维的。
 @return 数据集的实际维数。
 */
-unsigned int CDataHelper::GetActualDimensionCount() const
+unsigned int DataHelper::GetActualDimensionCount() const
 {
-	assert(_data_interface.GetDimensions() != nullptr);
+	assert(_data_object.GetDimensions() != nullptr);
 
 	Dimension dimension;
-	unsigned int dimension_count = _data_interface.GetDimensions()->GetDimensionCount();
+	unsigned int dimension_count = _data_object.GetDimensions()->GetDimensionCount();
 	unsigned int actual_dimension_count = 0;
 	for (unsigned int dimension_index = 0; dimension_index < dimension_count; ++dimension_index)
 	{
-		_data_interface.GetDimensions()->GetDimensionInfo(dimension_index,
+		_data_object.GetDimensions()->GetDimensionInfo(dimension_index,
 			dimension.type, dimension.start_index, dimension.length);
 		if (dimension.length > 1)
 		{
@@ -40,9 +40,9 @@ unsigned int CDataHelper::GetActualDimensionCount() const
 
 	return actual_dimension_count;
 }
-unsigned int CDataHelper::GetWidth()
+unsigned int DataHelper::GetWidth()
 {
-	auto dimension = _data_interface.GetDimensions();
+	auto dimension = _data_object.GetDimensions();
 	DimensionType dimension_type;
 	unsigned int start, length;
 	dimension->GetDimensionInfo(0, dimension_type, start, length);
@@ -50,9 +50,9 @@ unsigned int CDataHelper::GetWidth()
 	return length;
 }
 
-unsigned int CDataHelper::GetHeight()
+unsigned int DataHelper::GetHeight()
 {
-	auto dimension = _data_interface.GetDimensions();
+	auto dimension = _data_object.GetDimensions();
 	DimensionType dimension_type;
 	unsigned int start, length;
 	dimension->GetDimensionInfo(1, dimension_type, start, length);
@@ -60,9 +60,9 @@ unsigned int CDataHelper::GetHeight()
 	return length;
 }
 
-unsigned int CDataHelper::GetSlice()
+unsigned int DataHelper::GetSlice()
 {
-	auto dimension = _data_interface.GetDimensions();
+	auto dimension = _data_object.GetDimensions();
 	DimensionType dimension_type;
 	unsigned int start, length;
 	dimension->GetDimensionInfo(2, dimension_type, start, length);
@@ -70,9 +70,9 @@ unsigned int CDataHelper::GetSlice()
 }
 
 
-Yap::Dimension Yap::CDataHelper::GetDimension(DimensionType dimension_type)
+Yap::Dimension Yap::DataHelper::GetDimension(DimensionType dimension_type)
 {
-	auto dims = _data_interface.GetDimensions();
+	auto dims = _data_object.GetDimensions();
 	assert(dims != nullptr);
 
 	Dimension dimension;
@@ -89,10 +89,10 @@ Yap::Dimension Yap::CDataHelper::GetDimension(DimensionType dimension_type)
 	return dimension;
 }
 
-size_t Yap::CDataHelper::GetDataSize() const
+size_t Yap::DataHelper::GetDataSize() const
 {
 	size_t count = 1;
-	auto dimension = _data_interface.GetDimensions();
+	auto dimension = _data_object.GetDimensions();
 	DimensionType dimension_type;
 	unsigned int start, length;
 
@@ -105,9 +105,9 @@ size_t Yap::CDataHelper::GetDataSize() const
 	return count;
 }
 
-unsigned int CDataHelper::GetCoilCount()
+unsigned int DataHelper::GetCoilCount()
 {
-	auto dimension = _data_interface.GetDimensions();
+	auto dimension = _data_object.GetDimensions();
 	DimensionType dimension_type;
 	unsigned int start, length;
 
@@ -118,9 +118,9 @@ unsigned int CDataHelper::GetCoilCount()
 	return length;
 }
 
-unsigned int Yap::CDataHelper::GetDim4()
+unsigned int Yap::DataHelper::GetDim4()
 {
-	auto dimension = _data_interface.GetDimensions();
+	auto dimension = _data_object.GetDimensions();
 	DimensionType dimension_type;
 	unsigned int start, length;
 
@@ -135,18 +135,18 @@ unsigned int Yap::CDataHelper::GetDim4()
 @param  type 指定所关心的维度。
 @return 包含的数据元素的个数。
 */
-unsigned int CDataHelper::GetBlockSize(DimensionType type) const
+unsigned int DataHelper::GetBlockSize(DimensionType type) const
 {
-	assert(_data_interface.GetDimensions() != nullptr);
+	assert(_data_object.GetDimensions() != nullptr);
 
 	Dimension dimension;
-	unsigned int dimension_count = _data_interface.GetDimensions()->GetDimensionCount();
+	unsigned int dimension_count = _data_object.GetDimensions()->GetDimensionCount();
 	unsigned int block_size = 1;
 
 	bool success = false;
 	for (unsigned int dimension_index = 0; dimension_index < dimension_count; ++dimension_index)
 	{
-		_data_interface.GetDimensions()->GetDimensionInfo(dimension_index,
+		_data_object.GetDimensions()->GetDimensionInfo(dimension_index,
 			dimension.type, dimension.start_index, dimension.length);
 
 		if (dimension.type == type)

@@ -42,7 +42,7 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 	assert(data != nullptr);
 	assert(Inputs()->Find(name) != nullptr);
 
-	CDataHelper helper(data);
+	DataHelper helper(data);
 	
 	vector<unsigned int> key = GetKey(data->GetDimensions());
 	auto iter = _merge_buffers.find(key);
