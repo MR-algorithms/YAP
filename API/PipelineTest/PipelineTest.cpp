@@ -69,7 +69,7 @@ int main()
 
 
 	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"Test.pipeline");
+	auto pipeline = compiler.CompileFile(L"Niumag.pipeline");
 	if (pipeline)
 	{
 		pipeline->Input(L"Input", nullptr);

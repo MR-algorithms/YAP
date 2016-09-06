@@ -60,9 +60,9 @@ IProcessor * Yap::CNiumagImgReader::Clone()
 bool Yap::CNiumagImgReader::OnInit()
 {
 	AddInput(L"Input", 0, DataTypeUnknown);
-	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeInt);
+	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
 
-	AddProperty(PropertyString, L"DataPath", L"包含原始数据文件的文件夹。");
+	AddProperty(PropertyString, L"DataPath", L"数据文件夹和文件名。");
 
 	return true;
 }

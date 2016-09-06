@@ -1,0 +1,8 @@
+import "BasicRecon.dll";
+
+NiumagImgReader reader(DataPath = "D:\\test_data\\UU.img");
+JpegExporter jpeg_exporter(ExportFolder = "d:\\Output");
+	
+reader->jpeg_exporter;
+
+self.Input->reader.Input;
