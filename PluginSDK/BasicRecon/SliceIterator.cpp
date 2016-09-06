@@ -51,10 +51,10 @@ bool SliceIterator::Input(const wchar_t * name, IData * data)
 	
 	for (unsigned int i = slice_dimension.start_index; i < slice_dimension.start_index + slice_dimension.length; ++i)
 	{
-		DimensionsImpl slice_data_dimensions(data->GetDimensions());
-		slice_data_dimensions.ModifyDimension(DimensionSlice, 1, i);
+		Dimensions slice_data_dimensions(data->GetDimensions());
+		slice_data_dimensions.SetDimension(DimensionSlice, 1, i);
 
-		auto output = YapShared(new CComplexFloatData (
+		auto output = YapShared(new ComplexFloatData (
 			Yap::GetDataArray<complex<float>>(data) + i * slice_block_size, slice_data_dimensions));
 
 		// output->SetSliceLocalization(GetParams(), i);

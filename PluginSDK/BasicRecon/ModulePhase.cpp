@@ -75,7 +75,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 	if (input_data.GetActualDimensionCount() != 2)
 		return false;
 
-	DimensionsImpl dims;
+	Dimensions dims;
 	dims(DimensionReadout, 0, input_data.GetWidth())
 		(DimensionPhaseEncoding, 0, input_data.GetHeight());
 
@@ -83,7 +83,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 	{
 		if (data->GetDataType() == DataTypeComplexDouble)
 		{
-			auto module = YapShared(new CDoubleData(&dims));
+			auto module = YapShared(new DoubleData(&dims));
 
 			GetModule(GetDataArray<complex<double>>(data),
 				GetDataArray<double>(module.get()),
@@ -94,7 +94,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 		
 		else
 		{
-			auto module = YapShared(new CFloatData(&dims));
+			auto module = YapShared(new FloatData(&dims));
 
 			GetModule(GetDataArray<complex<float>>(data),
 				GetDataArray<float>(module.get()),
@@ -109,7 +109,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 	{
 		if (data->GetDataType() == DataTypeComplexDouble)
 		{
-			auto phase = YapShared(new CDoubleData(&dims));
+			auto phase = YapShared(new DoubleData(&dims));
 
 			GetPhase(GetDataArray<complex<double>>(data), GetDataArray<double>(phase.get()),
 				input_data.GetDataSize());
@@ -118,7 +118,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 		}
 		else
 		{
-			auto phase = YapShared(new CFloatData(&dims));
+			auto phase = YapShared(new FloatData(&dims));
 
 			GetPhase(GetDataArray<complex<float>>(data), GetDataArray<float>(phase.get()),
 				input_data.GetDataSize());

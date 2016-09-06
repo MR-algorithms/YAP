@@ -72,13 +72,13 @@ unsigned int CDataHelper::GetSlice()
 
 Yap::Dimension Yap::CDataHelper::GetDimension(DimensionType dimension_type)
 {
-	assert(_data_interface.GetDimensions());
+	auto dims = _data_interface.GetDimensions();
+	assert(dims != nullptr);
 
 	Dimension dimension;
-	unsigned int dimension_count = _data_interface.GetDimensions()->GetDimensionCount();
-	for (unsigned int dimension_index = 0; dimension_index < dimension_count; ++dimension_index)
+	for (unsigned int dim_index = 0; dim_index < dims->GetDimensionCount(); ++dim_index)
 	{
-		_data_interface.GetDimensions()->GetDimensionInfo(dimension_index,
+		dims->GetDimensionInfo(dim_index,
 			dimension.type, dimension.start_index, dimension.length);
 		if (dimension.type == dimension_type)
 		{

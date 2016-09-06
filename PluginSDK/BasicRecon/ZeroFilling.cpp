@@ -11,11 +11,11 @@ using namespace Yap;
 
 template <typename T>
 bool zero_filling(T* dest, 
-				 unsigned int dest_width, 
-				 unsigned int dest_height,
+				 int dest_width, 
+				 int dest_height,
 				 T* source, 
-				 unsigned int source_width, 
-				 unsigned int source_height)
+				 int source_width, 
+				 int source_height)
 {
 	assert(dest != nullptr && source != nullptr);
 	assert(dest_width >= source_width && dest_height >= source_height);
@@ -61,8 +61,8 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 	if (std::wstring(port) != L"Input")
 		return false;
 
-	auto dest_width = static_cast<unsigned int>(GetInt(L"DestWidth"));
-	auto dest_height = static_cast<unsigned int>(GetInt(L"DestHeight"));
+	auto dest_width = GetInt(L"DestWidth");
+	auto dest_height = GetInt(L"DestHeight");
 
 	CDataHelper input_data(data);
 	if (input_data.GetDataType() != DataTypeComplexDouble && input_data.GetDataType() != DataTypeComplexFloat)
@@ -74,13 +74,13 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 	if (dest_width < input_data.GetWidth() || dest_height < input_data.GetHeight())
 		return false;
 
-	Yap::DimensionsImpl dims;
+	Yap::Dimensions dims;
 	dims(DimensionReadout, 0, dest_width)
 		(DimensionPhaseEncoding, 0, dest_height);
 
 	if (data->GetDataType() == DataTypeComplexDouble)
 	{
-		auto output = YapShared(new CComplexDoubleData(&dims));
+		auto output = YapShared(new ComplexDoubleData(&dims));
 		zero_filling(Yap::GetDataArray<complex<double>>(output.get()), dest_width, dest_height,
 			Yap::GetDataArray<complex<double>>(data), input_data.GetWidth(), input_data.GetHeight());
 
@@ -89,7 +89,7 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 
 	else
 	{
-		auto output = YapShared(new CComplexFloatData(&dims));
+		auto output = YapShared(new ComplexFloatData(&dims));
 		zero_filling(Yap::GetDataArray<complex<float>>(output.get()), dest_width, dest_height,
 					Yap::GetDataArray<complex<float>>(data), input_data.GetWidth(), input_data.GetHeight());
 

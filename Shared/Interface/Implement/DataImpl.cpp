@@ -5,7 +5,7 @@ using namespace Yap;
 /**
 	获得相关数据使用的总的维数。
 */
-unsigned int Yap::DimensionsImpl::GetDimensionCount() 
+unsigned int Yap::Dimensions::GetDimensionCount() 
 {
 	return static_cast<unsigned int>(_dimension_info.size());
 }
@@ -18,10 +18,10 @@ unsigned int Yap::DimensionsImpl::GetDimensionCount()
 	@param  length 相关的数据在这个维度上的宽度。
 	@return
 */
-bool Yap::DimensionsImpl::GetDimensionInfo(unsigned int dimension_index, 
-										   DimensionType & dimension_type, 
-	unsigned int& start_index, 
-												  unsigned int& length)
+bool Yap::Dimensions::GetDimensionInfo(unsigned int dimension_index, 
+									   DimensionType & dimension_type, 
+									   unsigned int& start_index, 
+									   unsigned int& length)
 {
 	assert(dimension_index < _dimension_info.size());
 	if (dimension_index >= _dimension_info.size())
@@ -36,12 +36,12 @@ bool Yap::DimensionsImpl::GetDimensionInfo(unsigned int dimension_index,
 	return true;
 }
 
-IClonable * Yap::DimensionsImpl::Clone() const
+IClonable * Yap::Dimensions::Clone() const
 {
-	return new (std::nothrow) DimensionsImpl(*this);
+	return new (std::nothrow) Dimensions(*this);
 }
 
-DimensionsImpl & Yap::DimensionsImpl::operator()(DimensionType type, unsigned int index, unsigned int length)
+Dimensions & Yap::Dimensions::operator()(DimensionType type, unsigned int index, unsigned int length)
 {
 	assert(type != DimensionInvalid);
 
@@ -50,19 +50,20 @@ DimensionsImpl & Yap::DimensionsImpl::operator()(DimensionType type, unsigned in
 	return *this;
 }
 
-Yap::DimensionsImpl::DimensionsImpl()
+Yap::Dimensions::Dimensions()
 {
 }
 
-Yap::DimensionsImpl::DimensionsImpl(const DimensionsImpl& source)
+Yap::Dimensions::Dimensions(const Dimensions& source)
 {
 	_dimension_info = source._dimension_info;
 }
 
-Yap::DimensionsImpl::DimensionsImpl(IDimensions * source)
+Yap::Dimensions::Dimensions(IDimensions * source)
 {
-	DimensionType type;
-	unsigned int index, length;
+	DimensionType type = DimensionInvalid;
+	Dimension dim;
+	unsigned int index = 0, length = 0;
 
 	for (unsigned int i = 0; i < source->GetDimensionCount(); ++i)
 	{
@@ -71,13 +72,13 @@ Yap::DimensionsImpl::DimensionsImpl(IDimensions * source)
 	}
 }
 
-Yap::DimensionsImpl::DimensionsImpl(unsigned int dimension_count)
+Yap::Dimensions::Dimensions(unsigned int dimension_count)
 {
 	assert(dimension_count < 16);
 	_dimension_info.resize(dimension_count);
 }
 
-bool Yap::DimensionsImpl::SetDimensionInfo(unsigned int dimension_index, 
+bool Yap::Dimensions::SetDimensionInfo(unsigned int dimension_index, 
 												  DimensionType dimension_type, 
 												  unsigned int start_index, 
 												  unsigned int length)
@@ -91,7 +92,7 @@ bool Yap::DimensionsImpl::SetDimensionInfo(unsigned int dimension_index,
 	return true;
 }
 
-bool Yap::DimensionsImpl::ModifyDimension(DimensionType type, 
+bool Yap::Dimensions::SetDimension(DimensionType type, 
 												 unsigned int length,
 												 unsigned int start_index)
 {
@@ -108,7 +109,7 @@ bool Yap::DimensionsImpl::ModifyDimension(DimensionType type,
 	return false;
 }
 
-unsigned int Yap::DimensionsImpl::GetLength(unsigned int dimension_index)
+unsigned int Yap::Dimensions::GetLength(unsigned int dimension_index)
 {
 	assert(dimension_index < _dimension_info.size());
 
