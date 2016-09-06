@@ -138,5 +138,7 @@ namespace Yap
 	typedef DataImpl<char> CCharData;
 	typedef DataImpl<std::complex<double>> CComplexDoubleData;
 	typedef DataImpl<std::complex<float>> CComplexFloatData;
+
+	typedef DataImpl<unsigned short> CUnsignedShortData;
 };
 
