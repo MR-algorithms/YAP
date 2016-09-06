@@ -17,6 +17,7 @@
 #include "Algorithm2DWrapper.h"
 #include "SliceSelector.h"
 #include "Difference.h"
+#include "NiumagImgReader.h"
 
 #include "Interface\Implement\YapImplement.h"
 
@@ -24,6 +25,7 @@ using namespace Yap;
 
 BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(CmrDataReader)
+	ADD_PROCESSOR(CNiumagImgReader)
 	ADD_PROCESSOR(ComplexSplitter)
 	ADD_PROCESSOR(Difference)
 	ADD_PROCESSOR(Fft1D)
