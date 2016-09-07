@@ -52,7 +52,12 @@
     <ClCompile Include="ZeroFilling.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NiumagImgReader.cpp" />
+    <ClCompile Include="ReceiveData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NiumagImgReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm2DWrapper.h">
@@ -109,7 +114,12 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NiumagImgReader.h" />
+    <ClInclude Include="ReceiveData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NiumagImgReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
