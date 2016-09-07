@@ -2,7 +2,7 @@
 
 #include "Interface/Client/DataHelper.h"
 #include <complex>
-#include "Interface/Implement/DataImpl.h"
+#include "Interface/Implement/DataObject.h"
 
 using namespace Yap;
 using namespace std;
@@ -42,7 +42,7 @@ bool SliceIterator::Input(const wchar_t * name, IData * data)
 	assert((data != nullptr) && ((Yap::GetDataArray<complex<float>>(data) != nullptr) || Yap::GetDataArray<unsigned short>(data) != nullptr));
 	assert(Inputs()->Find(name) != nullptr);
 
-	CDataHelper helper(data);
+	DataHelper helper(data);
 
 	unsigned int slice_block_size = helper.GetBlockSize(DimensionSlice);
 
@@ -51,22 +51,15 @@ bool SliceIterator::Input(const wchar_t * name, IData * data)
 	
 	for (unsigned int i = slice_dimension.start_index; i < slice_dimension.start_index + slice_dimension.length; ++i)
 	{
-		DimensionsImpl slice_data_dimensions(data->GetDimensions());
-		slice_data_dimensions.ModifyDimension(DimensionSlice, 1, i);
-		if (data->GetDataType() == DataTypeComplexFloat)
-		{
-			auto output = YapShared(new CComplexFloatData(
-				Yap::GetDataArray<complex<float>>(data) + i * slice_block_size, slice_data_dimensions));
-			Feed(L"Output", output.get());
-		}
-		else
-		{
-			auto output = YapShared(new CUnsignedShortData(
-				Yap::GetDataArray<unsigned short>(data) + i * slice_block_size, slice_data_dimensions));
-			Feed(L"Output", output.get());
-		}
+		Dimensions slice_data_dimensions(data->GetDimensions());
+		slice_data_dimensions.SetDimension(DimensionSlice, 1, i);
 
-		// output->SetSliceLocalization(GetParams(), i);		
+		auto output = YapShared(new ComplexFloatData (
+			Yap::GetDataArray<complex<float>>(data) + i * slice_block_size, slice_data_dimensions));
+
+		// output->SetSliceLocalization(GetParams(), i);
+
+		Feed(L"Output", output.get());
 	}
 
 	return true;

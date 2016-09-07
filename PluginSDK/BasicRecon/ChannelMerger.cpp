@@ -42,13 +42,13 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 	assert(data != nullptr);
 	assert(Inputs()->Find(name) != nullptr);
 
-	CDataHelper helper(data);
+	DataHelper helper(data);
 	
 	vector<unsigned int> key = GetKey(data->GetDimensions());
 	auto iter = _merge_buffers.find(key);
 	if (iter == _merge_buffers.end())
 	{
-		DimensionsImpl merge_dimensions(helper.GetDimensionCount() - 1); // 消除DimensionChannel这一维
+		Dimensions merge_dimensions(helper.GetDimensionCount() - 1); // 消除DimensionChannel这一维
 
 		DimensionType type = DimensionInvalid;
 		unsigned int index = 0, length = 0;
@@ -65,7 +65,7 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 		}
 
 		MergeBuffer merge_buffer;
-		merge_buffer.buffer = YapShared(new CFloatData(&merge_dimensions));
+		merge_buffer.buffer = YapShared(new FloatData(&merge_dimensions));
 
 		// merge_buffer.buffer->SetLocalization(CLocalization(*data->GetLocalization()));
 		auto * data_array = Yap::GetDataArray<float>(data);

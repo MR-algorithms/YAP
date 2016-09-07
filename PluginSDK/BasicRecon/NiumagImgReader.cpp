@@ -112,12 +112,12 @@ bool Yap::CNiumagImgReader::ReadNiumagImgData()
 			return false;
 		}
 
-		DimensionsImpl dimensions;
+		Dimensions dimensions;
 		dimensions(DimensionReadout, 0U, dim1)
 			(DimensionPhaseEncoding, 0U, dim2)
 			(DimensionSlice, 0U, dim3);
 
-		auto data = YapShared(new CUnsignedShortData(
+		auto data = YapShared(new UnsignedShortData(
 			reinterpret_cast<unsigned short*>(buffer), dimensions, nullptr, true));
 
 		Feed(L"Output", data.get());

@@ -1,7 +1,7 @@
 #include "Fft1D.h"
 
 #include "Interface/Client/DataHelper.h"
-#include "Interface/Implement/DataImpl.h"
+#include "Interface/Implement/DataObject.h"
 
 #include <string.h>
 
@@ -46,7 +46,7 @@ bool Fft1D::Input(const wchar_t * port, IData * data)
 	if (wstring(port) != L"Input")
 		return false;
 
-	CDataHelper input_data(data);
+	DataHelper input_data(data);
 	if (input_data.GetDataType() != DataTypeComplexDouble)
 		return false;
 
@@ -62,9 +62,9 @@ bool Fft1D::Input(const wchar_t * port, IData * data)
 	}
 	else
 	{
-		Yap::DimensionsImpl dims;
+		Yap::Dimensions dims;
 		dims(DimensionReadout, 0, size);
-		auto output = YapShared(new CComplexDoubleData(&dims));
+		auto output = YapShared(new ComplexDoubleData(&dims));
 		Fft(data_array, GetDataArray<complex<double>>(output.get()), size, GetBool(L"Inverse"));
 		Feed(L"Output", output.get());
 	}

@@ -37,7 +37,7 @@ namespace Yap
 			if (data->GetDataType() != type_id<INPUT_TYPE>::type)
 				return false;
 
-			CDataHelper input_data(data);
+			DataHelper input_data(data);
 			if (input_data.GetActualDimensionCount() != 2)
 				return false;
 
@@ -97,7 +97,7 @@ namespace Yap
 			if (data->GetDataType() != type_id<T>::type)
 				return false;
 
-			CDataHelper input_data(data);
+			DataHelper input_data(data);
 			if (input_data.GetActualDimensionCount() != 2)
 				return false;
 

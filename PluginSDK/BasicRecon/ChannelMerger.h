@@ -20,7 +20,7 @@ namespace Yap
 	protected:
 		struct MergeBuffer
 		{
-			SmartPtr<CFloatData> buffer;
+			SmartPtr<FloatData> buffer;
 			unsigned int count;
 
 			MergeBuffer() : count(0){}

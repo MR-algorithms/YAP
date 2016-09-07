@@ -24,10 +24,10 @@
     <ClCompile Include="ProcessorImpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DataImpl.cpp">
+    <ClCompile Include="SharedObjectImpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SharedObjectImpl.cpp">
+    <ClCompile Include="DataObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -36,9 +36,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PropertyImpl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DataImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ProcessorImpl.h">
@@ -51,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SharedObjectImpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
