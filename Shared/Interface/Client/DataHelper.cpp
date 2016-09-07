@@ -40,6 +40,7 @@ unsigned int DataHelper::GetActualDimensionCount() const
 
 	return actual_dimension_count;
 }
+
 unsigned int DataHelper::GetWidth()
 {
 	auto dimension = _data_object.GetDimensions();

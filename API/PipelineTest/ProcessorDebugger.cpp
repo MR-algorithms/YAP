@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-#include "Interface/Implement/DataImpl.h"
+#include "Interface/Implement/DataObject.h"
 #include "Interface/IProcessor.h"
 #include "Interface/IProperty.h"
 

@@ -121,7 +121,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Implement64d.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win64_MTd.lib;lapack_win64_MTd.lib;Yap64d.lib</AdditionalDependencies>
+      <AdditionalDependencies>Client64d.lib;Implement64d.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win64_MTd.lib;lapack_win64_MTd.lib;Yap64d.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(YAP_ROOT)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
@@ -161,7 +161,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Implement64.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win64_MTd.lib;lapack_win64_MTd.lib;Yap64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Client64.lib;Implement64.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win64_MTd.lib;lapack_win64_MTd.lib;Yap64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(YAP_ROOT)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

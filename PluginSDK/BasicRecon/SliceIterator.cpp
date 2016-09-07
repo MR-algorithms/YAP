@@ -2,7 +2,7 @@
 
 #include "Interface/Client/DataHelper.h"
 #include <complex>
-#include "Interface/Implement/DataImpl.h"
+#include "Interface/Implement/DataObject.h"
 
 using namespace Yap;
 using namespace std;
