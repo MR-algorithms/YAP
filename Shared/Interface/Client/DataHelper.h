@@ -5,10 +5,10 @@
 
 namespace Yap
 {
-	class CDataHelper
+	class DataHelper
 	{
 	public:
-		CDataHelper(IData * data) : _data_interface(*data) {}
+		DataHelper(IData * data) : _data_object(*data) {}
 
 		int GetDataType();
 		unsigned int GetDimensionCount();
@@ -31,7 +31,7 @@ namespace Yap
 		unsigned int GetDim4();
 
 	protected:
-		IData & _data_interface;
+		IData & _data_object;
 	};
 
 	template <typename T>

@@ -7,7 +7,7 @@
 #include "Yap/PipelineConstructor.h"
 #include "Yap/PipelineCompiler.h"
 #include "Interface/Implement/CompositeProcessor.h"
-#include "Interface/Implement/DataImpl.h"
+#include "Interface/Implement/DataObject.h"
 
 #include <iostream>
 #include <string>

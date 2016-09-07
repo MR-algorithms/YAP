@@ -92,6 +92,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_UNICODE;UNICODE;%(PreprocessorDefinitions);NO_BOOST</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(YAP_ROOT)\Interface;$(Yap_ROOT)\Shared;D:\ThirdParty\VLD\include;D:\ThirdParty\Fftw\fftw-3.3.3-dll32</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -116,6 +117,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_UNICODE;UNICODE;%(PreprocessorDefinitions);NO_BOOST</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(YAP_ROOT)\Interface;$(Yap_ROOT)\Shared;D:\ThirdParty\VLD\include;D:\ThirdParty\Fftw\fftw-3.3.3-dll32</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

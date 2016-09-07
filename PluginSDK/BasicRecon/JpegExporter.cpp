@@ -166,19 +166,10 @@ bool JpegExporter::Input( const wchar_t * name, IData * data)
 
 	TODO(What if the data is not of float type ? );
 
-	CDataHelper data_helper(data);
-	if (data->GetDataType() == DataTypeFloat)
-	{
-		_impl->ExportImage(GetDataArray<float>(data),
-			data_helper.GetWidth(), data_helper.GetHeight(),
-			GetString(L"ExportFolder"));
-	}
-	else if (data->GetDataType() == DataTypeUnsignedShort)
-	{
-		_impl->ExportImage(GetDataArray<unsigned short>(data),
-			data_helper.GetWidth(), data_helper.GetHeight(),
-			GetString(L"ExportFolder"));
-	}
+	DataHelper data_helper(data);
+	_impl->ExportImage(GetDataArray<float>(data),
+		data_helper.GetWidth(), data_helper.GetHeight(),
+		GetString(L"ExportFolder"));
 
 	return true;
 }
