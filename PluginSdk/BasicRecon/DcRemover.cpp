@@ -1,7 +1,7 @@
 #include "DcRemover.h"
 
 #include "Interface/Client/DataHelper.h"
-#include "Interface/Implement/DataImpl.h"
+#include "Interface/Implement/DataObject.h"
 
 #include <string>
 
@@ -90,7 +90,7 @@ bool DcRemover::Input(const wchar_t * port, IData * data)
 	if (data->GetDataType() != DataTypeComplexDouble && data->GetDataType() != DataTypeComplexFloat)
 		return false;
 
-	CDataHelper input_data(data);
+	DataHelper input_data(data);
 	if (input_data.GetActualDimensionCount() != 2)
 		return false;
 
@@ -111,7 +111,7 @@ bool DcRemover::Input(const wchar_t * port, IData * data)
 		}
 		else
 		{
-			auto output_data = YapShared(new CComplexFloatData(data->GetDimensions()));
+			auto output_data = YapShared(new ComplexFloatData(data->GetDimensions()));
 
 			RemoveDC(GetDataArray<complex<float>>(data), GetDataArray<complex<float>>(output_data.get()),
 				width, height, inplace, corner_size);
@@ -129,7 +129,7 @@ bool DcRemover::Input(const wchar_t * port, IData * data)
 		}
 		else
 		{
-			auto output_data = YapShared(new CComplexDoubleData(data->GetDimensions()));
+			auto output_data = YapShared(new ComplexDoubleData(data->GetDimensions()));
 
 			RemoveDC(GetDataArray<complex<double>>(data), GetDataArray<complex<double>>(output_data.get()),
 				width, height, inplace, corner_size);

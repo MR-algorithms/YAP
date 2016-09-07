@@ -105,13 +105,13 @@ bool Yap::NiumagFidReader::ReadNiumagFidData()
 			return false;
 		}
 
-		DimensionsImpl dimensions;
+		Dimensions dimensions;
 		dimensions(DimensionReadout, 0U, dim1)
 			(DimensionPhaseEncoding, 0U, dim2)
 			(DimensionSlice, 0U, dim3)
 			(Dimension4, 0U, dim4);
 
-		auto data = YapShared(new CComplexFloatData(
+		auto data = YapShared(new ComplexFloatData(
 			reinterpret_cast<complex<float>*>(buffer), dimensions, nullptr, true));
 
 		Feed(L"Output", data.get());

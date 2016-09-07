@@ -8,7 +8,7 @@
 #include <string>
 #include <memory>
 #include "Utilities/macros.h"
-#include "interface/Implement/DataImpl.h"
+#include "interface/Implement/DataObject.h"
 #include "Interface/Implement/SharedObjectImpl.h"
 #include "Interface/Implement/ContainerImpl.h"
 #include "Interface/IProperty.h"

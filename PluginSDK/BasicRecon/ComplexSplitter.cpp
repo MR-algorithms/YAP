@@ -31,7 +31,7 @@ bool ComplexSplitter::Input(const wchar_t * port, IData * data)
 	if (data->GetDataType() != DataTypeComplexDouble)
 		return false;
 
-	CDataHelper input_data(data);
+	DataHelper input_data(data);
 
 	auto want_real = OutportLinked(L"Real");
 	auto want_imaginary = OutportLinked(L"Imaginary");
@@ -41,8 +41,8 @@ bool ComplexSplitter::Input(const wchar_t * port, IData * data)
 	auto data_array = GetDataArray<complex<double>>(data);
 	if (want_real && want_imaginary)
 	{
-		auto * real_data = new Yap::CDoubleData(data->GetDimensions());
-		auto * imaginary_data = new Yap::CDoubleData(data->GetDimensions());
+		auto * real_data = new Yap::DoubleData(data->GetDimensions());
+		auto * imaginary_data = new Yap::DoubleData(data->GetDimensions());
 		Split(data_array, GetDataArray<double>(real_data), GetDataArray<double>(imaginary_data), size);
 
 		Feed(L"Real", real_data);
@@ -50,13 +50,13 @@ bool ComplexSplitter::Input(const wchar_t * port, IData * data)
 	}
 	else if (want_real)
 	{
-		auto * real_data = new Yap::CDoubleData(data->GetDimensions());
+		auto * real_data = new Yap::DoubleData(data->GetDimensions());
 		ExtractReal(data_array, GetDataArray<double>(real_data), size);
 		Feed(L"Real", real_data);
 	}
 	else if (want_imaginary)
 	{
-		auto * imaginary_data = new Yap::CDoubleData(data->GetDimensions());
+		auto * imaginary_data = new Yap::DoubleData(data->GetDimensions());
 		ExtractImaginary(data_array, GetDataArray<double>(imaginary_data), size);
 		Feed(L"Imaginary", imaginary_data);
 	}
