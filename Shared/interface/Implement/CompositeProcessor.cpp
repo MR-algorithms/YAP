@@ -56,7 +56,7 @@ bool Yap::CompositeProcessor::Input(const wchar_t * port, IData * data)
 	return iter->second.processor->Input(iter->second.port.c_str(), data);
 }
 
-bool Yap::CompositeProcessor::AddInputMapping(const wchar_t * port, 
+bool Yap::CompositeProcessor::MapInput(const wchar_t * port, 
 	const wchar_t * inner_processor, 
 	const wchar_t * inner_port)
 {
@@ -71,7 +71,7 @@ bool Yap::CompositeProcessor::AddInputMapping(const wchar_t * port,
 	return true;
 }
 
-bool Yap::CompositeProcessor::AddOutputMapping(const wchar_t * port, 
+bool Yap::CompositeProcessor::MapOutput(const wchar_t * port, 
 	const wchar_t * inner_processor, 
 	const wchar_t * inner_port)
 {

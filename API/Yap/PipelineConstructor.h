@@ -25,11 +25,11 @@ namespace Yap
 	const int ConstructErrorSelfLink				= 13;
 	const int ConstructErrorOutOfMemory				= 100;
 
-	class CConstructError
+	class ConstructError
 	{
 	public:
-		CConstructError();
-		CConstructError(unsigned int line_number, int error_number, const std::wstring& error_message);
+		ConstructError();
+		ConstructError(unsigned int line_number, int error_number, const std::wstring& error_message);
 		unsigned int GetLineNumber() const;
 		int	GetErrorNumber() const;
 		std::wstring GetErrorMessage() const;
@@ -42,7 +42,7 @@ namespace Yap
 
 	class CompositeProcessor;
 	class ModuleManager;
-	class CProcessorAgent;
+	class ProcessorAgent;
 	struct IProcessor;
 
 	class PipelineConstructor

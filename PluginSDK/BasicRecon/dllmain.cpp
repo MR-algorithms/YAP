@@ -8,15 +8,16 @@
 #include "ComplexSplitter.h"
 #include "Grappa.h"
 #include "ModulePhase.h"
-#include "RemoveDC.h"
+#include "DcRemover.h"
 #include "CmrDataReader.h"
 #include "JpegExporter.h"
-#include "SamplingTypeGenerator.h"
+#include "SamplingMaskCreator.h"
 #include "SliceIterator.h"
 #include "imageProcessing.h"
 #include "Algorithm2DWrapper.h"
 #include "SliceSelector.h"
 #include "Difference.h"
+#include "NiumagImgReader.h"
 
 #include "Interface\Implement\YapImplement.h"
 
@@ -24,7 +25,9 @@ using namespace Yap;
 
 BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(CmrDataReader)
+	ADD_PROCESSOR(CNiumagImgReader)
 	ADD_PROCESSOR(ComplexSplitter)
+	ADD_PROCESSOR(Difference)
 	ADD_PROCESSOR(Fft1D)
 	ADD_PROCESSOR(Fft2D)
 	ADD_PROCESSOR(Grappa)

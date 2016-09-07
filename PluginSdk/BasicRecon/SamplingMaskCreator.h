@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef SamplingTypeGenerator_h__20160814
-#define SamplingTypeGenerator_h__20160814
+#ifndef SamplingMaskCreator_h__20160814
+#define SamplingMaskCreator_h__20160814
 
 #include "Interface/Implement/ProcessorImpl.h"
 #include <vector>
@@ -38,6 +38,6 @@ namespace Yap
 
 	};
 }
-#endif // SamplingTypeGenerator_h__
+#endif // SamplingMaskCreator_h__
 
 

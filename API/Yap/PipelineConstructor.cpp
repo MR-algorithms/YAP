@@ -6,12 +6,12 @@
 using namespace Yap;
 using namespace std;
 
-CConstructError::CConstructError() :
+ConstructError::ConstructError() :
 	_error_number(ConstructErrorSuccess)
 {
 }
 
-CConstructError::CConstructError(unsigned int line_number,
+ConstructError::ConstructError(unsigned int line_number,
 	int error_number,
 	const wstring& error_message)
 	: _error_number(error_number),
@@ -20,17 +20,17 @@ CConstructError::CConstructError(unsigned int line_number,
 {
 }
 
-unsigned int CConstructError::GetLineNumber() const
+unsigned int ConstructError::GetLineNumber() const
 {
 	return _line_number;
 }
 
-int CConstructError::GetErrorNumber() const
+int ConstructError::GetErrorNumber() const
 {
 	return _error_number;
 }
 
-wstring CConstructError::GetErrorMessage() const
+wstring ConstructError::GetErrorMessage() const
 {
 	return _error_message;
 }
@@ -86,7 +86,7 @@ IProcessor * Yap::PipelineConstructor::CreateProcessor(const wchar_t * class_id,
 	if (processor == nullptr)
 	{
 
-		throw CConstructError(0, ConstructErrorCreateProcessor, L"Failed to create processor instance.");
+		throw ConstructError(0, ConstructErrorCreateProcessor, L"Failed to create processor instance.");
 	}
 
 	try
@@ -97,7 +97,7 @@ IProcessor * Yap::PipelineConstructor::CreateProcessor(const wchar_t * class_id,
 	}
 	catch (bad_alloc&)
 	{
-		throw CConstructError(0, ConstructErrorOutOfMemory, L"Out of memory.");
+		throw ConstructError(0, ConstructErrorOutOfMemory, L"Out of memory.");
 	}
 }
 
@@ -115,14 +115,14 @@ bool Yap::PipelineConstructor::Link(const wchar_t * source,
 	if (!source_processor)
 	{
 		wstring message(L"Source processor not found: ");
-		throw CConstructError(0, ConstructErrorProcessorNotFound, message + source);
+		throw ConstructError(0, ConstructErrorProcessorNotFound, message + source);
 	}
 
 	auto dest_processor = _pipeline->Find(dest);
 	if (!dest_processor)
 	{
 		wstring message(L"Destination processor not found.");
-		throw CConstructError(0, ConstructErrorProcessorNotFound, message + dest);
+		throw ConstructError(0, ConstructErrorProcessorNotFound, message + dest);
 	}
 
 	if (source_port == nullptr)
@@ -138,7 +138,7 @@ bool Yap::PipelineConstructor::Link(const wchar_t * source,
 	{
 		wstring message(L"Failed to add link. Source: ");
 		message = message + source + L"." + source_port + L" Dest: " + dest + L"." + dest_port;
-		throw CConstructError(0, ConstructErrorAddLink, message);
+		throw ConstructError(0, ConstructErrorAddLink, message);
 	}
 
 	return true;
@@ -149,7 +149,7 @@ bool Yap::PipelineConstructor::MapInput(const wchar_t * pipeline_port,
 	const wchar_t * inner_port)
 {
 	assert(_pipeline);
-	return _pipeline->AddInputMapping(pipeline_port, inner_processor, inner_port);
+	return _pipeline->MapInput(pipeline_port, inner_processor, inner_port);
 }
 
 bool Yap::PipelineConstructor::MapOutput(const wchar_t * pipeline_port, 
@@ -157,7 +157,7 @@ bool Yap::PipelineConstructor::MapOutput(const wchar_t * pipeline_port,
 	const wchar_t * inner_port)
 {
 	assert(_pipeline);
-	return _pipeline->AddOutputMapping(pipeline_port, inner_processor, inner_port);
+	return _pipeline->MapOutput(pipeline_port, inner_processor, inner_port);
 }
 
 std::shared_ptr<CompositeProcessor> Yap::PipelineConstructor::GetPipeline()
@@ -171,18 +171,18 @@ bool PipelineConstructor::SetProperty(const wchar_t * processor_id,
 {
 	assert(_pipeline != nullptr);
 
-	CProcessorAgent processor(_pipeline->Find(processor_id));
+	ProcessorAgent processor(_pipeline->Find(processor_id));
 
 	if (!processor)
 	{
 		auto output = wstring(L"Processor not found£º") + processor_id;
-		throw CConstructError(0, ConstructErrorProcessorNotFound, output.c_str());
+		throw ConstructError(0, ConstructErrorProcessorNotFound, output.c_str());
 	}
 
 	auto properties = processor.GetProperties();
 	if (properties == nullptr)
 	{
-		throw CConstructError(0, ConstructErrorPropertiesNotFound, L"No property enumerator found in processor.");
+		throw ConstructError(0, ConstructErrorPropertiesNotFound, L"No property enumerator found in processor.");
 	}
 
 	auto property = properties->Find(property_id);
@@ -190,7 +190,7 @@ bool PipelineConstructor::SetProperty(const wchar_t * processor_id,
 	{
 		wostringstream output;
 		output << wstring(L"Property not found: ") << property_id;
-		throw CConstructError(0, ConstructErrorPropertyNotFound, output.str());
+		throw ConstructError(0, ConstructErrorPropertyNotFound, output.str());
 	}
 
 	auto property_type = property->GetType();
@@ -225,7 +225,7 @@ bool PipelineConstructor::SetProperty(const wchar_t * processor_id,
 		if (str.empty())
 		{
 			auto output = wstring(L"No string value specified for property£º") + property_id;
-			throw CConstructError(0, ConstructErrorPropertyValueNotString, output.c_str());
+			throw ConstructError(0, ConstructErrorPropertyValueNotString, output.c_str());
 		}
 
 		result = processor.SetString(property_id, value);
@@ -240,7 +240,7 @@ bool PipelineConstructor::SetProperty(const wchar_t * processor_id,
 		auto output = wstring(L"Failed to set property value,"
 			" please check to see if the property is of matching type: ") 
 			+ property_id;
-		throw CConstructError(0, ConstructErrorPropertySet, output.c_str());
+		throw ConstructError(0, ConstructErrorPropertySet, output.c_str());
 	}
 
 	return result;
@@ -261,7 +261,7 @@ bool PipelineConstructor::LinkProperty(const wchar_t * processor_id,
 	if (!processor)
 	{
 		auto output = wstring(L"failed to find processor:") + processor_id;
-		throw CConstructError(0, ConstructErrorProcessorNotFound, output.c_str());
+		throw ConstructError(0, ConstructErrorProcessorNotFound, output.c_str());
 	}
 
 	if (!processor->LinkProperty(property_id, param_id))
@@ -269,7 +269,7 @@ bool PipelineConstructor::LinkProperty(const wchar_t * processor_id,
 		wostringstream output;
 		output << L"Fail to link property to system variable. Property: " << property_id
 			<< L". System variable: " << param_id;
-		throw CConstructError(0, ConstructErrorPropertyLink, output.str());
+		throw ConstructError(0, ConstructErrorPropertyLink, output.str());
 	}
 
 	return true;

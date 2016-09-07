@@ -54,7 +54,7 @@ void ConstructorTest()
 			pipeline->Input(L"Input", nullptr);
 		}
 	}
-	catch (CConstructError& e)
+	catch (ConstructError& e)
 	{
 		wcout << e.GetErrorMessage() << std::endl;
 	}
@@ -62,13 +62,13 @@ void ConstructorTest()
 
 int main()
 {
-	CProcessorDebugger debugger;
+	YapDebugger debugger;
 	debugger.DebugPlugin(L"BasicRecon.dll");
 
 //	 ConstructorTest();
 
 
-	CPipelineCompiler compiler;
+	PipelineCompiler compiler;
 	auto pipeline = compiler.CompileFile(L"Test.pipeline");
 	if (pipeline)
 	{

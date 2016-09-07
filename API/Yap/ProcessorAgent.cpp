@@ -5,88 +5,88 @@
 
 using namespace Yap;
 
-CProcessorAgent::CProcessorAgent(IProcessor* processor) :
+ProcessorAgent::ProcessorAgent(IProcessor* processor) :
 	_processor(YapShared(processor))
 {
 }
 
-CProcessorAgent::~CProcessorAgent()
+ProcessorAgent::~ProcessorAgent()
 {
 }
 
-Yap::IProcessor * Yap::CProcessorAgent::Clone()
+Yap::IProcessor * Yap::ProcessorAgent::Clone()
 {
 	assert(_processor);
 	return _processor->Clone();
 }
 
-const wchar_t * Yap::CProcessorAgent::GetClassId()
+const wchar_t * Yap::ProcessorAgent::GetClassId()
 {
 	assert(_processor);
 	return _processor->GetClassId();
 }
 
-void Yap::CProcessorAgent::SetClassId(const wchar_t * id)
+void Yap::ProcessorAgent::SetClassId(const wchar_t * id)
 {
 	assert(_processor);
 	_processor->SetClassId(id);
 }
 
-const wchar_t * Yap::CProcessorAgent::GetInstanceId()
+const wchar_t * Yap::ProcessorAgent::GetInstanceId()
 {
 	assert(_processor);
 	return _processor->GetInstanceId();
 }
 
-void Yap::CProcessorAgent::SetInstanceId(const wchar_t * instance_id)
+void Yap::ProcessorAgent::SetInstanceId(const wchar_t * instance_id)
 {
 	assert(_processor);
 	_processor->SetInstanceId(instance_id);
 }
 
-Yap::IPortContainer * Yap::CProcessorAgent::Inputs()
+Yap::IPortContainer * Yap::ProcessorAgent::Inputs()
 {
 	assert(_processor);
 	return _processor->Inputs();
 }
 
-Yap::IPortContainer * Yap::CProcessorAgent::Outputs()
+Yap::IPortContainer * Yap::ProcessorAgent::Outputs()
 {
 	assert(_processor);
 	return _processor->Outputs();
 }
 
-Yap::IPropertyContainer * Yap::CProcessorAgent::GetProperties()
+Yap::IPropertyContainer * Yap::ProcessorAgent::GetProperties()
 {
 	assert(_processor);
 	return _processor->GetProperties();
 }
 
-bool Yap::CProcessorAgent::LinkProperty(const wchar_t * property_id, const wchar_t * param_id)
+bool Yap::ProcessorAgent::LinkProperty(const wchar_t * property_id, const wchar_t * param_id)
 {
 	assert(_processor);
 	return _processor->LinkProperty(property_id, param_id);
 }
 
-bool Yap::CProcessorAgent::UpdateProperties(IPropertyContainer * params)
+bool Yap::ProcessorAgent::UpdateProperties(IPropertyContainer * params)
 {
 	assert(_processor);
 	return _processor->UpdateProperties(params);
 }
 
-bool Yap::CProcessorAgent::Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input)
+bool Yap::ProcessorAgent::Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input)
 {
 	assert(_processor);
 	return _processor->Link(output, next, next_input);
 }
 
-bool Yap::CProcessorAgent::Input(const wchar_t * name, IData * data)
+bool Yap::ProcessorAgent::Input(const wchar_t * name, IData * data)
 {
 	assert(_processor);
 	return _processor->Input(name, data);
 }
 
-bool Yap::CProcessorAgent::SetInt(const wchar_t * property_name,
+bool Yap::ProcessorAgent::SetInt(const wchar_t * property_name,
 	int value)
 {
 	assert(_processor);
@@ -104,7 +104,7 @@ bool Yap::CProcessorAgent::SetInt(const wchar_t * property_name,
 	return true;
 }
 
-bool Yap::CProcessorAgent::SetBool(const wchar_t * property_name, bool value)
+bool Yap::ProcessorAgent::SetBool(const wchar_t * property_name, bool value)
 {
 	assert(_processor);
 	auto properties = _processor->GetProperties();
@@ -120,7 +120,7 @@ bool Yap::CProcessorAgent::SetBool(const wchar_t * property_name, bool value)
 	return true;
 }
 
-bool Yap::CProcessorAgent::SetFloat(const wchar_t * property_name, double value)
+bool Yap::ProcessorAgent::SetFloat(const wchar_t * property_name, double value)
 {
 	assert(_processor);
 	auto properties = _processor->GetProperties();
@@ -137,7 +137,7 @@ bool Yap::CProcessorAgent::SetFloat(const wchar_t * property_name, double value)
 	return true;
 }
 
-bool Yap::CProcessorAgent::SetString(const wchar_t* property_name, 
+bool Yap::ProcessorAgent::SetString(const wchar_t* property_name, 
 	const wchar_t* value)
 {
 	assert(_processor);
@@ -155,7 +155,7 @@ bool Yap::CProcessorAgent::SetString(const wchar_t* property_name,
 	return true;
 }
 
-Yap::CProcessorAgent::operator bool()
+Yap::ProcessorAgent::operator bool()
 {
 	return _processor;
 }
