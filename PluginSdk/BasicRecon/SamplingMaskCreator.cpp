@@ -70,7 +70,7 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * name, IData * data)
 	if (data->GetDataType() != DataTypeComplexFloat)
 		return false;
 
-	CDataHelper input_data(data);
+	DataHelper input_data(data);
 	if (GetBool(L"random_subsampling"))
 	{
 		auto row_count = input_data.GetHeight();
@@ -90,11 +90,11 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * name, IData * data)
 		}
 		memcpy(sampling_type, sampling_pattern.data(), row_count * sizeof(char));
 
-		DimensionsImpl dimensions;
+		Dimensions dimensions;
 		dimensions(DimensionReadout, 0U, 1)
 			(DimensionPhaseEncoding, 0U, row_count);
 
-		auto outdata = YapShared(new CCharData(sampling_type, dimensions, nullptr, true));
+		auto outdata = YapShared(new CharData(sampling_type, dimensions, nullptr, true));
 
 		Feed(L"Output", outdata.get());
 	}
@@ -136,11 +136,11 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * name, IData * data)
 		}
 		memcpy(sampling_type, sampling_pattern.data(), height * sizeof(char));
 
-		DimensionsImpl dimensions;
+		Dimensions dimensions;
 		dimensions(DimensionReadout, 0U, 1)
 			(DimensionPhaseEncoding, 0U, height);
 
-		auto outdata = YapShared(new CCharData(sampling_type, dimensions, nullptr, true));
+		auto outdata = YapShared(new CharData(sampling_type, dimensions, nullptr, true));
 
 		Feed(L"Output", outdata.get());
 	}

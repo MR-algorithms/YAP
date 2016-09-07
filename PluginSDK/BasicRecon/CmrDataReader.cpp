@@ -143,14 +143,14 @@ bool CmrDataReader::ReadRawData(unsigned int channel_index)
 	}
 	
 
-	DimensionsImpl dimensions;
+	Dimensions dimensions;
 	dimensions(DimensionReadout, 0U, width)
 			  (DimensionPhaseEncoding, 0U, height)
 			  (DimensionSlice, 0U, total_slice_count)
 			  (Dimension4, 0U, dim4)
 			  (DimensionChannel, channel_index, 1);
 
-	auto data = YapShared(new CComplexFloatData(
+	auto data = YapShared(new ComplexFloatData(
 		reinterpret_cast<complex<float>*>(raw_data_buffer), dimensions, nullptr, true));
 
 	Feed(L"Output", data.get());

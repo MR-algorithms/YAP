@@ -272,6 +272,19 @@ SmartPtr<TYPE> YapShared(IClonable * clonable)
 	return Yap::SmartPtr<TYPE>(dynamic_cast<TYPE*>(clonable));
 }
 
+/**
+	This function clones an object and wraps it with SmartPtr.
+
+	It requires that the object implement IClonable and ISharedObject.
+*/
+template <typename TYPE>
+SmartPtr<TYPE> YapClone(TYPE * object)
+{
+	assert(object != nullptr);
+	assert(dynamic<IClonable*>(object) != nullptr && "The object must implement IClonable.");
+	assert(dynamic<ISharedObject*>(object) != nullptr && "The object must implement ISharedObject.");
+}
+
 }; // namespace YAP
 
 

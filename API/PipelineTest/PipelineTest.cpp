@@ -7,7 +7,7 @@
 #include "Yap/PipelineConstructor.h"
 #include "Yap/PipelineCompiler.h"
 #include "Interface/Implement/CompositeProcessor.h"
-#include "Interface/Implement/DataImpl.h"
+#include "Interface/Implement/DataObject.h"
 
 #include <iostream>
 #include <string>
@@ -69,7 +69,7 @@ int main()
 
 
 	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"Test.pipeline");
+	auto pipeline = compiler.CompileFile(L"Niumag.pipeline");
 	if (pipeline)
 	{
 		pipeline->Input(L"Input", nullptr);

@@ -60,9 +60,9 @@ IProcessor * Yap::CNiumagImgReader::Clone()
 bool Yap::CNiumagImgReader::OnInit()
 {
 	AddInput(L"Input", 0, DataTypeUnknown);
-	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeInt);
+	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
 
-	AddProperty(PropertyString, L"DataPath", L"包含原始数据文件的文件夹。");
+	AddProperty(PropertyString, L"DataPath", L"数据文件夹和文件名。");
 
 	return true;
 }
@@ -112,12 +112,12 @@ bool Yap::CNiumagImgReader::ReadNiumagImgData()
 			return false;
 		}
 
-		DimensionsImpl dimensions;
+		Dimensions dimensions;
 		dimensions(DimensionReadout, 0U, dim1)
 			(DimensionPhaseEncoding, 0U, dim2)
 			(DimensionSlice, 0U, dim3);
 
-		auto data = YapShared(new CUnsignedShortData(
+		auto data = YapShared(new UnsignedShortData(
 			reinterpret_cast<unsigned short*>(buffer), dimensions, nullptr, true));
 
 		Feed(L"Output", data.get());
