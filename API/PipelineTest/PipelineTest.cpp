@@ -69,7 +69,7 @@ int main()
 
 
 	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"NiumagFid.pipeline");
+	auto pipeline = compiler.CompileFile(L"NiumagFidWriterReader.pipeline");
 	if (pipeline)
 	{
 		pipeline->Input(L"Input", nullptr);

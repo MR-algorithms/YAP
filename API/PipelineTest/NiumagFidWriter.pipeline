@@ -1,0 +1,8 @@
+import "BasicRecon.dll";
+
+NiumagFidWriter writer(ExportFolder = "d:\\Output");
+NiumagFidReader reader(DataPath = "D:\\test_data\\UU.img.fid");
+
+reader->writer;
+
+self.Input->reader.Input;

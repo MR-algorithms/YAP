@@ -20,6 +20,8 @@
     <ClCompile Include="SliceSelector.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="ZeroFilling.cpp" />
+    <ClCompile Include="NiumagImgWriter.cpp" />
+    <ClCompile Include="NiumagFidWriter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm2DWrapper.h" />
@@ -42,6 +44,8 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ZeroFilling.h" />
+    <ClInclude Include="NiumagImgWriter.h" />
+    <ClInclude Include="NiumagFidWriter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
