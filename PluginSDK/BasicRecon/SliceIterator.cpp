@@ -54,12 +54,22 @@ bool SliceIterator::Input(const wchar_t * name, IData * data)
 		Dimensions slice_data_dimensions(data->GetDimensions());
 		slice_data_dimensions.SetDimension(DimensionSlice, 1, i);
 
-		auto output = YapShared(new ComplexFloatData (
-			Yap::GetDataArray<complex<float>>(data) + i * slice_block_size, slice_data_dimensions));
+		if (helper.GetDataType() == DataTypeComplexFloat)
+		{
+			auto output = YapShared(new ComplexFloatData(
+				Yap::GetDataArray<complex<float>>(data) + i * slice_block_size, slice_data_dimensions));
+
+			Feed(L"Output", output.get());
+		}
+		else
+		{
+			auto output = YapShared(new UnsignedShortData(
+				Yap::GetDataArray<unsigned short>(data) + i * slice_block_size, slice_data_dimensions));
+
+			Feed(L"Output", output.get());
+		}
 
 		// output->SetSliceLocalization(GetParams(), i);
-
-		Feed(L"Output", output.get());
 	}
 
 	return true;
