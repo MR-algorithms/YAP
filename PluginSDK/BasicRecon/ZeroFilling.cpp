@@ -86,7 +86,6 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 
 		Feed(L"Output", output.get());
 	}
-
 	else
 	{
 		auto output = YapShared(new ComplexFloatData(&dims));
