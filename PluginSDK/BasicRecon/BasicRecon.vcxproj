@@ -167,9 +167,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm2DWrapper.h" />
+    <ClInclude Include="ChannelIterator.h" />
     <ClInclude Include="ChannelMerger.h" />
     <ClInclude Include="CmrDataReader.h" />
     <ClInclude Include="ComplexSplitter.h" />
+    <ClInclude Include="CompressedSensing.h" />
     <ClInclude Include="DcRemover.h" />
     <ClInclude Include="Difference.h" />
     <ClInclude Include="Fft1D.h" />
@@ -183,6 +185,8 @@
     <ClInclude Include="SliceIterator.h" />
     <ClInclude Include="SliceSelector.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SubSampling.h" />
+    <ClInclude Include="SumOfSquare.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ZeroFilling.h" />
   </ItemGroup>
@@ -193,6 +197,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ChannelIterator.cpp" />
     <ClCompile Include="ChannelMerger.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -211,6 +216,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="CompressedSensing.cpp" />
     <ClCompile Include="DcRemover.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -292,6 +298,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SubSampling.cpp" />
+    <ClCompile Include="SumOfSquare.cpp" />
     <ClCompile Include="ZeroFilling.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
