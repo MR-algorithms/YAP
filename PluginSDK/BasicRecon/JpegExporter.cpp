@@ -70,15 +70,15 @@ namespace Yap { namespace details
 			GdiplusStartup(&_gdiplusToken, &gdiplusStartupInput, NULL);
 		}
 
-
-		void ExportImage(float* image, int width, int height, const wchar_t * output_folder)
+		template <typename T>
+		void ExportImage(T* image, int width, int height, const wchar_t * output_folder)
 		{
 			boost::shared_array<unsigned char> buffer(new unsigned char[width * height * 4]);
-			float* data_cursor = image;
+			T* data_cursor = image;
 
 			auto result = std::minmax_element(data_cursor, data_cursor + width * height);
-			float min_data = *result.first;
-			float max_data = *result.second;
+			T min_data = *result.first;
+			T max_data = *result.second;
 
 			for (unsigned char* buffer_cursor = buffer.get(); buffer_cursor < buffer.get() + width * height * 4; buffer_cursor += 4)
 			{
@@ -113,54 +113,10 @@ namespace Yap { namespace details
 			Gdiplus::Status status = bitmap.Save(const_cast<wchar_t*>(file_path.c_str()), &encoderClsid, NULL);
 		}
 
-		void ExportShortImage(unsigned short* image, int width, int height, const wchar_t * output_folder)
-		{
-			boost::shared_array<unsigned char> buffer(new unsigned char[width * height * 4]);
-			unsigned short* data_cursor = image;
+		
 
-			auto result = std::minmax_element(data_cursor, data_cursor + width * height);
-			unsigned short min_data = *result.first;
-			unsigned short max_data = *result.second;
-
-			for (unsigned char* buffer_cursor = buffer.get(); buffer_cursor < buffer.get() + width * height * 4; buffer_cursor += 4)
-			{
-				auto temp = StretchPixelShortData(data_cursor, min_data, max_data);
-				if (data_cursor == NULL)
-				{
-					break;
-				}
-				*buffer_cursor = *(buffer_cursor + 1) = *(buffer_cursor + 2) = static_cast<unsigned char>(temp);
-				*(buffer_cursor + 3) = 255;
-				++data_cursor;
-			}
-
-			Gdiplus::Bitmap bitmap(width, height, width * 4, PixelFormat32bppRGB, buffer.get());
-			CLSID  encoderClsid;
-			if (!GetEncoderClsid(L"image/jpeg", &encoderClsid))
-			{
-				return;
-			}
-			wostringstream file_name;
-			static unsigned int jpeg_index = 0;
-			file_name << ++jpeg_index;
-
-			wstring file_path = output_folder;
-			if (wcslen(output_folder) > 3)
-			{
-				file_path += L"\\";
-			}
-			file_path += file_name.str();
-			file_path += L".jpg";
-
-			Gdiplus::Status status = bitmap.Save(const_cast<wchar_t*>(file_path.c_str()), &encoderClsid, NULL);
-		}
-
-		unsigned short StretchPixelData(float* data, float min_value, float max_data)
-		{
-			double rate = 255.0 / (double)(max_data - min_value);
-			return static_cast<unsigned short>((*data - min_value) * rate);
-		}
-		unsigned short StretchPixelShortData(unsigned short* data, unsigned short min_value, unsigned short max_data)
+		template <typename T>
+		unsigned short StretchPixelData(T* data, T min_value, T max_data)
 		{
 			double rate = 255.0 / (double)(max_data - min_value);
 			return static_cast<unsigned short>((*data - min_value) * rate);
@@ -209,11 +165,20 @@ bool JpegExporter::Input( const wchar_t * name, IData * data)
 	assert(_impl);
 
 	TODO(What if the data is not of float type ? );
-
 	DataHelper data_helper(data);
-	_impl->ExportImage(GetDataArray<float>(data),
-		data_helper.GetWidth(), data_helper.GetHeight(),
-		GetString(L"ExportFolder"));
+
+	if (data->GetDataType() == DataTypeFloat)
+	{		
+		_impl->ExportImage(GetDataArray<float>(data),
+			data_helper.GetWidth(), data_helper.GetHeight(),
+			GetString(L"ExportFolder"));
+	}
+	else if (data->GetDataType() == DataTypeUnsignedShort)
+	{
+		_impl->ExportImage(GetDataArray<unsigned short>(data),
+			data_helper.GetWidth(), data_helper.GetHeight(),
+			GetString(L"ExportFolder"));
+	}
 
 	return true;
 }

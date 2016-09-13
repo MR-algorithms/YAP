@@ -18,6 +18,9 @@
 #include "SliceSelector.h"
 #include "Difference.h"
 #include "NiumagImgReader.h"
+#include "SubSampling.h"
+#include "SumOfSquare.h"
+#include "ChannelIterator.h"
 
 #include "Interface\Implement\YapImplement.h"
 
@@ -38,6 +41,9 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(SliceIterator)
 	ADD_PROCESSOR(SliceSelector)
 	ADD_PROCESSOR(ZeroFilling)
+	ADD_PROCESSOR(SubSampling)
+	ADD_PROCESSOR(SumOfSquare)
+	ADD_PROCESSOR(ChannelIterator)
 	ADD(L"HFlipFloat", new Algorithm2DInPlaceWrapper<float>(hflip<float>, L"HFlipFloat"))
 END_DECL_PROCESSORS
 
