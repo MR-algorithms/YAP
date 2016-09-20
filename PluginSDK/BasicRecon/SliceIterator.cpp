@@ -26,7 +26,7 @@ SliceIterator::~SliceIterator(void)
 
 bool Yap::SliceIterator::OnInit()
 {
-	AddInput(L"Input", 3, DataTypeComplexFloat | DataTypeUnsignedShort);
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat | DataTypeUnsignedShort);
 	AddOutput(L"Output", 2, DataTypeComplexFloat | DataTypeUnsignedShort);
 
 	return true;

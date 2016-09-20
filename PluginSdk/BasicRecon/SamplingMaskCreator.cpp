@@ -34,8 +34,8 @@ SamplingMaskCreator::~SamplingMaskCreator()
 
 bool Yap::SamplingMaskCreator::OnInit()
 {
-	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeUnknown);
-	AddOutput(L"Output", 1, DataTypeChar);
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
+	AddOutput(L"Mask", 2, DataTypeChar);
 
 	AddProperty(PropertyFloat, L"pow", L"");
 	SetFloat(L"pow", 3.0f);
@@ -45,9 +45,9 @@ bool Yap::SamplingMaskCreator::OnInit()
 	SetFloat(L"radius", 0.2f);
 
 	AddProperty(PropertyBool, L"equal_subsampling", L"");
-	SetBool(L"equal_subsampling", false);
+	SetBool(L"equal_subsampling", true);
 	AddProperty(PropertyBool, L"random_subsampling", L"");
-	SetBool(L"random_subsampling", true);
+	SetBool(L"random_subsampling", false);
 
 	AddProperty(PropertyInt, L"Rate", L"");
 	SetInt(L"Rate", 2);
@@ -73,81 +73,94 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * name, IData * data)
 	DataHelper input_data(data);
 	if (GetBool(L"random_subsampling"))
 	{
-		auto row_count = input_data.GetHeight();
+		auto height = input_data.GetHeight();
+		auto width = input_data.GetWidth();
 		float pow = static_cast<float> (GetFloat(L"pow"));
 		float sample_percent = static_cast<float> (GetFloat(L"sample_percent"));
 		float radius = static_cast<float> (GetFloat(L"radius"));
 
-		auto sampling_pattern = GetMinInterferenceSamplingPattern(row_count, pow, sample_percent, radius);
-		char * sampling_type = nullptr;
+		auto mask = GenerateRandomMask(width, height, pow, sample_percent, radius);
+		char * Mask = nullptr;
 		try
 		{
-			sampling_type = new char[row_count];
+			Mask = new char[width * height];
 		}
 		catch(bad_alloc&)
 		{
 			return false;
 		}
-		memcpy(sampling_type, sampling_pattern.data(), row_count * sizeof(char));
+		memcpy(Mask, mask.data(), width * height * sizeof(char));
 
 		Dimensions dimensions;
-		dimensions(DimensionReadout, 0U, 1)
-			(DimensionPhaseEncoding, 0U, row_count);
+		dimensions(DimensionReadout, 0U, width)
+			(DimensionPhaseEncoding, 0U, height);
 
-		auto outdata = YapShared(new CharData(sampling_type, dimensions, nullptr, true));
+		auto outdata = YapShared(new CharData(Mask, dimensions, nullptr, true));
 
-		Feed(L"Output", outdata.get());
+		Feed(L"Mask", outdata.get());
 	}
 	else
 	{
-		vector<unsigned char> sampling_pattern;
 		unsigned int r = GetInt(L"Rate");
 		unsigned int acs = GetInt(L"AcsCount");
 		auto height = input_data.GetHeight();
-		for (unsigned int i = 0; i <= height - r - 1; ++i)
-		{
-			if (i % r == 0)
-			{
-				sampling_pattern.push_back(1);
-			}
-			else
-			{
-				sampling_pattern.push_back(0);
-			}
-		}
-
-		unsigned int first = static_cast<unsigned int>((floor((height - acs) / (2 * r))) * r + 1);
-		unsigned int last = first + acs;
-		sampling_pattern[first] = 1;
-		while (first <= last)
-		{
-			++first;
-			sampling_pattern[first] = 1;
-		}
-
-		char * sampling_type = nullptr;
+		auto width = input_data.GetWidth();
+		auto mask = GenerateEqualMask(width, height, acs, r);
+		char * Mask = nullptr;
 		try
 		{
-			sampling_type = new char[height];
+			Mask = new char[width * height];
 		}
 		catch (bad_alloc&)
 		{
 			return false;
 		}
-		memcpy(sampling_type, sampling_pattern.data(), height * sizeof(char));
+		memcpy(Mask, mask.data(), width * height * sizeof(char));
 
 		Dimensions dimensions;
-		dimensions(DimensionReadout, 0U, 1)
+		dimensions(DimensionReadout, 0U, width)
 			(DimensionPhaseEncoding, 0U, height);
 
-		auto outdata = YapShared(new CharData(sampling_type, dimensions, nullptr, true));
+		auto outdata = YapShared(new CharData(Mask, dimensions, nullptr, true));
 
-		Feed(L"Output", outdata.get());
+		Feed(L"Mask", outdata.get());
 	}
 	return true;
 }
 
-std::vector<unsigned char> Yap::SamplingMaskCreator::GetMinInterferenceSamplingPattern(unsigned int row_count, float pow, float sample_percent, float radius)
+std::vector<unsigned char> Yap::SamplingMaskCreator::GenerateRandomMask(unsigned int width, unsigned int height, float pow, float sample_percent, float radius)
+{
+	std::vector<unsigned char> sampling_pattern = GetRandomSamplingPattern(height, pow, sample_percent, radius);
+	std::vector<unsigned char> mask(width * height);
+	 auto mask_cursor = mask.data();
+
+	 for (unsigned int row = 0; row < height; ++row)
+	 {
+		 for (unsigned int column = 0; column < width; ++column)
+		 {
+			 *mask_cursor++ = sampling_pattern[width * row + column];
+		 }
+	 }
+	return mask;
+}
+
+std::vector<unsigned char> Yap::SamplingMaskCreator::GenerateEqualMask(unsigned int width, unsigned int height, unsigned int acs, unsigned int rate)
+{
+	std::vector<unsigned char> sampling_pattern = GetEqualSamplingPattern(height, acs, rate);
+	std::vector<unsigned char> mask(width * height);
+	auto mask_cursor = mask.data();
+
+	for (unsigned int row = 0; row < height; ++row)
+	{
+		for (unsigned int column = 0; column < width; ++column)
+		{
+			*mask_cursor++ = sampling_pattern[width * row + column];
+		}
+	}
+	return mask;
+}
+
+std::vector<unsigned char> Yap::SamplingMaskCreator::GetRandomSamplingPattern(unsigned int row_count, float pow, float sample_percent, float radius)
 {
 	float min_peak_interference((float)INT_MAX);
 	vector<float> pdf = GeneratePdf(row_count, pow, sample_percent, radius);
@@ -211,6 +224,32 @@ std::vector<unsigned char> Yap::SamplingMaskCreator::GetMinInterferenceSamplingP
 	fftwf_destroy_plan(p);
 
 	return min_interference_pattern;
+}
+
+std::vector<unsigned char> Yap::SamplingMaskCreator::GetEqualSamplingPattern(unsigned int height, unsigned int acs, unsigned int rate)
+{
+	std::vector<unsigned char> sampling_pattern;
+	for (unsigned int i = 0; i <= height - rate - 1; ++i)
+	{
+		if (i % rate == 0)
+		{
+			sampling_pattern.push_back(1);
+		}
+		else
+		{
+			sampling_pattern.push_back(0);
+		}
+	}
+
+	unsigned int first = static_cast<unsigned int>((floor((height - acs) / (2 * rate))) * rate + 1);
+	unsigned int last = first + acs;
+	sampling_pattern[first] = 1;
+	while (first <= last)
+	{
+		++first;
+		sampling_pattern[first] = 1;
+	}
+	return sampling_pattern;
 }
 
 std::vector<float> Yap::SamplingMaskCreator::GeneratePdf(unsigned int row_count, float p, float sample_percent, float radius)
@@ -300,3 +339,5 @@ std::vector<float> Yap::SamplingMaskCreator::LineSpace(float begin, float end, u
 
 	return vec;
 }
+
+

@@ -69,7 +69,11 @@ int main()
 
 
 	PipelineCompiler compiler;
+<<<<<<< HEAD
 	auto pipeline = compiler.CompileFile(L"NiumagFidWriterReader.pipeline");
+=======
+	auto pipeline = compiler.CompileFile(L"grappa.pipeline");
+>>>>>>> bdb24004f4632e2cc3eb9e5685e10227181936e6
 	if (pipeline)
 	{
 		pipeline->Input(L"Input", nullptr);
