@@ -1,0 +1,10 @@
+import "BasicRecon.dll";
+
+NiumagImgReader reader(DataPath = "D:\\Output\\1.img");
+JpegExporter jpeg_exporter(ExportFolder = "d:\\Output");
+SliceIterator slice_iterator;
+	
+reader->slice_iterator;
+slice_iterator->jpeg_exporter;
+
+self.Input->reader.Input;
