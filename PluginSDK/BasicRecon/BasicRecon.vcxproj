@@ -74,7 +74,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>C:\gadgetron\Dependencies\Armadillo\Armadillo-7200.2\lib_debug;C:\Users\James\Documents\Visual Studio 2015\Projects\YAP\FFTW-64\lib</LibraryPath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
     <OutDir>$(YAP_ROOT)\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -105,7 +105,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win64_MTd.lib;lapack_win64_MTd.lib</AdditionalDependencies>
+      <AdditionalDependencies>Clientd.lib;implementd.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win32_MTd.lib;lapack_win32_MTd.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(YAP_ROOT)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -143,6 +143,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(YAP_ROOT)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Client.lib;Implement.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win32_MT.lib;lapack_win32_MT.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -171,7 +172,6 @@
     <ClInclude Include="ChannelMerger.h" />
     <ClInclude Include="CmrDataReader.h" />
     <ClInclude Include="ComplexSplitter.h" />
-    <ClInclude Include="CompressedSensing.h" />
     <ClInclude Include="DcRemover.h" />
     <ClInclude Include="Difference.h" />
     <ClInclude Include="Fft1D.h" />
@@ -188,8 +188,6 @@
     <ClInclude Include="SliceIterator.h" />
     <ClInclude Include="SliceSelector.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SubSampling.h" />
-    <ClInclude Include="SumOfSquare.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ZeroFilling.h" />
   </ItemGroup>
@@ -219,7 +217,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="CompressedSensing.cpp" />
     <ClCompile Include="DcRemover.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -304,8 +301,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SubSampling.cpp" />
-    <ClCompile Include="SumOfSquare.cpp" />
     <ClCompile Include="ZeroFilling.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
