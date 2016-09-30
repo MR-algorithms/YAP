@@ -23,6 +23,7 @@
     <ClCompile Include="SliceSelector.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="ZeroFilling.cpp" />
+    <ClCompile Include="DataTypeConvertor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm2DWrapper.h" />
@@ -48,6 +49,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ZeroFilling.h" />
+    <ClInclude Include="DataTypeConvertor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
