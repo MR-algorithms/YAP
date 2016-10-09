@@ -16,6 +16,9 @@ namespace Yap
 		~DataTypeConvertor();
 
 		virtual bool Input(const wchar_t * port, IData * data) override;
+
+		int GetOutputDataType();
+
 		virtual IProcessor * Clone() override;
 
 		// Inherited via ProcessorImpl

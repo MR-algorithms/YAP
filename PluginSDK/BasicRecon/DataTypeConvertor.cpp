@@ -5,20 +5,128 @@
 using namespace Yap;
 using namespace std;
 
-template <typename T>
-bool ReverseType(T* input,
-	T* target_type_data,
-	size_t size)
+template <typename IN_TYPE, typename OUT_TYPE>
+Yap::SmartPtr<IData> GetConvertedData(IData* input_object)
 {
-	assert(input != nullptr && target_type_data != nullptr);
+	assert(input_object != nullptr);
 
-	auto input_end = input + size;
+	auto output_object = YapShared(new DataObject<OUT_TYPE>(input_object->GetDimensions()));
+	auto output = ::GetDataArray<OUT_TYPE>(output_object.get());
+
+	DataHelper helper(input_object);
+
+	auto input = ::GetDataArray<IN_TYPE>(input_object);
+	auto input_end = input + helper.GetDataSize();
+
 	while (input != input_end)
 	{
-		*(target_type_data++) = *(input++);
+		*(output++) = OUT_TYPE(*(input++));
 	}
 
-	return true;
+	return output_object;
+}
+
+template <typename IN_TYPE>
+Yap::SmartPtr<IData> GetConvertedDataComplexDouble(IData* input_object)
+{
+	assert(input_object != nullptr);
+
+	auto output_object = YapShared(new DataObject<complex<double>>(input_object->GetDimensions()));
+	auto output = ::GetDataArray<complex<double>>(output_object.get());
+
+	DataHelper helper(input_object);
+
+	auto input = ::GetDataArray<IN_TYPE>(input_object);
+	auto input_end = input + helper.GetDataSize();
+
+	while (input != input_end)
+	{
+		*(output++) = complex<double>(static_cast<double>(*(input++)));
+	}
+
+	return output_object;
+}
+
+template <typename IN_TYPE>
+Yap::SmartPtr<IData> GetConvertedDataComplexFloat(IData* input_object)
+{
+	assert(input_object != nullptr);
+
+	auto output_object = YapShared(new DataObject<complex<float>>(input_object->GetDimensions()));
+	auto output = ::GetDataArray<complex<float>>(output_object.get());
+
+	DataHelper helper(input_object);
+
+	auto input = ::GetDataArray<IN_TYPE>(input_object);
+	auto input_end = input + helper.GetDataSize();
+
+	while (input != input_end)
+	{
+		*(output++) = complex<float>(static_cast<float>(*(input++)));
+	}
+
+	return output_object;
+}
+
+template <typename IN_TYPE>
+Yap::SmartPtr<IData> Convert(IData * input, int output_type)
+{
+	assert(input != nullptr);
+
+	DataHelper helper(input);
+	auto data_size = helper.GetDataSize();
+
+	switch (output_type)
+	{
+	case DataTypeInt:
+		return GetConvertedData<IN_TYPE, int>(input);
+	case DataTypeUnsignedShort:
+		return GetConvertedData<IN_TYPE, unsigned short>(input);
+	case DataTypeFloat:
+		return GetConvertedData<IN_TYPE, float>(input);
+	case DataTypeDouble:
+		return GetConvertedData<IN_TYPE, double>(input);
+	case DataTypeComplexFloat:
+		return GetConvertedDataComplexFloat<IN_TYPE>(input);
+	case DataTypeComplexDouble:
+		return GetConvertedDataComplexDouble<IN_TYPE>(input);
+	default:
+		return SmartPtr<IData>();
+	}
+}
+
+template <>
+Yap::SmartPtr<IData> Convert<complex<double>>(IData * input, int output_type)
+{
+	assert(input != nullptr);
+
+	DataHelper helper(input);
+	auto data_size = helper.GetDataSize();
+
+	switch (output_type)
+	{
+	case DataTypeComplexFloat:
+		return GetConvertedData<complex<double>, complex<float>>(input);
+	default:
+		return SmartPtr<IData>();
+	}
+}
+
+template <>
+Yap::SmartPtr<IData> Convert<complex<float>>(IData * input, int output_type)
+{
+	assert(input != nullptr);
+
+	DataHelper helper(input);
+	auto data_size = helper.GetDataSize();
+
+	switch (output_type)
+	{
+	case DataTypeComplexDouble:
+		return GetConvertedData<complex<float>, complex<double>>(input);
+	default:
+		return SmartPtr<IData>();
+	}
 }
 
 DataTypeConvertor::DataTypeConvertor(void):
@@ -38,7 +146,7 @@ DataTypeConvertor::~DataTypeConvertor()
 
 bool Yap::DataTypeConvertor::OnInit()
 {
-	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeFloat);//DataType´ý¸Ä
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
 
 	AddOutput(L"Int", YAP_ANY_DIMENSION, DataTypeInt);
 	AddOutput(L"UnsignedShort", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
@@ -55,6 +163,23 @@ IProcessor * Yap::DataTypeConvertor::Clone()
 	return new (nothrow) DataTypeConvertor(*this);
 }
 
+static const wchar_t * GetPortName(int data_type)
+{
+	static map<int, wchar_t *> data_type_mapping = {
+		{DataTypeUnsignedChar, L"Char"},
+		{DataTypeShort, L"Short"},
+		{DataTypeUnsignedShort, L"UnsignedShort"},
+		{DataTypeFloat, L"Float"},
+		{DataTypeDouble, L"Double"},
+		{DataTypeComplexFloat, L"ComplexFloat"},
+		{DataTypeComplexDouble, L"ComplexDouble"},
+		{DataTypeBool, L"Bool"} };
+
+	auto iter = data_type_mapping.find(data_type);
+
+	return (iter != data_type_mapping.end()) ? iter->second : nullptr;
+}
+
 bool Yap::DataTypeConvertor::Input(const wchar_t * port, IData * data)
 {
 	if (std::wstring(port) != L"Input")
@@ -62,97 +187,105 @@ bool Yap::DataTypeConvertor::Input(const wchar_t * port, IData * data)
 
 	DataHelper input_data(data);
 
-	auto want_int = OutportLinked(L"Int");
-	auto want_unsignedshort = OutportLinked(L"UnsignedShort");
-	auto want_float = OutportLinked(L"Float");
-	auto want_double = OutportLinked(L"Double");
-	auto want_complexFloat = OutportLinked(L"ComplexFloat");
-	auto want_complexDouble = OutportLinked(L"ComplexDouble");
+	int output_data_type = GetOutputDataType();
+	switch (data->GetDataType())
+	{
+	case DataTypeUnsignedChar:
+	{
+		auto output = Convert<unsigned char>(data, output_data_type);
+		Feed(GetPortName(output_data_type), output.get());
+		break;
+	}
 
-	if (input_data.GetActualDimensionCount() != 2)
+	case DataTypeShort:
+	{
+		auto output = Convert<short>(data, output_data_type);
+		Feed(GetPortName(output_data_type), output.get());
+		break;
+	}
+	case DataTypeUnsignedShort:
+	{
+		auto output = Convert<unsigned short>(data, output_data_type);
+		Feed(GetPortName(output_data_type), output.get());
+		break;
+	}
+	case DataTypeFloat:
+	{
+		auto output = Convert<float>(data, output_data_type);
+		Feed(GetPortName(output_data_type), output.get());
+		break;
+	}
+	case DataTypeDouble:
+	{
+		auto output = Convert<double>(data, output_data_type);
+		Feed(GetPortName(output_data_type), output.get());
+		break;
+	}
+	case DataTypeInt:
+	{
+		auto output = Convert<int>(data, output_data_type);
+		Feed(GetPortName(output_data_type), output.get());
+		break;
+	}
+	case DataTypeUnsignedInt:
+	{
+		auto output = Convert<unsigned int>(data, output_data_type);
+		Feed(GetPortName(output_data_type), output.get());
+		break;
+	}
+	case DataTypeComplexFloat:
+	{
+		auto output = Convert<complex<float>>(data, output_data_type);
+		Feed(GetPortName(output_data_type), output.get());
+		break;
+	}
+	case DataTypeComplexDouble:
+	{
+		auto output = Convert<complex<double>>(data, output_data_type);
+		Feed(GetPortName(output_data_type), output.get());
+		break;
+	}
+	case DataTypeBool:
+	{
+		auto output = Convert<bool>(data, output_data_type);
+		Feed(GetPortName(output_data_type), output.get());
+		break;
+	}
+	default:
 		return false;
-
-	Dimensions dims;
-	dims(DimensionReadout, 0, input_data.GetWidth())
-		(DimensionPhaseEncoding, 0, input_data.GetHeight());
-
-	if (want_int)
-	{
-		auto int_data = YapShared(new IntData(&dims));
-
-		ReverseType(GetDataArray<int>(data),
-			GetDataArray<int>(int_data.get()),
-			input_data.GetDataSize());
-
-		Feed(L"Int", int_data.get());
-	}
-
-	if (want_unsignedshort)
-	{
-		auto unsignedshort_data = YapShared(new UnsignedShortData(&dims));
-
-		auto input = GetDataArray<float>(data);
-		auto taget = GetDataArray<unsigned short>(unsignedshort_data.get());
-		auto size = input_data.GetDataSize();
-
-		assert(input != nullptr && taget != nullptr);
-
-		auto input_end = input + size;
-		while (input != input_end)
-		{
-			*(taget++) = *((unsigned short *)input++);
-		}
-
-// 		ReverseType(GetDataArray<unsigned short>(data),
-// 			GetDataArray<unsigned short>(unsignedshort_data.get()),
-// 			input_data.GetDataSize());
-
-		Feed(L"UnsignedShort", unsignedshort_data.get());
-	}
-
-	if (want_float)
-	{
-		auto float_data = YapShared(new FloatData(&dims));
-
-		ReverseType(GetDataArray<float>(data),
-			GetDataArray<float>(float_data.get()),
-			input_data.GetDataSize());
-
-		Feed(L"Float", float_data.get());
-	}
-
-	if (want_double)
-	{
-		auto double_data = YapShared(new DoubleData(&dims));
-
-		ReverseType(GetDataArray<double>(data),
-			GetDataArray<double>(double_data.get()),
-			input_data.GetDataSize());
-
-		Feed(L"Double", double_data.get());
-	}
-
-	if (want_complexFloat)
-	{
-		auto complexfloat_data = YapShared(new ComplexFloatData(&dims));
-
-		ReverseType(GetDataArray<complex<float>>(data),
-			GetDataArray<complex<float>>(complexfloat_data.get()),
-			input_data.GetDataSize());
-
-		Feed(L"ComplexFloat", complexfloat_data.get());
-	}
-
-	if (want_complexDouble)
-	{
-		auto complexdouble_data = YapShared(new ComplexDoubleData(&dims));
-
-		ReverseType(GetDataArray<complex<double>>(data),
-			GetDataArray<complex<double>>(complexdouble_data.get()),
-			input_data.GetDataSize());
-
-		Feed(L"ComplexDouble", complexdouble_data.get());
 	}
 
 	return true;
+}
+
+int Yap::DataTypeConvertor::GetOutputDataType()
+{
+	int output_type;
+
+	if (OutportLinked(L"Int"))
+	{
+		output_type = DataTypeInt;
+	}
+	else if (OutportLinked(L"UnsignedShort"))
+	{
+		output_type = DataTypeUnsignedShort;
+	}
+	else if (OutportLinked(L"Float"))
+	{
+		output_type = DataTypeFloat;
+	}
+	else if (OutportLinked(L"Double"))
+	{
+		output_type = DataTypeDouble;
+	}
+	else if (OutportLinked(L"ComplexFloat"))
+	{
+		output_type = DataTypeComplexFloat;
+	}
+	else if (OutportLinked(L"ComplexDouble"))
+	{
+		output_type = DataTypeComplexDouble;
+	}
+
+	return output_type;
 }
