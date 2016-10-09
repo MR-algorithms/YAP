@@ -18,11 +18,11 @@
 #include "SliceSelector.h"
 #include "Difference.h"
 #include "NiumagImgReader.h"
-
 #include "NiumagFidReader.h"
 #include "NiumagImgWriter.h"
 #include "NiumagFidWriter.h"
 #include "ChannelIterator.h"
+#include "DataTypeConvertor.h"
 
 #include "Interface\Implement\YapImplement.h"
 
@@ -42,6 +42,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(JpegExporter)
 	ADD_PROCESSOR(ModulePhase)
 	ADD_PROCESSOR(DcRemover)
+	ADD_PROCESSOR(DataTypeConvertor)
 	ADD_PROCESSOR(SamplingMaskCreator)
 	ADD_PROCESSOR(SliceIterator)
 	ADD_PROCESSOR(SliceSelector)

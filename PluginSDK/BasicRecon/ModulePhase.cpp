@@ -39,8 +39,14 @@ bool GetPhase(complex<T>* input, T* phase,
 	return true;
 }
 
-ModulePhase::ModulePhase() :
+ModulePhase::ModulePhase(void) :
 	ProcessorImpl(L"ModulePhase")
+{
+
+}
+
+Yap::ModulePhase::ModulePhase(const ModulePhase& rhs):
+	ProcessorImpl(rhs)
 {
 
 }
@@ -135,4 +141,5 @@ Yap::IProcessor * Yap::ModulePhase::Clone()
 {
 	return new (nothrow) ModulePhase(*this);
 }
+
 

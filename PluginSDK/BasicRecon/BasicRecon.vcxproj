@@ -172,6 +172,7 @@
     <ClInclude Include="ChannelMerger.h" />
     <ClInclude Include="CmrDataReader.h" />
     <ClInclude Include="ComplexSplitter.h" />
+    <ClInclude Include="DataTypeConvertor.h" />
     <ClInclude Include="DcRemover.h" />
     <ClInclude Include="Difference.h" />
     <ClInclude Include="Fft1D.h" />
@@ -217,6 +218,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="DataTypeConvertor.cpp" />
     <ClCompile Include="DcRemover.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>

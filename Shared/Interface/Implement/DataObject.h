@@ -132,6 +132,7 @@ namespace Yap
 		SmartPtr<ISharedObject> _parent;
 	};
 
+	typedef DataObject<int> IntData;
 	typedef DataObject<double> DoubleData;
 	typedef DataObject<float> FloatData;
 	typedef DataObject<char> CharData;
