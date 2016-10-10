@@ -17,4 +17,3 @@ fft->module_phase;
 module_phase.Module->jpeg_exporter;
 
 self.Input->reader.Input;
-

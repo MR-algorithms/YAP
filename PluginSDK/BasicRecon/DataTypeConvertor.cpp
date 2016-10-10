@@ -73,9 +73,6 @@ Yap::SmartPtr<IData> Convert(IData * input, int output_type)
 {
 	assert(input != nullptr);
 
-	DataHelper helper(input);
-	auto data_size = helper.GetDataSize();
-
 	switch (output_type)
 	{
 	case DataTypeInt:
@@ -154,6 +151,10 @@ bool Yap::DataTypeConvertor::OnInit()
 	AddOutput(L"Double", YAP_ANY_DIMENSION, DataTypeDouble);
 	AddOutput(L"ComplexFloat", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddOutput(L"ComplexDouble", YAP_ANY_DIMENSION, DataTypeComplexDouble);
+// 	AddOutput(L"Bool", YAP_ANY_DIMENSION, DataTypeBool);
+// 	AddOutput(L"Char", YAP_ANY_DIMENSION, DataTypeUnsignedChar);
+// 	AddOutput(L"UnsignedInt", YAP_ANY_DIMENSION, DataTypeUnsignedInt);
+// 	AddOutput(L"Short", YAP_ANY_DIMENSION, DataTypeShort);
 
 	return true;
 }
@@ -171,6 +172,8 @@ static const wchar_t * GetPortName(int data_type)
 		{DataTypeUnsignedShort, L"UnsignedShort"},
 		{DataTypeFloat, L"Float"},
 		{DataTypeDouble, L"Double"},
+		{DataTypeInt, L"Int"},
+		{DataTypeUnsignedInt,L"UnsignedInt"},
 		{DataTypeComplexFloat, L"ComplexFloat"},
 		{DataTypeComplexDouble, L"ComplexDouble"},
 		{DataTypeBool, L"Bool"} };
@@ -184,8 +187,6 @@ bool Yap::DataTypeConvertor::Input(const wchar_t * port, IData * data)
 {
 	if (std::wstring(port) != L"Input")
 		return false;
-
-	DataHelper input_data(data);
 
 	int output_data_type = GetOutputDataType();
 	switch (data->GetDataType())

@@ -20,7 +20,7 @@ NiumagImgWriter::NiumagImgWriter(const NiumagImgWriter& rhs) :
 
 bool Yap::NiumagImgWriter::OnInit()
 {
-	AddInput(L"Input", 3, DataTypeUnsignedShort);
+	AddInput(L"Input", 2, DataTypeUnsignedShort);
 	AddProperty(PropertyString, L"ExportFolder", L"Set folder used to write images.");
 
 	return true;
@@ -59,19 +59,23 @@ bool Yap::NiumagImgWriter::Input(const wchar_t * name, IData * data)
 	int section7size = 100;
 	int section8size = 100;
 
-	int section6_offset = 4 * 9 + 500;
+	int section6_offset = 4 * 9 
+							+ section1size 
+							+ section2size
+							+ section3size
+							+ section4size
+							+ section5size;
 
 	DataHelper data_helper(data);
 	
 	auto dimension_count = data_helper.GetDimensionCount();
-	if (dimension_count != 3)
+	if (dimension_count != 2)
 		return false;
 
 	int dim1 = data_helper.GetWidth();
 	int dim2 = data_helper.GetHeight();
-	int dim3 = data_helper.GetSlice();
 
-	unsigned buffer_size = dim1 * dim2 * dim3;
+	unsigned buffer_size = dim1 * dim2;
 	unsigned short * img_data = GetDataArray<unsigned short>(data);
 
 	ofstream file(file_path.c_str(), ios::binary);
@@ -89,7 +93,6 @@ bool Yap::NiumagImgWriter::Input(const wchar_t * name, IData * data)
 	file.seekp(section6_offset, ios::beg);
 	file.write(reinterpret_cast<char*>(&dim1), 4);
 	file.write(reinterpret_cast<char*>(&dim2), 4);
-	file.write(reinterpret_cast<char*>(&dim3), 4);
 	file.write(reinterpret_cast<char*>(img_data), buffer_size * sizeof(unsigned short));
 	file.close();
 

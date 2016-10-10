@@ -24,6 +24,7 @@
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="ZeroFilling.cpp" />
     <ClCompile Include="DataTypeConvertor.cpp" />
+    <ClCompile Include="NiumagImgReader2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm2DWrapper.h" />
@@ -50,6 +51,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ZeroFilling.h" />
     <ClInclude Include="DataTypeConvertor.h" />
+    <ClInclude Include="NiumagImgReader2.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
