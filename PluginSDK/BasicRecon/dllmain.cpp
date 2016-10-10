@@ -21,6 +21,8 @@
 #include "SubSampling.h"
 #include "SumOfSquare.h"
 #include "ChannelIterator.h"
+#include "Nlmeans.h"
+#include "NLM.h"
 
 #include "Interface\Implement\YapImplement.h"
 
@@ -44,6 +46,8 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(SubSampling)
 	ADD_PROCESSOR(SumOfSquare)
 	ADD_PROCESSOR(ChannelIterator)
+	ADD_PROCESSOR(Nlmeans)
+	ADD_PROCESSOR(NLM)
 	ADD(L"HFlipFloat", new Algorithm2DInPlaceWrapper<float>(hflip<float>, L"HFlipFloat"))
 END_DECL_PROCESSORS
 
