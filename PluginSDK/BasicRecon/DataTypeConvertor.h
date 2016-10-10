@@ -1,25 +1,29 @@
 #pragma once
 
-#ifndef ModulePhase_h__20160814
-#define ModulePhase_h__20160814
+#ifndef DataTypeConvertor_h__201609
+#define DataTypeConvertor_h__201609
 
 #include "Interface/Implement/ProcessorImpl.h"
 
 namespace Yap
 {
-	class ModulePhase :
+	class DataTypeConvertor :
 		public ProcessorImpl
 	{
 	public:
-		ModulePhase(void);
-		ModulePhase(const ModulePhase& rhs);
-		~ModulePhase();
+		DataTypeConvertor(void);
+		DataTypeConvertor(const DataTypeConvertor& rhs);
+		~DataTypeConvertor();
 
 		virtual bool Input(const wchar_t * port, IData * data) override;
+
+		int GetOutputDataType();
+
 		virtual IProcessor * Clone() override;
 
 		// Inherited via ProcessorImpl
 		virtual bool OnInit() override;
 	};
 }
-#endif // ModulePhase_h__
+
+#endif // DataTypeConvertor_h__

@@ -1,0 +1,20 @@
+import "BasicRecon.dll";
+
+NiumagFidReader reader(DataPath = "D:\\test_data\\UU.img.fid");
+JpegExporter jpeg_exporter(ExportFolder = "d:\\Output");
+SliceIterator slice_iterator;
+ModulePhase module_phase;
+Fft2D fft;
+RemoveDC dc_remover;
+ZeroFilling zero_filling(DestWidth = 1024, DestHeight = 1024);
+HFlipFloat hflip;
+	
+reader->slice_iterator;
+slice_iterator->dc_remover;
+dc_remover->zero_filling;
+zero_filling->fft;
+fft->module_phase;
+module_phase.Module->jpeg_exporter;
+
+self.Input->reader.Input;
+
