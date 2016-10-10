@@ -17,12 +17,15 @@ namespace Yap
 
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
-		int GetOutputDataType();
-
 		virtual IProcessor * Clone() override;
 
 		// Inherited via ProcessorImpl
 		virtual bool OnInit() override;
+
+	protected:
+		int GetOutputDataType();
+		const wchar_t * GetPortName(int data_type);
+		static std::map<int, wchar_t *> s_data_type_to_port;
 	};
 }
 
