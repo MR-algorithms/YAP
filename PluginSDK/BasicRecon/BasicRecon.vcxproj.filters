@@ -17,14 +17,14 @@
     <ClCompile Include="NiumagFidReader.cpp" />
     <ClCompile Include="NiumagFidWriter.cpp" />
     <ClCompile Include="NiumagImgReader.cpp" />
-    <ClCompile Include="NiumagImgWriter.cpp" />
     <ClCompile Include="SamplingMaskCreator.cpp" />
     <ClCompile Include="SliceIterator.cpp" />
     <ClCompile Include="SliceSelector.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="ZeroFilling.cpp" />
     <ClCompile Include="DataTypeConvertor.cpp" />
-    <ClCompile Include="NiumagImgReader2.cpp" />
+    <ClCompile Include="NiuMriImageReader.cpp" />
+    <ClCompile Include="NiuMriImageWriter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm2DWrapper.h" />
@@ -43,7 +43,6 @@
     <ClInclude Include="NiumagFidReader.h" />
     <ClInclude Include="NiumagFidWriter.h" />
     <ClInclude Include="NiumagImgReader.h" />
-    <ClInclude Include="NiumagImgWriter.h" />
     <ClInclude Include="SamplingMaskCreator.h" />
     <ClInclude Include="SliceIterator.h" />
     <ClInclude Include="SliceSelector.h" />
@@ -51,7 +50,8 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ZeroFilling.h" />
     <ClInclude Include="DataTypeConvertor.h" />
-    <ClInclude Include="NiumagImgReader2.h" />
+    <ClInclude Include="NiuMriImageReader.h" />
+    <ClInclude Include="NiuMriImageWriter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

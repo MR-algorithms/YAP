@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "NiumagImgWriter.h"
+#include "NiuMriImageWriter.h"
 
 #include <fstream>
 #include <iosfwd>
@@ -8,17 +8,17 @@
 using namespace Yap;
 using namespace std;
 
-NiumagImgWriter::NiumagImgWriter(void) :
-	ProcessorImpl(L"NiumagImgWriter")
+NiuMriImageWriter::NiuMriImageWriter(void) :
+	ProcessorImpl(L"NiuMriImageWriter")
 {
 }
 
-NiumagImgWriter::NiumagImgWriter(const NiumagImgWriter& rhs) :
+NiuMriImageWriter::NiuMriImageWriter(const NiuMriImageWriter& rhs) :
 	ProcessorImpl(rhs)
 {
 }
 
-bool Yap::NiumagImgWriter::OnInit()
+bool Yap::NiuMriImageWriter::OnInit()
 {
 	AddInput(L"Input", 2, DataTypeUnsignedShort);
 	AddProperty(PropertyString, L"ExportFolder", L"Set folder used to write images.");
@@ -26,12 +26,12 @@ bool Yap::NiumagImgWriter::OnInit()
 	return true;
 }
 
-IProcessor * Yap::NiumagImgWriter::Clone()
+IProcessor * Yap::NiuMriImageWriter::Clone()
 {
-	return new(nothrow) NiumagImgWriter(*this);
+	return new(nothrow) NiuMriImageWriter(*this);
 }
 
-bool Yap::NiumagImgWriter::Input(const wchar_t * name, IData * data)
+bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && (GetDataArray<unsigned short>(data) != nullptr));
 
@@ -46,7 +46,7 @@ bool Yap::NiumagImgWriter::Input(const wchar_t * name, IData * data)
 		file_path += L"\\";
 	}
 	file_path += file_name.str();
-	file_path += L".img";
+	file_path += L".niuimg";
 
 	//write data
 	int file_version = 1;

@@ -1,17 +1,17 @@
 #pragma once
-#ifndef NiumagImgWriter_h__
-#define NiumagImgWriter_h__
+#ifndef NiuMriImageWriter_h__
+#define NiuMriImageWriter_h__
 
 #include "Interface/Implement/processorImpl.h"
 
 namespace Yap
 {
-	class NiumagImgWriter :
+	class NiuMriImageWriter :
 		public ProcessorImpl
 	{
 	public:
-		NiumagImgWriter(void);
-		NiumagImgWriter(const NiumagImgWriter& rhs);
+		NiuMriImageWriter(void);
+		NiuMriImageWriter(const NiuMriImageWriter& rhs);
 
 	private:
 		virtual bool Input(const wchar_t * name, IData * data);
@@ -22,4 +22,4 @@ namespace Yap
 
 }
 
-#endif // NiumagImgWriter_h__
+#endif // NiuMriImageWriter_h__

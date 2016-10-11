@@ -18,9 +18,9 @@
 #include "SliceSelector.h"
 #include "Difference.h"
 #include "NiumagImgReader.h"
-#include "NiumagImgReader2.h"
+#include "NiuMriImageReader.h"
 #include "NiumagFidReader.h"
-#include "NiumagImgWriter.h"
+#include "NiuMriImageWriter.h"
 #include "NiumagFidWriter.h"
 #include "ChannelIterator.h"
 #include "DataTypeConvertor.h"
@@ -32,10 +32,10 @@ using namespace Yap;
 BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(CmrDataReader)
 	ADD_PROCESSOR(NiumagImgReader)
-	ADD_PROCESSOR(NiumagImgReader2)
 	ADD_PROCESSOR(NiumagFidReader)
-	ADD_PROCESSOR(NiumagImgWriter)
 	ADD_PROCESSOR(NiumagFidWriter)
+	ADD_PROCESSOR(NiuMriImageReader)
+	ADD_PROCESSOR(NiuMriImageWriter)
 	ADD_PROCESSOR(ComplexSplitter)
 	ADD_PROCESSOR(Difference)
 	ADD_PROCESSOR(Fft1D)

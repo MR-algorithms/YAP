@@ -69,7 +69,7 @@ int main()
 
 
 	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"NiumagImgReader.pipeline");
+	auto pipeline = compiler.CompileFile(L"NiuMriImageReader.pipeline");
 	if (pipeline)
 	{
 		pipeline->Input(L"Input", nullptr);
