@@ -70,7 +70,7 @@ namespace Yap { namespace details
 			GdiplusStartup(&_gdiplusToken, &gdiplusStartupInput, NULL);
 		}
 
-		template <typename T>
+		template<typename T>
 		void ExportImage(T* image, int width, int height, const wchar_t * output_folder)
 		{
 			boost::shared_array<unsigned char> buffer(new unsigned char[width * height * 4]);
@@ -112,10 +112,8 @@ namespace Yap { namespace details
 
 			Gdiplus::Status status = bitmap.Save(const_cast<wchar_t*>(file_path.c_str()), &encoderClsid, NULL);
 		}
-
 		
-
-		template <typename T>
+		template<typename T>
 		unsigned short StretchPixelData(T* data, T min_value, T max_data)
 		{
 			double rate = 255.0 / (double)(max_data - min_value);
@@ -165,10 +163,11 @@ bool JpegExporter::Input( const wchar_t * name, IData * data)
 	assert(_impl);
 
 	TODO(What if the data is not of float type ? );
+
 	DataHelper data_helper(data);
 
 	if (data->GetDataType() == DataTypeFloat)
-	{		
+	{
 		_impl->ExportImage(GetDataArray<float>(data),
 			data_helper.GetWidth(), data_helper.GetHeight(),
 			GetString(L"ExportFolder"));

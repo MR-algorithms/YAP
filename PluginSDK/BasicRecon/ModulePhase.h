@@ -11,8 +11,9 @@ namespace Yap
 		public ProcessorImpl
 	{
 	public:
-		ModulePhase();
-		virtual ~ModulePhase();
+		ModulePhase(void);
+		ModulePhase(const ModulePhase& rhs);
+		~ModulePhase();
 
 		virtual bool Input(const wchar_t * port, IData * data) override;
 		virtual IProcessor * Clone() override;

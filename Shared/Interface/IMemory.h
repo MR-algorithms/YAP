@@ -91,8 +91,21 @@ class SmartPtr
 public:
 	SmartPtr() : _pointer(nullptr) {}
 
-	SmartPtr(const SmartPtr<TYPE>& source) : _pointer(source._pointer) 
+ 	SmartPtr(const SmartPtr<TYPE>& source) : _pointer(source._pointer) 
+ 	{
+ 		auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
+ 		if (shared_object != nullptr)
+ 		{
+ 			shared_object->Lock();
+ 		}
+ 	}
+
+	template <typename SOURCE_TYPE>
+	SmartPtr(SmartPtr<SOURCE_TYPE>& source) : _pointer(source.get())
 	{
+		if (dynamic_cast<TYPE*>(source.get()) == nullptr)
+			throw std::bad_cast();
+
 		auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
 		if (shared_object != nullptr)
 		{
@@ -102,6 +115,19 @@ public:
 
 	SmartPtr(SmartPtr<TYPE>&& source) : _pointer(source._pointer) 
 	{
+		auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
+		if (shared_object != nullptr)
+		{
+			shared_object->Lock();
+		}
+	}
+
+	template <typename SOURCE_TYPE>
+	SmartPtr(SmartPtr<SOURCE_TYPE>&& source) : _pointer(source.get())
+	{
+		if (dynamic_cast<TYPE*>(source.get()) == nullptr)
+			throw std::bad_cast();
+
 		auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
 		if (shared_object != nullptr)
 		{

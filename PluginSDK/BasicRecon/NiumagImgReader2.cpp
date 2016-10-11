@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "NiumagImgReader.h"
+#include "NiumagImgReader2.h"
 
 #include <sstream>
 #include <iostream>
@@ -31,33 +31,33 @@ namespace Yap
 	}
 }
 
-NiumagImgReader::NiumagImgReader():
-	ProcessorImpl(L"NiumagImgReader")
+NiumagImgReader2::NiumagImgReader2(void) :
+	ProcessorImpl(L"NiumagImgReader2")
 {
 }
 
-Yap::NiumagImgReader::NiumagImgReader(const NiumagImgReader& rhs):
+Yap::NiumagImgReader2::NiumagImgReader2(const NiumagImgReader2& rhs) :
 	ProcessorImpl(rhs)
 {
 }
 
-bool Yap::NiumagImgReader::Input(const wchar_t * name, IData * data)
+bool Yap::NiumagImgReader2::Input(const wchar_t * name, IData * data)
 {
 	// Should not pass in data to start raw data file reading.
 	assert(data == nullptr);
 
-	if (!ReadNiumagImgData())
+	if (!ReadNiumagImgData2())
 		return false;
 
 	return true;
 }
 
-IProcessor * Yap::NiumagImgReader::Clone()
+IProcessor * Yap::NiumagImgReader2::Clone()
 {
-	return new(nothrow) NiumagImgReader(*this);
+	return new(nothrow) NiumagImgReader2(*this);
 }
 
-bool Yap::NiumagImgReader::OnInit()
+bool Yap::NiumagImgReader2::OnInit()
 {
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
@@ -67,7 +67,7 @@ bool Yap::NiumagImgReader::OnInit()
 	return true;
 }
 
-bool Yap::NiumagImgReader::ReadNiumagImgData()
+bool Yap::NiumagImgReader2::ReadNiumagImgData2()
 {
 	std::wostringstream output(GetString(L"DataPath"));
 	wstring data_path = output.str();
@@ -91,19 +91,18 @@ bool Yap::NiumagImgReader::ReadNiumagImgData()
 
 		file.seekg(section6_offset, ios::beg);
 
-		int buf[3];
-		file.read(reinterpret_cast<char*>(buf), sizeof(int) * 3);
+		int buf[2];
+		file.read(reinterpret_cast<char*>(buf), sizeof(int) * 2);
 		int dim1 = buf[0];
 		int dim2 = buf[1];
-		int dim3 = buf[2];
 
 		assert(sizeof(unsigned short) == 2);
-		if (dim1 > 2048 || dim2 > 2048 || dim3 > 1024)
+		if (dim1 > 2048 || dim2 > 2048)
 		{
 			throw std::ifstream::failure("out of range");
 		}
 
-		unsigned buffer_size = dim1 * dim2 * dim3;
+		unsigned buffer_size = dim1 * dim2;
 		unsigned short * buffer = new unsigned short[buffer_size];
 
 		if (!file.read(reinterpret_cast<char*>(buffer), buffer_size * sizeof(unsigned short)))
@@ -114,8 +113,7 @@ bool Yap::NiumagImgReader::ReadNiumagImgData()
 
 		Dimensions dimensions;
 		dimensions(DimensionReadout, 0U, dim1)
-			(DimensionPhaseEncoding, 0U, dim2)
-			(DimensionSlice, 0U, dim3);
+			(DimensionPhaseEncoding, 0U, dim2);
 
 		auto data = YapShared(new UnsignedShortData(
 			reinterpret_cast<unsigned short*>(buffer), dimensions, nullptr, true));
@@ -130,6 +128,6 @@ bool Yap::NiumagImgReader::ReadNiumagImgData()
 	{
 		return false;
 	}
-	
+
 	return true;
 }

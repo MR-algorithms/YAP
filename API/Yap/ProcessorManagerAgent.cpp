@@ -35,7 +35,7 @@ bool Yap::ModuleAgent::Load(const wchar_t * plugin_path)
 
 	auto create_func = (Yap::IProcessorContainer*(*)())::GetProcAddress(
 		_module, "GetProcessorManager");
-	if (create_func == nullptr)
+	if (create_func == nullptr) 
 	{
 		::FreeLibrary(_module);
 		_module = 0;
