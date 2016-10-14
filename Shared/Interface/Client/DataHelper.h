@@ -29,6 +29,7 @@ namespace Yap
 		unsigned int GetSlice();
 		unsigned int GetCoilCount();
 		unsigned int GetDim4();
+		IData * GetData();
 
 	protected:
 		IData & _data_object;

@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "NiumagImgReader.h"
+#include "NiuMriImageReader.h"
 
 #include <sstream>
 #include <iostream>
@@ -15,7 +15,7 @@ namespace Yap
 	{
 
 		/// This structure is used to store version info and sizes of all sections.
-		struct NiumagImgFileHeaderInfo
+		struct NiuMriImageFileHeaderInfo
 		{
 			int  FileVersion;
 			int  Section1Size;
@@ -31,33 +31,33 @@ namespace Yap
 	}
 }
 
-NiumagImgReader::NiumagImgReader():
-	ProcessorImpl(L"NiumagImgReader")
+NiuMriImageReader::NiuMriImageReader(void) :
+	ProcessorImpl(L"NiuMriImageReader")
 {
 }
 
-Yap::NiumagImgReader::NiumagImgReader(const NiumagImgReader& rhs):
+Yap::NiuMriImageReader::NiuMriImageReader(const NiuMriImageReader& rhs) :
 	ProcessorImpl(rhs)
 {
 }
 
-bool Yap::NiumagImgReader::Input(const wchar_t * name, IData * data)
+bool Yap::NiuMriImageReader::Input(const wchar_t * name, IData * data)
 {
 	// Should not pass in data to start raw data file reading.
 	assert(data == nullptr);
 
-	if (!ReadNiumagImgData())
+	if (!ReadNiuMriImageData())
 		return false;
 
 	return true;
 }
 
-IProcessor * Yap::NiumagImgReader::Clone()
+IProcessor * Yap::NiuMriImageReader::Clone()
 {
-	return new(nothrow) NiumagImgReader(*this);
+	return new(nothrow) NiuMriImageReader(*this);
 }
 
-bool Yap::NiumagImgReader::OnInit()
+bool Yap::NiuMriImageReader::OnInit()
 {
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
@@ -67,7 +67,7 @@ bool Yap::NiumagImgReader::OnInit()
 	return true;
 }
 
-bool Yap::NiumagImgReader::ReadNiumagImgData()
+bool Yap::NiuMriImageReader::ReadNiuMriImageData()
 {
 	std::wostringstream output(GetString(L"DataPath"));
 	wstring data_path = output.str();
@@ -77,12 +77,12 @@ bool Yap::NiumagImgReader::ReadNiumagImgData()
 		ifstream file(data_path.c_str(), ios::binary);
 
 		//read image data header
-		details::NiumagImgFileHeaderInfo sections;
-		if (!file.read(reinterpret_cast<char*>(&sections), sizeof(details::NiumagImgFileHeaderInfo)))
+		details::NiuMriImageFileHeaderInfo sections;
+		if (!file.read(reinterpret_cast<char*>(&sections), sizeof(details::NiuMriImageFileHeaderInfo)))
 			return false;
 
 		//
-		int section6_offset = sizeof(details::NiumagImgFileHeaderInfo) +
+		int section6_offset = sizeof(details::NiuMriImageFileHeaderInfo) +
 			sections.Section1Size +
 			sections.Section2Size +
 			sections.Section3Size +
@@ -91,19 +91,18 @@ bool Yap::NiumagImgReader::ReadNiumagImgData()
 
 		file.seekg(section6_offset, ios::beg);
 
-		int buf[3];
-		file.read(reinterpret_cast<char*>(buf), sizeof(int) * 3);
+		int buf[2];
+		file.read(reinterpret_cast<char*>(buf), sizeof(int) * 2);
 		int dim1 = buf[0];
 		int dim2 = buf[1];
-		int dim3 = buf[2];
 
 		assert(sizeof(unsigned short) == 2);
-		if (dim1 > 2048 || dim2 > 2048 || dim3 > 1024)
+		if (dim1 > 2048 || dim2 > 2048)
 		{
 			throw std::ifstream::failure("out of range");
 		}
 
-		unsigned buffer_size = dim1 * dim2 * dim3;
+		unsigned buffer_size = dim1 * dim2;
 		unsigned short * buffer = new unsigned short[buffer_size];
 
 		if (!file.read(reinterpret_cast<char*>(buffer), buffer_size * sizeof(unsigned short)))
@@ -114,8 +113,7 @@ bool Yap::NiumagImgReader::ReadNiumagImgData()
 
 		Dimensions dimensions;
 		dimensions(DimensionReadout, 0U, dim1)
-			(DimensionPhaseEncoding, 0U, dim2)
-			(DimensionSlice, 0U, dim3);
+			(DimensionPhaseEncoding, 0U, dim2);
 
 		auto data = YapShared(new UnsignedShortData(
 			reinterpret_cast<unsigned short*>(buffer), dimensions, nullptr, true));
@@ -130,6 +128,6 @@ bool Yap::NiumagImgReader::ReadNiumagImgData()
 	{
 		return false;
 	}
-	
+
 	return true;
 }

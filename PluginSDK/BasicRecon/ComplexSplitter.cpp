@@ -41,24 +41,25 @@ bool ComplexSplitter::Input(const wchar_t * port, IData * data)
 	auto data_array = GetDataArray<complex<double>>(data);
 	if (want_real && want_imaginary)
 	{
-		auto * real_data = new Yap::DoubleData(data->GetDimensions());
-		auto * imaginary_data = new Yap::DoubleData(data->GetDimensions());
-		Split(data_array, GetDataArray<double>(real_data), GetDataArray<double>(imaginary_data), size);
+		auto real_data = YapShared(new Yap::DoubleData(data->GetDimensions())) ;
+		auto imaginary_data = YapShared(new Yap::DoubleData(data->GetDimensions()));
 
-		Feed(L"Real", real_data);
-		Feed(L"Imaginary", imaginary_data);
+		Split(data_array, GetDataArray<double>(real_data.get()), GetDataArray<double>(imaginary_data.get()), size);
+
+		Feed(L"Real", real_data.get());
+		Feed(L"Imaginary", imaginary_data.get());
 	}
 	else if (want_real)
 	{
-		auto * real_data = new Yap::DoubleData(data->GetDimensions());
-		ExtractReal(data_array, GetDataArray<double>(real_data), size);
-		Feed(L"Real", real_data);
+		auto real_data = YapShared(new Yap::DoubleData(data->GetDimensions()));
+		ExtractReal(data_array, GetDataArray<double>(real_data.get()), size);
+		Feed(L"Real", real_data.get());
 	}
 	else if (want_imaginary)
 	{
-		auto * imaginary_data = new Yap::DoubleData(data->GetDimensions());
-		ExtractImaginary(data_array, GetDataArray<double>(imaginary_data), size);
-		Feed(L"Imaginary", imaginary_data);
+		auto imaginary_data = YapShared(new Yap::DoubleData(data->GetDimensions()));
+		ExtractImaginary(data_array, GetDataArray<double>(imaginary_data.get()), size);
+		Feed(L"Imaginary", imaginary_data.get());
 	}
 
 	return true;

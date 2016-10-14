@@ -130,6 +130,11 @@ unsigned int Yap::DataHelper::GetDim4()
 	return length;
 }
 
+Yap::IData * Yap::DataHelper::GetData()
+{
+	return &_data_object;
+}
+
 /**
 获得指定维度的一块数据所包含的数据元素的个数。例如当type等于DimensionSlice时，
 返回一个slice中的元素个数。
