@@ -182,6 +182,7 @@ arma::cx_fmat Grappa::FitCoef(complex<float> * subsampled_data,
 	}
 
 	cx_fmat temp2((width - 2) * fit_num, block * num_coil * 3);
+	temp2.zeros();
 	for (unsigned int k = 0; k < fit_num; ++k)
 	{
 		for (unsigned int readout_index = 1; readout_index < width - 1; ++readout_index)

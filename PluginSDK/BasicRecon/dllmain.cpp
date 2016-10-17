@@ -23,6 +23,7 @@
 #include "ChannelIterator.h"
 #include "Nlmeans.h"
 #include "NLM.h"
+#include "ChannelDataCollector.h"
 
 #include "Interface\Implement\YapImplement.h"
 
@@ -30,7 +31,7 @@ using namespace Yap;
 
 BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(CmrDataReader)
-	ADD_PROCESSOR(CNiumagImgReader)
+	ADD_PROCESSOR(NiumagImgReader)
 	ADD_PROCESSOR(ComplexSplitter)
 	ADD_PROCESSOR(Difference)
 	ADD_PROCESSOR(Fft1D)
@@ -48,6 +49,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(ChannelIterator)
 	ADD_PROCESSOR(Nlmeans)
 	ADD_PROCESSOR(NLM)
+	ADD_PROCESSOR(ChannelDataCollector)
 	ADD(L"HFlipFloat", new Algorithm2DInPlaceWrapper<float>(hflip<float>, L"HFlipFloat"))
 END_DECL_PROCESSORS
 

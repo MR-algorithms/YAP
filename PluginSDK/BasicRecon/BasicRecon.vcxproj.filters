@@ -73,6 +73,24 @@
     <ClCompile Include="NLM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DataTypeConvertor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NiumagFidReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NiumagFidWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NiumagImgReader2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NiumagImgWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChannelDataCollector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm2DWrapper.h">
@@ -148,6 +166,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NLM.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataTypeConvertor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NiumagFidReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NiumagFidWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NiumagImgReader2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NiumagImgWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChannelDataCollector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

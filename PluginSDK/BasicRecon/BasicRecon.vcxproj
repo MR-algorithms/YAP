@@ -167,11 +167,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm2DWrapper.h" />
+    <ClInclude Include="ChannelDataCollector.h" />
     <ClInclude Include="ChannelIterator.h" />
     <ClInclude Include="ChannelMerger.h" />
     <ClInclude Include="CmrDataReader.h" />
     <ClInclude Include="ComplexSplitter.h" />
     <ClInclude Include="CompressedSensing.h" />
+    <ClInclude Include="DataTypeConvertor.h" />
     <ClInclude Include="DcRemover.h" />
     <ClInclude Include="Difference.h" />
     <ClInclude Include="Fft1D.h" />
@@ -180,7 +182,11 @@
     <ClInclude Include="imageProcessing.h" />
     <ClInclude Include="JpegExporter.h" />
     <ClInclude Include="ModulePhase.h" />
+    <ClInclude Include="NiumagFidReader.h" />
+    <ClInclude Include="NiumagFidWriter.h" />
     <ClInclude Include="NiumagImgReader.h" />
+    <ClInclude Include="NiumagImgReader2.h" />
+    <ClInclude Include="NiumagImgWriter.h" />
     <ClInclude Include="NLM.h" />
     <ClInclude Include="Nlmeans.h" />
     <ClInclude Include="SamplingMaskCreator.h" />
@@ -199,6 +205,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ChannelDataCollector.cpp" />
     <ClCompile Include="ChannelIterator.cpp" />
     <ClCompile Include="ChannelMerger.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -219,6 +226,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="CompressedSensing.cpp" />
+    <ClCompile Include="DataTypeConvertor.cpp" />
     <ClCompile Include="DcRemover.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -275,7 +283,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="NiumagFidReader.cpp" />
+    <ClCompile Include="NiumagFidWriter.cpp" />
     <ClCompile Include="NiumagImgReader.cpp" />
+    <ClCompile Include="NiumagImgReader2.cpp" />
+    <ClCompile Include="NiumagImgWriter.cpp" />
     <ClCompile Include="NLM.cpp" />
     <ClCompile Include="Nlmeans.cpp" />
     <ClCompile Include="SamplingMaskCreator.cpp">

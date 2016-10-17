@@ -125,19 +125,19 @@ void Yap::Nlmeans::nlmeans_ipol(unsigned int iDWin, unsigned int iDBloc, float S
 		for (unsigned int x = 0; x < iWidth; x++)
 		{
 			int iDWin0 = MIN(iDWin, MIN(iWidth - 1 - x, MIN(iHeight - 1 - y, MIN(x, y))));
-			unsigned int imin = MAX(x - iDBloc, iDWin0);
-			unsigned int jmin = MAX(y - iDBloc, iDWin0);
+			int imin = MAX(x - iDBloc, iDWin0);
+			int jmin = MAX(y - iDBloc, iDWin0);
 
-			unsigned int imax = MIN(x + iDBloc, iWidth - 1 - iDWin0);
-			unsigned int jmax = MIN(y + iDBloc, iHeight - 1 - iDWin0);
+			int imax = MIN(x + iDBloc, iWidth - 1 - iDWin0);
+			int jmax = MIN(y + iDBloc, iHeight - 1 - iDWin0);
 
 			float fMaxWeight = 0.0f;
 
 			float fTotalWeight = 0.0f;
 
-			for (unsigned int j = jmin; j <= jmax; j++)
+			for (int j = jmin; j <= jmax; j++)
 			{
-				for (unsigned int i = imin; i <= imax; i++)
+				for (int i = imin; i <= imax; i++)
 				{
 					if (i != x || j != y)
 					{

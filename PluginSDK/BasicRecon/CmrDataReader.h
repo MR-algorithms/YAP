@@ -30,14 +30,9 @@ namespace Yap
 
 		virtual bool OnInit() override;
 
-		std::vector<std::complex<float>> ReadRawData(unsigned int channel_index);
+		bool ReadRawData(unsigned int channel_index);
 		float* ReadEcnuFile(const wchar_t * file_path, unsigned int& width, unsigned int& height,
 			unsigned int& slices, unsigned int& dim4);
-
-		unsigned int _width;
-		unsigned int _height;
-		unsigned int _total_slice_count;
-		unsigned int _dim4;
 	};
 }
 
