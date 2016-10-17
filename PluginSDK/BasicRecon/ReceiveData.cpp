@@ -39,6 +39,7 @@ namespace Yap
 			DataTypeUnsignedShort);
 		AddProperty(PropertyInt, L"DataCount", L"The count of data flow times.");
 		AddProperty(PropertyStruct, L"DataDimension", L"The dimension size of data and every dimension size as an Array.");
+		return true;
 	}
 
 	IProcessor * ReceiveData::Clone()
@@ -52,7 +53,7 @@ namespace Yap
 			return false;
 		if (data == nullptr)
 			return false;
-		CDataHelper data_reverse = CDataHelper(data);
+		DataHelper data_reverse = DataHelper(data);
 		auto data_type = data_reverse.GetDataType();
 		switch (data_type)
 		{
@@ -74,9 +75,9 @@ namespace Yap
 			case DataTypeUnsignedShort:
 				break;
 			default:
-				
+				return false;
 		}
-
+		return true;
 	}
 
 }
