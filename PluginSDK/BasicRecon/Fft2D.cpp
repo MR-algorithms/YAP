@@ -31,8 +31,8 @@ bool Yap::Fft2D::OnInit()
 	SetBool(L"Inverse", false);
 	SetBool(L"InPlace", true);
 
-	AddInput(L"Input", 2, DataTypeComplexDouble);
-	AddOutput(L"Output", 2, DataTypeComplexDouble);
+	AddInput(L"Input", 2, DataTypeComplexFloat);
+	AddOutput(L"Output", 2, DataTypeComplexFloat);
 
 	return true;
 }
