@@ -41,8 +41,8 @@ ZeroFilling::~ZeroFilling()
 
 bool Yap::ZeroFilling::OnInit()
 {
-	AddInput(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
-	AddOutput(L"Output", 2, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 
 	AddProperty(PropertyInt, L"DestWidth", L"Destination width.");
 	SetInt(L"DestWidth", 512);
@@ -76,7 +76,10 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 
 	Yap::Dimensions dims;
 	dims(DimensionReadout, 0, dest_width)
-		(DimensionPhaseEncoding, 0, dest_height);
+		(DimensionPhaseEncoding, 0, dest_height)
+		(DimensionSlice, 0, 1)
+		(Dimension4, 0, 1)
+		(DimensionChannel, 0, 1);
 
 	if (data->GetDataType() == DataTypeComplexDouble)
 	{

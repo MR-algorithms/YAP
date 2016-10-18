@@ -30,11 +30,7 @@ namespace Yap
 }
 
 CmrDataReader::CmrDataReader(void) :
-	ProcessorImpl(L"CmrRawDataReader"),
-	_width(0),
-	_height(0),
-	_total_slice_count(0),
-	_dim4(0)
+	ProcessorImpl(L"CmrRawDataReader")
 {
 }
 
@@ -68,47 +64,23 @@ bool CmrDataReader::Input(const wchar_t * name, IData * data)
 
 	int channel_count = GetInt(L"ChannelCount");
 	assert(channel_count > 0 && channel_count <= 32);
-	float * channels_kspace_data = nullptr;
-	try
-	{
-		channels_kspace_data = new float[_width * _height * _total_slice_count * channel_count * 2];
-	}
-	catch (bad_alloc&)
-	{
-		return false;
-	}
-
 	for (int channel_index = 0; channel_index < channel_count; ++channel_index)
 	{
 		unsigned int channel_mask = (1 << channel_index); // 每次循环都和0或，得到某通道0001(1),0010(2),0100(4),1000(8)
 		bool channel_used = ((channel_mask & GetInt(L"ChannelSwitch")) == channel_mask);    // channel_mask只要和给的通道一样，就必定等于channel_mask自己
+
 		if (channel_used)
 		{
-// 			if (!ReadRawData(channel_index))
-// 			{
-// 				return false;
-// 			}
-			auto channel_kspace_data = ReadRawData(channel_index);
-			memcpy(channels_kspace_data + _width * _height * _total_slice_count * channel_index, 
-				channel_kspace_data.data(), _width * _height * _total_slice_count * sizeof(complex<float>));
+ 			if (!ReadRawData(channel_index))
+ 			{
+ 				return false;
+ 			}
 		}
 	}
-
-	Dimensions dimensions;
-	dimensions(DimensionReadout, 0U, _width)
-		(DimensionPhaseEncoding, 0U, _height)
-		(DimensionSlice, 0U, _total_slice_count)
-		(Dimension4, 0U, _dim4)
-		(DimensionChannel, 0U, channel_count);
-
-	auto output_data = YapShared(new ComplexFloatData(
-		reinterpret_cast<complex<float>*>(channels_kspace_data), dimensions, nullptr, true));
-
-	Feed(L"Output", output_data.get());
 	return true;
 }
 
-std::vector<std::complex<float>> CmrDataReader::ReadRawData(unsigned int channel_index)
+bool CmrDataReader::ReadRawData(unsigned int channel_index)
 {
 	std::wostringstream output;
 	output << GetString(L"DataPath") << L"\\ChannelData"
@@ -138,15 +110,14 @@ std::vector<std::complex<float>> CmrDataReader::ReadRawData(unsigned int channel
 		float * temp_raw_data_buffer = ReadEcnuFile(data_path.c_str(), width, height, group_slice_count, dim4);
 		if (temp_raw_data_buffer == nullptr)
 		{
-			return std::vector<std::complex<float>>();
+			return false;
 		}
 		channel_data_buffer.push_back(temp_raw_data_buffer);
 		total_slice_count += group_slice_count;
 		slices.push_back(group_slice_count);
 	}
-	
+
 	float* raw_data_buffer = nullptr;
-	std::vector<std::complex<float>> channel_kspace_data(width * height * total_slice_count);
 	if (channel_data_buffer.size() == 1)
 	{
 		raw_data_buffer = channel_data_buffer[0];
@@ -159,7 +130,7 @@ std::vector<std::complex<float>> CmrDataReader::ReadRawData(unsigned int channel
 		}
 		catch(bad_alloc&)
 		{
-			return std::vector<std::complex<float>>();
+			return false;
 		}
 
 		unsigned int offset = 0;
@@ -169,10 +140,20 @@ std::vector<std::complex<float>> CmrDataReader::ReadRawData(unsigned int channel
 			offset += width * height * slices[i] * 2;
 		}
 	}
-	memcpy(channel_kspace_data.data(), raw_data_buffer, width * height * total_slice_count * sizeof(complex<float>));
 
-	delete[]raw_data_buffer;
-	return channel_kspace_data;
+	Dimensions dimensions;
+	dimensions(DimensionReadout, 0U, width)
+		(DimensionPhaseEncoding, 0U, height)
+		(DimensionSlice, 0U, total_slice_count)
+		(Dimension4, 0U, dim4)
+		(DimensionChannel, channel_index, 1);
+
+	auto output_data = YapShared(new ComplexFloatData(
+		reinterpret_cast<complex<float>*>(raw_data_buffer), dimensions, nullptr, true));
+
+	Feed(L"Output", output_data.get());
+
+	return true;
 }
 
 /**

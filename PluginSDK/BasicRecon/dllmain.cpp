@@ -18,12 +18,12 @@
 #include "SliceSelector.h"
 #include "Difference.h"
 #include "NiumagImgReader.h"
-#include "NiuMriImageReader.h"
-#include "NiumagFidReader.h"
-#include "NiuMriImageWriter.h"
-#include "NiumagFidWriter.h"
+#include "SubSampling.h"
 #include "ChannelIterator.h"
-#include "DataTypeConvertor.h"
+#include "Nlmeans.h"
+#include "NLM.h"
+#include "ChannelDataCollector.h"
+#include "ChannelMerger.h"
 
 #include "Interface\Implement\YapImplement.h"
 
@@ -32,10 +32,6 @@ using namespace Yap;
 BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(CmrDataReader)
 	ADD_PROCESSOR(NiumagImgReader)
-	ADD_PROCESSOR(NiumagFidReader)
-	ADD_PROCESSOR(NiumagFidWriter)
-	ADD_PROCESSOR(NiuMriImageReader)
-	ADD_PROCESSOR(NiuMriImageWriter)
 	ADD_PROCESSOR(ComplexSplitter)
 	ADD_PROCESSOR(Difference)
 	ADD_PROCESSOR(Fft1D)
@@ -44,12 +40,16 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(JpegExporter)
 	ADD_PROCESSOR(ModulePhase)
 	ADD_PROCESSOR(DcRemover)
-	ADD_PROCESSOR(DataTypeConvertor)
 	ADD_PROCESSOR(SamplingMaskCreator)
 	ADD_PROCESSOR(SliceIterator)
 	ADD_PROCESSOR(SliceSelector)
 	ADD_PROCESSOR(ZeroFilling)
+	ADD_PROCESSOR(SubSampling)
 	ADD_PROCESSOR(ChannelIterator)
+	ADD_PROCESSOR(Nlmeans)
+	ADD_PROCESSOR(NLM)
+	ADD_PROCESSOR(ChannelDataCollector)
+	ADD_PROCESSOR(ChannelMerger)
 	ADD(L"HFlipFloat", new Algorithm2DInPlaceWrapper<float>(hflip<float>, L"HFlipFloat"))
 END_DECL_PROCESSORS
 

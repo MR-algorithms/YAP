@@ -40,7 +40,7 @@ bool Yap::SamplingMaskCreator::OnInit()
 	AddProperty(PropertyFloat, L"pow", L"");
 	SetFloat(L"pow", 3.0f);
 	AddProperty(PropertyFloat, L"sample_percent", L"");
-	SetFloat(L"sample_percent", 0.4);
+	SetFloat(L"sample_percent", 0.4f);
 	AddProperty(PropertyFloat, L"radius", L"");
 	SetFloat(L"radius", 0.2f);
 

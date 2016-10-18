@@ -1,59 +1,197 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="BasicRecon.cpp" />
-    <ClCompile Include="ChannelIterator.cpp" />
-    <ClCompile Include="ChannelMerger.cpp" />
-    <ClCompile Include="CmrDataReader.cpp" />
-    <ClCompile Include="ComplexSplitter.cpp" />
-    <ClCompile Include="DcRemover.cpp" />
-    <ClCompile Include="Difference.cpp" />
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="Fft1D.cpp" />
-    <ClCompile Include="Fft2D.cpp" />
-    <ClCompile Include="Grappa.cpp" />
-    <ClCompile Include="JpegExporter.cpp" />
-    <ClCompile Include="ModulePhase.cpp" />
-    <ClCompile Include="NiumagFidReader.cpp" />
-    <ClCompile Include="NiumagFidWriter.cpp" />
-    <ClCompile Include="NiumagImgReader.cpp" />
-    <ClCompile Include="SamplingMaskCreator.cpp" />
-    <ClCompile Include="SliceIterator.cpp" />
-    <ClCompile Include="SliceSelector.cpp" />
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="ZeroFilling.cpp" />
-    <ClCompile Include="DataTypeConvertor.cpp" />
-    <ClCompile Include="NiuMriImageReader.cpp" />
-    <ClCompile Include="NiuMriImageWriter.cpp" />
+    <ClCompile Include="BasicRecon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChannelMerger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CmrDataReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ComplexSplitter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DcRemover.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Difference.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Fft1D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Fft2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Grappa.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JpegExporter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ModulePhase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SamplingMaskCreator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SliceIterator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SliceSelector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZeroFilling.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NiumagImgReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CompressedSensing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SubSampling.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChannelIterator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Nlmeans.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NLM.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataTypeConvertor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NiumagFidReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NiumagFidWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChannelDataCollector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NiuMriImageReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NiuMriImageWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Algorithm2DWrapper.h" />
-    <ClInclude Include="ChannelIterator.h" />
-    <ClInclude Include="ChannelMerger.h" />
-    <ClInclude Include="CmrDataReader.h" />
-    <ClInclude Include="ComplexSplitter.h" />
-    <ClInclude Include="DcRemover.h" />
-    <ClInclude Include="Difference.h" />
-    <ClInclude Include="Fft1D.h" />
-    <ClInclude Include="Fft2D.h" />
-    <ClInclude Include="Grappa.h" />
-    <ClInclude Include="imageProcessing.h" />
-    <ClInclude Include="JpegExporter.h" />
-    <ClInclude Include="ModulePhase.h" />
-    <ClInclude Include="NiumagFidReader.h" />
-    <ClInclude Include="NiumagFidWriter.h" />
-    <ClInclude Include="NiumagImgReader.h" />
-    <ClInclude Include="SamplingMaskCreator.h" />
-    <ClInclude Include="SliceIterator.h" />
-    <ClInclude Include="SliceSelector.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="ZeroFilling.h" />
-    <ClInclude Include="DataTypeConvertor.h" />
-    <ClInclude Include="NiuMriImageReader.h" />
-    <ClInclude Include="NiuMriImageWriter.h" />
+    <ClInclude Include="Algorithm2DWrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChannelMerger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CmrDataReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ComplexSplitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DcRemover.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Difference.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Fft1D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Fft2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Grappa.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="JpegExporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imageProcessing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModulePhase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SamplingMaskCreator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SliceIterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SliceSelector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZeroFilling.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NiumagImgReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CompressedSensing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SubSampling.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChannelIterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Nlmeans.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NLM.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataTypeConvertor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NiumagFidReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NiumagFidWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChannelDataCollector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NiuMriImageReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NiuMriImageWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{72172d75-df01-4303-b6d3-f3376dd014a1}</UniqueIdentifier>
+      <Extensions>h;hpp</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{76bb0875-0858-42a8-85a0-1df59b3874db}</UniqueIdentifier>
+      <Extensions>cpp</Extensions>
+    </Filter>
   </ItemGroup>
 </Project>
