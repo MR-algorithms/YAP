@@ -19,11 +19,11 @@
 #include "Difference.h"
 #include "NiumagImgReader.h"
 #include "SubSampling.h"
-#include "SumOfSquare.h"
 #include "ChannelIterator.h"
 #include "Nlmeans.h"
 #include "NLM.h"
 #include "ChannelDataCollector.h"
+#include "ChannelMerger.h"
 
 #include "Interface\Implement\YapImplement.h"
 
@@ -45,11 +45,11 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(SliceSelector)
 	ADD_PROCESSOR(ZeroFilling)
 	ADD_PROCESSOR(SubSampling)
-	ADD_PROCESSOR(SumOfSquare)
 	ADD_PROCESSOR(ChannelIterator)
 	ADD_PROCESSOR(Nlmeans)
 	ADD_PROCESSOR(NLM)
 	ADD_PROCESSOR(ChannelDataCollector)
+	ADD_PROCESSOR(ChannelMerger)
 	ADD(L"HFlipFloat", new Algorithm2DInPlaceWrapper<float>(hflip<float>, L"HFlipFloat"))
 END_DECL_PROCESSORS
 

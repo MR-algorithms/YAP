@@ -25,12 +25,12 @@ inline void ConvertElement(IN_TYPE& input, complex<float>& output)
 
 inline void ConvertElement(complex<double>& input, complex<float>& output)
 {
-	output = complex<double>(input);
+	output = complex<float>(input);
 }
 
 inline void ConvertElement(complex<float>& input, complex<double>& output)
 {
-	output = complex<float>(input);
+	output = complex<double>(input);
 }
 
 template <typename IN_TYPE, typename OUT_TYPE>

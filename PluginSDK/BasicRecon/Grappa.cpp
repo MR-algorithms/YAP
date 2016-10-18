@@ -31,7 +31,7 @@ bool Yap::Grappa::OnInit()
 	AddProperty(PropertyInt, L"Rate", L"The acceleration factor.");
 	SetInt(L"Rate", 2);
 	AddProperty(PropertyInt, L"AcsCount", L"The auto-calibration signal.");
-	SetInt(L"AcsCount", 16);
+	SetInt(L"AcsCount", 32);
 	AddProperty(PropertyInt, L"Block", L"The number of blocks.");
 	SetInt(L"Block", 4);
 
@@ -85,6 +85,7 @@ bool Grappa::Recon(std::complex<float> * subsampled_data,
 {
 	vector<complex<float>> acs_data = GetAcsData(subsampled_data, r, acs, width, height, num_coil);
 		cx_fmat coef = FitCoef(subsampled_data, r, acs, block, width, height, num_coil);
+
 		cx_frowvec Temp(1, block * num_coil * 3);
 		Temp.zeros();
 		for (unsigned int n = 0; n < floor(height / r); ++n)
@@ -147,7 +148,7 @@ bool Grappa::Recon(std::complex<float> * subsampled_data,
 complex<float> * Grappa::MakeFidelity(complex<float> * recon_data, vector<complex<float>> acs_data, 
 	unsigned int r, unsigned int acs, unsigned int width, unsigned int height, unsigned int num_coil)
 {
-	unsigned int first = static_cast<unsigned int> (((height - acs) / (2 * r)) * r + 1);
+	unsigned int first = ((height - acs) / (2 * r)) * r + 1;
 	for (unsigned int coil_index = 0; coil_index < num_coil; ++coil_index)
 	{
 				auto acs_position = width * height * coil_index + first * width;
@@ -212,7 +213,7 @@ arma::cx_fmat Grappa::FitCoef(complex<float> * subsampled_data,
 			}
 		}
 	}
-	cx_fmat coef = pinv(temp2) * temp1;
+	cx_fmat coef = pinv(temp2, 0, "std") * temp1;
 	return coef;
 }
 

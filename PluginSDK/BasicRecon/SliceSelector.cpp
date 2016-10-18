@@ -28,7 +28,7 @@ bool Yap::SliceSelector::OnInit()
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
 	AddProperty(PropertyInt, L"SliceIndex", L"The index of the slice you want to get.");
-	SetInt(L"SliceIndex", 1);
+	SetInt(L"SliceIndex", 3);
 
 	return true;
 }

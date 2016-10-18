@@ -185,8 +185,8 @@
     <ClInclude Include="NiumagFidReader.h" />
     <ClInclude Include="NiumagFidWriter.h" />
     <ClInclude Include="NiumagImgReader.h" />
-    <ClInclude Include="NiumagImgReader2.h" />
-    <ClInclude Include="NiumagImgWriter.h" />
+    <ClInclude Include="NiuMriImageReader.h" />
+    <ClInclude Include="NiuMriImageWriter.h" />
     <ClInclude Include="NLM.h" />
     <ClInclude Include="Nlmeans.h" />
     <ClInclude Include="SamplingMaskCreator.h" />
@@ -194,7 +194,6 @@
     <ClInclude Include="SliceSelector.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SubSampling.h" />
-    <ClInclude Include="SumOfSquare.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ZeroFilling.h" />
   </ItemGroup>
@@ -286,8 +285,8 @@
     <ClCompile Include="NiumagFidReader.cpp" />
     <ClCompile Include="NiumagFidWriter.cpp" />
     <ClCompile Include="NiumagImgReader.cpp" />
-    <ClCompile Include="NiumagImgReader2.cpp" />
-    <ClCompile Include="NiumagImgWriter.cpp" />
+    <ClCompile Include="NiuMriImageReader.cpp" />
+    <ClCompile Include="NiuMriImageWriter.cpp" />
     <ClCompile Include="NLM.cpp" />
     <ClCompile Include="Nlmeans.cpp" />
     <ClCompile Include="SamplingMaskCreator.cpp">
@@ -315,7 +314,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SubSampling.cpp" />
-    <ClCompile Include="SumOfSquare.cpp" />
     <ClCompile Include="ZeroFilling.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
