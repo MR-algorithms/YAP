@@ -74,7 +74,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>C:\gadgetron\Dependencies\Armadillo\Armadillo-7200.2\lib_debug;C:\Users\James\Documents\Visual Studio 2015\Projects\YAP\FFTW-64\lib</LibraryPath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
     <OutDir>$(YAP_ROOT)\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
