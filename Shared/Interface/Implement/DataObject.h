@@ -139,5 +139,6 @@ namespace Yap
 	typedef DataObject<std::complex<double>> ComplexDoubleData;
 	typedef DataObject<std::complex<float>> ComplexFloatData;
 	typedef DataObject<unsigned short> UnsignedShortData;
+	typedef DataObject<unsigned int> UnsignedIntData;
 };
 

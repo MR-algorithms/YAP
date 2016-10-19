@@ -16,8 +16,8 @@ namespace Yap
 
 		virtual bool OnInit() override;
 	private:
-		IData * GLCM(IData * data, unsigned int size);
-		Yap::SmartPtr<IData> Normalization(IData * data, unsigned int size);	//the GLCM size or gray level number.
+		void GLCM(unsigned int * input_data,  unsigned int * output_data, unsigned int input_width, unsigned int input_height, unsigned int out_size);
+		void Normalization(IData * data, unsigned int * out, unsigned int size);	//the GLCM size or gray level number.
 	};
 
 }
