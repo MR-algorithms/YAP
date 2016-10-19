@@ -24,6 +24,7 @@
 #include "NiumagFidWriter.h"
 #include "ChannelIterator.h"
 #include "DataTypeConvertor.h"
+#include "ExtractGLCM.h"
 
 #include "Interface\Implement\YapImplement.h"
 
@@ -50,6 +51,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(SliceSelector)
 	ADD_PROCESSOR(ZeroFilling)
 	ADD_PROCESSOR(ChannelIterator)
+	ADD_PROCESSOR(ExtractGLCM)
 	ADD(L"HFlipFloat", new Algorithm2DInPlaceWrapper<float>(hflip<float>, L"HFlipFloat"))
 END_DECL_PROCESSORS
 

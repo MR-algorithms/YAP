@@ -1,0 +1,13 @@
+import "BasicRecon.dll";
+
+NiumagImgReader reader(DataPath = "D:\\Output\\1.img");
+ExtractGLCM glcm(GLCMSize = 256);
+//ExtractGLCM是得到unsigned int型数据，需要转换为JPEG的float或unsigned short。
+DataTypeConvertor dataconvert;
+JpegExporter jpeg_exporter(ExportFolder = "d:\\Output");
+	
+reader.Output->glcm.Input;
+glcm.Output->dataconvert.Input;
+dataconvert.UnsignedShort->jpeg_exporter.Input;
+
+self.Input->reader.Input;

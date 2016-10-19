@@ -61,22 +61,22 @@
     <ClCompile Include="ChannelIterator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NiumagImgReader2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="NiumagFidWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NiumagFidReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NiumagImgWriter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DataTypeConvertor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ExtractGLCM.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NiuMriImageReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NiuMriImageWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -160,6 +160,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExtractGLCM.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NiuMriImageReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NiuMriImageWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

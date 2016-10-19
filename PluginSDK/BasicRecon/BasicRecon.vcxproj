@@ -187,6 +187,8 @@
     <ClInclude Include="NiumagImgReader.h" />
     <ClInclude Include="NiumagImgReader2.h" />
     <ClInclude Include="NiumagImgWriter.h" />
+    <ClInclude Include="NiuMriImageReader.h" />
+    <ClInclude Include="NiuMriImageWriter.h" />
     <ClInclude Include="ReceiveData.h" />
     <ClInclude Include="SamplingMaskCreator.h" />
     <ClInclude Include="SliceIterator.h" />
@@ -281,8 +283,8 @@
     <ClCompile Include="NiumagFidReader.cpp" />
     <ClCompile Include="NiumagFidWriter.cpp" />
     <ClCompile Include="NiumagImgReader.cpp" />
-    <ClCompile Include="NiumagImgReader2.cpp" />
-    <ClCompile Include="NiumagImgWriter.cpp" />
+    <ClCompile Include="NiuMriImageReader.cpp" />
+    <ClCompile Include="NiuMriImageWriter.cpp" />
     <ClCompile Include="ReceiveData.cpp" />
     <ClCompile Include="SamplingMaskCreator.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
