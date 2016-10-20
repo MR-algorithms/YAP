@@ -12,6 +12,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <time.h>
 
 using namespace std;
 using namespace Yap;
@@ -62,20 +63,24 @@ void ConstructorTest()
 
 int main()
 {
+	time_t start = clock();
 	YapDebugger debugger;
 	debugger.DebugPlugin(L"BasicRecon.dll");
 
 //	 ConstructorTest();
 
-
 	PipelineCompiler compiler;
+
 	//auto pipeline = compiler.CompileFile(L"NiuMriImageReader.pipeline");
+
 	auto pipeline = compiler.CompileFile(L"grappa.pipeline");
 	if (pipeline)
 	{
 		pipeline->Input(L"Input", nullptr);
 	}
 
+	time_t end = clock();
+	printf("the running time is : %f\n", float(end - start) / CLOCKS_PER_SEC);
     return 0;
 }
 

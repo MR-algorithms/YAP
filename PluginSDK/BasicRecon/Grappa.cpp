@@ -6,10 +6,10 @@
 
 #include <vector>
 
+
 using namespace std;
 using namespace arma;
 using namespace Yap;
-
 
 Grappa::Grappa(void) :
 	ProcessorImpl(L"Grappa")
@@ -31,12 +31,12 @@ bool Yap::Grappa::OnInit()
 	AddProperty(PropertyInt, L"Rate", L"The acceleration factor.");
 	SetInt(L"Rate", 2);
 	AddProperty(PropertyInt, L"AcsCount", L"The auto-calibration signal.");
-	SetInt(L"AcsCount", 16);
+	SetInt(L"AcsCount", 32);
 	AddProperty(PropertyInt, L"Block", L"The number of blocks.");
 	SetInt(L"Block", 4);
 
-	AddInput(L"Input", 3, DataTypeComplexDouble | DataTypeComplexFloat);
-	AddOutput(L"Output", 3, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 
 	return true;
 }
@@ -53,13 +53,13 @@ bool Grappa::Input(const wchar_t * port, IData * data)
 		DataHelper input_data(data);  //输入数据为欠采添零的K空间数据
 		if (input_data.GetDataType() != DataTypeComplexDouble && input_data.GetDataType() != DataTypeComplexFloat)
 			return false;
-// 		if (input_data.GetActualDimensionCount() != 3)
-// 			return false;
+ 		if (input_data.GetActualDimensionCount() != 3)
+ 			return false;
 		auto width = input_data.GetWidth();
 		auto height = input_data.GetHeight();
-		auto coil_count = input_data.GetCoilCount();	
+		Dimension channel_dimension = input_data.GetDimension(DimensionChannel);
 		Recon(GetDataArray<complex<float>>(data), R, Acs, Block,
-			width, height, coil_count);
+			width, height, channel_dimension.length);
 
 		Feed(L"Output", data);
 
@@ -67,31 +67,26 @@ bool Grappa::Input(const wchar_t * port, IData * data)
 }
 
 std::vector<std::complex<float>> Grappa::GetAcsData(std::complex<float> * data, 
-	size_t r, size_t acs, size_t width, size_t height, size_t num_coil)
+	unsigned int r, unsigned int acs, unsigned int width, unsigned int height, unsigned int num_coil)
 {
-	unsigned int first = static_cast<unsigned int> (((height - acs) / (2 * r)) * r + 1);
-	vector<complex<float>> acs_data(acs * width * num_coil, 0);	
-	for (unsigned int coil_index = 0; coil_index < num_coil; ++num_coil)
+	unsigned int first = ((height - acs) / (2 * r)) * r + 1;
+	vector<complex<float>> acs_data(acs * width * num_coil);
+	for (unsigned int coil_index = 0; coil_index < num_coil; ++coil_index)
 	{
-			for (unsigned int k = 0; k < acs; ++k)
-			{
-				auto acs_position = width * height * coil_index + (first + k) * width;
-				memcpy(acs_data.data()  + width * acs * coil_index +
-					k * width, data + acs_position, width * sizeof(complex<float>));
-			}
+		auto acs_position = width * height * coil_index + first * width;
+		memcpy(acs_data.data() + width * acs * coil_index, data + acs_position, acs * width * sizeof(complex<float>));
 	}
 	return acs_data;
 }
 
 
 bool Grappa::Recon(std::complex<float> * subsampled_data, 
-	size_t r, size_t acs, size_t Block, size_t width, size_t height, size_t Num_coil)
+	unsigned int  r, unsigned int acs, unsigned int block, unsigned int width, unsigned int height, unsigned int num_coil)
 {
-	unsigned int block = static_cast<unsigned int> (Block);
-	unsigned int num_coil = static_cast<unsigned int> (Num_coil);
-	vector<complex<float>> acs_data = GetAcsData(subsampled_data, r, acs, width, height, Num_coil);
-		cx_mat coef = FitCoef(subsampled_data, r, acs, Block, width, height, Num_coil);
-		cx_rowvec Temp(1, block * num_coil * 3);
+	vector<complex<float>> acs_data = GetAcsData(subsampled_data, r, acs, width, height, num_coil);
+		cx_fmat coef = FitCoef(subsampled_data, r, acs, block, width, height, num_coil);
+
+		cx_frowvec Temp(1, block * num_coil * 3);
 		Temp.zeros();
 		for (unsigned int n = 0; n < floor(height / r); ++n)
 		{
@@ -111,7 +106,7 @@ bool Grappa::Recon(std::complex<float> * subsampled_data,
 							{
 								auto src_point =width * height * coil_index + 
 									width * (1 + n * r - block_l * r - 1) + readout_index;
-								Temp[coil_index + block_l * num_coil + shift * block * num_coil] = *(subsampled_data - 1 + shift);
+								Temp[coil_index + block_l * num_coil + shift * block * num_coil] = *(subsampled_data + src_point + shift - 1);
 							}
 						}
 					}
@@ -127,11 +122,11 @@ bool Grappa::Recon(std::complex<float> * subsampled_data,
 							{
 								auto src_point =width * height * coil_index + 
 									width * (1 + n * r + block_r * r + 1) + readout_index;
-								Temp[coil_index + (block_r + 2) * num_coil + shift * num_coil] = *(subsampled_data - 1 + shift);
+								Temp[coil_index + (block_r + 2) * num_coil + shift * num_coil] = *(subsampled_data + src_point - 1 + shift);
 							}
 						}
 					}
-					cx_rowvec Recon_Data = Temp * coef;
+					cx_frowvec Recon_Data = Temp * coef;
 					for (unsigned int b = 0; b < r - 1; ++b)
 					{
 						for (unsigned int coil_index = 0; coil_index < num_coil; ++coil_index)
@@ -151,33 +146,26 @@ bool Grappa::Recon(std::complex<float> * subsampled_data,
 
 
 complex<float> * Grappa::MakeFidelity(complex<float> * recon_data, vector<complex<float>> acs_data, 
-	size_t r, size_t acs, size_t width, size_t height, size_t num_coil)
+	unsigned int r, unsigned int acs, unsigned int width, unsigned int height, unsigned int num_coil)
 {
-	unsigned int first = static_cast<unsigned int> (((height - acs) / (2 * r)) * r + 1);
+	unsigned int first = ((height - acs) / (2 * r)) * r + 1;
 	for (unsigned int coil_index = 0; coil_index < num_coil; ++coil_index)
 	{
-			for (unsigned int k = 0; k < acs; ++k)
-			{
-				auto acs_position = width * height * coil_index + (first + k) * width;
+				auto acs_position = width * height * coil_index + first * width;
 					memcpy(recon_data + acs_position, acs_data.data() + 
-						width * acs * coil_index + k * width, width * sizeof(complex<float>));
-			}
+						width * acs * coil_index, acs * width * sizeof(complex<float>));
 	}
 	return recon_data;
 }
 
 
 
-arma::cx_mat Grappa::FitCoef(complex<float> * subsampled_data, 
-	size_t R, size_t acs, size_t Block, size_t Width, size_t height, size_t Num_coil)
+arma::cx_fmat Grappa::FitCoef(complex<float> * subsampled_data, 
+	unsigned int r, unsigned int acs, unsigned int block, unsigned int width, unsigned int height, unsigned int num_coil)
 {
-	unsigned int width = static_cast<unsigned int> (Width);
-	unsigned int num_coil = static_cast<unsigned int> (Num_coil);
-	unsigned int r = static_cast<unsigned int> (R);
-	unsigned int block = static_cast<unsigned int> (Block);
-	unsigned int first = static_cast<unsigned int> (((height - acs) / (2 * R)) * R + 1);
-	unsigned int fit_num = static_cast<unsigned int> (acs / R);
-	cx_mat temp1((width - 2) * fit_num, num_coil * (r - 1));
+	unsigned int first =((height - acs) / (2 * r)) * r + 1;
+	unsigned int fit_num = acs / r;
+	cx_fmat temp1((width - 2) * fit_num, num_coil * (r - 1));
 	temp1.zeros();
 	for (unsigned int k = 0; k < fit_num; ++k)
 	{
@@ -194,7 +182,7 @@ arma::cx_mat Grappa::FitCoef(complex<float> * subsampled_data,
 		}
 	}
 
-	cx_mat temp2((width - 2) * fit_num, block * num_coil * 3);
+	cx_fmat temp2((width - 2) * fit_num, block * num_coil * 3);
 	temp2.zeros();
 	for (unsigned int k = 0; k < fit_num; ++k)
 	{
@@ -225,7 +213,7 @@ arma::cx_mat Grappa::FitCoef(complex<float> * subsampled_data,
 			}
 		}
 	}
-	cx_mat coef = pinv(temp2) * temp1;
+	cx_fmat coef = pinv(temp2, 0, "std") * temp1;
 	return coef;
 }
 

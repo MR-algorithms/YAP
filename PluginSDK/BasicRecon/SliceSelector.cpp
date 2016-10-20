@@ -28,7 +28,7 @@ bool Yap::SliceSelector::OnInit()
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
 	AddProperty(PropertyInt, L"SliceIndex", L"The index of the slice you want to get.");
-	SetInt(L"SliceIndex", 0);
+	SetInt(L"SliceIndex", 3);
 
 	return true;
 }
@@ -70,7 +70,7 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 		}	
 		for (unsigned int i = channel_dimention.start_index; i < channel_dimention.start_index + channel_dimention.length; ++i)
 		{
-			memcpy(slice_channel_data + i * slice_block_size, data + slice_index * slice_block_size + i * channel_block_size, 
+			memcpy(slice_channel_data + i * slice_block_size, Yap::GetDataArray<complex<float>>(data) + slice_index * slice_block_size + i * channel_block_size, 
 				slice_block_size * sizeof(complex<float>));
 		}
 		Dimensions dimensions;
