@@ -73,6 +73,7 @@ int main()
 
 	//auto pipeline = compiler.CompileFile(L"NiuMriImageReader.pipeline");
 
+	auto pipeline = compiler.CompileFile(L"ExtractFeature.pipeline");
 	if (pipeline)
 	{
 		pipeline->Input(L"Input", nullptr);
