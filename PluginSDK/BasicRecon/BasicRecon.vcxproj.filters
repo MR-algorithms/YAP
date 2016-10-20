@@ -52,9 +52,6 @@
     <ClCompile Include="ZeroFilling.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ReceiveData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="NiumagImgReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -80,7 +77,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ExtractGLCM.cpp">
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="NiumagFidReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -149,9 +146,6 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ReceiveData.h">
-	  <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -162,8 +156,8 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExtractGLCM.h">
-	  <Filter>Header Files</Filter>
-	</ClInclude>
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="SubSampling.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -192,6 +186,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NiuMriImageWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NiumagImgReader2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NiumagImgWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
