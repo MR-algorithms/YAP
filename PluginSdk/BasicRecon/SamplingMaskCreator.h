@@ -20,19 +20,22 @@ namespace Yap
 
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
+
 	private:
 		unsigned int _try_count;
 		unsigned int _tolerance;
 
-		std::vector<unsigned char> GetMinInterferenceSamplingPattern(unsigned int row_count,
+		std::vector<unsigned char> GetRandomSamplingPattern(unsigned int row_count,
 			float pow, float sample_percent, float radius);
+		std::vector<unsigned char> GetEqualSamplingPattern(unsigned int height, unsigned int acs, unsigned int rate);
 
 		// Pdf 数据类型有待补充。
 		std::vector<float> GeneratePdf(unsigned int row_count, float p, float sample_percent, float radius);
 
 		std::vector<float> LineSpace(float begin, float end, unsigned int count);
 
-
+		std::vector<unsigned char> GenerateRandomMask(unsigned int width, unsigned int height, float pow, float sample_percent, float radius);
+		std::vector<unsigned char> GenerateEqualMask(unsigned int width, unsigned int height, unsigned int acs, unsigned int rate);
 		// Inherited via ProcessorImpl
 		virtual bool OnInit() override;
 

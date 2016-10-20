@@ -6,17 +6,17 @@
 
 namespace Yap
 {
-	/// Class used to read img data file created by CMR.
+	/// Class used to read img data file created by Niumag.
 	/**
 	Feel nullptr to the "Input" port to trigger file reading.
 	"Output" data will be of type Unsigned Int.
 	*/
-	class CNiumagImgReader :
+	class NiumagImgReader :
 		public ProcessorImpl
 	{
 	public:
-		CNiumagImgReader(void);
-		CNiumagImgReader(const CNiumagImgReader& rhs);
+		NiumagImgReader(void);
+		NiumagImgReader(const NiumagImgReader& rhs);
 	private:
 		virtual bool Input(const wchar_t * name, IData * data);
 		virtual IProcessor * Clone() override;

@@ -1,0 +1,24 @@
+import "BasicRecon.dll";
+
+CmrRawDataReader reader(DataPath = "D:\\test_data\\RawData_256\\RawData",
+	ChannelCount = 4, ChannelSwitch = 15);
+SliceSelector slice_selector;
+Fft2D fft;
+ModulePhase module_phase;
+
+DataTypeConvertor converter;
+ExtractGLCM glcm;
+ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);
+
+JpegExporter jpeg_exporter(ExportFolder = "d:\\Output");
+
+reader->slice_selector;
+slice_selector->zero_filling;
+
+zero_filling->fft;
+fft->module_phase;
+module_phase.Module->glcm;
+glcm->converter;
+converter.Float->jpeg_exporter;
+
+self.Input->reader.Input;

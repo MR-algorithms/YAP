@@ -1,6 +1,6 @@
 #include "SliceSelector.h"
 #include "interface/Client/DataHelper.h"
-#include "Interface/Implement/DataImpl.h"
+#include "Interface/Implement/DataObject.h"
 
 #include <complex>
 
@@ -28,7 +28,7 @@ bool Yap::SliceSelector::OnInit()
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
 	AddProperty(PropertyInt, L"SliceIndex", L"The index of the slice you want to get.");
-	SetInt(L"SliceIndex", 0);
+	SetInt(L"SliceIndex", 3);
 
 	return true;
 }
@@ -45,13 +45,13 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 
 	int slice_index = GetInt(L"SliceIndex");
 
-	CDataHelper input_data(data);
-	DimensionsImpl data_dimentions(data->GetDimensions());
+	DataHelper input_data(data);
+	Dimensions data_dimentions(data->GetDimensions());
 	unsigned int slice_block_size = input_data.GetBlockSize(DimensionSlice);
-	if (data_dimentions.GetDimensionCount() <= 3)
+	if (input_data.GetActualDimensionCount() <= 3)
 	{		
-		data_dimentions.ModifyDimension(DimensionSlice, 1, slice_index);
-		auto output = YapShared(new CComplexFloatData(Yap::GetDataArray<complex<float>>(data)
+		data_dimentions.SetDimension(DimensionSlice, 1, slice_index);
+		auto output = YapShared(new ComplexFloatData(Yap::GetDataArray<complex<float>>(data)
 			+ slice_index * slice_block_size, data_dimentions));
 		Feed(L"Output", output.get());
 	}
@@ -70,16 +70,16 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 		}	
 		for (unsigned int i = channel_dimention.start_index; i < channel_dimention.start_index + channel_dimention.length; ++i)
 		{
-			memcpy(slice_channel_data + i * slice_block_size, data + slice_index * slice_block_size + i * channel_block_size, 
+			memcpy(slice_channel_data + i * slice_block_size, Yap::GetDataArray<complex<float>>(data) + slice_index * slice_block_size + i * channel_block_size, 
 				slice_block_size * sizeof(complex<float>));
 		}
-		DimensionsImpl dimensions;
+		Dimensions dimensions;
 		dimensions(DimensionReadout, 0U, input_data.GetWidth())
 			(DimensionPhaseEncoding, 0U, input_data.GetHeight())
 			(DimensionSlice, slice_index, 1)
 			(Dimension4, 0U, input_data.GetDim4())
 			(DimensionChannel, 0U, input_data.GetCoilCount());
-		auto outdata = YapShared(new CComplexFloatData(
+		auto outdata = YapShared(new ComplexFloatData(
 			slice_channel_data, dimensions, nullptr, true));
 
 		Feed(L"Output", outdata.get());

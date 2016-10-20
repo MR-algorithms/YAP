@@ -39,8 +39,14 @@ bool GetPhase(complex<T>* input, T* phase,
 	return true;
 }
 
-ModulePhase::ModulePhase() :
+ModulePhase::ModulePhase(void) :
 	ProcessorImpl(L"ModulePhase")
+{
+
+}
+
+Yap::ModulePhase::ModulePhase(const ModulePhase& rhs):
+	ProcessorImpl(rhs)
 {
 
 }
@@ -67,23 +73,16 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 	if (data->GetDataType() != DataTypeComplexDouble && data->GetDataType() != DataTypeComplexFloat)
 		return false;
 
-	CDataHelper input_data(data);
+	DataHelper input_data(data);
 
 	auto want_module = OutportLinked(L"Module");
 	auto want_phase = OutportLinked(L"Phase");
-
-	if (input_data.GetActualDimensionCount() != 2)
-		return false;
-
-	DimensionsImpl dims;
-	dims(DimensionReadout, 0, input_data.GetWidth())
-		(DimensionPhaseEncoding, 0, input_data.GetHeight());
 
 	if (want_module)
 	{
 		if (data->GetDataType() == DataTypeComplexDouble)
 		{
-			auto module = YapShared(new CDoubleData(&dims));
+			auto module = YapShared(new DoubleData(data->GetDimensions()));
 
 			GetModule(GetDataArray<complex<double>>(data),
 				GetDataArray<double>(module.get()),
@@ -94,7 +93,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 		
 		else
 		{
-			auto module = YapShared(new CFloatData(&dims));
+			auto module = YapShared(new FloatData(data->GetDimensions()));
 
 			GetModule(GetDataArray<complex<float>>(data),
 				GetDataArray<float>(module.get()),
@@ -109,7 +108,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 	{
 		if (data->GetDataType() == DataTypeComplexDouble)
 		{
-			auto phase = YapShared(new CDoubleData(&dims));
+			auto phase = YapShared(new DoubleData(data->GetDimensions()));
 
 			GetPhase(GetDataArray<complex<double>>(data), GetDataArray<double>(phase.get()),
 				input_data.GetDataSize());
@@ -118,7 +117,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 		}
 		else
 		{
-			auto phase = YapShared(new CFloatData(&dims));
+			auto phase = YapShared(new FloatData(data->GetDimensions()));
 
 			GetPhase(GetDataArray<complex<float>>(data), GetDataArray<float>(phase.get()),
 				input_data.GetDataSize());
@@ -135,4 +134,5 @@ Yap::IProcessor * Yap::ModulePhase::Clone()
 {
 	return new (nothrow) ModulePhase(*this);
 }
+
 

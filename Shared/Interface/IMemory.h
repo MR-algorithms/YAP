@@ -91,8 +91,21 @@ class SmartPtr
 public:
 	SmartPtr() : _pointer(nullptr) {}
 
-	SmartPtr(const SmartPtr<TYPE>& source) : _pointer(source._pointer) 
+ 	SmartPtr(const SmartPtr<TYPE>& source) : _pointer(source._pointer) 
+ 	{
+ 		auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
+ 		if (shared_object != nullptr)
+ 		{
+ 			shared_object->Lock();
+ 		}
+ 	}
+
+	template <typename SOURCE_TYPE>
+	SmartPtr(SmartPtr<SOURCE_TYPE>& source) : _pointer(source.get())
 	{
+		if (dynamic_cast<TYPE*>(source.get()) == nullptr)
+			throw std::bad_cast();
+
 		auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
 		if (shared_object != nullptr)
 		{
@@ -102,6 +115,19 @@ public:
 
 	SmartPtr(SmartPtr<TYPE>&& source) : _pointer(source._pointer) 
 	{
+		auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
+		if (shared_object != nullptr)
+		{
+			shared_object->Lock();
+		}
+	}
+
+	template <typename SOURCE_TYPE>
+	SmartPtr(SmartPtr<SOURCE_TYPE>&& source) : _pointer(source.get())
+	{
+		if (dynamic_cast<TYPE*>(source.get()) == nullptr)
+			throw std::bad_cast();
+
 		auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
 		if (shared_object != nullptr)
 		{
@@ -270,6 +296,19 @@ SmartPtr<TYPE> YapShared(IClonable * clonable)
 		   "Only pointers to object implementing ISharedObject can be wrapped using YapShared().");
 
 	return Yap::SmartPtr<TYPE>(dynamic_cast<TYPE*>(clonable));
+}
+
+/**
+	This function clones an object and wraps it with SmartPtr.
+
+	It requires that the object implement IClonable and ISharedObject.
+*/
+template <typename TYPE>
+SmartPtr<TYPE> YapClone(TYPE * object)
+{
+	assert(object != nullptr);
+	assert(dynamic<IClonable*>(object) != nullptr && "The object must implement IClonable.");
+	assert(dynamic<ISharedObject*>(object) != nullptr && "The object must implement ISharedObject.");
 }
 
 }; // namespace YAP

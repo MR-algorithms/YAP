@@ -70,15 +70,15 @@ namespace Yap { namespace details
 			GdiplusStartup(&_gdiplusToken, &gdiplusStartupInput, NULL);
 		}
 
-
-		void ExportImage(float* image, int width, int height, const wchar_t * output_folder)
+		template<typename T>
+		void ExportImage(T* image, int width, int height, const wchar_t * output_folder)
 		{
 			boost::shared_array<unsigned char> buffer(new unsigned char[width * height * 4]);
-			float* data_cursor = image;
+			T* data_cursor = image;
 
 			auto result = std::minmax_element(data_cursor, data_cursor + width * height);
-			float min_data = *result.first;
-			float max_data = *result.second;
+			T min_data = *result.first;
+			T max_data = *result.second;
 
 			for (unsigned char* buffer_cursor = buffer.get(); buffer_cursor < buffer.get() + width * height * 4; buffer_cursor += 4)
 			{
@@ -112,8 +112,9 @@ namespace Yap { namespace details
 
 			Gdiplus::Status status = bitmap.Save(const_cast<wchar_t*>(file_path.c_str()), &encoderClsid, NULL);
 		}
-
-		unsigned short StretchPixelData(float* data, float min_value, float max_data)
+		
+		template<typename T>
+		unsigned short StretchPixelData(T* data, T min_value, T max_data)
 		{
 			double rate = 255.0 / (double)(max_data - min_value);
 			return static_cast<unsigned short>((*data - min_value) * rate);
@@ -150,7 +151,7 @@ IProcessor* JpegExporter::Clone()
 
 bool JpegExporter::OnInit()
 {
-	AddInput(L"Input", 2, DataTypeFloat);
+	AddInput(L"Input", 2, DataTypeFloat | DataTypeUnsignedShort);
 	AddProperty(PropertyString, L"ExportFolder", L"Set folder used to hold exported images.");
 
 	return true;
@@ -158,15 +159,25 @@ bool JpegExporter::OnInit()
 
 bool JpegExporter::Input( const wchar_t * name, IData * data)
 {
-	assert((data != nullptr) && (GetDataArray<float>(data) != nullptr));
+	assert((data != nullptr) && ((GetDataArray<float>(data) != nullptr) || (GetDataArray<unsigned short>(data) != nullptr)));
 	assert(_impl);
 
 	TODO(What if the data is not of float type ? );
 
-	CDataHelper data_helper(data);
-	_impl->ExportImage(GetDataArray<float>(data),
-		data_helper.GetWidth(), data_helper.GetHeight(),
-		GetString(L"ExportFolder"));
+	DataHelper data_helper(data);
+
+	if (data->GetDataType() == DataTypeFloat)
+	{
+		_impl->ExportImage(GetDataArray<float>(data),
+			data_helper.GetWidth(), data_helper.GetHeight(),
+			GetString(L"ExportFolder"));
+	}
+	else if (data->GetDataType() == DataTypeUnsignedShort)
+	{
+		_impl->ExportImage(GetDataArray<unsigned short>(data),
+			data_helper.GetWidth(), data_helper.GetHeight(),
+			GetString(L"ExportFolder"));
+	}
 
 	return true;
 }

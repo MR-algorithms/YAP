@@ -64,20 +64,19 @@ bool CmrDataReader::Input(const wchar_t * name, IData * data)
 
 	int channel_count = GetInt(L"ChannelCount");
 	assert(channel_count > 0 && channel_count <= 32);
-
 	for (int channel_index = 0; channel_index < channel_count; ++channel_index)
 	{
 		unsigned int channel_mask = (1 << channel_index); // 每次循环都和0或，得到某通道0001(1),0010(2),0100(4),1000(8)
 		bool channel_used = ((channel_mask & GetInt(L"ChannelSwitch")) == channel_mask);    // channel_mask只要和给的通道一样，就必定等于channel_mask自己
+
 		if (channel_used)
 		{
-			if (!ReadRawData(channel_index))
-			{
-				return false;
-			}
+ 			if (!ReadRawData(channel_index))
+ 			{
+ 				return false;
+ 			}
 		}
 	}
-
 	return true;
 }
 
@@ -141,19 +140,18 @@ bool CmrDataReader::ReadRawData(unsigned int channel_index)
 			offset += width * height * slices[i] * 2;
 		}
 	}
-	
 
-	DimensionsImpl dimensions;
+	Dimensions dimensions;
 	dimensions(DimensionReadout, 0U, width)
-			  (DimensionPhaseEncoding, 0U, height)
-			  (DimensionSlice, 0U, total_slice_count)
-			  (Dimension4, 0U, dim4)
-			  (DimensionChannel, channel_index, 1);
+		(DimensionPhaseEncoding, 0U, height)
+		(DimensionSlice, 0U, total_slice_count)
+		(Dimension4, 0U, dim4)
+		(DimensionChannel, channel_index, 1);
 
-	auto data = YapShared(new CComplexFloatData(
+	auto output_data = YapShared(new ComplexFloatData(
 		reinterpret_cast<complex<float>*>(raw_data_buffer), dimensions, nullptr, true));
 
-	Feed(L"Output", data.get());
+	Feed(L"Output", output_data.get());
 
 	return true;
 }

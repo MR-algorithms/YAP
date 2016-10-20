@@ -31,17 +31,17 @@ namespace Yap
 	}
 }
 
-CNiumagImgReader::CNiumagImgReader():
+NiumagImgReader::NiumagImgReader():
 	ProcessorImpl(L"NiumagImgReader")
 {
 }
 
-Yap::CNiumagImgReader::CNiumagImgReader(const CNiumagImgReader& rhs):
+Yap::NiumagImgReader::NiumagImgReader(const NiumagImgReader& rhs):
 	ProcessorImpl(rhs)
 {
 }
 
-bool Yap::CNiumagImgReader::Input(const wchar_t * name, IData * data)
+bool Yap::NiumagImgReader::Input(const wchar_t * name, IData * data)
 {
 	// Should not pass in data to start raw data file reading.
 	assert(data == nullptr);
@@ -52,22 +52,22 @@ bool Yap::CNiumagImgReader::Input(const wchar_t * name, IData * data)
 	return true;
 }
 
-IProcessor * Yap::CNiumagImgReader::Clone()
+IProcessor * Yap::NiumagImgReader::Clone()
 {
-	return new(nothrow) CNiumagImgReader(*this);
+	return new(nothrow) NiumagImgReader(*this);
 }
 
-bool Yap::CNiumagImgReader::OnInit()
+bool Yap::NiumagImgReader::OnInit()
 {
 	AddInput(L"Input", 0, DataTypeUnknown);
-	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeInt);
+	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
 
-	AddProperty(PropertyString, L"DataPath", L"包含原始数据文件的文件夹。");
+	AddProperty(PropertyString, L"DataPath", L"数据文件夹和文件名。");
 
 	return true;
 }
 
-bool Yap::CNiumagImgReader::ReadNiumagImgData()
+bool Yap::NiumagImgReader::ReadNiumagImgData()
 {
 	std::wostringstream output(GetString(L"DataPath"));
 	wstring data_path = output.str();
@@ -79,7 +79,7 @@ bool Yap::CNiumagImgReader::ReadNiumagImgData()
 		//read image data header
 		details::NiumagImgFileHeaderInfo sections;
 		if (!file.read(reinterpret_cast<char*>(&sections), sizeof(details::NiumagImgFileHeaderInfo)))
-			return nullptr;
+			return false;
 
 		//
 		int section6_offset = sizeof(details::NiumagImgFileHeaderInfo) +
@@ -112,12 +112,12 @@ bool Yap::CNiumagImgReader::ReadNiumagImgData()
 			return false;
 		}
 
-		DimensionsImpl dimensions;
+		Dimensions dimensions;
 		dimensions(DimensionReadout, 0U, dim1)
 			(DimensionPhaseEncoding, 0U, dim2)
 			(DimensionSlice, 0U, dim3);
 
-		auto data = YapShared(new CUnsignedShortData(
+		auto data = YapShared(new UnsignedShortData(
 			reinterpret_cast<unsigned short*>(buffer), dimensions, nullptr, true));
 
 		Feed(L"Output", data.get());

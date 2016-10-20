@@ -7,11 +7,12 @@
 #include "Yap/PipelineConstructor.h"
 #include "Yap/PipelineCompiler.h"
 #include "Interface/Implement/CompositeProcessor.h"
-#include "Interface/Implement/DataImpl.h"
+#include "Interface/Implement/DataObject.h"
 
 #include <iostream>
 #include <string>
 #include <vector>
+#include <time.h>
 
 using namespace std;
 using namespace Yap;
@@ -62,19 +63,24 @@ void ConstructorTest()
 
 int main()
 {
+	time_t start = clock();
 	YapDebugger debugger;
 	debugger.DebugPlugin(L"BasicRecon.dll");
 
 //	 ConstructorTest();
 
-
 	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"Test.pipeline");
+
+	//auto pipeline = compiler.CompileFile(L"NiuMriImageReader.pipeline");
+
+	auto pipeline = compiler.CompileFile(L"ExtractFeature.pipeline");
 	if (pipeline)
 	{
 		pipeline->Input(L"Input", nullptr);
 	}
 
+	time_t end = clock();
+	printf("the running time is : %f\n", float(end - start) / CLOCKS_PER_SEC);
     return 0;
 }
 

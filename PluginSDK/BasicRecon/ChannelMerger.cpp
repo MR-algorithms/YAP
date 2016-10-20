@@ -27,6 +27,7 @@ bool Yap::ChannelMerger::OnInit()
 	AddInput(L"Input", 2, DataTypeFloat);
 
 	AddProperty(PropertyInt, L"ChannelCount", L"通道数");
+	SetInt(L"ChannelCount", 4);
 	AddProperty(PropertyInt, L"ChannelSwitch", L"通道开关指示值");
 
 	return true;
@@ -42,13 +43,13 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 	assert(data != nullptr);
 	assert(Inputs()->Find(name) != nullptr);
 
-	CDataHelper helper(data);
+	DataHelper helper(data);
 	
 	vector<unsigned int> key = GetKey(data->GetDimensions());
 	auto iter = _merge_buffers.find(key);
 	if (iter == _merge_buffers.end())
 	{
-		DimensionsImpl merge_dimensions(helper.GetDimensionCount() - 1); // 消除DimensionChannel这一维
+		Dimensions merge_dimensions(helper.GetDimensionCount() - 1); // 消除DimensionChannel这一维
 
 		DimensionType type = DimensionInvalid;
 		unsigned int index = 0, length = 0;
@@ -65,11 +66,18 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 		}
 
 		MergeBuffer merge_buffer;
-		merge_buffer.buffer = YapShared(new CFloatData(&merge_dimensions));
+		merge_buffer.buffer = YapShared(new FloatData(&merge_dimensions));
 
 		// merge_buffer.buffer->SetLocalization(CLocalization(*data->GetLocalization()));
 		auto * data_array = Yap::GetDataArray<float>(data);
-		memcpy(merge_buffer.buffer->GetData(), data_array, helper.GetBlockSize(DimensionChannel) * sizeof(float));
+		vector<float> module_data(helper.GetBlockSize(DimensionSlice));
+		memcpy(module_data.data(), data_array, helper.GetBlockSize(DimensionSlice) * sizeof(float));
+		for (unsigned int i = 0; i < module_data.size(); ++i)
+		{
+			module_data[i] *= module_data[i];
+		}
+
+		memcpy(merge_buffer.buffer->GetData(), module_data.data(), helper.GetBlockSize(DimensionSlice) * sizeof(float));
 		merge_buffer.count = 1;
 
 		auto result = _merge_buffers.insert(make_pair(key, merge_buffer));
@@ -80,23 +88,31 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 		float * merge_cursor = reinterpret_cast<float*>(iter->second.buffer->GetData());
 
 		auto * source_data_array = Yap::GetDataArray<float>(data);
-		float * source_cursor = source_data_array;
-		float * source_end = source_cursor + helper.GetBlockSize(DimensionChannel);
+		vector<float> source_data_vector(helper.GetBlockSize(DimensionSlice));
+		memcpy(source_data_vector.data(), source_data_array, helper.GetBlockSize(DimensionSlice) * sizeof(float));
 		++iter->second.count;
-		for (; source_cursor < source_end; ++source_cursor, ++merge_cursor)
+		for (unsigned int i = 0; i < source_data_vector.size(); ++i, ++merge_cursor)
 		{
-			*merge_cursor += *source_cursor;
+			*merge_cursor += (source_data_vector[i] * source_data_vector[i]);
 		}
 	}
 
-	unsigned int bit_number = GetInt(L"ChannelSwitch");
-	unsigned int used_channel_count = 0;
-	for (used_channel_count = 0; bit_number; ++used_channel_count)
-	{
-		bit_number &= (bit_number - 1);   // 消除最低位的1.
-	}   // 最后used_channel_count得到1的个数。即打开的通道总数
+	float * merge_cursor = reinterpret_cast<float*>(iter->second.buffer->GetData());
+	float * merge_end = merge_cursor + helper.GetBlockSize(DimensionSlice);
 
-	if (iter->second.count == used_channel_count)
+	for (; merge_cursor < merge_end; ++merge_cursor)
+	{
+		*merge_cursor = sqrt(*merge_cursor);
+	}
+
+// 	unsigned int bit_number = GetInt(L"ChannelSwitch");
+// 	unsigned int used_channel_count = 0;
+// 	for (used_channel_count = 0; bit_number; ++used_channel_count)
+// 	{
+// 		bit_number &= (bit_number - 1);   // 消除最低位的1.
+// 	}   // 最后used_channel_count得到1的个数。即打开的通道总数
+
+	if (iter->second.count == GetInt(L"ChannelCount"))
 	{
 		Feed(L"Output", iter->second.buffer.get());
 	}

@@ -133,8 +133,8 @@ bool Yap::PipelineConstructor::Link(const wchar_t * source,
 	{
 		dest_port = L"Input";
 	}
-
-	if (!source_processor->Link(source_port, dest_processor, dest_port))
+	auto linknext = source_processor->Link(source_port, dest_processor, dest_port);
+	if (!linknext)
 	{
 		wstring message(L"Failed to add link. Source: ");
 		message = message + source + L"." + source_port + L" Dest: " + dest + L"." + dest_port;

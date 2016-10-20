@@ -1,0 +1,8 @@
+import "BasicRecon.dll";
+
+NiuMriImageReader reader(DataPath = "D:\\Output\\2.niuimg");
+JpegExporter jpeg_exporter(ExportFolder = "d:\\Output");
+	
+reader->jpeg_exporter;
+
+self.Input->reader.Input;
