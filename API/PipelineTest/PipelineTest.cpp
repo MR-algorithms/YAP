@@ -70,7 +70,7 @@ int main()
 
 	PipelineCompiler compiler;
 	//auto pipeline = compiler.CompileFile(L"NiuMriImageReader.pipeline");
-	auto pipeline = compiler.CompileFile(L"ExtratFeature.pipeline");
+	auto pipeline = compiler.CompileFile(L"grappa.pipeline");
 	if (pipeline)
 	{
 		pipeline->Input(L"Input", nullptr);

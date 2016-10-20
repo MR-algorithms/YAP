@@ -28,6 +28,7 @@ void Convert(Yap::DataHelper help, unsigned int * out_data, unsigned int size)
 		++in_data;
 	}
 }
+
 Yap::ExtractGLCM::ExtractGLCM():
 	ProcessorImpl(L"ExtractGLCM"),
 	_glcm_size(256),
@@ -58,7 +59,8 @@ bool Yap::ExtractGLCM::Input(const wchar_t * name, IData * data)
 	unsigned int glcm_size = GetInt(L"GLCMSize");
 	unsigned int direction = GetInt(L"Direction");
 	unsigned int step_size = GetInt(L"StepSize");
-	if (direction > 12 || direction < 0 || step_size >data_helper.GetDataSize() || step_size < 0 || glcm_size < 8 || glcm_size > 256)
+	TODO(不知道GLCM的大小限制在8~256范围内是否合适)
+	if (direction > 12 || direction < 0 || step_size >data_helper.GetWidth() || step_size > data_helper.GetHeight() || step_size < 0 || glcm_size < 8 || glcm_size > 256)
 		return false;
 	SetGLCMSize(glcm_size);
 	SetDirection(direction);
@@ -83,8 +85,7 @@ bool Yap::ExtractGLCM::Input(const wchar_t * name, IData * data)
 
 Yap::IProcessor * Yap::ExtractGLCM::Clone()
 {
-	TODO(new没有加nothrow，加nothrow后就会报错)
-	return new ExtractGLCM(*this);
+	return new(nothrow) ExtractGLCM(*this);
 }
 
 bool Yap::ExtractGLCM::OnInit()
@@ -93,9 +94,9 @@ bool Yap::ExtractGLCM::OnInit()
 	AddProperty(PropertyInt, L"Direction", L"The GLCM matrix direction.");
 	AddProperty(PropertyInt, L"StepSize", L"The GLCM matrix from derived image step,eg: StepSize = 1, then get image pixels with distance 1.");
 	SetInt(L"GLCMSize", 256);
-	SetInt(L"Direction", Yap::Direction::DirectionAll);
+	SetInt(L"Direction", DirectionAll);
 	SetInt(L"StepSize", 1);
-	//All Type data to Int (0~n) n:8~255
+	//All Type data to Int (0~n) n:8~256
 	AddInput(L"Input", 2 , DataTypeAll);
 	AddOutput(L"Output", 2 , DataTypeUnsignedInt);
 	return true;
@@ -112,7 +113,8 @@ void Yap::ExtractGLCM::GLCM(unsigned int * input_data,
 	{
 		output_data[i] = 0;
 	}
-
+	auto n = GetStepSize();
+	assert(n < input_width && n < input_height);
 	switch (GetDirection())
 	{
 		/*
@@ -126,8 +128,8 @@ void Yap::ExtractGLCM::GLCM(unsigned int * input_data,
 		*/
 		case DirectionRight:
 		{
-			int r = 0;
-			int c = 1;
+			int r = 0 * n;
+			int c = 1 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
 			//for (unsigned int i = (r < 0 ? 1 : 0); i < input_width - (r > 0 ? -1 : 0); ++i)
 			//	{
@@ -142,119 +144,119 @@ void Yap::ExtractGLCM::GLCM(unsigned int * input_data,
 		}
 		case DirectionDown:
 		{
-			int r = 1;
-			int c = 0;
+			int r = 1 * n;
+			int c = 0 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
 			break;
 		}
 		case DirectionLeft:
 		{
-			int r = 0;
-			int c = -1;
+			int r = 0 * n;
+			int c = -1 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
 			break;
 		}
 		case DirectionUp:
 		{
-			int r = -1;
-			int c = 0;
+			int r = -1 * n;
+			int c = 0 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
 			break;
 		}
 		case DirectionRightDown:
 		{
-			int r = 1;
-			int c = 1;
+			int r = 1 * n;
+			int c = 1 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
 			break;
 		}
 		case DirectionLeftDown:
 		{
-			int r = 1;
-			int c = -1;
+			int r = 1 * n;
+			int c = -1 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
 			break;
 		}
 		case DirectionLeftUp:
 		{
-			int r = -1;
-			int c = -1;
+			int r = -1 * n;
+			int c = -1 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
 			break;
 		}
 		case DirectionRightUp:
 		{
-			int r = -1;
-			int c = 1;
+			int r = -1 * n;
+			int c = 1 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
 			break;
 		}
 		case DirectionRightAndDown:
 		{
-			int r = 0;
-			int c = 1;
+			int r = 0 * n;
+			int c = 1 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
-			r = 1;
-			c = 0;
+			r = 1 * n;
+			c = 0 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
 			break;
 		}
 		case DirectionLeftAndDown:
 		{
-			int r = 0;
-			int c = -1;
+			int r = 0 * n;
+			int c = -1 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
-			r = 1;
-			c = 0;
+			r = 1 * n;
+			c = 0 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
 			break;
 		}
 		case DirectionLeftAndUp:
 		{
-			int r = 0;
-			int c = -1;
+			int r = 0 * n;
+			int c = -1 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
-			r = -1;
-			c = 0;
+			r = -1 * n;
+			c = 0 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
 			break;
 		}
 		case DirectionRightAndUp:
 		{
-			int r = 0;
-			int c = 1;
+			int r = 0 * n;
+			int c = 1 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
-			r = -1;
-			c = 0;
+			r = -1 * n;
+			c = 0 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
 			break;
 		}
 		case DirectionAll:
 		{
 			//实现上、下、左、右、右下、左下、左上、右上，四个方向。
-			int r = 0;
-			int c = 1;
+			int r = 0 * n;
+			int c = 1 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
-			r = 1;
-			c = 0;
+			r = 1 * n;
+			c = 0 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
-			r = 0;
-			c = -1;
+			r = 0 * n;
+			c = -1 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
-			r = -1;
-			c = 0;
+			r = -1 * n;
+			c = 0 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
-			r = 1;
-			c = 1;
+			r = 1 * n;
+			c = 1 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
-			r = 1;
-			c = -1;
+			r = 1 * n;
+			c = -1 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
-			r = -1;
-			c = -1;
+			r = -1 * n;
+			c = -1 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
-			r = -1;
-			c = 1;
+			r = -1 * n;
+			c = 1 * n;
 			AddDirection(input_data, output_data, input_width, input_height, out_size, r, c);
 			break;
 		}
@@ -398,12 +400,12 @@ void Yap::ExtractGLCM::AddDirection(unsigned int * input_data,
 	int step_row, 
 	int step_column)
 {
-	for (unsigned int i = (step_row < 0 ? 1 : 0); i < input_width - (step_row > 0 ? -1 : 0); ++i)
+	for (unsigned int i = (step_row < 0 ? -step_row : 0); i < input_width + (step_row > 0 ? -step_row : 0); ++i)
 	{
-		for (unsigned int j = (step_column < 0 ? 1 : 0); j < input_height + (step_column > 0 ? -1 : 0); ++j)
+		for (unsigned int j = (step_column < 0 ? -step_column : 0); j < input_height + (step_column > 0 ? -step_column : 0); ++j)
 		{
-			auto row = input_data[(i + step_row) * input_width + j];
-			auto column = input_data[i * input_width + j + step_column];
+			auto row = input_data[i * input_width + j];
+			auto column = input_data[(i + step_row) * input_width + j + step_column];
 			++output_data[row * out_size + column];
 		}
 	}
