@@ -1,11 +1,29 @@
 #include "stdafx.h"
-#include "ExtractGLCM.h"
+#include "ExtractTextureMatrix.h"
 #include "Interface/Client/DataHelper.h"
 #include <math.h>
+#include <map>
+#include <tuple>
 
 using namespace std;
 using namespace Yap;
 using namespace Yap::Direction;
+
+static map<std::wstring, unsigned int> _direction_map = {
+	{ L"DirectionRight", Direction::DirectionRight },
+	{ L"DirectionDown", Direction::DirectionDown },
+	{ L"DirectionLeft",Direction::DirectionLeft },
+	{ L"DirectionUp", Direction::DirectionUp },
+	{ L"DirectionRightDown", Direction::DirectionRightDown },
+	{ L"DirectionLeftDown", Direction::DirectionLeftDown },
+	{ L"DirectionLeftUp", Direction::DirectionLeftUp },
+	{ L"DirectionRightUp", Direction::DirectionRightUp },
+	{ L"DirectionRightAndDown", Direction::DirectionRightAndDown },
+	{ L"DirectionLeftAndDown", Direction::DirectionLeftAndDown },
+	{ L"DirectionLeftAndUp", Direction::DirectionLeftAndUp },
+	{ L"DirectionRightAndUp", Direction::DirectionRightAndUp },
+	{ L"DirectionAll", Direction::DirectionAll }
+};
 
 template<typename T>
 void Convert(Yap::DataHelper help, unsigned int * out_data, unsigned int size)
@@ -29,24 +47,32 @@ void Convert(Yap::DataHelper help, unsigned int * out_data, unsigned int size)
 	}
 }
 
-Yap::ExtractGLCM::ExtractGLCM():
-	ProcessorImpl(L"ExtractGLCM"),
-	_glcm_size(256),
+Yap::ExtractTextureMatrix::ExtractTextureMatrix():
+	ProcessorImpl(L"ExtractTextureMatrix"),
+	_gray_level(256),
+	_glszm_size(256),
 	_direction(0),
 	_step_size(1)
 {
+	AddProperty(PropertyInt, L"GrayLevel", L"The GLCM matrix size(gray level size).");
+	AddProperty(PropertyString, L"Direction", L"The GLCM matrix direction.");
+	AddProperty(PropertyInt, L"StepSize", L"The GLCM matrix from derived image step, eg: StepSize = 1, then get image pixels with distance 1.");
+	AddProperty(PropertyInt, L"GLSZMSize", L"The GLSZM matrix size");
+	SetInt(L"GrayLevel", 256);
+	SetInt(L"GLSZMSize", 256);
+	SetString(L"Direction", L"DirectionAll");
+	SetInt(L"StepSize", 1);
+	//All Type data to Int (0~n) n:8~256
+	AddInput(L"Input", 2, DataTypeAll);
+	AddOutput(L"GLCM", 2, DataTypeUnsignedInt);
+	AddOutput(L"GLSZM", 2, DataTypeUnsignedInt);
 }
 
-Yap::ExtractGLCM::ExtractGLCM(const ExtractGLCM & rh):
-	ProcessorImpl(rh)
+Yap::ExtractTextureMatrix::~ExtractTextureMatrix()
 {
 }
 
-Yap::ExtractGLCM::~ExtractGLCM()
-{
-}
-
-bool Yap::ExtractGLCM::Input(const wchar_t * name, IData * data)
+bool Yap::ExtractTextureMatrix::Input(const wchar_t * name, IData * data)
 {
 	if (std::wstring(name) != L"Input")
 		return false;
@@ -56,58 +82,79 @@ bool Yap::ExtractGLCM::Input(const wchar_t * name, IData * data)
 	
 	if (data_helper.GetActualDimensionCount() != 2)
 		return false;
-	unsigned int glcm_size = GetInt(L"GLCMSize");
-	unsigned int direction = GetInt(L"Direction");
+	unsigned int gray_level= GetInt(L"GrayLevel");
+	unsigned int glszm_size = GetInt(L"GLSZMSize");
+	wstring direction = GetString(L"Direction");
 	unsigned int step_size = GetInt(L"StepSize");
-	TODO(不知道GLCM的大小限制在8~256范围内是否合适)
-	if (direction > 12 || direction < 0 || step_size >data_helper.GetWidth() || step_size > data_helper.GetHeight() || step_size < 0 || glcm_size < 8 || glcm_size > 256)
+	TODO(不知道gray_level的大小限制在8~256范围内是否合适)
+	if (GetDirectionFromName(direction) < 0)
+			return false;
+	if (glszm_size > data_helper.GetWidth() ||
+		glszm_size > data_helper.GetHeight()|| 
+		step_size >data_helper.GetWidth() || 
+		step_size > data_helper.GetHeight() || 
+		step_size < 0 || 
+		gray_level < 8 ||
+		gray_level > 256)
 		return false;
-	SetGLCMSize(glcm_size);
-	SetDirection(direction);
+	SetGLSZMSize(glszm_size);
+	SetGrayLevel(gray_level);
+	SetDirection(GetDirectionFromName(direction));
 	SetStepSize(step_size);
 
 	auto normalize_data = new unsigned int[data_helper.GetDataSize()];
 
 	Normalization(data, normalize_data);
-	
-	auto glcm = new unsigned int[(size_t)glcm_size * glcm_size];
 
-	GLCM(normalize_data, glcm, data_helper.GetWidth(), data_helper.GetHeight());
+	if (OutportLinked(L"GLCM") || OutportLinked(L"Output"))
+	{
+		auto glcm = new unsigned int[(size_t)gray_level * gray_level];
 
-	Dimensions dimensions;
-	dimensions(DimensionReadout, 0U, glcm_size)(DimensionPhaseEncoding, 0U, glcm_size);
-	auto glcm_shared = Yap::YapShared(new UnsignedIntData(glcm, dimensions, nullptr, true));
+		GLCM(normalize_data, glcm, data_helper.GetWidth(), data_helper.GetHeight());
 
-	Feed(L"Output", glcm_shared.get());
+		Dimensions dimensions;
+		dimensions(DimensionReadout, 0U, gray_level)(DimensionPhaseEncoding, 0U, gray_level);
+		auto glcm_shared = Yap::YapShared(new UnsignedIntData(glcm, dimensions, nullptr, true));
 
+		Feed(L"GLCM", glcm_shared.get());
+
+		return true;
+
+	}
+	if (OutportLinked(L"GLSZM"))
+	{
+		//The size of glszm is row=gray_level and column=glszm_size
+		auto glszm = new unsigned int[(size_t)gray_level * glszm_size];
+
+		GLSZM(normalize_data, glszm, data_helper.GetWidth(), data_helper.GetHeight());
+
+		Dimensions dimensions;
+		dimensions(DimensionReadout, 0U, glszm_size)(DimensionPhaseEncoding, 0U, glszm_size);
+		auto glszm_shared = Yap::YapShared(new UnsignedIntData(glszm, dimensions, nullptr, true));
+
+		Feed(L"GLSZM", glszm_shared.get());
+
+		return true;
+
+	}
+}
+
+Yap::IProcessor * Yap::ExtractTextureMatrix::Clone()
+{
+	return new(nothrow) ExtractTextureMatrix(*this);
+}
+
+bool Yap::ExtractTextureMatrix::OnInit()
+{
 	return true;
 }
 
-Yap::IProcessor * Yap::ExtractGLCM::Clone()
-{
-	return new(nothrow) ExtractGLCM(*this);
-}
-
-bool Yap::ExtractGLCM::OnInit()
-{
-	AddProperty(PropertyInt, L"GLCMSize", L"The GLCM matrix size(gray level size).");
-	AddProperty(PropertyInt, L"Direction", L"The GLCM matrix direction.");
-	AddProperty(PropertyInt, L"StepSize", L"The GLCM matrix from derived image step,eg: StepSize = 1, then get image pixels with distance 1.");
-	SetInt(L"GLCMSize", 256);
-	SetInt(L"Direction", DirectionAll);
-	SetInt(L"StepSize", 1);
-	//All Type data to Int (0~n) n:8~256
-	AddInput(L"Input", 2 , DataTypeAll);
-	AddOutput(L"Output", 2 , DataTypeUnsignedInt);
-	return true;
-}
-
-void Yap::ExtractGLCM::GLCM(unsigned int * input_data, 
+void Yap::ExtractTextureMatrix::GLCM(unsigned int * input_data, 
 	unsigned int * output_data, 
 	unsigned int input_width, 
 	unsigned int input_height)
 {
-	auto out_size = GetGLCMSize();
+	auto out_size = GetGrayLevel();
 	//init glcm
 	for (size_t i = 0; i < out_size * out_size; ++i)
 	{
@@ -265,9 +312,29 @@ void Yap::ExtractGLCM::GLCM(unsigned int * input_data,
 	}
 }
 
-void Yap::ExtractGLCM::Normalization(IData * data, unsigned int * out)
+void Yap::ExtractTextureMatrix::GLSZM(unsigned int * input_data, unsigned int * output_data, unsigned int input_width, unsigned int input_height)
 {
-	auto size = GetGLCMSize();
+	auto out_row = GetGrayLevel();
+	auto out_column = GetGLSZMSize();
+	for (size_t i = 0; i < out_row * out_column; ++i)
+	{
+		output_data[i] = 0;
+	}
+	//记录一次zone size的个数
+	std::map<std::tuple<unsigned int, unsigned int>, unsigned int> zone;
+	//外部循环是为了得到不同灰度的区域，内部循环是为了得到相同灰度区域的大小
+	for (unsigned int row = 0; row < input_width ; ++row)
+	{
+		for (unsigned int column = 0; column < input_height ; ++column)
+		{
+			TODO(还未实现GLSZM部分的代码)
+		}
+	}
+		
+}
+void Yap::ExtractTextureMatrix::Normalization(IData * data, unsigned int * out)
+{
+	auto size = GetGrayLevel();
 	assert(size <= 256);
 	DataHelper help(data);
 
@@ -346,32 +413,42 @@ void Yap::ExtractGLCM::Normalization(IData * data, unsigned int * out)
 
 }
 
-void Yap::ExtractGLCM::SetGLCMSize(unsigned int glcm_size)
+void Yap::ExtractTextureMatrix::SetGLSZMSize(unsigned int glszm_size)
 {
-	_glcm_size = glcm_size;
+	_glszm_size = glszm_size;
 }
 
-unsigned int Yap::ExtractGLCM::GetGLCMSize()
+unsigned int Yap::ExtractTextureMatrix::GetGLSZMSize()
 {
-	return _glcm_size;
+	return _glszm_size;
 }
 
-void Yap::ExtractGLCM::SetDirection(unsigned int direction)
+void Yap::ExtractTextureMatrix::SetGrayLevel(unsigned int glcm_size)
+{
+	_gray_level = glcm_size;
+}
+
+unsigned int Yap::ExtractTextureMatrix::GetGrayLevel()
+{
+	return _gray_level;
+}
+
+void Yap::ExtractTextureMatrix::SetDirection(unsigned int direction)
 {
 	_direction = direction;
 }
 
-unsigned int Yap::ExtractGLCM::GetDirection()
+unsigned int Yap::ExtractTextureMatrix::GetDirection()
 {
 	return _direction;
 }
 
-void Yap::ExtractGLCM::SetStepSize(unsigned int step_size)
+void Yap::ExtractTextureMatrix::SetStepSize(unsigned int step_size)
 {
 	_step_size = step_size;
 }
 
-unsigned int Yap::ExtractGLCM::GetStepSize()
+unsigned int Yap::ExtractTextureMatrix::GetStepSize()
 {
 	return _step_size;
 }
@@ -392,7 +469,7 @@ unsigned int Yap::ExtractGLCM::GetStepSize()
 *		-n		n			 0
 *so: unsigned int step_c = (step_c < 0 ? n : 0); and column = ***[*** + j + step_c];
 */
-void Yap::ExtractGLCM::AddDirection(unsigned int * input_data, 
+void Yap::ExtractTextureMatrix::AddDirection(unsigned int * input_data, 
 	unsigned int * output_data, 
 	unsigned int input_width, 
 	unsigned int input_height, 
@@ -409,4 +486,14 @@ void Yap::ExtractGLCM::AddDirection(unsigned int * input_data,
 			++output_data[row * out_size + column];
 		}
 	}
+}
+
+int Yap::ExtractTextureMatrix::GetDirectionFromName(wstring name)
+{
+	auto direction = _direction_map.find(name);
+	if (direction != _direction_map.end())
+	{
+		return direction->second;
+	}
+	return -1;
 }

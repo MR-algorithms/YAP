@@ -76,8 +76,6 @@
     <ClCompile Include="DataTypeConvertor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ExtractGLCM.cpp">
-    </ClCompile>
     <ClCompile Include="NiumagFidReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -91,6 +89,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NiuMriImageWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtractTextureMatrix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtractTextureFeatures.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -155,9 +159,6 @@
     <ClInclude Include="CompressedSensing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ExtractGLCM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SubSampling.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -192,6 +193,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NiumagImgWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtractTextureMatrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtractTextureFeatures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

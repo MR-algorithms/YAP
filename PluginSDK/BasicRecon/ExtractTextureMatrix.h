@@ -1,6 +1,7 @@
 #pragma once
 #include "Interface\Implement\ProcessorImpl.h"
 
+
 namespace Yap 
 {
 	namespace Direction
@@ -20,13 +21,12 @@ namespace Yap
 		const unsigned int DirectionAll				= 12;
 	};
 
-	class ExtractGLCM :
+	class ExtractTextureMatrix :
 		public ProcessorImpl
 	{
 	public:
-		ExtractGLCM();
-		ExtractGLCM(const ExtractGLCM & glcm);
-		~ExtractGLCM();
+		ExtractTextureMatrix();
+		~ExtractTextureMatrix();
 
 		virtual bool Input(const wchar_t * name, IData * data);
 		virtual IProcessor * Clone() override;
@@ -39,10 +39,20 @@ namespace Yap
 		void SetStepSize(unsigned int step_size);
 		unsigned int GetStepSize();
 
-		void SetGLCMSize(unsigned int glcm_size);
-		unsigned int GetGLCMSize();
+		void SetGrayLevel(unsigned int glcm_size);
+		unsigned int GetGrayLevel();
+
+		void SetGLSZMSize(unsigned int glszm_size);
+		unsigned int GetGLSZMSize();
 
 	private:
+		// GLSZM refers to the Gray Level Size Zone Matrix 灰度区域大小矩阵
+		void GLSZM(unsigned int * input_data,
+			unsigned int * output_data,
+			unsigned int input_width,
+			unsigned int input_height);
+
+		// GLCM refers to the Gray Level Coordinate Matrix 灰度共生矩阵
 		void GLCM(unsigned int * input_data,  
 			unsigned int * output_data, 
 			unsigned int input_width, 
@@ -56,9 +66,11 @@ namespace Yap
 			unsigned int out_size,
 			int step_row,
 			int step_column);
+		int GetDirectionFromName(std::wstring name);
 
 	private:
-		unsigned int _glcm_size;
+		unsigned int _gray_level;
+		unsigned int _glszm_size;
 		unsigned int _direction;
 		unsigned int _step_size;
 	};

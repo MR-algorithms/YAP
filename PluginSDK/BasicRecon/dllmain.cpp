@@ -25,7 +25,7 @@
 #include "SubSampling.h"
 #include "ChannelIterator.h"
 #include "DataTypeConvertor.h"
-#include "ExtractGLCM.h"
+#include "ExtractTextureMatrix.h"
 #include "Nlmeans.h"
 #include "NLM.h"
 #include "ChannelDataCollector.h"
@@ -57,7 +57,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(ZeroFilling)
 	ADD_PROCESSOR(SubSampling)
 	ADD_PROCESSOR(ChannelIterator)
-	ADD_PROCESSOR(ExtractGLCM)
+	ADD_PROCESSOR(ExtractTextureMatrix)
 	ADD_PROCESSOR(Nlmeans)
 	ADD_PROCESSOR(NLM)
 	ADD_PROCESSOR(ChannelDataCollector)
