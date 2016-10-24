@@ -30,6 +30,10 @@ namespace Yap
 NiumagFidReader::NiumagFidReader(void):
 	ProcessorImpl(L"NiumagFidReader")
 {
+	AddInput(L"Input", 0, DataTypeUnknown);
+	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
+
+	AddProperty(PropertyString, L"DataPath", L"数据文件夹和文件名。");
 }
 
 NiumagFidReader::NiumagFidReader(const NiumagFidReader& rhs):
@@ -51,16 +55,6 @@ bool Yap::NiumagFidReader::Input(const wchar_t * name, IData * data)
 IProcessor * Yap::NiumagFidReader::Clone()
 {
 	return new(nothrow) NiumagFidReader(*this);
-}
-
-bool Yap::NiumagFidReader::OnInit()
-{
-	AddInput(L"Input", 0, DataTypeUnknown);
-	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
-
-	AddProperty(PropertyString, L"DataPath", L"数据文件夹和文件名。");
-
-	return true;
 }
 
 bool Yap::NiumagFidReader::ReadNiumagFidData()

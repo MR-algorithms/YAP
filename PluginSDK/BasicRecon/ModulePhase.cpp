@@ -42,7 +42,9 @@ bool GetPhase(complex<T>* input, T* phase,
 ModulePhase::ModulePhase(void) :
 	ProcessorImpl(L"ModulePhase")
 {
-
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddOutput(L"Module", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
+	AddOutput(L"Phase", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
 }
 
 Yap::ModulePhase::ModulePhase(const ModulePhase& rhs):
@@ -53,16 +55,6 @@ Yap::ModulePhase::ModulePhase(const ModulePhase& rhs):
 
 ModulePhase::~ModulePhase()
 {
-}
-
-
-bool Yap::ModulePhase::OnInit()
-{
-	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
-	AddOutput(L"Module", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
-	AddOutput(L"Phase", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
-
-	return true;
 }
 
 bool ModulePhase::Input(const wchar_t * port, IData * data)

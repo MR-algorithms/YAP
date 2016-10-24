@@ -10,18 +10,12 @@ using namespace arma;
 NLM::NLM(void):
 	ProcessorImpl(L"NLM")
 {
+	AddInput(L"Input", 2, DataTypeFloat);
+	AddOutput(L"Output", 2, DataTypeFloat);
 }
 
 NLM::~NLM()
 {
-}
-
-bool Yap::NLM::OnInit()
-{
-	AddInput(L"Input", 2, DataTypeFloat);
-	AddOutput(L"Output", 2, DataTypeFloat);
-
-	return true;
 }
 
 IProcessor * Yap::NLM::Clone()

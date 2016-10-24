@@ -18,17 +18,7 @@ Fft1D::Fft1D() :
 	_plan_inverse(false),
 	_plan_in_place(false)
 {
-
-}
-
-Fft1D::~Fft1D()
-{
-}
-
-
-bool Yap::Fft1D::OnInit()
-{
-	AddProperty(PropertyBool, L"Inverse", L"The direction of FFT1D."); 
+	AddProperty(PropertyBool, L"Inverse", L"The direction of FFT1D.");
 	AddProperty(PropertyBool, L"InPlace", L"The position of FFT1D.");
 
 	SetBool(L"Inverse", false);
@@ -36,8 +26,10 @@ bool Yap::Fft1D::OnInit()
 
 	AddInput(L"Input", 1, DataTypeComplexDouble);
 	AddOutput(L"Output", 1, DataTypeComplexDouble);
+}
 
-	return true;
+Fft1D::~Fft1D()
+{
 }
 
 

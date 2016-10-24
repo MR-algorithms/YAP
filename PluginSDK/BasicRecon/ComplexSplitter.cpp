@@ -6,21 +6,13 @@ using namespace Yap;
 ComplexSplitter::ComplexSplitter() :
 	ProcessorImpl(L"ComplexSplitter")
 {
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble);
+	AddOutput(L"Real", YAP_ANY_DIMENSION, DataTypeDouble);
+	AddOutput(L"Imaginary", YAP_ANY_DIMENSION, DataTypeDouble);
 }
 
 ComplexSplitter::~ComplexSplitter()
 {
-}
-
-
-bool Yap::ComplexSplitter::OnInit()
-{
-	// ANY  DIMENSION
-	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble);
-	AddOutput(L"Real", YAP_ANY_DIMENSION, DataTypeDouble);
-	AddOutput(L"Imaginary", YAP_ANY_DIMENSION, DataTypeDouble);
-
-	return true;
 }
 
 bool ComplexSplitter::Input(const wchar_t * port, IData * data)

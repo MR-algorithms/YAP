@@ -12,17 +12,12 @@ namespace Yap
 	{
 	public:
 		ZeroFilling();
-
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
 	protected:
-
 		virtual ~ZeroFilling();
 
 		virtual IProcessor * Clone() override;
-
-		// Inherited via ProcessorImpl
-		virtual bool OnInit() override;
 	};
 }
 #endif // ZeroFilling_h__

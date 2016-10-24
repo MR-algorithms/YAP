@@ -14,10 +14,8 @@ namespace Yap
 		NiumagFidWriter(const NiumagFidWriter& rhs);
 
 	private:
-		virtual bool Input(const wchar_t * name, IData * data);
 		virtual IProcessor * Clone() override;
-
-		virtual bool OnInit() override;
+		virtual bool Input(const wchar_t * name, IData * data);
 	};
 
 }

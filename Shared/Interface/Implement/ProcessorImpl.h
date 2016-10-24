@@ -34,9 +34,6 @@ namespace Yap
 		virtual IPortContainer * Inputs() override;
 		virtual IPortContainer * Outputs() override;
 
-		bool Init();
-		virtual bool OnInit() = 0;
-
 		virtual const wchar_t * GetClassId() override;
 		virtual void SetClassId(const wchar_t * id) override;
 		virtual const wchar_t * GetInstanceId() override;

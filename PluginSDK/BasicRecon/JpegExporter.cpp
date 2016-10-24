@@ -132,6 +132,9 @@ JpegExporter::JpegExporter() :
 	ProcessorImpl(L"JpegExporter")
 {
 	_impl = shared_ptr<JpegExporterImp>(new JpegExporterImp);
+	AddInput(L"Input", 2, DataTypeFloat | DataTypeUnsignedShort);
+	AddProperty(PropertyString, L"ExportFolder", L"Set folder used to hold exported images.");
+
 }
 
 JpegExporter::JpegExporter(const JpegExporter& rhs)
@@ -147,14 +150,6 @@ JpegExporter::~JpegExporter()
 IProcessor* JpegExporter::Clone()
 {
 	return new (std::nothrow) JpegExporter(*this);
-}
-
-bool JpegExporter::OnInit()
-{
-	AddInput(L"Input", 2, DataTypeFloat | DataTypeUnsignedShort);
-	AddProperty(PropertyString, L"ExportFolder", L"Set folder used to hold exported images.");
-
-	return true;
 }
 
 bool JpegExporter::Input( const wchar_t * name, IData * data)

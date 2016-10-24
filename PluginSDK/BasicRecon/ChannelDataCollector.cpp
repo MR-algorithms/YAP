@@ -9,6 +9,10 @@ using namespace std;
 ChannelDataCollector::ChannelDataCollector(void):
 	ProcessorImpl(L"ChannelDataCollector")
 {
+	AddInput(L"Input", 2, DataTypeComplexFloat);
+	AddOutput(L"Output", 3, DataTypeComplexFloat);
+	AddProperty(PropertyInt, L"ChannelCount", L"The total channel count.");
+	SetInt(L"ChannelCount", 4);
 }
 
 
@@ -21,16 +25,6 @@ Yap::ChannelDataCollector::ChannelDataCollector(const ChannelDataCollector& rhs)
 
 ChannelDataCollector::~ChannelDataCollector(void)
 {
-}
-
-bool Yap::ChannelDataCollector::OnInit()
-{
-	AddInput(L"Input", 2, DataTypeComplexFloat);
-	AddOutput(L"Output", 3, DataTypeComplexFloat);
-	AddProperty(PropertyInt, L"ChannelCount", L"The total channel count.");
-	SetInt(L"ChannelCount", 4);
-
-	return true;
 }
 
 IProcessor * Yap::ChannelDataCollector::Clone()

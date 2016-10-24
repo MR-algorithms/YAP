@@ -20,6 +20,9 @@ void GetSubSampledData(T * input_data, T * mask, T * output_data, unsigned int w
 SubSampling::SubSampling():
 	ProcessorImpl(L"SubSampling")
 {
+	AddInput(L"Input", 3, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddInput(L"Mask", 2, DataTypeChar);
+	AddOutput(L"Output", 3, DataTypeComplexDouble | DataTypeComplexFloat);
 }
 
 Yap::SubSampling::SubSampling(const SubSampling & rhs)
@@ -29,15 +32,6 @@ Yap::SubSampling::SubSampling(const SubSampling & rhs)
 
 SubSampling::~SubSampling()
 {
-}
-
-bool Yap::SubSampling::OnInit()
-{
-	AddInput(L"Input", 3, DataTypeComplexDouble | DataTypeComplexFloat);
-	AddInput(L"Mask", 2, DataTypeChar);
-	AddOutput(L"Output", 3, DataTypeComplexDouble | DataTypeComplexFloat);
-
-	return true;
 }
 
 IProcessor * Yap::SubSampling::Clone()

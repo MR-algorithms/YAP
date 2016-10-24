@@ -25,15 +25,6 @@ SamplingMaskCreator::SamplingMaskCreator(void):
 Yap::SamplingMaskCreator::SamplingMaskCreator(const SamplingMaskCreator & rhs)
 	:ProcessorImpl(rhs)
 {	
-}
-
-
-SamplingMaskCreator::~SamplingMaskCreator()
-{
-}
-
-bool Yap::SamplingMaskCreator::OnInit()
-{
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddOutput(L"Mask", 2, DataTypeChar);
 
@@ -53,8 +44,11 @@ bool Yap::SamplingMaskCreator::OnInit()
 	SetInt(L"Rate", 2);
 	AddProperty(PropertyInt, L"AcsCount", L"");
 	SetInt(L"AcsCount", 16);
+}
 
-	return true;
+
+SamplingMaskCreator::~SamplingMaskCreator()
+{
 }
 
 IProcessor * Yap::SamplingMaskCreator::Clone()
