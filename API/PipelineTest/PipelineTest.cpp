@@ -70,7 +70,10 @@ int main()
 //	 ConstructorTest();
 
 	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"grappa.pipeline");
+
+	//auto pipeline = compiler.CompileFile(L"NiuMriImageReader.pipeline");
+
+	auto pipeline = compiler.CompileFile(L"ExtractFeature.pipeline");
 	if (pipeline)
 	{
 		pipeline->Input(L"Input", nullptr);
