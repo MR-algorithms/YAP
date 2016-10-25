@@ -33,9 +33,9 @@ SubSampling::~SubSampling()
 
 bool Yap::SubSampling::OnInit()
 {
-	AddInput(L"Input", 3, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddInput(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 	AddInput(L"Mask", 2, DataTypeChar);
-	AddOutput(L"Output", 3, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddOutput(L"Output", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 
 	return true;
 }
