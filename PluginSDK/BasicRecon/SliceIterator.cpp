@@ -10,6 +10,8 @@ using namespace std;
 SliceIterator::SliceIterator(void) :
 	ProcessorImpl(L"SliceIterator")
 {
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat | DataTypeUnsignedShort);
+	AddOutput(L"Output", 2, DataTypeComplexFloat | DataTypeUnsignedShort);
 }
 
 SliceIterator::SliceIterator( const SliceIterator& rhs)
@@ -21,15 +23,6 @@ SliceIterator::SliceIterator( const SliceIterator& rhs)
 
 SliceIterator::~SliceIterator(void)
 {
-}
-
-
-bool Yap::SliceIterator::OnInit()
-{
-	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat | DataTypeUnsignedShort);
-	AddOutput(L"Output", 2, DataTypeComplexFloat | DataTypeUnsignedShort);
-
-	return true;
 }
 
 IProcessor* SliceIterator::Clone()

@@ -14,10 +14,8 @@ namespace Yap
 		NiuMriImageWriter(const NiuMriImageWriter& rhs);
 
 	private:
-		virtual bool Input(const wchar_t * name, IData * data);
 		virtual IProcessor * Clone() override;
-
-		virtual bool OnInit() override;
+		virtual bool Input(const wchar_t * name, IData * data);
 	};
 
 }

@@ -12,10 +12,7 @@ namespace Yap
 		NLM(void);
 		virtual ~NLM();
 
-		virtual bool OnInit() override;
-
 		virtual IProcessor * Clone() override;
-
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
 	protected:
@@ -24,6 +21,5 @@ namespace Yap
 		arma::fmat GetGaussianKernel(int pl, float sigma);
 
 		float GetSigma(float * input_img, unsigned int width, unsigned int height);
-
 	};
 }

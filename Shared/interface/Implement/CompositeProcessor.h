@@ -36,8 +36,6 @@ namespace Yap
 		std::map<std::wstring, Anchor> _output;
 		std::map<std::wstring, Anchor> _inputs;
 
-		// Inherited via ProcessorImpl
-		virtual bool OnInit() override;
 	};
 }
 

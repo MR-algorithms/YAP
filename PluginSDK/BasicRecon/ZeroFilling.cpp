@@ -32,15 +32,6 @@ bool zero_filling(T* dest,
 
 ZeroFilling::ZeroFilling() : ProcessorImpl(L"ZeroFilling")
 {
-
-}
-
-ZeroFilling::~ZeroFilling()
-{
-}
-
-bool Yap::ZeroFilling::OnInit()
-{
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 
@@ -52,8 +43,10 @@ bool Yap::ZeroFilling::OnInit()
 	SetInt(L"Left", 0);
 	AddProperty(PropertyInt, L"Top", L"Y coordinate of top left corner of source data in destination data.");
 	SetInt(L"Top", 0);
+}
 
-	return true;
+ZeroFilling::~ZeroFilling()
+{
 }
 
 bool ZeroFilling::Input(const wchar_t * port, IData * data)

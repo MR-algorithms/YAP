@@ -11,19 +11,13 @@ using namespace std;
 NiumagFidWriter::NiumagFidWriter(void) :
 	ProcessorImpl(L"NiumagFidWriter")
 {
+	AddInput(L"Input", 4, DataTypeComplexFloat);
+	AddProperty(PropertyString, L"ExportFolder", L"Set folder used to write fid.");
 }
 
 NiumagFidWriter::NiumagFidWriter(const NiumagFidWriter& rhs) :
 	ProcessorImpl(rhs)
 {
-}
-
-bool Yap::NiumagFidWriter::OnInit()
-{
-	AddInput(L"Input", 4, DataTypeComplexFloat);
-	AddProperty(PropertyString, L"ExportFolder", L"Set folder used to write fid.");
-
-	return true;
 }
 
 IProcessor * Yap::NiumagFidWriter::Clone()

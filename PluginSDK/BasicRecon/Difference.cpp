@@ -22,23 +22,15 @@ void calc_difference(T * input_data,
 
 Difference::Difference() : ProcessorImpl(L"Difference")
 {
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
+	AddInput(L"Reference", YAP_ANY_DIMENSION, DataTypeAll);
 
+	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeAll);
 }
 
 
 Difference::~Difference()
 {
-}
-
-
-bool Yap::Difference::OnInit()
-{
-	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
-	AddInput(L"Reference", YAP_ANY_DIMENSION, DataTypeAll);
-
-	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeAll);
-
-	return true;
 }
 
 bool Yap::Difference::Input(const wchar_t * port, IData * data)

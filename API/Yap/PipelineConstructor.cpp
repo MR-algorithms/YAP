@@ -48,7 +48,6 @@ PipelineConstructor::~PipelineConstructor()
 void PipelineConstructor::Reset(bool reset_modules)
 {
 	_pipeline = shared_ptr<CompositeProcessor>(new CompositeProcessor(L"__PIPELINE"));
-	_pipeline->Init();
 
 	if (reset_modules)
 	{
@@ -221,13 +220,6 @@ bool PipelineConstructor::SetProperty(const wchar_t * processor_id,
 	break;
 	case PropertyString:
 	{
-		wstring str(value);
-		if (str.empty())
-		{
-			auto output = wstring(L"No string value specified for property£º") + property_id;
-			throw ConstructError(0, ConstructErrorPropertyValueNotString, output.c_str());
-		}
-
 		result = processor.SetString(property_id, value);
 	}
 	break;

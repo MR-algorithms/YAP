@@ -14,14 +14,8 @@ namespace Yap
 		DcRemover();
 		~DcRemover();
 
-		virtual bool Input(const wchar_t * port, IData * data) override;
-
 		virtual IProcessor * Clone() override;
-
-
-		// Inherited via ProcessorImpl
-		virtual bool OnInit() override;
-
+		virtual bool Input(const wchar_t * port, IData * data) override;
 	};
 }
 

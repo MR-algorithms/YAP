@@ -59,16 +59,6 @@ void RemoveDC(T * input_data,
 DcRemover::DcRemover() :
 	ProcessorImpl(L"RemoveDC")
 {
-}
-
-
-DcRemover::~DcRemover()
-{
-}
-
-
-bool Yap::DcRemover::OnInit()
-{
 	AddInput(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 	
 	AddProperty(PropertyBool, L"Inplace", L"If the processed data will be stored in place.");
@@ -77,10 +67,12 @@ bool Yap::DcRemover::OnInit()
 	SetInt(L"CornerSize", 10);
 
 	AddOutput(L"Output", 2, DataTypeComplexDouble | DataTypeComplexFloat);
-
-	return true;
 }
 
+
+DcRemover::~DcRemover()
+{
+}
 
 bool DcRemover::Input(const wchar_t * port, IData * data)
 {

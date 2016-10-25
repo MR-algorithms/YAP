@@ -23,10 +23,7 @@ namespace Yap
 		Nlmeans(const Nlmeans& rhs);
 		virtual ~Nlmeans();
 
-		virtual bool OnInit() override;
-
 		virtual IProcessor * Clone() override;
-
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
 	protected:

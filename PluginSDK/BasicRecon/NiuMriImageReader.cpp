@@ -34,6 +34,10 @@ namespace Yap
 NiuMriImageReader::NiuMriImageReader(void) :
 	ProcessorImpl(L"NiuMriImageReader")
 {
+	AddInput(L"Input", 0, DataTypeUnknown);
+	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
+
+	AddProperty(PropertyString, L"DataPath", L"数据文件夹和文件名。");
 }
 
 Yap::NiuMriImageReader::NiuMriImageReader(const NiuMriImageReader& rhs) :
@@ -55,16 +59,6 @@ bool Yap::NiuMriImageReader::Input(const wchar_t * name, IData * data)
 IProcessor * Yap::NiuMriImageReader::Clone()
 {
 	return new(nothrow) NiuMriImageReader(*this);
-}
-
-bool Yap::NiuMriImageReader::OnInit()
-{
-	AddInput(L"Input", 0, DataTypeUnknown);
-	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
-
-	AddProperty(PropertyString, L"DataPath", L"数据文件夹和文件名。");
-
-	return true;
 }
 
 bool Yap::NiuMriImageReader::ReadNiuMriImageData()

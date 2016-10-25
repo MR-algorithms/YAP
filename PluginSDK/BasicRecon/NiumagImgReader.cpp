@@ -34,6 +34,10 @@ namespace Yap
 NiumagImgReader::NiumagImgReader():
 	ProcessorImpl(L"NiumagImgReader")
 {
+	AddInput(L"Input", 0, DataTypeUnknown);
+	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
+
+	AddProperty(PropertyString, L"DataPath", L"数据文件夹和文件名。");
 }
 
 Yap::NiumagImgReader::NiumagImgReader(const NiumagImgReader& rhs):
@@ -55,16 +59,6 @@ bool Yap::NiumagImgReader::Input(const wchar_t * name, IData * data)
 IProcessor * Yap::NiumagImgReader::Clone()
 {
 	return new(nothrow) NiumagImgReader(*this);
-}
-
-bool Yap::NiumagImgReader::OnInit()
-{
-	AddInput(L"Input", 0, DataTypeUnknown);
-	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
-
-	AddProperty(PropertyString, L"DataPath", L"数据文件夹和文件名。");
-
-	return true;
 }
 
 bool Yap::NiumagImgReader::ReadNiumagImgData()

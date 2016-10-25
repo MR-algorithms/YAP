@@ -19,12 +19,13 @@ namespace Yap
 		Grappa(const Grappa& rhs);
 		virtual ~Grappa();
 
+		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
+	protected:
 		bool Recon(std::complex<float> * subsampled_data,
 			unsigned int r, unsigned int acs, unsigned int Block, unsigned int width, unsigned int height, unsigned int num_coil);
 
-	protected:
 		std::complex<float> * MakeFidelity(std::complex<float> * recon_data, std::vector<std::complex<float>> acs_data,
 			unsigned int r, unsigned int acs, unsigned int width, unsigned int height, unsigned int num_coil);
 		 arma::cx_fmat FitCoef(std::complex<float> * subsampled_data,
@@ -32,11 +33,6 @@ namespace Yap
 
 		std::vector<std::complex<float>> GetAcsData(std::complex<float> * data, 
 			unsigned int r, unsigned int acs, unsigned int width, unsigned int height, unsigned int num_coil);
-
-		virtual IProcessor * Clone() override;
-
-		// Inherited via ProcessorImpl
-		virtual bool OnInit() override;
 	};
 }
 #endif // Grappa_h__

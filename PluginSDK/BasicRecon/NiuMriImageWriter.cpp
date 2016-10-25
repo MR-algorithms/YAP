@@ -11,19 +11,13 @@ using namespace std;
 NiuMriImageWriter::NiuMriImageWriter(void) :
 	ProcessorImpl(L"NiuMriImageWriter")
 {
+	AddInput(L"Input", 2, DataTypeUnsignedShort);
+	AddProperty(PropertyString, L"ExportFolder", L"Set folder used to write images.");
 }
 
 NiuMriImageWriter::NiuMriImageWriter(const NiuMriImageWriter& rhs) :
 	ProcessorImpl(rhs)
 {
-}
-
-bool Yap::NiuMriImageWriter::OnInit()
-{
-	AddInput(L"Input", 2, DataTypeUnsignedShort);
-	AddProperty(PropertyString, L"ExportFolder", L"Set folder used to write images.");
-
-	return true;
 }
 
 IProcessor * Yap::NiuMriImageWriter::Clone()

@@ -26,6 +26,7 @@ namespace Yap
 		virtual bool OnProgress(unsigned int percent) = 0;
 		virtual void OnEnd() = 0;
 	};
+
 	class CompressedSensing :
 		public ProcessorImpl
 	{
@@ -33,10 +34,7 @@ namespace Yap
 		explicit CompressedSensing(bool fft_shift);
 		virtual ~CompressedSensing(void);
 
-		virtual bool OnInit() override;
-
 		virtual IProcessor * Clone() override;
-
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
 	protected:
