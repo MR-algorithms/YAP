@@ -24,6 +24,7 @@
 #include "NLM.h"
 #include "ChannelDataCollector.h"
 #include "ChannelMerger.h"
+#include "CompressedSensing.h"
 
 #include "Interface\Implement\YapImplement.h"
 
@@ -50,6 +51,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(NLM)
 	ADD_PROCESSOR(ChannelDataCollector)
 	ADD_PROCESSOR(ChannelMerger)
+	ADD_PROCESSOR(CompressedSensing)
 	ADD(L"HFlipFloat", new Algorithm2DInPlaceWrapper<float>(hflip<float>, L"HFlipFloat"))
 END_DECL_PROCESSORS
 

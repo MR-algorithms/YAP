@@ -25,20 +25,15 @@ SubSampling::SubSampling():
 Yap::SubSampling::SubSampling(const SubSampling & rhs)
 	: ProcessorImpl(rhs)
 {
+	AddInput(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddInput(L"Mask", 2, DataTypeChar);
+	AddOutput(L"Output", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 }
 
 SubSampling::~SubSampling()
 {
 }
 
-bool Yap::SubSampling::OnInit()
-{
-	AddInput(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
-	AddInput(L"Mask", 2, DataTypeChar);
-	AddOutput(L"Output", 2, DataTypeComplexDouble | DataTypeComplexFloat);
-
-	return true;
-}
 
 IProcessor * Yap::SubSampling::Clone()
 {

@@ -3,7 +3,7 @@
 #include "Interface\IData.h"
 #include <complex>
 #include <vector>
-#include "interface\IMemory.h"
+#include "Interface/IMemory.h"
 #include "Interface/Implement/SharedObjectImpl.h"
 #include <assert.h>
 
@@ -55,7 +55,7 @@ namespace Yap
 		
 		DataObject(T* data, IDimensions * dimensions, ISharedObject * parent = nullptr, bool own_data = false) : 
 			_data(data), _own_memory(own_data), _dimensions(dimensions), _use_count(0), 
-			_parent(SmartPtr::Make(parent))
+			_parent(/*SmartPtr::Make(parent)*/YapShared(parent))
 		{
 			assert(data != nullptr);
 		}

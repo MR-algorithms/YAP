@@ -1,7 +1,12 @@
 #pragma once
 #include "Interface/Implement/ProcessorImpl.h"
 #include "fftw3.h"
-#include <armadillo>
+#include <boost/numeric/ublas/matrix.hpp>
+#include <boost/numeric/ublas/matrix_proxy.hpp>
+#include <boost/numeric/ublas/io.hpp>
+#include <complex>
+#include <boost/numeric/ublas/fwd.hpp>
+
 
 namespace Yap
 {
@@ -16,8 +21,8 @@ namespace Yap
 		float line_search_alpha;
 		float line_search_beta;
 		float initial_line_search_step;
-		arma::fmat mask;
-		arma::cx_fmat undersampling_k_space;
+		boost::numeric::ublas::matrix<float> mask;
+		boost::numeric::ublas::matrix<std::complex<float>> undersampling_k_space;
 	};
 
 	struct  ILongTaskListener
@@ -31,7 +36,7 @@ namespace Yap
 		public ProcessorImpl
 	{
 	public:
-		explicit CompressedSensing(bool fft_shift);
+		CompressedSensing();
 		virtual ~CompressedSensing(void);
 
 		virtual IProcessor * Clone() override;
@@ -40,24 +45,26 @@ namespace Yap
 	protected:
 		SmartPtr<IData> _mask;
 
-		arma::cx_fmat Reconstruct(arma::cx_fmat subsampled_data, ParametterSet& myparameter);
+		boost::numeric::ublas::matrix<std::complex<float>> Reconstruct(boost::numeric::ublas::matrix<std::complex<float>>& subsampled_data, ParametterSet& myparameter);
 
-		arma::cx_fmat ComputeGradient(arma::cx_fmat in_data, float wavelet_weight, float tv_weight, 
-			float p_norm, arma::fmat mask, arma::cx_fmat subsampled_kdata);
+		boost::numeric::ublas::matrix<std::complex<float>> ComputeGradient(boost::numeric::ublas::matrix < std::complex<float >> &in_data, float wavelet_weight, float tv_weight,
+			float p_norm, boost::numeric::ublas::matrix<float> mask, boost::numeric::ublas::matrix<std::complex<float>> subsampled_kdata);
 
-		arma::cx_fmat GetFidelityTerm(arma::cx_fmat in_data, arma::fmat mask, arma::cx_fmat subsampled_kdata);
-		arma::cx_fmat GetWaveletTerm(arma::cx_fmat in_data, float p_norm);
-		arma::cx_fmat GetTVTerm(arma::cx_fmat in_data, float p_norm);
-		float CalculateEnergy(arma::cx_fmat recon_k_data, arma::cx_fmat differential_recon_kdata, 
-			arma::cx_fmat recon_wavelet_data, arma::cx_fmat differential_recon_wavelet_data, arma::cx_fcube recon_tv_data, 
-			arma::cx_fcube differential_recon_tv_data, const ParametterSet& myparameter, float step_length);
+		boost::numeric::ublas::matrix<std::complex<float>> GetFidelityTerm(boost::numeric::ublas::matrix<std::complex<float>>& in_data, 
+			boost::numeric::ublas::matrix<float>& mask, boost::numeric::ublas::matrix<std::complex<float>> subsampled_kdata);
+		boost::numeric::ublas::matrix<std::complex<float>> GetWaveletTerm(boost::numeric::ublas::matrix<std::complex<float>>& in_data, float p_norm);
+		boost::numeric::ublas::matrix<std::complex<float>> GetTVTerm(boost::numeric::ublas::matrix<std::complex<float>>& in_data, float p_norm);
+		float CalculateEnergy(boost::numeric::ublas::matrix<std::complex<float>>& recon_k_data, boost::numeric::ublas::matrix<std::complex<float>>& differential_recon_kdata,
+			boost::numeric::ublas::matrix<std::complex<float>>& recon_wavelet_data, boost::numeric::ublas::matrix<std::complex<float>>& differential_recon_wavelet_data, 
+			std::vector<boost::numeric::ublas::matrix<std::complex<float>>>& recon_tv_data, std::vector<boost::numeric::ublas::matrix<std::complex<float>>>& differential_recon_tv_data, 
+			const ParametterSet& myparameter, float step_length);
 
 
 		//Fwt
 		unsigned int QuadLength(unsigned int length);
 		std::vector<float> Iconv(std::vector<float>& filter, std::vector<float>& row);
-		arma::cx_fmat Fw2DTransform(arma::cx_fmat input, ILongTaskListener * listener = nullptr);
-		arma::fmat FWT2D(arma::fmat input, std::vector<float>& filter, unsigned int scale, ILongTaskListener * listener = nullptr);
+		boost::numeric::ublas::matrix<std::complex<float>> Fw2DTransform(boost::numeric::ublas::matrix<std::complex<float>>& input, ILongTaskListener * listener = nullptr);
+		boost::numeric::ublas::matrix<float> FWT2D(boost::numeric::ublas::matrix<float>& input, std::vector<float>& filter, unsigned int scale, ILongTaskListener * listener = nullptr);
 		std::vector<float> Filter(std::vector<float>& filter, unsigned int a, std::vector<float>& in_put);
 		std::vector<float> MirrorFilt(std::vector<float>& filter);
 		std::vector<float> Aconv(std::vector<float>& filter, std::vector<float>& row);
@@ -67,30 +74,54 @@ namespace Yap
 		std::vector<float> DownSamplingLowPass(std::vector<float>& row, std::vector<float>& filter);
 		std::vector<float> DownSamplingHighPass(std::vector<float>& row, std::vector<float>& filter);
 		std::vector<float> LeftShift(std::vector<float>& row);
-		arma::fmat DownSampling(arma::fmat output, std::vector<float>& filter, unsigned int nc);
+		boost::numeric::ublas::matrix<float> DownSampling(boost::numeric::ublas::matrix<float>& output, std::vector<float>& filter, unsigned int nc);
 
 		//Ifwt
-		arma::cx_fmat IFw2DTransform(arma::cx_fmat input, ILongTaskListener * listener = nullptr);
-		arma::fmat IFWT2D(arma::fmat input, std::vector<float>& filter, unsigned int scale, ILongTaskListener * listener = nullptr);
-		arma::fmat UpSampling(arma::fmat input, std::vector<float>& filter, unsigned int nc);
+		boost::numeric::ublas::matrix<std::complex<float>> IFw2DTransform(boost::numeric::ublas::matrix<std::complex<float>>& input, ILongTaskListener * listener = nullptr);
+		boost::numeric::ublas::matrix<float> IFWT2D(boost::numeric::ublas::matrix<float>& input, std::vector<float>& filter, unsigned int scale, ILongTaskListener * listener = nullptr);
+		boost::numeric::ublas::matrix<float> UpSampling(boost::numeric::ublas::matrix<float>& input, std::vector<float>& filter, unsigned int nc);
 		std::vector<float> UpSamplingLowPass(std::vector<float>& row, std::vector<float>& filter);
 		std::vector<float> UpSampleInterpolateZero(std::vector<float>& row);
 		std::vector<float> UpSamplingHighPass(std::vector<float>& row, std::vector<float>& filter);
 		std::vector<float> RightShift(std::vector<float>& row);
 
 		//TV
-		arma::cx_fcube TV2DTransform(arma::cx_fmat in_data);
+		std::vector<boost::numeric::ublas::matrix<std::complex<float>>> TV2DTransform(boost::numeric::ublas::matrix<std::complex<float>>& in_data);
 		//ITV2D
-		arma::cx_fmat ITV2DTransform(arma::cx_fcube input);
+		boost::numeric::ublas::matrix<std::complex<float>> ITV2DTransform(std::vector<boost::numeric::ublas::matrix<std::complex<float>>>& input);
 
 		//Fft
-		arma::cx_fmat Fft2DTransform(arma::cx_fmat data);
-		arma::cx_fmat IFft2DTransform(arma::cx_fmat data);
+		boost::numeric::ublas::matrix<std::complex<float>> Fft2DTransform(boost::numeric::ublas::matrix<std::complex<float>> data);
+		boost::numeric::ublas::matrix<std::complex<float>> IFft2DTransform(boost::numeric::ublas::matrix<std::complex<float>> data);
 		void SetFFTPlan(const fftwf_plan& plan);
 		void SetIFFTPlan(const fftwf_plan& plan);
-		void FftShift(arma::cx_fmat data);
+		void FftShift(boost::numeric::ublas::matrix<std::complex<float>>& data);
 		void SwapBlock(std::complex<float> * block1, std::complex<float> * block2,
-			unsigned int width, unsigned int height, unsigned int line_stride);
+			size_t width, size_t height, unsigned int line_stride);
+
+		boost::numeric::ublas::matrix<float> Transpose(boost::numeric::ublas::matrix<float>& in_data);
+		boost::numeric::ublas::matrix<float> square_module(boost::numeric::ublas::matrix<std::complex<float>> input);
+		float sum(boost::numeric::ublas::matrix<float> input);
+		std::complex<float> sum(boost::numeric::ublas::matrix<std::complex<float>> input);
+		boost::numeric::ublas::matrix<float> fill(float value, boost::numeric::ublas::matrix<float>& input);
+		boost::numeric::ublas::matrix<float> sqrt_root(boost::numeric::ublas::matrix<float> input);
+		boost::numeric::ublas::matrix<std::complex<float>> dot_multiply(boost::numeric::ublas::matrix<float> mask, boost::numeric::ublas::matrix<std::complex<float>> input);
+		boost::numeric::ublas::matrix<std::complex<float>> conj_multiply(boost::numeric::ublas::matrix<std::complex<float>>& input_1, boost::numeric::ublas::matrix<std::complex<float>>& input_2);
+		boost::numeric::ublas::matrix<float> module(boost::numeric::ublas::matrix<std::complex<float>> input);
+		boost::numeric::ublas::matrix<float> GetMask(float * mask, size_t width, size_t height);
+		boost::numeric::ublas::matrix<std::complex<float>> GetSubsampledData(std::complex<float>* data, size_t width, size_t height);
+		void GetReconData(std::complex<float> * recon, boost::numeric::ublas::matrix<std::complex<float>>& data);
+		boost::numeric::ublas::matrix<std::complex<float>> Matrix_plus(boost::numeric::ublas::matrix<std::complex<float>>& input_1, 
+			boost::numeric::ublas::matrix<std::complex<float>>& input_2);
+		boost::numeric::ublas::matrix<float> Matrix_plus(boost::numeric::ublas::matrix<float>& input_1,
+			boost::numeric::ublas::matrix<float>& input_2);
+		boost::numeric::ublas::matrix<std::complex<float>> Matrix_minus(boost::numeric::ublas::matrix<std::complex<float>> input_1,
+			boost::numeric::ublas::matrix<std::complex<float>> input_2);
+		boost::numeric::ublas::matrix<std::complex<float>> Matrix_scale_multiply(boost::numeric::ublas::matrix<std::complex<float>>& input, float value);
+		boost::numeric::ublas::matrix<std::complex<float>> Matrix_scale_div(boost::numeric::ublas::matrix<std::complex<float>>& input, float value);
+		boost::numeric::ublas::matrix<std::complex<float>> Minus(boost::numeric::ublas::matrix<std::complex<float>>& input);
+		boost::numeric::ublas::matrix<float> GetRealPart(boost::numeric::ublas::matrix<std::complex<float>> input);
+		boost::numeric::ublas::matrix<float> GetImaginaryPart(boost::numeric::ublas::matrix<std::complex<float>> input);
 
 	private:
 		std::vector<float> _filter;
@@ -98,7 +129,6 @@ namespace Yap
 		unsigned int _coarse_level;
 		unsigned int _iteration_count;
 
-		bool _fft_shift;
 		fftwf_plan _p_FFT;
 		fftwf_plan _p_IFFT;
 	};
