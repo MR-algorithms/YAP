@@ -31,12 +31,12 @@ namespace Yap {
 	3. The object is created on the stack of the original module and the address of the object is pass to
 	client module. In this case, the object SHOULD NOT implement either IDynamicObject or ISharedObject.
 	The client module can only use the interface pointer before the function call returns. It CAN NOT store
-	the interface pointer for late use. Since it is the most probable scenario to cause probleme. We strongly
+	the interface pointer for late use. Since it is the most probable scenario to cause problem. We strongly
 	suggest not to use this.
 */
 
 /**
-	If an object is created dynamically in one module and then its ownship is transferred to another module, then
+	If an object is created dynamically in one module and then its ownership is transferred to another module, then
 	the object should implement this interface, so that the client module can call DeleteThis() to safely deallocate
 	the object.
 	

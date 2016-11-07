@@ -6,17 +6,17 @@
 #include "Interface/IProcessor.h"
 #include "Interface/IMemory.h"
 #include "Interface/IProperty.h"
-#include "Interface/Implement/SharedObjectImpl.h"
 
 namespace Yap
 {
 	class ProcessorAgent :
-		public IProcessor, public SharedObjectImpl
+		public IProcessor
 	{
 	public:
 		ProcessorAgent(IProcessor * processor);
 		virtual ~ProcessorAgent();
 
+	public:
 		virtual IProcessor * Clone() override;
 
 		virtual const wchar_t * GetClassId() override;

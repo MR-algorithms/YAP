@@ -12,10 +12,10 @@ namespace Yap
 	public:
 		SharedObjectImpl();
 		virtual ~SharedObjectImpl();
-	private:
 		// Inherited via ISharedObject
 		virtual void Lock() override;
 		virtual void Release() override;
+
 
 		unsigned int _use_count;
 	};
