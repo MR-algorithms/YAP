@@ -12,7 +12,6 @@ namespace Yap
 
 	class Dimensions : 
 		public IDimensions, 
-		public SharedObjectImpl, 
 		public IClonable
 	{
 	public:
@@ -20,6 +19,10 @@ namespace Yap
 		explicit Dimensions(unsigned int dimension_count);
 		Dimensions(const Dimensions& source);
 		explicit Dimensions(IDimensions * source);
+
+		~Dimensions();
+
+	public:
 
 		bool SetDimension(DimensionType type, unsigned int length, unsigned int start_index = 0);
 		unsigned int GetLength(unsigned int dimension_index);
@@ -55,7 +58,7 @@ namespace Yap
 		
 		DataObject(T* data, IDimensions * dimensions, ISharedObject * parent = nullptr, bool own_data = false) : 
 			_data(data), _own_memory(own_data), _dimensions(dimensions), _use_count(0), 
-			_parent(/*SmartPtr::Make(parent)*/YapShared(parent))
+			_parent(YapShared(parent))
 		{
 			assert(data != nullptr);
 		}
