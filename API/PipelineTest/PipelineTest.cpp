@@ -70,7 +70,7 @@ int main()
 //	 ConstructorTest();
 
 	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"grappa.pipeline");
+	auto pipeline = compiler.CompileFile(L"niumag_recon.pipeline");
 	if (pipeline)
 	{
 		pipeline->Input(L"Input", nullptr);
