@@ -176,7 +176,6 @@
     <ClInclude Include="DataTypeConvertor.h" />
     <ClInclude Include="DcRemover.h" />
     <ClInclude Include="Difference.h" />
-    <ClInclude Include="ExtractTextureFeatures.h" />
     <ClInclude Include="ExtractTextureMatrix.h" />
     <ClInclude Include="Fft1D.h" />
     <ClInclude Include="Fft2D.h" />
@@ -256,7 +255,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ExtractTextureFeatures.cpp" />
     <ClCompile Include="ExtractTextureMatrix.cpp" />
     <ClCompile Include="Fft1D.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>

@@ -94,9 +94,6 @@
     <ClCompile Include="ExtractTextureMatrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ExtractTextureFeatures.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm2DWrapper.h">
@@ -196,9 +193,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExtractTextureMatrix.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ExtractTextureFeatures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
