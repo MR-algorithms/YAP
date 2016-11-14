@@ -15,18 +15,13 @@ namespace Yap
 		ComplexSplitter();;
 		~ComplexSplitter();
 
-		virtual bool Input(const wchar_t * port, IData * data) override;
-
 	protected:
+		virtual bool Input(const wchar_t * port, IData * data) override;
+		virtual IProcessor * Clone() override;
 
 		void Split(std::complex<double> * data, double * real, double * imaginary, size_t size);
 		void ExtractReal(std::complex<double> * data, double * real, size_t size);
 		void ExtractImaginary(std::complex<double> * data, double * imaginary, size_t size);
-
-		virtual IProcessor * Clone() override;
-
-		// Inherited via ProcessorImpl
-		virtual bool OnInit() override;
 	};
 }
 #endif // ComplexSplitter_h__

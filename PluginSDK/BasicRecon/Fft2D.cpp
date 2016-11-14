@@ -16,15 +16,6 @@ Fft2D::Fft2D():
 	_plan_in_place(false),
 	_fft_plan(nullptr)
 {
-}
-
-
-Fft2D::~Fft2D()
-{
-}
-
-bool Yap::Fft2D::OnInit()
-{
 	AddProperty(PropertyBool, L"Inverse", L"The direction of FFT2D.");
 	AddProperty(PropertyBool, L"InPlace", L"The position of FFT2D.");
 
@@ -33,8 +24,11 @@ bool Yap::Fft2D::OnInit()
 
 	AddInput(L"Input", 2, DataTypeComplexFloat);
 	AddOutput(L"Output", 2, DataTypeComplexFloat);
+}
 
-	return true;
+
+Fft2D::~Fft2D()
+{
 }
 
 bool Fft2D::Input(const wchar_t * port, IData * data)

@@ -9,21 +9,16 @@ using namespace  Yap;
 ChannelIterator::ChannelIterator():
 	ProcessorImpl(L"ChannelIterator")
 {
-}
-
-
-ChannelIterator::~ChannelIterator()
-{
-}
-
-bool Yap::ChannelIterator::OnInit()
-{
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddOutput(L"Output", 2, DataTypeComplexFloat);
 
 	AddProperty(PropertyInt, L"SliceIndex", L"The index of the slice you want to get.");
 	SetInt(L"SliceIndex", 0);
-	return true;
+}
+
+
+ChannelIterator::~ChannelIterator()
+{
 }
 
 IProcessor * Yap::ChannelIterator::Clone()

@@ -37,20 +37,14 @@ CmrDataReader::CmrDataReader(void) :
 CmrDataReader::CmrDataReader(const CmrDataReader& rhs)
 	: ProcessorImpl(rhs)
 {
-}
-
-bool Yap::CmrDataReader::OnInit()
-{
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
 	AddProperty(PropertyString, L"DataPath",  L"包含原始数据文件的文件夹。");
 	AddProperty(PropertyInt, L"ChannelCount",  L"通道数");
 	AddProperty(PropertyInt, L"ChannelSwitch",  L"通道开关指示值");
-	AddProperty(PropertyInt, L"GroupCount",  L"分组扫描数");
+	AddProperty(PropertyInt, L"GroupCount",  L"分组扫描数");}
 
-	return true;
-}
 
 IProcessor * CmrDataReader::Clone()
 {

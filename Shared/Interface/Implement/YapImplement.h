@@ -14,17 +14,15 @@
 		processor_manager = Yap::YapShared(new (std::nothrow) ContainerImpl<IProcessor>);\
 		if (!processor_manager) return nullptr;
 
-#define ADD_PROCESSOR(class_name) auto * my##class_name = new class_name; \
-if (!my##class_name->Init())\
-{\
+#define ADD_PROCESSOR(class_name) try{\
+	auto * my##class_name = new class_name; \
+	processor_manager->Add(my##class_name->GetClassId(), my##class_name);\
+}\
+catch(...){\
 	return nullptr;\
 }\
-processor_manager->Add(my##class_name->GetClassId(), my##class_name);
 
-#define ADD(a, b) auto pb = b; if (!pb->Init())\
-{\
-	return nullptr;\
-}\
+#define ADD(a, b) auto pb = b; \
 processor_manager->Add((a), pb);
 
 #define END_DECL_PROCESSORS return processor_manager.get();\

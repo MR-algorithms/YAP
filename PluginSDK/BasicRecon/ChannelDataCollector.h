@@ -11,10 +11,7 @@ namespace Yap
 		ChannelDataCollector(const ChannelDataCollector& rhs);
 		virtual ~ChannelDataCollector(void);
 
-		virtual bool OnInit() override;
-
 		virtual IProcessor * Clone() override;
-
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
 	protected:

@@ -71,9 +71,8 @@ int main()
 
 	PipelineCompiler compiler;
 
-	//auto pipeline = compiler.CompileFile(L"NiuMriImageReader.pipeline");
+	auto pipeline = compiler.CompileFile(L"niumag_recon.pipeline");
 
-	auto pipeline = compiler.CompileFile(L"NiumagFidReader.pipeline");
 	if (pipeline)
 	{
 		pipeline->Input(L"Input", nullptr);
@@ -81,6 +80,6 @@ int main()
 
 	time_t end = clock();
 	printf("the running time is : %f\n", float(end - start) / CLOCKS_PER_SEC);
-    return 0;
+	return 0;
 }
 

@@ -14,6 +14,15 @@ using namespace Yap;
 Grappa::Grappa(void) :
 	ProcessorImpl(L"Grappa")
 {
+	AddProperty(PropertyInt, L"Rate", L"The acceleration factor.");
+	SetInt(L"Rate", 2);
+	AddProperty(PropertyInt, L"AcsCount", L"The auto-calibration signal.");
+	SetInt(L"AcsCount", 32);
+	AddProperty(PropertyInt, L"Block", L"The number of blocks.");
+	SetInt(L"Block", 4);
+
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 }
 
 Yap::Grappa::Grappa(const Grappa & rhs)
@@ -24,23 +33,6 @@ Yap::Grappa::Grappa(const Grappa & rhs)
 Grappa::~Grappa()
 {
 }
-
-
-bool Yap::Grappa::OnInit()
-{
-	AddProperty(PropertyInt, L"Rate", L"The acceleration factor.");
-	SetInt(L"Rate", 2);
-	AddProperty(PropertyInt, L"AcsCount", L"The auto-calibration signal.");
-	SetInt(L"AcsCount", 32);
-	AddProperty(PropertyInt, L"Block", L"The number of blocks.");
-	SetInt(L"Block", 4);
-
-	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
-	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
-
-	return true;
-}
-
 
 bool Grappa::Input(const wchar_t * port, IData * data)
 {

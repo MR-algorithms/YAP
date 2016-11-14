@@ -20,6 +20,8 @@ namespace Yap
 		explicit Algorithm2DWrapper(ProcessingFunc func, const wchar_t * processor_name) :
 			_func(func), ProcessorImpl(processor_name)
 		{
+			AddInput(L"Input", 2, type_id<INPUT_TYPE>::type);
+			AddOutput(L"Output", 2, type_id<OUTPUT_TYPE>::type);
 		}
 
 		Algorithm2DWrapper(const Algorithm2DWrapper<INPUT_TYPE, OUTPUT_TYPE>& rhs) :
@@ -58,15 +60,6 @@ namespace Yap
 		}
 	protected:
 		ProcessingFunc _func;
-
-		// Inherited via ProcessorImpl
-		virtual bool OnInit() override
-		{
-			AddInput(L"Input", 2, type_id<INPUT_TYPE>::type);
-			AddOutput(L"Output", 2, type_id<OUTPUT_TYPE>::type);
-
-			return true;
-		}
 	};
 
 
@@ -80,6 +73,8 @@ namespace Yap
 		explicit Algorithm2DInPlaceWrapper(ProcessingFunc func, const wchar_t * processor_name) :
 			_func(func), ProcessorImpl(processor_name)
 		{
+			AddInput(L"Input", 2, type_id<T>::type);
+			AddOutput(L"Output", 2, type_id<T>::type);
 		}
 
 		Algorithm2DInPlaceWrapper(const Algorithm2DInPlaceWrapper<T>& rhs) :
@@ -116,15 +111,6 @@ namespace Yap
 		}
 	protected:
 		ProcessingFunc _func;
-
-		// Inherited via ProcessorImpl
-		virtual bool OnInit() override
-		{
-			AddInput(L"Input", 2, type_id<T>::type);
-			AddOutput(L"Output", 2, type_id<T>::type);
-
-			return true;
-		}
 	};
 }
 

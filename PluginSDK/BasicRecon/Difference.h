@@ -18,7 +18,6 @@ namespace Yap
 		virtual IProcessor * Clone() override;
 
 	protected:
-		virtual bool OnInit() override;
 		SmartPtr<IData> _reference_data;
 	};
 }

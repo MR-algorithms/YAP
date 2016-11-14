@@ -15,10 +15,6 @@ namespace Yap
 		~SliceIterator(void);
 		virtual IProcessor* Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
-
-		// Inherited via ProcessorImpl
-		virtual bool OnInit() override;
 	};
-
 }
 #endif // SliceIterator_h__

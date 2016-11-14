@@ -107,20 +107,6 @@ Yap::SmartPtr<IData> Convert<complex<float>>(IData * input, int output_type)
 DataTypeConvertor::DataTypeConvertor(void):
 	ProcessorImpl(L"DataTypeConvertor")
 {
-}
-
-DataTypeConvertor::DataTypeConvertor(const DataTypeConvertor& rhs) :
-	ProcessorImpl(rhs)
-{
-
-}
-
-DataTypeConvertor::~DataTypeConvertor()
-{
-}
-
-bool Yap::DataTypeConvertor::OnInit()
-{
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
 
 	AddOutput(L"Bool", YAP_ANY_DIMENSION, DataTypeBool);
@@ -133,8 +119,16 @@ bool Yap::DataTypeConvertor::OnInit()
 	AddOutput(L"Double", YAP_ANY_DIMENSION, DataTypeDouble);
 	AddOutput(L"ComplexFloat", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddOutput(L"ComplexDouble", YAP_ANY_DIMENSION, DataTypeComplexDouble);
+}
 
-	return true;
+DataTypeConvertor::DataTypeConvertor(const DataTypeConvertor& rhs) :
+	ProcessorImpl(rhs)
+{
+
+}
+
+DataTypeConvertor::~DataTypeConvertor()
+{
 }
 
 IProcessor * Yap::DataTypeConvertor::Clone()

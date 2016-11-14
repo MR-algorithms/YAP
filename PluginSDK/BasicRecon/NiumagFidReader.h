@@ -21,8 +21,6 @@ namespace Yap
 		virtual bool Input(const wchar_t * name, IData * data);
 		virtual IProcessor * Clone() override;
 
-		virtual bool OnInit() override;
-
 		bool ReadNiumagFidData();
 	};
 }

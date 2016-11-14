@@ -2,6 +2,7 @@
 #include "Interface\IProperty.h"
 
 #include <cassert>
+#include "Interface\IMemory.h"
 
 using namespace Yap;
 

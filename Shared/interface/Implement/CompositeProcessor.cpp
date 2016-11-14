@@ -106,7 +106,3 @@ IProcessor * Yap::CompositeProcessor::Find(const wchar_t * instance_id)
 	return iter->second.get();
 }
 
-bool Yap::CompositeProcessor::OnInit()
-{
-	return true;
-}

@@ -96,11 +96,6 @@ namespace details
 		return _output.get();
 	}
 
-	bool ProcessorImpl::Init()
-	{
-		return OnInit();
-	}
-
 	bool ProcessorImpl::Link(const wchar_t * out_port,
 							 IProcessor* next_processor,
 							 const wchar_t * in_port)

@@ -7,18 +7,13 @@ using namespace Yap;
 CompressedSensing::CompressedSensing():
 	ProcessorImpl(L"CompressedSensing")
 {
+	AddInput(L"Input", 2, DataTypeComplexFloat);
+	AddOutput(L"Output", 2, DataTypeComplexFloat);
 }
 
 
 CompressedSensing::~CompressedSensing()
 {
-}
-
-bool Yap::CompressedSensing::OnInit()
-{
-	AddInput(L"Input", 2, DataTypeComplexFloat);
-	AddOutput(L"Output", 2, DataTypeComplexFloat);
-	return true;
 }
 
 IProcessor * Yap::CompressedSensing::Clone()

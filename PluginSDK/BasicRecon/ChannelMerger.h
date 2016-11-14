@@ -33,8 +33,6 @@ namespace Yap
 		std::vector<unsigned int> GetKey(IDimensions * dimensions);
 		std::map<std::vector<unsigned int>, MergeBuffer> _merge_buffers; 
 
-		// Inherited via ProcessorImpl
-		virtual bool OnInit() override;
 	};
 }
 

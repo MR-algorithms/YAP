@@ -10,7 +10,11 @@ using namespace Yap;
 SliceSelector::SliceSelector(void):
 	ProcessorImpl(L"SliceSelector")
 {
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
+	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
+	AddProperty(PropertyInt, L"SliceIndex", L"The index of the slice you want to get.");
+	SetInt(L"SliceIndex", 3);
 }
 
 Yap::SliceSelector::SliceSelector(const SliceSelector & rhs)
@@ -20,17 +24,6 @@ Yap::SliceSelector::SliceSelector(const SliceSelector & rhs)
 
 SliceSelector::~SliceSelector()
 {
-}
-
-bool Yap::SliceSelector::OnInit()
-{
-	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
-	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
-
-	AddProperty(PropertyInt, L"SliceIndex", L"The index of the slice you want to get.");
-	SetInt(L"SliceIndex", 3);
-
-	return true;
 }
 
 IProcessor * Yap::SliceSelector::Clone()

@@ -54,6 +54,11 @@ Yap::Dimensions::Dimensions()
 {
 }
 
+Yap::Dimensions::~Dimensions()
+{
+
+}
+
 Yap::Dimensions::Dimensions(const Dimensions& source)
 {
 	_dimension_info = source._dimension_info;

@@ -17,12 +17,11 @@ namespace Yap
 		Fft1D();
 		virtual ~Fft1D();
 
+		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
-		void FFTShift(std::complex<double>* data, size_t size);
-
 	protected:
-
+		void FFTShift(std::complex<double>* data, size_t size);
 		void SwapBlock(std::complex<double> * block1, std::complex<double> * block2,
 			size_t width);
 
@@ -34,13 +33,6 @@ namespace Yap
 		bool Fft(std::complex<double> * data, std::complex<double> * result,
 			size_t size, bool inverse = false);
 		void Plan(size_t size, bool inverse, bool in_place);
-
-		virtual IProcessor * Clone() override;
-
-
-		// Inherited via ProcessorImpl
-		virtual bool OnInit() override;
-
 	};
 }
 

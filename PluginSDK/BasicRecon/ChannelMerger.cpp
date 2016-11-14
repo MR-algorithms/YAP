@@ -9,28 +9,21 @@ using namespace std;
 ChannelMerger::ChannelMerger(void) :
 	ProcessorImpl(L"ChannelMerger")
 {
-}
-
-ChannelMerger::ChannelMerger( const ChannelMerger& rhs )
-	: ProcessorImpl(rhs)
-{
-
-}
-
-ChannelMerger::~ChannelMerger(void)
-{
-}
-
-bool Yap::ChannelMerger::OnInit()
-{
 	AddOutput(L"Output", 2, DataTypeFloat);
 	AddInput(L"Input", 2, DataTypeFloat);
 
 	AddProperty(PropertyInt, L"ChannelCount", L"通道数");
 	SetInt(L"ChannelCount", 4);
 	AddProperty(PropertyInt, L"ChannelSwitch", L"通道开关指示值");
+}
 
-	return true;
+ChannelMerger::ChannelMerger( const ChannelMerger& rhs )
+	: ProcessorImpl(rhs)
+{
+}
+
+ChannelMerger::~ChannelMerger(void)
+{
 }
 
 IProcessor* ChannelMerger::Clone()

@@ -17,7 +17,6 @@ namespace Yap
 		virtual ~SamplingMaskCreator();
 
 		virtual IProcessor * Clone() override;
-
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
 
@@ -36,11 +35,9 @@ namespace Yap
 
 		std::vector<unsigned char> GenerateRandomMask(unsigned int width, unsigned int height, float pow, float sample_percent, float radius);
 		std::vector<unsigned char> GenerateEqualMask(unsigned int width, unsigned int height, unsigned int acs, unsigned int rate);
-		// Inherited via ProcessorImpl
-		virtual bool OnInit() override;
-
 	};
 }
+
 #endif // SamplingMaskCreator_h__
 
 

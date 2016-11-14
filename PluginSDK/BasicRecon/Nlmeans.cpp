@@ -10,6 +10,8 @@ using namespace arma;
 Nlmeans::Nlmeans(void):
 	ProcessorImpl(L"Nlmeans")
 {
+	AddInput(L"Input", 2, DataTypeFloat);
+	AddOutput(L"Output", 2, DataTypeFloat);
 }
 
 Yap::Nlmeans::Nlmeans(const Nlmeans & rhs) :
@@ -19,14 +21,6 @@ Yap::Nlmeans::Nlmeans(const Nlmeans & rhs) :
 
 Nlmeans::~Nlmeans()
 {
-}
-
-bool Yap::Nlmeans::OnInit()
-{
-	AddInput(L"Input", 2, DataTypeFloat);
-	AddOutput(L"Output", 2, DataTypeFloat);
-
-	return true;
 }
 
 IProcessor * Yap::Nlmeans::Clone()

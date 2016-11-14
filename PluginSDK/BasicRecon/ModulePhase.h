@@ -15,11 +15,8 @@ namespace Yap
 		ModulePhase(const ModulePhase& rhs);
 		~ModulePhase();
 
-		virtual bool Input(const wchar_t * port, IData * data) override;
 		virtual IProcessor * Clone() override;
-
-		// Inherited via ProcessorImpl
-		virtual bool OnInit() override;
+		virtual bool Input(const wchar_t * port, IData * data) override;
 	};
 }
 #endif // ModulePhase_h__

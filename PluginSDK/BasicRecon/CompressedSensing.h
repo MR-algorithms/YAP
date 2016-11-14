@@ -15,6 +15,7 @@ namespace Yap
 		float line_search_beta;
 		float initial_line_search_step;
 	};
+
 	class CompressedSensing :
 		public ProcessorImpl
 	{
@@ -22,10 +23,7 @@ namespace Yap
 		CompressedSensing();
 		virtual ~CompressedSensing();
 
-		virtual bool OnInit() override;
-
 		virtual IProcessor * Clone() override;
-
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
 	protected:
