@@ -28,8 +28,10 @@
 #include "SamplingMaskCreator.h"
 #include "SliceIterator.h"
 #include "SliceSelector.h"
+#include "ExtractTextureMatrix.h"
 #include "SubSampling.h"
 #include "ZeroFilling.h"
+
 
 #include "Interface\Implement\YapImplement.h"
 
@@ -61,6 +63,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(SliceIterator)
 	ADD_PROCESSOR(SliceSelector)
 	ADD_PROCESSOR(SubSampling)
+	ADD_PROCESSOR(ExtractTextureMatrix)
 	ADD_PROCESSOR(ZeroFilling)
 	ADD(L"HFlipFloat", new Algorithm2DInPlaceWrapper<float>(hflip<float>, L"HFlipFloat"))
 END_DECL_PROCESSORS

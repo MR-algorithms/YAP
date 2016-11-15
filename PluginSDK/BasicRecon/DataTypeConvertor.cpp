@@ -183,7 +183,8 @@ bool Yap::DataTypeConvertor::Input(const wchar_t * port, IData * data)
 		return false;
 
 	int output_data_type = GetOutputDataType();
-	switch (data->GetDataType())
+	auto type = data->GetDataType();
+	switch (type)
 	{
 	case DataTypeBool:
 	{
