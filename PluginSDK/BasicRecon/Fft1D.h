@@ -28,7 +28,7 @@ namespace Yap
 		unsigned int _plan_data_size;
 		bool _plan_inverse;
 		bool _plan_in_place;
-		fftw_plan _fft_plan;
+		fftwf_plan _fft_plan;
 
 		bool Fft(std::complex<double> * data, std::complex<double> * result,
 			size_t size, bool inverse = false);

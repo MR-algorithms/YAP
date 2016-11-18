@@ -12,48 +12,26 @@ using namespace std;
 using namespace Yap;
 using namespace boost::numeric::ublas;
 
+
 CompressedSensing::CompressedSensing():
 	ProcessorImpl(L"CompressedSensing"),
-	_p_FFT(nullptr),
-	_p_IFFT(nullptr),
+	_fft_plan(nullptr),
 	_iteration_count(0),
 	_coarse_level(0),
-	_filter_type_size(0)
+	_filter_type_size(0),
+	_plan_data_width(0),
+	_plan_data_height(0),
+	_plan_in_place(false),
+	_plan_inverse(false)
 {
-	AddInput(L"Input", 2, DataTypeComplexFloat);
-	AddInput(L"Mask", 2, DataTypeChar);
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
+	AddInput(L"Mask", 2, DataTypeFloat);
 	AddOutput(L"Output", 2, DataTypeComplexFloat);
 }
 
 
 
-float Yap::CompressedSensing::sum(boost::numeric::ublas::matrix<float> input)
-{
-	float sum_value = 0;
-	for (unsigned int i = 0; i < input.size1(); ++i)
-	{
-		for (unsigned int j = 0; j < input.size2(); ++j)
-		{
-			sum_value += input(i, j);
-		}
-	}
-	return sum_value;
-}
-
-complex<float> Yap::CompressedSensing::sum(boost::numeric::ublas::matrix<complex<float>> input)
-{
-	complex<float> sum_value = 0;
-	for (unsigned int i = 0; i < input.size1(); ++i)
-	{
-		for (unsigned int j = 0; j < input.size2(); ++j)
-		{
-			sum_value += input(i, j);
-		}
-	}
-	return sum_value;
-}
-
-CompressedSensing::~CompressedSensing(void)
+CompressedSensing::~CompressedSensing()
 {
 }
 
@@ -84,7 +62,7 @@ bool Yap::CompressedSensing::Input(const wchar_t * port, IData * data)
 		ParametterSet myparameter = { 200, pow(10,-30), 8, 1, 0.002, 0.005, 0.01, 0.8, 2, mask, undersampled_data};
 
 		auto recon_data = Reconstruct(undersampled_data, myparameter);
-		complex<float> * recon = nullptr;
+		std::complex<float> * recon = nullptr;
 		try
 		{
 			recon = new complex<float>[input_data.GetWidth() * input_data.GetHeight()];
@@ -94,9 +72,17 @@ bool Yap::CompressedSensing::Input(const wchar_t * port, IData * data)
 			return false;
 		}	
 		GetReconData(recon, recon_data);
-		auto output = YapShared(new ComplexFloatData(recon, data->GetDimensions(), nullptr, true));
+
+		Dimensions dimensions;
+		dimensions(DimensionReadout, 0U, input_data.GetWidth())
+			(DimensionPhaseEncoding, 0U, input_data.GetHeight());
+		auto output = YapShared(new ComplexFloatData(recon, dimensions, nullptr, true));
 
 		Feed(L"Output", output.get());
+	}
+	else
+	{
+		return false;
 	}
 		return true;
 }
@@ -455,16 +441,12 @@ matrix<float> Yap::CompressedSensing::DownSampling(matrix<float>& output, std::v
 	auto width = output.size2();
 	for (unsigned int ix = 0; ix < nc; ++ix)//行变换
 	{
+		auto bot = &output(ix, 0);
+		auto top = &output(ix, nc / 2);
 		std::vector<float> row(nc);//把一行所有的元素提取出来，低通放左边，高通放右边
-		for (unsigned int i = 0; i < nc; ++i)
-		{
-			row[i] = output(ix, i);
-		}
-		for (unsigned int i = 0; i < nc / 2; ++i)
-		{
-			output(ix, i) = DownSamplingLowPass(row, filter)[i];
-			output(ix, i + nc / 2) = DownSamplingHighPass(row, filter)[i];
-		}
+		memcpy(row.data(), bot, nc * sizeof(float));
+		memcpy(bot, DownSamplingLowPass(row, filter).data(), (nc / 2) * sizeof(float));
+		memcpy(top, DownSamplingHighPass(row, filter).data(), (nc / 2) * sizeof(float));
 	}
 	return output;
 }
@@ -477,7 +459,9 @@ matrix<float> Yap::CompressedSensing::IFWT2D(matrix<float>& input, std::vector<f
 	assert(width == height);
 
 	matrix<float> output(height, width);
-	output = input;
+	auto p_output = &output(0, 0);
+	auto p_input = &input(0, 0);
+	memcpy(p_output, p_input, width * height * sizeof(float));
 	unsigned int J = QuadLength(width);//a power of 2
 	unsigned int nc = static_cast<unsigned int>(pow(2, scale + 1));
 	if (listener != nullptr)
@@ -488,8 +472,10 @@ matrix<float> Yap::CompressedSensing::IFWT2D(matrix<float>& input, std::vector<f
 	for (unsigned int jscal = 0; jscal < scale; ++jscal)    //  unsigned int jscal = scale; jscal <= J - 1; ++jscal
 	{
 		//列方向进行反小波变换
-		output = UpSampling(Transpose(output), filter, nc);
-		output = UpSampling(Transpose(output), filter, nc);
+		memcpy(p_output, &Transpose(output)(0, 0), width * height * sizeof(float));
+		output = UpSampling(output, filter, nc);
+		memcpy(p_output, &Transpose(output)(0, 0), width * height * sizeof(float));
+		output = UpSampling(output, filter, nc);
 		nc = nc * 2;
 		if (listener != nullptr)
 		{
@@ -505,23 +491,25 @@ matrix<float> Yap::CompressedSensing::IFWT2D(matrix<float>& input, std::vector<f
 
 matrix<float> Yap::CompressedSensing::UpSampling(matrix<float>& output, std::vector<float>& filter, unsigned int nc)
 {
+	auto width = output.size2();
 	for (unsigned int ix = 0; ix < nc; ++ix)				 // 行变换
 	{
+		auto top = &output(ix, nc / 2);
+		auto bot = &output(ix, 0);
 		std::vector<float> bot_row(nc / 2);
-		std::vector<float> top_row(nc / 2);
-		for (unsigned int i = 0; i < nc / 2; ++i)
-		{
-			bot_row[i] = output(ix, i);
-			top_row[i] = output(ix, i + nc / 2);
-		}
+		memcpy(bot_row.data(), bot, (nc / 2) * sizeof(float));
 		std::vector<float> front(nc);
+		memcpy(front.data(), UpSamplingLowPass(bot_row, filter).data(), nc * sizeof(float));
+		std::vector<float> top_row(nc / 2);
+		memcpy(top_row.data(), top, (nc / 2) * sizeof(float));
 		std::vector<float> back(nc);
+		memcpy(back.data(), UpSamplingHighPass(top_row, filter).data(), nc * sizeof(float));
+		std::vector<float> row(nc);
 		for (unsigned int i = 0; i < nc; ++i)
 		{
-			front[i] = UpSamplingLowPass(bot_row, filter)[i];
-			back[i] = UpSamplingHighPass(top_row, filter)[i];
-			output(ix, i) = front[i] + back[i];
+			row[i] = front[i] + back[i];
 		}
+		memcpy(bot, row.data(), nc * sizeof(float));
 	}
 	return output;
 }
@@ -608,32 +596,40 @@ matrix<complex<float>> Yap::CompressedSensing::ITV2DTransform(std::vector<matrix
 	matrix<complex<float>> temp_y(height, width);
 
 	auto& vertical_tv = in_data[0];
-	for (size_t i = 0; i < width * (height - 1); ++i)
+	for (size_t i = 0; i < height - 1; ++i)
 	{
-		if (i < width)
-			temp_x(int(i / width), i) = vertical_tv(int(i / width), i) * (-1.0f);
-		else
-			temp_x(int(i / width), i) = vertical_tv(int(i / width),i - width) - vertical_tv(int(i / width), i);
+		for (size_t j = 0; j < width; ++j)
+		{
+			if (i < 1)
+				temp_x(i, j) = vertical_tv(i, j) * (-1.0f);
+			else
+				temp_x(i, j) = vertical_tv(i - 1, j) - vertical_tv(i, j);
+		}
 	}
-	for (size_t i = width * (height - 1); i < width * height; ++i)
+	for (size_t j = 0; j < width; ++j)
 	{
-		temp_x(height - 1, i) = vertical_tv(height - 1, i - width);
+		temp_x(height - 1, j) = vertical_tv(height - 2, j);
 	}
 
 	auto& horizontal_tv = in_data[1];
-	for (size_t i = 0; i < width * height; ++i)
+	for (size_t i = 0; i < height; ++i)
 	{
-		if (i % width != 0)
+		for (size_t j = 0; j < width; ++j)
 		{
-			temp_y(int(i / width), i) = horizontal_tv(int(i / width), i - 1) - horizontal_tv(int(i / width), i);
+			if (j != 0)
+			{
+				temp_y(i, j) = horizontal_tv(i, j - 1) - horizontal_tv(i, j);
+			}
+			else
+			{
+				temp_y(i, j) = horizontal_tv(i, j) * (-1.0f);
+				if (i != 0 )
+				{
+					temp_y(i - 1, width - 1) = horizontal_tv(i - 1, width - 2);
+				}
+			}
+			temp_y(height - 1, width - 1) = horizontal_tv(height - 1, width - 2);
 		}
-		else
-		{
-			temp_y(int(i / width), i) = horizontal_tv(int(i / width), i) * (-1.0f);
-			if (i != 0)
-				temp_y(int(i / width), i - 1) = horizontal_tv(int(i / width), i - 2);
-		}
-		temp_y(int(i / width), width * height - 1) = horizontal_tv(int(i / width), width * height - 2);
 	}
 	itv_result = temp_x + temp_y;
 
@@ -645,11 +641,12 @@ matrix<complex<float>> Yap::CompressedSensing::Fft2DTransform(matrix<complex<flo
 	matrix<complex<float>> image_slice;
 	image_slice.resize(in_data.size1(), in_data.size2());
 	FftShift(in_data);  // 由于小波变换问题，必须把k-space先fftshift
+	Plan(image_slice.size2(), image_slice.size1(), false, false);
 	complex<float>* p_input = &in_data(0, 0);
 	complex<float>* p_image = &image_slice(0, 0);
 
 		//从图像到k空间是傅里叶变换
-		fftwf_execute_dft(_p_FFT, (fftwf_complex*)p_input, (fftwf_complex*)p_image);
+		fftwf_execute_dft(_fft_plan, (fftwf_complex*)p_input, (fftwf_complex*)p_image);
 		FftShift(image_slice);
 
 	image_slice = Matrix_scale_div(image_slice, sqrt(in_data.size1() * in_data.size2()));
@@ -662,11 +659,12 @@ matrix<complex<float>> Yap::CompressedSensing::IFft2DTransform(matrix<complex<fl
 	matrix<complex<float>> image_slice;
 	image_slice.resize(in_data.size1(), in_data.size2());
 	FftShift(in_data);  // 由于小波变换问题，必须把k-space先fftshift
+	Plan(image_slice.size2(), image_slice.size1(), true, false);
 	complex<float>* p_in_data = &in_data(0, 0);
 	complex<float>* p_image_slice = &image_slice(0, 0);
 
 	//从k空间到图像是反傅里叶变换
-	fftwf_execute_dft(_p_IFFT, (fftwf_complex*)p_in_data, (fftwf_complex*)p_image_slice);
+	fftwf_execute_dft(_fft_plan, (fftwf_complex*)p_in_data, (fftwf_complex*)p_image_slice);
 	FftShift(image_slice);
 
 	image_slice = Matrix_scale_div(image_slice, sqrt(in_data.size1() * in_data.size2()));
@@ -674,15 +672,6 @@ matrix<complex<float>> Yap::CompressedSensing::IFft2DTransform(matrix<complex<fl
 	return image_slice;
 }
 
-void Yap::CompressedSensing::SetFFTPlan(const fftwf_plan& plan)
-{
-	_p_FFT = plan;
-}
-
-void Yap::CompressedSensing::SetIFFTPlan(const fftwf_plan& plan)
-{
-	_p_IFFT = plan;
-}
 
 void Yap::CompressedSensing::FftShift(matrix<complex<float>>& data)
 {
@@ -712,13 +701,15 @@ void Yap::CompressedSensing::SwapBlock(std::complex<float> * block1, std::comple
 	}
 }
 
-matrix<float> Yap::CompressedSensing::FWT2D(matrix<float>& input, std::vector<float>& filter, unsigned int scale, ILongTaskListener * listener /*= nullptr*/)
+matrix<float> Yap::CompressedSensing::FWT2D(matrix<float>& input, std::vector<float>& filter, unsigned int scale, ILongTaskListener * listener)
 {
 	auto width = input.size2();
 	auto height = input.size1();
 	assert(width == height);
 	matrix<float> output(height, width);
-	output = input;
+	float * p_input = &input(0, 0);
+	float * p_output = &output(0, 0);
+	memcpy(p_output, p_input, width * height * sizeof(float));
 
 	unsigned int J = QuadLength(width);//a _iwavelet_slice_index of 2
 	unsigned int nc = width;
@@ -731,8 +722,10 @@ matrix<float> Yap::CompressedSensing::FWT2D(matrix<float>& input, std::vector<fl
 	}
 	for (unsigned int jscal = 0; jscal < scale; ++jscal)     // unsigned int jscal = J - 1; jscal >= scale; --jscal
 	{
-		output = DownSampling(Transpose(output), filter, nc);// 行方向下采样
-		output = DownSampling(Transpose(output), filter, nc);//列方向下采样
+		output = DownSampling(output, filter, nc);// 行方向下采样
+		memcpy(p_output, &Transpose(output)(0, 0), width * height * sizeof(float));
+		output = DownSampling(output, filter, nc);//列方向下采样
+		memcpy(p_output, &Transpose(output)(0, 0), width * height * sizeof(float));
 		nc = nc / 2;
 		if (listener != nullptr)
 		{
@@ -746,10 +739,10 @@ matrix<float> Yap::CompressedSensing::FWT2D(matrix<float>& input, std::vector<fl
 	return output;
 }
 
-matrix<complex<float>> Yap::CompressedSensing::Fw2DTransform(matrix<complex<float>>& input, ILongTaskListener * listener /*= nullptr*/)
+matrix<complex<float>> Yap::CompressedSensing::Fw2DTransform(matrix<complex<float>>& input, ILongTaskListener * listener)
 {
 	int t = sizeof(int);	//
-	matrix<complex<float>> in_data(input);
+	matrix<complex<float>>& in_data(input);
 	auto width = in_data.size2();
 	auto height = in_data.size1();
 	matrix<float> in_real_part(height, width);
@@ -779,7 +772,7 @@ matrix<complex<float>> Yap::CompressedSensing::Fw2DTransform(matrix<complex<floa
 
 matrix<complex<float>> Yap::CompressedSensing::IFw2DTransform(matrix<complex<float>>& input, ILongTaskListener * listener /*= nullptr*/)
 {
-	matrix<complex<float>> in_data(input);
+	matrix<complex<float>>& in_data(input);
 	auto width = in_data.size2();
 	auto height = in_data.size1();
 	matrix<float> in_real_part(height, width);
@@ -808,7 +801,7 @@ matrix<complex<float>> Yap::CompressedSensing::IFw2DTransform(matrix<complex<flo
 float Yap::CompressedSensing::CalculateEnergy(matrix<complex<float>>& recon_k_data, 
 	matrix<complex<float>>& differential_recon_k_data, matrix<complex<float>>& recon_wavelet_data, 
 	matrix<complex<float>>& differential_recon_wavelet_data, std::vector<matrix<complex<float>>>& recon_tv_data, 
-	std::vector<matrix<complex<float>>>& differential_recon_tv_data, const ParametterSet& myparameter, float step_length)
+	std::vector<matrix<complex<float>>>& differential_recon_tv_data, ParametterSet& myparameter, float step_length)
 {
 	float total_energy = 0.0;
 	float fidelity_energy = 0.0;
@@ -853,7 +846,7 @@ float Yap::CompressedSensing::CalculateEnergy(matrix<complex<float>>& recon_k_da
 
 boost::numeric::ublas::matrix<float> Yap::CompressedSensing::Transpose(boost::numeric::ublas::matrix<float>& in_data)
 {
-	matrix<float> output(in_data.size1(), in_data.size2());
+	matrix<float> output(in_data.size2(), in_data.size1());
 
 	for (size_t i = 0; i < in_data.size1(); ++i)
 	{
@@ -865,7 +858,7 @@ boost::numeric::ublas::matrix<float> Yap::CompressedSensing::Transpose(boost::nu
 	return output;
 }
 
-matrix<float> Yap::CompressedSensing::square_module(matrix<complex<float>> input)
+matrix<float> Yap::CompressedSensing::square_module(matrix<complex<float>>& input)
 {
 	matrix<float> normal(input.size1(), input.size2());
 	for (size_t i = 0; i < input.size1(); ++i)
@@ -903,7 +896,7 @@ matrix<float> Yap::CompressedSensing::sqrt_root(matrix<float> input)
 	return output;
 }
 
-matrix<complex<float>> Yap::CompressedSensing::dot_multiply(matrix<float> mask, matrix<complex<float>> input)
+matrix<complex<float>> Yap::CompressedSensing::dot_multiply(matrix<float>& mask, matrix<complex<float>>& input)
 {
 	matrix<complex<float>> result(input.size1(), input.size2());
 	assert(mask.size1() == input.size1() && mask.size2() == input.size2());
@@ -930,7 +923,7 @@ matrix<complex<float>> Yap::CompressedSensing::conj_multiply(matrix<complex<floa
 	return result;
 }
 
-matrix<float> Yap::CompressedSensing::module(matrix<complex<float>> input)
+matrix<float> Yap::CompressedSensing::module(matrix<complex<float>>& input)
 {
 	matrix<float> result(input.size1(), input.size2());
 	for (size_t i = 0; i < input.size1(); ++i)
@@ -1019,7 +1012,7 @@ matrix<std::complex<float>> Yap::CompressedSensing::Matrix_scale_multiply(matrix
 	return output;
 }
 
-matrix<std::complex<float>> Yap::CompressedSensing::Matrix_minus(matrix<std::complex<float>> input_1, matrix<std::complex<float>> input_2)
+matrix<std::complex<float>> Yap::CompressedSensing::Matrix_minus(matrix<std::complex<float>>& input_1, matrix<std::complex<float>>& input_2)
 {
 	matrix<complex<float>> output(input_1.size1(), input_1.size2());
 	for (size_t i = 0; i < input_1.size1(); ++i)
@@ -1057,7 +1050,7 @@ boost::numeric::ublas::matrix<std::complex<float>> Yap::CompressedSensing::Minus
 	return input;
 }
 
-matrix<float> Yap::CompressedSensing::GetRealPart(matrix<std::complex<float>> input)
+matrix<float> Yap::CompressedSensing::GetRealPart(matrix<std::complex<float>>& input)
 {
 	matrix<float> output(input.size1(), input.size2());
 	for (size_t i = 0; i < input.size1(); ++i)
@@ -1070,7 +1063,7 @@ matrix<float> Yap::CompressedSensing::GetRealPart(matrix<std::complex<float>> in
 	return output;
 }
 
-matrix<float> Yap::CompressedSensing::GetImaginaryPart(matrix<std::complex<float>> input)
+matrix<float> Yap::CompressedSensing::GetImaginaryPart(matrix<std::complex<float>>& input)
 {
 	matrix<float> output(input.size1(), input.size2());
 	for (size_t i = 0; i < input.size1(); ++i)
@@ -1083,4 +1076,54 @@ matrix<float> Yap::CompressedSensing::GetImaginaryPart(matrix<std::complex<float
 	return output;
 }
 
+void Yap::CompressedSensing::Plan(size_t width, size_t height, bool inverse, bool inplace)
+{
+	std::vector<fftwf_complex> data(width * height);
+
+	if (inplace)
+	{
+		_fft_plan = fftwf_plan_dft_2d(int(width), int(height), (fftwf_complex*)data.data(),
+			(fftwf_complex*)data.data(),
+			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
+			FFTW_MEASURE);
+	}
+	else
+	{
+		std::vector<fftwf_complex> result(width * height);
+		_fft_plan = fftwf_plan_dft_2d(int(width), int(height), (fftwf_complex*)data.data(),
+			(fftwf_complex*)result.data(),
+			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
+			FFTW_MEASURE);
+	}
+	_plan_data_width = static_cast<unsigned int> (width);
+	_plan_data_height = static_cast<unsigned int> (height);
+	_plan_inverse = inverse;
+	_plan_in_place = inplace;
+}
+
+float Yap::CompressedSensing::sum(boost::numeric::ublas::matrix<float>& input)
+{
+	float sum_value = 0;
+	for (unsigned int i = 0; i < input.size1(); ++i)
+	{
+		for (unsigned int j = 0; j < input.size2(); ++j)
+		{
+			sum_value += input(i, j);
+		}
+	}
+	return sum_value;
+}
+
+std::complex<float> Yap::CompressedSensing::sum(boost::numeric::ublas::matrix<std::complex<float>>& input)
+{
+	complex<float> sum_value = 0;
+	for (unsigned int i = 0; i < input.size1(); ++i)
+	{
+		for (unsigned int j = 0; j < input.size2(); ++j)
+		{
+			sum_value += input(i, j);
+		}
+	}
+	return sum_value;
+}
 

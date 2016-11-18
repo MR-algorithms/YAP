@@ -1,19 +1,22 @@
 import "BasicRecon.dll";
 
-CmrRawDataReader reader(DataPath = "D:\\test_data\\1.3.6.1.4.1.31636.24815489.151224005\\1",
+CmrRawDataReader reader(DataPath = "D:\\test_data\\RawData_256\\RawData",
 	ChannelCount = 4, ChannelSwitch = 15);
-SliceIterator slice_iterator;
+SliceSelector slice_selector;
 RemoveDC dc_remover;
 ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);
+Difference difference;
 Fft2D fft;
 ModulePhase module_phase;
 JpegExporter jpeg_exporter(ExportFolder = "d:\\Output");
 	
-reader->slice_iterator;
-slice_iterator->dc_remover;
+reader->slice_selector;
+slice_selector->dc_remover;
 dc_remover->zero_filling;
 zero_filling->fft;
 fft->module_phase;
-module_phase.Module->jpeg_exporter;
+module_phase.Module->difference.Reference;
+module_phase.Module->difference.Input;
+difference->jpeg_exporter;
 
 self.Input->reader.Input;

@@ -37,7 +37,7 @@ namespace Yap
 	{
 	public:
 		CompressedSensing();
-		virtual ~CompressedSensing(void);
+		virtual ~CompressedSensing();
 
 		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
@@ -57,7 +57,7 @@ namespace Yap
 		float CalculateEnergy(boost::numeric::ublas::matrix<std::complex<float>>& recon_k_data, boost::numeric::ublas::matrix<std::complex<float>>& differential_recon_kdata,
 			boost::numeric::ublas::matrix<std::complex<float>>& recon_wavelet_data, boost::numeric::ublas::matrix<std::complex<float>>& differential_recon_wavelet_data, 
 			std::vector<boost::numeric::ublas::matrix<std::complex<float>>>& recon_tv_data, std::vector<boost::numeric::ublas::matrix<std::complex<float>>>& differential_recon_tv_data, 
-			const ParametterSet& myparameter, float step_length);
+			ParametterSet& myparameter, float step_length);
 
 
 		//Fwt
@@ -93,21 +93,20 @@ namespace Yap
 		//Fft
 		boost::numeric::ublas::matrix<std::complex<float>> Fft2DTransform(boost::numeric::ublas::matrix<std::complex<float>> data);
 		boost::numeric::ublas::matrix<std::complex<float>> IFft2DTransform(boost::numeric::ublas::matrix<std::complex<float>> data);
-		void SetFFTPlan(const fftwf_plan& plan);
-		void SetIFFTPlan(const fftwf_plan& plan);
+		void Plan(size_t width, size_t height, bool inverse, bool inplace);
 		void FftShift(boost::numeric::ublas::matrix<std::complex<float>>& data);
 		void SwapBlock(std::complex<float> * block1, std::complex<float> * block2,
 			size_t width, size_t height, unsigned int line_stride);
 
 		boost::numeric::ublas::matrix<float> Transpose(boost::numeric::ublas::matrix<float>& in_data);
-		boost::numeric::ublas::matrix<float> square_module(boost::numeric::ublas::matrix<std::complex<float>> input);
-		float sum(boost::numeric::ublas::matrix<float> input);
-		std::complex<float> sum(boost::numeric::ublas::matrix<std::complex<float>> input);
+		boost::numeric::ublas::matrix<float> square_module(boost::numeric::ublas::matrix<std::complex<float>>& input);
 		boost::numeric::ublas::matrix<float> fill(float value, boost::numeric::ublas::matrix<float>& input);
+		float sum(boost::numeric::ublas::matrix<float>& input);
+		std::complex<float> sum(boost::numeric::ublas::matrix<std::complex<float>>& input);
 		boost::numeric::ublas::matrix<float> sqrt_root(boost::numeric::ublas::matrix<float> input);
-		boost::numeric::ublas::matrix<std::complex<float>> dot_multiply(boost::numeric::ublas::matrix<float> mask, boost::numeric::ublas::matrix<std::complex<float>> input);
+		boost::numeric::ublas::matrix<std::complex<float>> dot_multiply(boost::numeric::ublas::matrix<float>& mask, boost::numeric::ublas::matrix<std::complex<float>>& input);
 		boost::numeric::ublas::matrix<std::complex<float>> conj_multiply(boost::numeric::ublas::matrix<std::complex<float>>& input_1, boost::numeric::ublas::matrix<std::complex<float>>& input_2);
-		boost::numeric::ublas::matrix<float> module(boost::numeric::ublas::matrix<std::complex<float>> input);
+		boost::numeric::ublas::matrix<float> module(boost::numeric::ublas::matrix<std::complex<float>>& input);
 		boost::numeric::ublas::matrix<float> GetMask(float * mask, size_t width, size_t height);
 		boost::numeric::ublas::matrix<std::complex<float>> GetSubsampledData(std::complex<float>* data, size_t width, size_t height);
 		void GetReconData(std::complex<float> * recon, boost::numeric::ublas::matrix<std::complex<float>>& data);
@@ -115,22 +114,25 @@ namespace Yap
 			boost::numeric::ublas::matrix<std::complex<float>>& input_2);
 		boost::numeric::ublas::matrix<float> Matrix_plus(boost::numeric::ublas::matrix<float>& input_1,
 			boost::numeric::ublas::matrix<float>& input_2);
-		boost::numeric::ublas::matrix<std::complex<float>> Matrix_minus(boost::numeric::ublas::matrix<std::complex<float>> input_1,
-			boost::numeric::ublas::matrix<std::complex<float>> input_2);
+		boost::numeric::ublas::matrix<std::complex<float>> Matrix_minus(boost::numeric::ublas::matrix<std::complex<float>>& input_1,
+			boost::numeric::ublas::matrix<std::complex<float>>& input_2);
 		boost::numeric::ublas::matrix<std::complex<float>> Matrix_scale_multiply(boost::numeric::ublas::matrix<std::complex<float>>& input, float value);
 		boost::numeric::ublas::matrix<std::complex<float>> Matrix_scale_div(boost::numeric::ublas::matrix<std::complex<float>>& input, float value);
 		boost::numeric::ublas::matrix<std::complex<float>> Minus(boost::numeric::ublas::matrix<std::complex<float>>& input);
-		boost::numeric::ublas::matrix<float> GetRealPart(boost::numeric::ublas::matrix<std::complex<float>> input);
-		boost::numeric::ublas::matrix<float> GetImaginaryPart(boost::numeric::ublas::matrix<std::complex<float>> input);
+		boost::numeric::ublas::matrix<float> GetRealPart(boost::numeric::ublas::matrix<std::complex<float>>& input);
+		boost::numeric::ublas::matrix<float> GetImaginaryPart(boost::numeric::ublas::matrix<std::complex<float>>& input);
 
 	private:
 		std::vector<float> _filter;
 		unsigned int _filter_type_size;
 		unsigned int _coarse_level;
 		unsigned int _iteration_count;
+		unsigned int _plan_data_width;
+		unsigned int _plan_data_height;
+		bool _plan_inverse;
+		bool _plan_in_place;
 
-		fftwf_plan _p_FFT;
-		fftwf_plan _p_IFFT;
+		fftwf_plan _fft_plan;
 	};
 }
 

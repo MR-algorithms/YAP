@@ -69,7 +69,10 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 
 	Yap::Dimensions dims;
 	dims(DimensionReadout, 0, dest_width)
-		(DimensionPhaseEncoding, 0, dest_height);
+		(DimensionPhaseEncoding, 0, dest_height)
+		(DimensionSlice, 0, 1)
+		(Dimension4, 0, 1)
+		(DimensionChannel, 0, 1);
 
 	if (data->GetDataType() == DataTypeComplexDouble)
 	{
