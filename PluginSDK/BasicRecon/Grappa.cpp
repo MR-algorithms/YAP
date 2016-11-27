@@ -17,7 +17,7 @@ Grappa::Grappa(void) :
 	AddProperty(PropertyInt, L"Rate", L"The acceleration factor.");
 	SetInt(L"Rate", 2);
 	AddProperty(PropertyInt, L"AcsCount", L"The auto-calibration signal.");
-	SetInt(L"AcsCount", 32);
+	SetInt(L"AcsCount", 16);
 	AddProperty(PropertyInt, L"Block", L"The number of blocks.");
 	SetInt(L"Block", 4);
 
@@ -108,13 +108,13 @@ bool Grappa::Recon(std::complex<float> * subsampled_data,
 						{
 							if ((block_r + n + 1) * r + 1 > height)
 							{
-								Temp[coil_index + (block_r + 2) * num_coil + shift * num_coil] = 0;
+								Temp[coil_index + (block_r + 2) * num_coil + shift * num_coil * block] = 0;
 							}
 							else
 							{
 								auto src_point =width * height * coil_index + 
 									width * (1 + n * r + block_r * r + 1) + readout_index;
-								Temp[coil_index + (block_r + 2) * num_coil + shift * num_coil] = *(subsampled_data + src_point - 1 + shift);
+								Temp[coil_index + (block_r + 2) * num_coil + shift * num_coil * block] = *(subsampled_data + src_point - 1 + shift);
 							}
 						}
 					}
@@ -155,8 +155,8 @@ complex<float> * Grappa::MakeFidelity(complex<float> * recon_data, vector<comple
 arma::cx_fmat Grappa::FitCoef(complex<float> * subsampled_data, 
 	unsigned int r, unsigned int acs, unsigned int block, unsigned int width, unsigned int height, unsigned int num_coil)
 {
-	unsigned int first =((height - acs) / (2 * r)) * r + 1;
-	unsigned int fit_num = acs / r;
+	unsigned int first =(floor((height - acs) / (2 * r))) * r + 1;
+	unsigned int fit_num = floor(acs / r);
 	cx_fmat temp1((width - 2) * fit_num, num_coil * (r - 1));
 	temp1.zeros();
 	for (unsigned int k = 0; k < fit_num; ++k)
