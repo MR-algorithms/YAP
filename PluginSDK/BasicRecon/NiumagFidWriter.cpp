@@ -85,3 +85,8 @@ bool Yap::NiumagFidWriter::Input(const wchar_t * name, IData * data)
 
 	return true;
 }
+
+Yap::NiumagFidWriter::~NiumagFidWriter()
+{
+
+}

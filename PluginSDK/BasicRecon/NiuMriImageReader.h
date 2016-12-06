@@ -17,7 +17,10 @@ namespace Yap
 	public:
 		NiuMriImageReader(void);
 		NiuMriImageReader(const NiuMriImageReader& rhs);
+
 	private:
+		~NiuMriImageReader();
+
 		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data);
 

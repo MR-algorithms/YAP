@@ -13,11 +13,13 @@ namespace Yap
 	public:
 		SliceSelector(void);
 		SliceSelector(const SliceSelector& rhs);
-		virtual ~SliceSelector();
 
 		virtual IProcessor * Clone() override;
 
 		virtual bool Input(const wchar_t * name, IData * data) override;
+
+	protected:
+		~SliceSelector();
 	};
 }
 #endif // SliceSelector_h__

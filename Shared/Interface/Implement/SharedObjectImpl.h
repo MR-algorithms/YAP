@@ -15,8 +15,7 @@ namespace Yap
 		// Inherited via ISharedObject
 		virtual void Lock() override;
 		virtual void Release() override;
-
-
+		
 		unsigned int _use_count;
 	};
 }

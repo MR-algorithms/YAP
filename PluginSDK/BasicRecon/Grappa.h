@@ -17,12 +17,13 @@ namespace Yap
 	public:
 		Grappa(void);
 		Grappa(const Grappa& rhs);
-		virtual ~Grappa();
 
 		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
 	protected:
+		~Grappa();
+
 		bool Recon(std::complex<float> * subsampled_data,
 			unsigned int r, unsigned int acs, unsigned int Block, unsigned int width, unsigned int height, unsigned int num_coil);
 

@@ -21,12 +21,13 @@ namespace Yap
 	{
 	public:
 		CompressedSensing();
-		virtual ~CompressedSensing();
 
 		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
 	protected:
+		~CompressedSensing();
+
 		SmartPtr<IData> _mask;
 
 	};

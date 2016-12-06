@@ -7,10 +7,12 @@ namespace Yap
 	{
 	public:
 		ChannelIterator();
-		virtual ~ChannelIterator();
 
 		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
+	protected:
+		~ChannelIterator();
+
 	};
 }
 

@@ -29,8 +29,6 @@ namespace Yap
 		{
 		}
 
-		~Algorithm2DWrapper() {}
-
 		virtual bool Input(const wchar_t * port, IData * data) override
 		{
 			if (wstring(port) != L"Input")
@@ -59,6 +57,8 @@ namespace Yap
 			return new(nothrow) Algorithm2DWrapper<INPUT_TYPE, OUTPUT_TYPE>(*this);
 		}
 	protected:
+		~Algorithm2DWrapper() {}
+
 		ProcessingFunc _func;
 	};
 
@@ -81,8 +81,6 @@ namespace Yap
 			_func(rhs._func), ProcessorImpl(rhs)
 		{
 		}
-
-		~Algorithm2DInPlaceWrapper() {}
 
 		virtual bool Input(const wchar_t * port, IData * data) override
 		{
@@ -110,6 +108,8 @@ namespace Yap
 			return new (std::nothrow) Algorithm2DInPlaceWrapper<T>(*this);
 		}
 	protected:
+		~Algorithm2DInPlaceWrapper() {}
+
 		ProcessingFunc _func;
 	};
 }

@@ -121,3 +121,8 @@ bool Yap::NiumagFidReader::ReadNiumagFidData()
 
 	return true;
 }
+
+Yap::NiumagFidReader::~NiumagFidReader()
+{
+
+}
