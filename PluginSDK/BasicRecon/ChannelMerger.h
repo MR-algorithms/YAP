@@ -14,10 +14,11 @@ namespace Yap
 	public:
 		ChannelMerger(void);
 		ChannelMerger(const ChannelMerger& rhs);
-		virtual ~ChannelMerger(void);
 		virtual IProcessor* Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
 	protected:
+		~ChannelMerger(void);
+
 		struct MergeBuffer
 		{
 			SmartPtr<FloatData> buffer;
@@ -27,7 +28,7 @@ namespace Yap
 			MergeBuffer(MergeBuffer& rhs) : count(rhs.count), buffer(rhs.buffer) {}
 			MergeBuffer(MergeBuffer&& rhs) : count(rhs.count), buffer(rhs.buffer) {} 
 
-			~MergeBuffer() {}
+			virtual ~MergeBuffer() {}
 		};
 
 		std::vector<unsigned int> GetKey(IDimensions * dimensions);

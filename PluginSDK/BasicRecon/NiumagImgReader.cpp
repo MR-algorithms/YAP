@@ -127,3 +127,8 @@ bool Yap::NiumagImgReader::ReadNiumagImgData()
 	
 	return true;
 }
+
+Yap::NiumagImgReader::~NiumagImgReader()
+{
+
+}

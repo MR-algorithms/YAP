@@ -92,3 +92,8 @@ bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)
 
 	return true;
 }
+
+Yap::NiuMriImageWriter::~NiuMriImageWriter()
+{
+
+}

@@ -13,10 +13,12 @@ namespace Yap
 	public:
 		ModulePhase(void);
 		ModulePhase(const ModulePhase& rhs);
-		~ModulePhase();
 
 		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * port, IData * data) override;
+	protected:
+		~ModulePhase();
+
 	};
 }
 #endif // ModulePhase_h__

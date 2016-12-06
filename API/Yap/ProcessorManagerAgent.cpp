@@ -1,7 +1,6 @@
 #include "ProcessorManagerAgent.h"
 #include <assert.h>
 
-
 using namespace Yap;
 
 ModuleAgent::ModuleAgent() :

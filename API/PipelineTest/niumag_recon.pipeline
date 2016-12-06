@@ -3,20 +3,18 @@ import "BasicRecon.dll";
 NiumagFidReader reader(DataPath = "D:\\test_data\\UU.img.fid");
 SliceIterator slice_iterator;
 RemoveDC dc_remover;
-ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);
+ZeroFilling zero_filling(DestWidth = 1024, DestHeight = 1024);
 Fft2D fft;
 ModulePhase module_phase;
-DataTypeConvertor reverse;
-NiumagImgWriter writer(ExportFolder = "d:\\Output");
-
-// JpegExporter jpeg_exporter(ExportFolder = "d:\\Output");
+DataTypeConvertor convertor;
+NiuMriImageWriter writer(ExportFolder = "d:\\Output");
 	
 reader->slice_iterator;
 slice_iterator->dc_remover;
 dc_remover->zero_filling;
 zero_filling->fft;
 fft->module_phase;
-module_phase.Module->reverse;
-reverse.UnsignedShort->writer;
+module_phase.Module->convertor;
+convertor.UnsignedShort->writer;
 
 self.Input->reader.Input;

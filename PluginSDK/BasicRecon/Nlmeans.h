@@ -21,12 +21,13 @@ namespace Yap
 	public:
 		Nlmeans(void);
 		Nlmeans(const Nlmeans& rhs);
-		virtual ~Nlmeans();
 
 		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
 	protected:
+		~Nlmeans();
+
 		void nlmeans_ipol(unsigned int iDWin, unsigned int iDBloc, float Sigma, float fFiltPar, 
 			float * fpI, float * fpO, unsigned int iWidth, unsigned int iHeight);
 

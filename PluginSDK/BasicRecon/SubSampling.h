@@ -9,12 +9,13 @@ namespace Yap
 	public:
 		SubSampling(void);
 		SubSampling(const SubSampling& rhs);
-		virtual ~SubSampling();
 
 		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
 	private:
+		~SubSampling();
+
 		SmartPtr<IData> _mask;
 
 	};

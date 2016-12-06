@@ -14,7 +14,6 @@ namespace Yap
 	public:
 		SamplingMaskCreator(void);
 		SamplingMaskCreator(const SamplingMaskCreator& rhs);
-		virtual ~SamplingMaskCreator();
 
 		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
@@ -23,6 +22,8 @@ namespace Yap
 	private:
 		unsigned int _try_count;
 		unsigned int _tolerance;
+
+		~SamplingMaskCreator();
 
 		std::vector<unsigned char> GetRandomSamplingPattern(unsigned int row_count,
 			float pow, float sample_percent, float radius);

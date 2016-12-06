@@ -27,6 +27,12 @@ namespace Yap
 		};
 
 	}
+
+	CmrDataReader::~CmrDataReader()
+	{
+
+	}
+
 }
 
 CmrDataReader::CmrDataReader(void) :

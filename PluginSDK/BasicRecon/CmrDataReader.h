@@ -25,6 +25,8 @@ namespace Yap
 		CmrDataReader(void);
 		CmrDataReader(const CmrDataReader& rhs);
 	private:
+		~CmrDataReader();
+
 		virtual bool Input(const wchar_t * name, IData * data);
 		virtual IProcessor * Clone() override;  
 

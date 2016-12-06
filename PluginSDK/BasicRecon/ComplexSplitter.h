@@ -13,9 +13,10 @@ namespace Yap
 
 	public:
 		ComplexSplitter();;
-		~ComplexSplitter();
 
 	protected:
+		~ComplexSplitter();
+
 		virtual bool Input(const wchar_t * port, IData * data) override;
 		virtual IProcessor * Clone() override;
 

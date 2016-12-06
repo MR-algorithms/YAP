@@ -125,3 +125,8 @@ bool Yap::NiuMriImageReader::ReadNiuMriImageData()
 
 	return true;
 }
+
+Yap::NiuMriImageReader::~NiuMriImageReader()
+{
+
+}

@@ -18,6 +18,8 @@ namespace Yap
 		NiumagFidReader(void);
 		NiumagFidReader(const NiumagFidReader& rhs);
 	private:
+		~NiumagFidReader();
+
 		virtual bool Input(const wchar_t * name, IData * data);
 		virtual IProcessor * Clone() override;
 

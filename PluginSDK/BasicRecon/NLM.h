@@ -10,12 +10,13 @@ namespace Yap
 	{
 	public:
 		NLM(void);
-		virtual ~NLM();
 
 		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
 	protected:
+		~NLM();
+
 		void nlmeans(float * input_img, float * output_img, unsigned int pl_r, 
 			unsigned int sw_r, float sigma, float h, unsigned int width, unsigned int height);
 		arma::fmat GetGaussianKernel(int pl, float sigma);
