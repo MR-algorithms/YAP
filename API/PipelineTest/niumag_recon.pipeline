@@ -2,7 +2,7 @@ import "BasicRecon.dll";
 
 NiumagFidReader reader(DataPath = "D:\\test_data\\UU.img.fid");
 SliceIterator slice_iterator;
-RemoveDC dc_remover;
+DcRemover dc_remover;
 ZeroFilling zero_filling(DestWidth = 1024, DestHeight = 1024);
 Fft2D fft;
 ModulePhase module_phase;
