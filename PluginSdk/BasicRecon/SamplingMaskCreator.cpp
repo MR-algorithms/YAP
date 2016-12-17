@@ -27,9 +27,9 @@ SamplingMaskCreator::SamplingMaskCreator():
 	SetFloat(L"radius", 0.2f);
 
 	AddProperty(PropertyBool, L"equal_subsampling", L"");
-	SetBool(L"equal_subsampling", false);
+	SetBool(L"equal_subsampling", true);
 	AddProperty(PropertyBool, L"random_subsampling", L"");
-	SetBool(L"random_subsampling", true);
+	SetBool(L"random_subsampling", false);
 
 	AddProperty(PropertyInt, L"Rate", L"");
 	SetInt(L"Rate", 2);

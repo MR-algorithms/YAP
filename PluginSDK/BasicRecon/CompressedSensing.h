@@ -96,7 +96,7 @@ namespace Yap
 		void Plan(size_t width, size_t height, bool inverse, bool inplace);
 		void FftShift(boost::numeric::ublas::matrix<std::complex<float>>& data);
 		void SwapBlock(std::complex<float> * block1, std::complex<float> * block2,
-			size_t width, size_t height, unsigned int line_stride);
+			size_t width, size_t height, size_t line_stride);
 
 		boost::numeric::ublas::matrix<float> Transpose(boost::numeric::ublas::matrix<float>& in_data);
 		boost::numeric::ublas::matrix<float> square_module(boost::numeric::ublas::matrix<std::complex<float>>& input);
@@ -104,23 +104,9 @@ namespace Yap
 		float sum(boost::numeric::ublas::matrix<float>& input);
 		std::complex<float> sum(boost::numeric::ublas::matrix<std::complex<float>>& input);
 		boost::numeric::ublas::matrix<float> sqrt_root(boost::numeric::ublas::matrix<float> input);
-		boost::numeric::ublas::matrix<std::complex<float>> dot_multiply(boost::numeric::ublas::matrix<float>& mask, boost::numeric::ublas::matrix<std::complex<float>>& input);
 		boost::numeric::ublas::matrix<std::complex<float>> conj_multiply(boost::numeric::ublas::matrix<std::complex<float>>& input_1, boost::numeric::ublas::matrix<std::complex<float>>& input_2);
-		boost::numeric::ublas::matrix<float> module(boost::numeric::ublas::matrix<std::complex<float>>& input);
-		boost::numeric::ublas::matrix<float> GetMask(float * mask, size_t width, size_t height);
-		boost::numeric::ublas::matrix<std::complex<float>> GetSubsampledData(std::complex<float>* data, size_t width, size_t height);
-		void GetReconData(std::complex<float> * recon, boost::numeric::ublas::matrix<std::complex<float>>& data);
-		boost::numeric::ublas::matrix<std::complex<float>> Matrix_plus(boost::numeric::ublas::matrix<std::complex<float>>& input_1, 
-			boost::numeric::ublas::matrix<std::complex<float>>& input_2);
-		boost::numeric::ublas::matrix<float> Matrix_plus(boost::numeric::ublas::matrix<float>& input_1,
-			boost::numeric::ublas::matrix<float>& input_2);
-		boost::numeric::ublas::matrix<std::complex<float>> Matrix_minus(boost::numeric::ublas::matrix<std::complex<float>>& input_1,
-			boost::numeric::ublas::matrix<std::complex<float>>& input_2);
-		boost::numeric::ublas::matrix<std::complex<float>> Matrix_scale_multiply(boost::numeric::ublas::matrix<std::complex<float>>& input, float value);
-		boost::numeric::ublas::matrix<std::complex<float>> Matrix_scale_div(boost::numeric::ublas::matrix<std::complex<float>>& input, float value);
-		boost::numeric::ublas::matrix<std::complex<float>> Minus(boost::numeric::ublas::matrix<std::complex<float>>& input);
-		boost::numeric::ublas::matrix<float> GetRealPart(boost::numeric::ublas::matrix<std::complex<float>>& input);
-		boost::numeric::ublas::matrix<float> GetImaginaryPart(boost::numeric::ublas::matrix<std::complex<float>>& input);
+		boost::numeric::ublas::matrix<float> module(boost::numeric::ublas::matrix<std::complex<float>> input);
+
 
 	private:
 		std::vector<float> _filter;

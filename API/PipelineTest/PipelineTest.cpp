@@ -70,7 +70,7 @@ int main()
 //	 ConstructorTest();
 
 	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"CompressedSensing.pipeline");
+	auto pipeline = compiler.CompileFile(L"Test.pipeline");
 	if (pipeline)
 	{
 		pipeline->Input(L"Input", nullptr);

@@ -5,18 +5,15 @@ CmrRawDataReader reader(DataPath = "D:\\test_data\\RawData_256\\RawData",
 SliceSelector slice_selector;
 RemoveDC dc_remover;
 ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);
-Difference difference;
-Fft2D fft;
+cuFft2D cufft;
 ModulePhase module_phase;
 JpegExporter jpeg_exporter(ExportFolder = "d:\\Output");
 	
 reader->slice_selector;
 slice_selector->dc_remover;
 dc_remover->zero_filling;
-zero_filling->fft;
-fft->module_phase;
-module_phase.Module->difference.Reference;
-module_phase.Module->difference.Input;
-difference->jpeg_exporter;
+zero_filling->cufft;
+cufft->module_phase;
+module_phase.Module->jpeg_exporter;
 
 self.Input->reader.Input;
