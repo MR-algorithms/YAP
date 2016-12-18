@@ -95,19 +95,19 @@ void Fft1D::SwapBlock(std::complex<double>* block1,
 
 void Fft1D::Plan(size_t size, bool inverse, bool in_place)
 {
-	vector<fftw_complex> data(size);
+	vector<fftwf_complex> data(size);
 	if (in_place)
 	{
-		_fft_plan = fftw_plan_dft_1d(_plan_data_size, (fftw_complex*)data.data(),
-			(fftw_complex*)data.data(),
+		_fft_plan = fftwf_plan_dft_1d(int(size), (fftwf_complex*)data.data(),
+			(fftwf_complex*)data.data(),
 			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
 			FFTW_MEASURE);
 	}
 	else
 	{
-		vector<fftw_complex> result(size);
-		_fft_plan = fftw_plan_dft_1d(_plan_data_size, (fftw_complex*)data.data(),
-			(fftw_complex*)result.data(),
+		vector<fftwf_complex> result(size);
+		_fft_plan = fftwf_plan_dft_1d(int(size), (fftwf_complex*)data.data(),
+			(fftwf_complex*)result.data(),
 			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
 			FFTW_MEASURE);
 	}
@@ -129,7 +129,7 @@ bool Fft1D::Fft(std::complex<double> * data,
 		Plan(size, inverse, in_place);
 	}
 
-	fftw_execute_dft(_fft_plan, (fftw_complex*)data, (fftw_complex*)result_data);
+	fftwf_execute_dft(_fft_plan, (fftwf_complex*)data, (fftwf_complex*)result_data);
 
 	for (auto data = result_data; data < result_data + size; ++data)
 	{

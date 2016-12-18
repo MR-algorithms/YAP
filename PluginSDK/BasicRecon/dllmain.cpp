@@ -30,6 +30,7 @@
 #include "SliceSelector.h"
 #include "SubSampling.h"
 #include "ZeroFilling.h"
+#include "cuFft2D.h"
 
 #include "Interface\Implement\YapImplement.h"
 
@@ -62,6 +63,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(SliceSelector)
 	ADD_PROCESSOR(SubSampling)
 	ADD_PROCESSOR(ZeroFilling)
+	ADD_PROCESSOR(cuFft2D)
 	ADD(L"HFlipFloat", new Algorithm2DInPlaceWrapper<float>(hflip<float>, L"HFlipFloat"))
 END_DECL_PROCESSORS
 

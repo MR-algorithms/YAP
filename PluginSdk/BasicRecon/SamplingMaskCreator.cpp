@@ -1,32 +1,23 @@
 
 #include "SamplingMaskCreator.h"
 #include "Interface/Client/DataHelper.h"
+#include "Interface/Implement/DataObject.h"
 
 #include <math.h>
-#include <algorithm>
 #include <numeric>
-#include <fftw3.h>
-
-#pragma comment(lib, "libfftw3-3.lib")
-#pragma comment(lib, "libfftw3f-3.lib")
-#pragma comment(lib, "libfftw3l-3.lib")
+#include <algorithm>
 
 
 using namespace Yap;
 using namespace std;
 
-SamplingMaskCreator::SamplingMaskCreator(void):
+SamplingMaskCreator::SamplingMaskCreator():
 	ProcessorImpl(L"SamplingMaskCreator"),
 	_try_count(10),
 	_tolerance(3)
 {
-}
-
-Yap::SamplingMaskCreator::SamplingMaskCreator(const SamplingMaskCreator & rhs)
-	:ProcessorImpl(rhs)
-{	
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
-	AddOutput(L"Mask", 2, DataTypeChar);
+	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeFloat);
 
 	AddProperty(PropertyFloat, L"pow", L"");
 	SetFloat(L"pow", 3.0f);
@@ -56,9 +47,9 @@ IProcessor * Yap::SamplingMaskCreator::Clone()
 	return new (nothrow) SamplingMaskCreator(*this);
 }
 
-bool Yap::SamplingMaskCreator::Input(const wchar_t * name, IData * data)
+bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
 {
-	if (wstring(name) != L"Input")
+	if (wstring(port) != L"Input")
 		return false;
 
 	if (data->GetDataType() != DataTypeComplexFloat)
@@ -74,24 +65,27 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * name, IData * data)
 		float radius = static_cast<float> (GetFloat(L"radius"));
 
 		auto mask = GenerateRandomMask(width, height, pow, sample_percent, radius);
-		char * Mask = nullptr;
+		float * Mask = nullptr;
 		try
 		{
-			Mask = new char[width * height];
+			Mask = new float[width * height];
 		}
 		catch(bad_alloc&)
 		{
 			return false;
 		}
-		memcpy(Mask, mask.data(), width * height * sizeof(char));
+		memcpy(Mask, mask.data(), width * height * sizeof(float));
 
 		Dimensions dimensions;
 		dimensions(DimensionReadout, 0U, width)
-			(DimensionPhaseEncoding, 0U, height);
+			(DimensionPhaseEncoding, 0U, height)
+			(DimensionSlice, 0U, 1)
+			(Dimension4, 0U, 1)
+			(DimensionChannel, 0U, 1);
 
-		auto outdata = YapShared(new CharData(Mask, dimensions, nullptr, true));
+		auto outdata = YapShared(new FloatData(Mask, dimensions, nullptr, true));
 
-		Feed(L"Mask", outdata.get());
+		Feed(L"Output", outdata.get());
 	}
 	else
 	{
@@ -100,67 +94,71 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * name, IData * data)
 		auto height = input_data.GetHeight();
 		auto width = input_data.GetWidth();
 		auto mask = GenerateEqualMask(width, height, acs, r);
-		char * Mask = nullptr;
+		float * Mask = nullptr;
 		try
 		{
-			Mask = new char[width * height];
+			Mask = new float[width * height];
 		}
 		catch (bad_alloc&)
 		{
 			return false;
 		}
-		memcpy(Mask, mask.data(), width * height * sizeof(char));
+		memcpy(Mask, mask.data(), width * height * sizeof(float));
 
 		Dimensions dimensions;
 		dimensions(DimensionReadout, 0U, width)
-			(DimensionPhaseEncoding, 0U, height);
+			(DimensionPhaseEncoding, 0U, height)
+			(DimensionSlice, 0U, 1)
+			(Dimension4, 0U, 1)
+			(DimensionChannel, 0U, 1);
 
-		auto outdata = YapShared(new CharData(Mask, dimensions, nullptr, true));
+		auto outdata = YapShared(new FloatData(Mask, dimensions, nullptr, true));
 
-		Feed(L"Mask", outdata.get());
+		Feed(L"Output", outdata.get());
 	}
 	return true;
 }
 
-std::vector<unsigned char> Yap::SamplingMaskCreator::GenerateRandomMask(unsigned int width, unsigned int height, float pow, float sample_percent, float radius)
+std::vector<float> Yap::SamplingMaskCreator::GenerateRandomMask(unsigned int width, unsigned int height, 
+	float pow, float sample_percent, float radius)
 {
-	std::vector<unsigned char> sampling_pattern = GetRandomSamplingPattern(height, pow, sample_percent, radius);
-	std::vector<unsigned char> mask(width * height);
+	std::vector<unsigned int> sampling_pattern = GetRandomSamplingPattern(height, pow, sample_percent, radius);
+	std::vector<float> mask(width * height);
 	 auto mask_cursor = mask.data();
 
 	 for (unsigned int row = 0; row < height; ++row)
 	 {
 		 for (unsigned int column = 0; column < width; ++column)
 		 {
-			 *mask_cursor++ = sampling_pattern[width * row + column];
+			 *mask_cursor++ = float(sampling_pattern[row]);
 		 }
 	 }
 	return mask;
 }
 
-std::vector<unsigned char> Yap::SamplingMaskCreator::GenerateEqualMask(unsigned int width, unsigned int height, unsigned int acs, unsigned int rate)
+std::vector<float> Yap::SamplingMaskCreator::GenerateEqualMask(unsigned int width, unsigned int height, unsigned int acs, unsigned int rate)
 {
-	std::vector<unsigned char> sampling_pattern = GetEqualSamplingPattern(height, acs, rate);
-	std::vector<unsigned char> mask(width * height);
+	std::vector<unsigned int> sampling_pattern = GetEqualSamplingPattern(height, acs, rate);
+	std::vector<float> mask(width * height);
 	auto mask_cursor = mask.data();
 
 	for (unsigned int row = 0; row < height; ++row)
 	{
 		for (unsigned int column = 0; column < width; ++column)
 		{
-			*mask_cursor++ = sampling_pattern[width * row + column];
+			*mask_cursor++ = float(sampling_pattern[row]);
 		}
 	}
 	return mask;
 }
 
-std::vector<unsigned char> Yap::SamplingMaskCreator::GetRandomSamplingPattern(unsigned int row_count, float pow, float sample_percent, float radius)
+std::vector<unsigned int> Yap::SamplingMaskCreator::GetRandomSamplingPattern(unsigned int row_count, float pow, float sample_percent, float radius)
 {
 	float min_peak_interference((float)INT_MAX);
 	vector<float> pdf = GeneratePdf(row_count, pow, sample_percent, radius);
 
-	vector<unsigned char> min_interference_pattern(pdf.size());
-	vector<unsigned char> sampling_pattern(pdf.size());
+	vector<unsigned int> min_interference_pattern(pdf.size());
+	vector<unsigned int> sampling_pattern(pdf.size());
 	vector<complex<float>> normalized_sampling_pattern(pdf.size());
 	vector<complex<float>> fft_result(pdf.size());
 
@@ -191,7 +189,6 @@ std::vector<unsigned char> Yap::SamplingMaskCreator::GetRandomSamplingPattern(un
 			normalized_sampling_pattern[t] = std::complex<float>(sampling_pattern[t] / pdf[t], 0);
 		}
 		// 傅里叶变换
-
 		fftwf_execute(p);
 		for (auto iter = fft_result.begin() + 1; iter != fft_result.end(); ++iter)
 		{
@@ -216,22 +213,17 @@ std::vector<unsigned char> Yap::SamplingMaskCreator::GetRandomSamplingPattern(un
 	}
 	//
 	fftwf_destroy_plan(p);
-
 	return min_interference_pattern;
 }
 
-std::vector<unsigned char> Yap::SamplingMaskCreator::GetEqualSamplingPattern(unsigned int height, unsigned int acs, unsigned int rate)
+std::vector<unsigned int> Yap::SamplingMaskCreator::GetEqualSamplingPattern(unsigned int height, unsigned int acs, unsigned int rate)
 {
-	std::vector<unsigned char> sampling_pattern;
-	for (unsigned int i = 0; i <= height - rate - 1; ++i)
+	std::vector<unsigned int> sampling_pattern(height, 0);
+	for (unsigned int i = 0; i < height; ++i)
 	{
 		if (i % rate == 0)
 		{
-			sampling_pattern.push_back(1);
-		}
-		else
-		{
-			sampling_pattern.push_back(0);
+			sampling_pattern[i] = 1;
 		}
 	}
 
@@ -278,6 +270,10 @@ std::vector<float> Yap::SamplingMaskCreator::GeneratePdf(unsigned int row_count,
 
 	float sum = accumulate(pdf.begin(), pdf.end(), 0.0f);
 
+	if (floor(sum) > line_count)
+	{
+		return vector<float>();  //p值偏小。
+	}
 
 	std::vector<float> pdf_temp;
 	while (1)
@@ -295,11 +291,6 @@ std::vector<float> Yap::SamplingMaskCreator::GeneratePdf(unsigned int row_count,
 		}
 
 		sum = floor(accumulate(pdf_temp.begin(), pdf_temp.end(), 0.0f));
-
-		if (floor(sum) > line_count)
-		{
-			return vector<float>();  //p值偏小。
-		}
 
 		if (sum > line_count)
 		{
@@ -333,5 +324,4 @@ std::vector<float> Yap::SamplingMaskCreator::LineSpace(float begin, float end, u
 
 	return vec;
 }
-
 

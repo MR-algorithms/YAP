@@ -36,9 +36,9 @@ ZeroFilling::ZeroFilling() : ProcessorImpl(L"ZeroFilling")
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 
 	AddProperty(PropertyInt, L"DestWidth", L"Destination width.");
-	SetInt(L"DestWidth", 512);
+	SetInt(L"DestWidth", 256);
 	AddProperty(PropertyInt, L"DestHeight", L"Destination height.");
-	SetInt(L"DestHeight", 512);
+	SetInt(L"DestHeight", 256);
 	AddProperty(PropertyInt, L"Left", L"X coordinate of top left corner of source data in destination data.");
 	SetInt(L"Left", 0);
 	AddProperty(PropertyInt, L"Top", L"Y coordinate of top left corner of source data in destination data.");
@@ -69,7 +69,10 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 
 	Yap::Dimensions dims;
 	dims(DimensionReadout, 0, dest_width)
-		(DimensionPhaseEncoding, 0, dest_height);
+		(DimensionPhaseEncoding, 0, dest_height)
+		(DimensionSlice, 0, 1)
+		(Dimension4, 0, 1)
+		(DimensionChannel, 0, 1);
 
 	if (data->GetDataType() == DataTypeComplexDouble)
 	{

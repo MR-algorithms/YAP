@@ -88,6 +88,9 @@
     <ClCompile Include="NiuMriImageWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cuFft2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm2DWrapper.h">
@@ -180,6 +183,9 @@
     <ClInclude Include="NiuMriImageWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cuFft2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -193,5 +199,8 @@
       <UniqueIdentifier>{76bb0875-0858-42a8-85a0-1df59b3874db}</UniqueIdentifier>
       <Extensions>cpp</Extensions>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="pre_cuFft2D.cu" />
   </ItemGroup>
 </Project>
