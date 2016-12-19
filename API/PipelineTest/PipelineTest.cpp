@@ -49,7 +49,7 @@ void ConstructorTest()
 
 		constructor.MapInput(L"Input", L"reader", L"Input");
 
-		shared_ptr<IProcessor> pipeline = constructor.GetPipeline();
+		SmartPtr<IProcessor> pipeline = constructor.GetPipeline();
 		if (pipeline)
 		{
 			pipeline->Input(L"Input", nullptr);
