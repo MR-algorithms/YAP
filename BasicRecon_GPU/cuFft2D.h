@@ -1,9 +1,5 @@
 #pragma once
 #include "Interface\Implement\ProcessorImpl.h"
-#include <cusp/complex.h>
-#include <thrust\device_vector.h>
-#include <thrust\device_ptr.h>
-#include <cufft.h>
 
 namespace Yap
 {

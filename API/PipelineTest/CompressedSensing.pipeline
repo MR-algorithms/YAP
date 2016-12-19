@@ -1,4 +1,5 @@
 import "BasicRecon.dll";
+import "CompressedSensing.dll";
 
 CmrRawDataReader reader(DataPath = "D:\\test_data\\RawData_256\\RawData",
 	ChannelCount = 4, ChannelSwitch = 15);

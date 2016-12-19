@@ -28,9 +28,6 @@
     <ClCompile Include="Fft2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Grappa.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="JpegExporter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -53,9 +50,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NiumagImgReader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CompressedSensing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SubSampling.cpp">
@@ -88,9 +82,6 @@
     <ClCompile Include="NiuMriImageWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cuFft2D.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm2DWrapper.h">
@@ -115,9 +106,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Fft2D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Grappa.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="JpegExporter.h">
@@ -150,9 +138,6 @@
     <ClInclude Include="NiumagImgReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CompressedSensing.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SubSampling.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -183,9 +168,6 @@
     <ClInclude Include="NiuMriImageWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cuFft2D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -199,8 +181,5 @@
       <UniqueIdentifier>{76bb0875-0858-42a8-85a0-1df59b3874db}</UniqueIdentifier>
       <Extensions>cpp</Extensions>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <CudaCompile Include="pre_cuFft2D.cu" />
   </ItemGroup>
 </Project>
