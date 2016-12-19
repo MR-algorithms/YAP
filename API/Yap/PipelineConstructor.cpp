@@ -47,7 +47,7 @@ PipelineConstructor::~PipelineConstructor()
 
 void PipelineConstructor::Reset(bool reset_modules)
 {
-	_pipeline = YapShared(new CompositeProcessor(L"__PIPELINE"));
+	_pipeline = shared_ptr<CompositeProcessor>(new CompositeProcessor(L"__PIPELINE"));
 
 	if (reset_modules)
 	{
@@ -159,7 +159,7 @@ bool Yap::PipelineConstructor::MapOutput(const wchar_t * pipeline_port,
 	return _pipeline->MapOutput(pipeline_port, inner_processor, inner_port);
 }
 
-Yap::SmartPtr<CompositeProcessor> Yap::PipelineConstructor::GetPipeline()
+std::shared_ptr<CompositeProcessor> Yap::PipelineConstructor::GetPipeline()
 {
 	return _pipeline;
 }
@@ -168,7 +168,7 @@ bool PipelineConstructor::SetProperty(const wchar_t * processor_id,
 	const wchar_t * property_id,
 	const wchar_t * value)
 {
-	assert(_pipeline.get() != nullptr);
+	assert(_pipeline != nullptr);
 
 	ProcessorAgent processor(_pipeline->Find(processor_id));
 

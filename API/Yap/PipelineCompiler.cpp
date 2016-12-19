@@ -453,7 +453,7 @@ PipelineCompiler::~PipelineCompiler(void)
 }
 
 
-Yap::SmartPtr<CompositeProcessor> Yap::PipelineCompiler::Compile(const wchar_t * text)
+std::shared_ptr<CompositeProcessor> Yap::PipelineCompiler::Compile(const wchar_t * text)
 {
 	wistringstream input;
 	input.str(text);
@@ -461,7 +461,7 @@ Yap::SmartPtr<CompositeProcessor> Yap::PipelineCompiler::Compile(const wchar_t *
 	return DoCompile(input);
 }
 
-Yap::SmartPtr<CompositeProcessor> PipelineCompiler::CompileFile(const wchar_t * path)
+shared_ptr<CompositeProcessor> PipelineCompiler::CompileFile(const wchar_t * path)
 {
 	wifstream script_file;
 	script_file.open(path);
@@ -470,13 +470,13 @@ Yap::SmartPtr<CompositeProcessor> PipelineCompiler::CompileFile(const wchar_t * 
 	{
 		wstring message = wstring(L"Failed to open script file: ") + path;
 		// throw CompileError(Token(), CompileErrorFailedOpenFile, message);
-		return Yap::SmartPtr<CompositeProcessor>();
+		return shared_ptr<CompositeProcessor>();
 	}
 
 	return DoCompile(script_file);
 }
 
-Yap::SmartPtr<CompositeProcessor> PipelineCompiler::DoCompile(std::wistream& input)
+std::shared_ptr<CompositeProcessor> PipelineCompiler::DoCompile(std::wistream& input)
 {
 	Preprocess(input);
 
@@ -493,7 +493,7 @@ Yap::SmartPtr<CompositeProcessor> PipelineCompiler::DoCompile(std::wistream& inp
 			return _constructor->GetPipeline();
 		}
 
-		return Yap::SmartPtr<CompositeProcessor>();
+		return std::shared_ptr<CompositeProcessor>();
 	}
 	catch (CompileError& e)
 	{
@@ -505,7 +505,7 @@ Yap::SmartPtr<CompositeProcessor> PipelineCompiler::DoCompile(std::wistream& inp
 
 		wcerr << output.str();
 
-		return Yap::SmartPtr<CompositeProcessor>();
+		return std::shared_ptr<CompositeProcessor>();
 	}
 }
 

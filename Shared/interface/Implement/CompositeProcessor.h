@@ -17,6 +17,7 @@ namespace Yap
 	public:
 		CompositeProcessor(const wchar_t * class_id);
 		CompositeProcessor(CompositeProcessor& rhs);
+		virtual ~CompositeProcessor();
 
 		virtual IProcessor * Clone() override;
 
@@ -31,8 +32,6 @@ namespace Yap
 		bool AddProcessor(IProcessor * processor);
 		IProcessor * Find(const wchar_t * instance_id);
 	protected:
-		virtual ~CompositeProcessor();
-
 		std::map<std::wstring, SmartPtr<IProcessor>> _processors;
 		std::map<std::wstring, Anchor> _output;
 		std::map<std::wstring, Anchor> _inputs;

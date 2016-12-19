@@ -9,9 +9,6 @@
 #include <stack>
 #include <memory>
 
-#include "Interface/IMemory.h"
-#include "Interface/Implement/CompositeProcessor.h"
-
 namespace Yap
 {
 	class CompositeProcessor;
@@ -185,11 +182,11 @@ namespace Yap
 		PipelineCompiler();
 		~PipelineCompiler();
 
-		Yap::SmartPtr<CompositeProcessor> CompileFile(const wchar_t * path);
-		Yap::SmartPtr<CompositeProcessor> Compile(const wchar_t * text);
+		std::shared_ptr<CompositeProcessor> CompileFile(const wchar_t * path);
+		std::shared_ptr<CompositeProcessor> Compile(const wchar_t * text);
 
 	protected:
-		Yap::SmartPtr<CompositeProcessor> DoCompile(std::wistream& input);
+		std::shared_ptr<CompositeProcessor> DoCompile(std::wistream& input);
 
 		std::vector<std::wstring> _script_lines;
 		std::vector<Token> _tokens;
