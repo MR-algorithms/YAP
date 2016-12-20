@@ -6,6 +6,9 @@
 #include <memory>
 #include <string>
 
+#include "Interface/IMemory.h"
+#include "Interface/Implement/CompositeProcessor.h"
+
 namespace Yap
 {
 
@@ -40,7 +43,7 @@ namespace Yap
 		unsigned int _line_number;
 	};
 
-	class CompositeProcessor;
+	class Pipeline;
 	class ModuleManager;
 	class ProcessorAgent;
 	struct IProcessor;
@@ -75,10 +78,10 @@ namespace Yap
 
 		bool InstanceIdExists(const wchar_t * id);
 
-		std::shared_ptr<CompositeProcessor> GetPipeline();
+		SmartPtr<Pipeline> GetPipeline();
 
 	protected:
-		std::shared_ptr<CompositeProcessor> _pipeline;
+		SmartPtr<Pipeline> _pipeline;
 		std::shared_ptr<ModuleManager> _module_manager;
 		std::wstring _plugin_folder;
 	};
