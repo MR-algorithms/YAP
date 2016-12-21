@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "NiuMriImageWriter.h"
-
+#include <time.h> 
+#include <stdio.h> 
 #include <fstream>
 #include <iosfwd>
 #include "Interface\Client\DataHelper.h"
@@ -39,6 +40,16 @@ bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)
 	{
 		file_path += L"\\";
 	}
+	
+	time_t t = time(0);
+	char tmp[64];
+	strftime(tmp, sizeof(tmp), "%Y%m%d", localtime(&t));
+	string str(tmp);
+	std::wstring wstr;
+	wstr.assign(str.begin(), str.end());
+	wstr += L".";
+	file_path += wstr;
+	
 	file_path += file_name.str();
 	file_path += L".niuimg";
 
@@ -95,5 +106,4 @@ bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)
 
 Yap::NiuMriImageWriter::~NiuMriImageWriter()
 {
-
 }
