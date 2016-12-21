@@ -7,7 +7,7 @@ ZeroFilling zero_filling(DestWidth = 1024, DestHeight = 1024);
 Fft2D fft;
 ModulePhase module_phase;
 DataTypeConvertor convertor;
-NiuMriImageWriter writer(ExportFolder = "d:\\Output");
+NiuMriImageWriter writer(ExportFolder = "d:\\Output", FileName = "Apple");
 	
 reader->slice_iterator;
 slice_iterator->dc_remover;
