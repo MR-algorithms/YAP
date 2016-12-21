@@ -14,6 +14,7 @@ NiuMriImageWriter::NiuMriImageWriter(void) :
 {
 	AddInput(L"Input", 2, DataTypeUnsignedShort);
 	AddProperty(PropertyString, L"ExportFolder", L"Set folder used to write images.");
+	AddProperty(PropertyString, L"FileName", L"Set file name.");
 }
 
 NiuMriImageWriter::NiuMriImageWriter(const NiuMriImageWriter& rhs) :
@@ -30,28 +31,9 @@ bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && (GetDataArray<unsigned short>(data) != nullptr));
 
-	wostringstream file_name;
-	static unsigned int niumag_img_index = 0;
-	file_name << ++niumag_img_index;
-
 	auto output_folder = GetString(L"ExportFolder");
-	wstring file_path = output_folder;
-	if (wcslen(output_folder) > 3)
-	{
-		file_path += L"\\";
-	}
-	
-	time_t t = time(0);
-	char tmp[64];
-	strftime(tmp, sizeof(tmp), "%Y%m%d", localtime(&t));
-	string str(tmp);
-	std::wstring wstr;
-	wstr.assign(str.begin(), str.end());
-	wstr += L".";
-	file_path += wstr;
-	
-	file_path += file_name.str();
-	file_path += L".niuimg";
+	auto output_name = GetString(L"FileName");
+	auto file_path = GetFilePath(output_folder, output_name);
 
 	//write data
 	int file_version = 1;
@@ -106,4 +88,37 @@ bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)
 
 Yap::NiuMriImageWriter::~NiuMriImageWriter()
 {
+}
+
+std::wstring Yap::NiuMriImageWriter::GetFilePath(const wchar_t * output_folder, const wchar_t * output_name)
+{
+	wostringstream file_name;
+	static unsigned int niumag_img_index = 0;
+	file_name << ++niumag_img_index;
+
+	wstring file_path = output_folder;
+	if (wcslen(output_folder) > 3)
+	{
+		file_path += L"\\";
+	}
+
+	if (wcslen(output_name) > 0)
+	{
+		file_path += output_name;
+		file_path += L".";
+	}
+
+	time_t t = time(0);
+	char tmp[64];
+	strftime(tmp, sizeof(tmp), "%Y%m%d", localtime(&t));
+	string str(tmp);
+	std::wstring wstr;
+	wstr.assign(str.begin(), str.end());
+	wstr += L".";
+	file_path += wstr;
+
+	file_path += file_name.str();
+	file_path += L".niuimg";
+
+	return file_path;
 }
