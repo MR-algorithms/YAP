@@ -27,6 +27,7 @@
 #include "Nlmeans.h"
 #include "SamplingMaskCreator.h"
 #include "SliceIterator.h"
+#include "SliceMerger.h"
 #include "SliceSelector.h"
 #include "SubSampling.h"
 #include "ZeroFilling.h"
@@ -59,6 +60,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(Nlmeans)
 	ADD_PROCESSOR(SamplingMaskCreator)
 	ADD_PROCESSOR(SliceIterator)
+	ADD_PROCESSOR(SliceMerger)
 	ADD_PROCESSOR(SliceSelector)
 	ADD_PROCESSOR(SubSampling)
 	ADD_PROCESSOR(ZeroFilling)

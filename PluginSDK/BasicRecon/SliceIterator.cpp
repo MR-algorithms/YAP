@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "SliceIterator.h"
 
 #include "Interface/Client/DataHelper.h"
