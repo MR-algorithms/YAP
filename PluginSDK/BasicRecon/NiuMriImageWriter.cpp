@@ -12,7 +12,7 @@ using namespace std;
 NiuMriImageWriter::NiuMriImageWriter(void) :
 	ProcessorImpl(L"NiuMriImageWriter")
 {
-	AddInput(L"Input", 2, DataTypeUnsignedShort);
+	AddInput(L"Input", 3, DataTypeUnsignedShort);
 	AddProperty(PropertyString, L"ExportFolder", L"Set folder used to write images.");
 	AddProperty(PropertyString, L"FileName", L"Set file name.");
 }
@@ -56,13 +56,14 @@ bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)
 	DataHelper data_helper(data);
 	
 	auto dimension_count = data_helper.GetDimensionCount();
-	if (dimension_count != 2)
+	if (dimension_count != 3)
 		return false;
 
 	int dim1 = data_helper.GetWidth();
 	int dim2 = data_helper.GetHeight();
+	int dim3 = data_helper.GetSlice();
 
-	unsigned buffer_size = dim1 * dim2;
+	unsigned buffer_size = dim1 * dim2 * dim3;
 	unsigned short * img_data = GetDataArray<unsigned short>(data);
 
 	ofstream file(file_path.c_str(), ios::binary);
@@ -80,6 +81,7 @@ bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)
 	file.seekp(section6_offset, ios::beg);
 	file.write(reinterpret_cast<char*>(&dim1), 4);
 	file.write(reinterpret_cast<char*>(&dim2), 4);
+	file.write(reinterpret_cast<char*>(&dim3), 4);
 	file.write(reinterpret_cast<char*>(img_data), buffer_size * sizeof(unsigned short));
 	file.close();
 
@@ -92,10 +94,6 @@ Yap::NiuMriImageWriter::~NiuMriImageWriter()
 
 std::wstring Yap::NiuMriImageWriter::GetFilePath(const wchar_t * output_folder, const wchar_t * output_name)
 {
-	wostringstream file_name;
-	static unsigned int niumag_img_index = 0;
-	file_name << ++niumag_img_index;
-
 	wstring file_path = output_folder;
 	if (wcslen(output_folder) > 3)
 	{
@@ -114,10 +112,8 @@ std::wstring Yap::NiuMriImageWriter::GetFilePath(const wchar_t * output_folder, 
 	string str(tmp);
 	std::wstring wstr;
 	wstr.assign(str.begin(), str.end());
-	wstr += L".";
 	file_path += wstr;
 
-	file_path += file_name.str();
 	file_path += L".niuimg";
 
 	return file_path;

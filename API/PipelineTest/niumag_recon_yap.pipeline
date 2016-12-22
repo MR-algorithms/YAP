@@ -7,6 +7,7 @@ ZeroFilling zero_filling(DestWidth = 1024, DestHeight = 1024);
 Fft2D fft;
 ModulePhase module_phase;
 DataTypeConvertor convertor;
+SliceMerger slice_merger(SliceCount = 5);
 NiuMriImageWriter writer(ExportFolder = "d:\\Output", FileName = "Apple");
 	
 reader->slice_iterator;
@@ -15,6 +16,7 @@ dc_remover->zero_filling;
 zero_filling->fft;
 fft->module_phase;
 module_phase.Module->convertor;
-convertor.UnsignedShort->writer;
+convertor.UnsignedShort->slice_merger;
+slice_merger->writer;
 
 self.Input->reader.Input;

@@ -15,6 +15,7 @@ SliceMerger::SliceMerger(void) :
 	AddOutput(L"Output", 3, DataTypeAll);
 
 	AddProperty(PropertyInt, L"SliceCount", L"Slice count.");
+	TODO(从SliceIterator中自动获得该参数);
 }
 
 SliceMerger::SliceMerger(const SliceMerger& rhs)
@@ -38,8 +39,9 @@ bool SliceMerger::Input(const wchar_t * port, IData * data)
 
 	static int slice_num = 0;
 	auto slice_count = GetInt(L"SliceCount");
+	assert(slice_count > 0);
 
-	if (++slice_num == 1)
+	if (slice_num == 0)
 	{
 		DataHelper helper(data);
 		auto width = helper.GetWidth();
@@ -52,6 +54,8 @@ bool SliceMerger::Input(const wchar_t * port, IData * data)
 		
 		TODO(其他数据类型情况);
 		_data = YapShared(new UnsignedShortData(&dims));//只能用于UnsignedShortData
+
+		++slice_num;
 	}
 
 	assert(slice_num != 0);
@@ -61,7 +65,7 @@ bool SliceMerger::Input(const wchar_t * port, IData * data)
 	auto input_array = GetDataArray<unsigned short>(data);
 	auto output_array = GetDataArray<unsigned short>(_data.get());
 
-	auto slice_start = output_array + width * height * sizeof(unsigned short) * (slice_num++ - 1);
+	auto slice_start = output_array + width * height * (slice_num++ - 1);
 	for (unsigned int row = 0; row < height; ++row)
 	{
 		memcpy(slice_start + row * width, input_array + row * width, width * sizeof(unsigned short));
