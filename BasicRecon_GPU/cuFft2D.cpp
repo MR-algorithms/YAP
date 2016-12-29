@@ -7,7 +7,7 @@
 using namespace std;
 using namespace Yap;
 
-extern void pre_cuFft2D(std::complex<float> * h_kspace, std::complex<float> * h_image, bool fft_forward, unsigned int width, unsigned int height);
+extern "C" void pre_cuFft2D(std::complex<float> * h_kspace, std::complex<float> * h_image, bool fft_forward, unsigned int width, unsigned int height);
 
 cuFft2D::cuFft2D():
 	ProcessorImpl(L"cuFft2D")

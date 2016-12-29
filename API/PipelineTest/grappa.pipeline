@@ -1,40 +1,26 @@
 import "BasicRecon.dll";
+import "GrappaRecon.dll";
 
 CmrRawDataReader reader(DataPath = "D:\\test_data\\RawData_256\\RawData",
 	ChannelCount = 4, ChannelSwitch = 15);
 SliceSelector slice_selector;
-Fft2D fft1;
-Fft2D fft2;
-ModulePhase module_phase1;
-ModulePhase module_phase2;
+Fft2D fft;
+ModulePhase module_phase;
 Grappa grappa;
-ChannelDataCollector data_collector1;
-ChannelDataCollector data_collector2;
-ChannelMerger channel_merger1;
-ChannelMerger channel_merger2;
-ChannelIterator channel_iterator1;
-ChannelIterator channel_iterator2;
+ChannelDataCollector data_collector;
+ChannelMerger channel_merger;
+ChannelIterator channel_iterator;
 
-Difference difference;
 JpegExporter jpeg_exporter(ExportFolder = "d:\\Output");
 	
 reader->slice_selector;
 
-slice_selector->data_collector1;
-data_collector1->channel_iterator1;
-channel_iterator1->fft1;
-fft1->module_phase1;
-module_phase1.Module->channel_merger1;
-channel_merger1->difference.Reference;
-
-slice_selector->data_collector2;
-data_collector2->grappa;
-grappa->channel_iterator2;
-channel_iterator2->fft2;
-fft2->module_phase2;
-module_phase2.Module->channel_merger2;
-channel_merger2->difference.Input;
-
-difference->jpeg_exporter;
+slice_selector->data_collector;
+data_collector->grappa;
+grappa->channel_iterator;
+channel_iterator->fft;
+fft->module_phase;
+module_phase.Module->channel_merger;
+channel_merger->jpeg_exporter;
 
 self.Input->reader.Input;

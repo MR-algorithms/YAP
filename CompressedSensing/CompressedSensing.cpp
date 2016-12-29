@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "CompressedSensing.h"
 #include "Interface/Client/DataHelper.h"
+#include "Interface/Implement/DataObject.h"
 #include "vector"
 #include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <boost/numeric/ublas/matrix_expression.hpp>
-
 
 using namespace std;
 using namespace Yap;
@@ -54,8 +54,8 @@ bool Yap::CompressedSensing::Input(const wchar_t * port, IData * data)
 		DataHelper input_mask(_mask.get());
 		matrix<float> mask(input_mask.GetHeight(), input_mask.GetWidth());
 		matrix<complex<float>> undersampled_data(input_data.GetHeight(), input_data.GetWidth());
-		memcpy(&mask(0, 0), GetDataArray<float>(_mask.get()), input_data.GetWidth() * input_data.GetHeight() * sizeof(float));
-		memcpy(&undersampled_data(0, 0), GetDataArray<complex<float>>(data), input_data.GetWidth() * input_data.GetHeight() * sizeof(complex<float>));
+ 		memcpy(&mask(0, 0), GetDataArray<float>(_mask.get()), input_data.GetWidth() * input_data.GetHeight() * sizeof(float));
+ 		memcpy(&undersampled_data(0, 0), GetDataArray<complex<float>>(data), input_data.GetWidth() * input_data.GetHeight() * sizeof(complex<float>));
 		ParametterSet myparameter = { 200, float(pow(10,-30)), 8, 1, 0.002f, 0.005f, 0.01f, 0.8f, 2, mask, undersampled_data};
 
 		auto recon_data = Reconstruct(undersampled_data, myparameter);
