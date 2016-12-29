@@ -3,7 +3,7 @@
 #include "Interface\IData.h"
 #include <complex>
 #include <vector>
-#include "interface\IMemory.h"
+#include "Interface/IMemory.h"
 #include "Interface/Implement/SharedObjectImpl.h"
 #include <assert.h>
 

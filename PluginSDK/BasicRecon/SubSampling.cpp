@@ -5,34 +5,20 @@
 using namespace std;
 using namespace Yap;
 
-template <typename T>
-void GetSubSampledData(T * input_data, T * mask, T * output_data, unsigned int width, unsigned int height, unsigned int coil_count)
-{
-	for (unsigned int c = 0; c < coil_count; ++c)
-	{
-		for (unsigned int i = 0; i < width * height; ++i)
-		{
-			*(output_data + c * width * height + i) = *(input_data + c * width * height + i) * *(mask + i);
-		}
-	}
-}
 
 SubSampling::SubSampling():
 	ProcessorImpl(L"SubSampling")
 {
-	AddInput(L"Input", 3, DataTypeComplexDouble | DataTypeComplexFloat);
-	AddInput(L"Mask", 2, DataTypeChar);
-	AddOutput(L"Output", 3, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
+	AddInput(L"Mask", 2, DataTypeFloat);
+	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 }
 
-Yap::SubSampling::SubSampling(const SubSampling & rhs)
-	: ProcessorImpl(rhs)
-{
-}
 
 SubSampling::~SubSampling()
 {
 }
+
 
 IProcessor * Yap::SubSampling::Clone()
 {
@@ -54,13 +40,30 @@ bool Yap::SubSampling::Input(const wchar_t * port, IData * data)
 
 		auto width = input_data.GetWidth();
 		auto height = input_data.GetHeight();
-		auto coil_count = input_data.GetCoilCount();
-		auto output_data = YapShared(new ComplexFloatData(data->GetDimensions()));
-		GetSubSampledData(GetDataArray<complex<float>>(data), GetDataArray<complex<float>>(_mask.get()),
-			GetDataArray<complex<float>>(output_data.get()), width, height, coil_count);
 
-		Feed(L"Output", output_data.get());
+		Dimensions dimensions;
+		dimensions(DimensionReadout, 0U, width)
+			(DimensionPhaseEncoding, 0U, height)
+			(DimensionSlice, 0U, 1)
+			(Dimension4, 0U, 1)
+			(DimensionChannel, 0U, 1);
+
+		auto outdata = YapShared(new ComplexFloatData(&dimensions));
+
+		GetSubSampledData(GetDataArray<complex<float>>(data), GetDataArray<float>(_mask.get()),
+			GetDataArray<complex<float>>(outdata.get()), width, height);
+
+		Feed(L"Output", outdata.get());
 	}
 
 	return true;
+}
+
+void Yap::SubSampling::GetSubSampledData(std::complex<float> * input_data, float * mask, std::complex<float> * output_data, 
+	unsigned int width, unsigned int height)
+{
+	for (unsigned int i = 0; i < width * height; ++i)
+	{
+		*(output_data + i) = *(input_data + i) * *(mask + i);
+	}
 }

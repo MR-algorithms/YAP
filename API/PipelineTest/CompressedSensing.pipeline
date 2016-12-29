@@ -1,0 +1,29 @@
+import "BasicRecon.dll";
+
+CmrRawDataReader reader(DataPath = "D:\\test_data\\RawData_256\\RawData",
+	ChannelCount = 4, ChannelSwitch = 15);
+SliceSelector slice_selector1;
+SliceSelector slice_selector2;
+
+
+Fft2D fft;
+SamplingMaskCreator mask_creator;
+SubSampling sub_sampling;
+ModulePhase module_phase;
+CompressedSensing compressed_sensing;
+JpegExporter jpeg_exporter(ExportFolder = "d:\\Output");
+	
+reader->slice_selector1;
+reader->slice_selector2;
+
+slice_selector1->mask_creator;
+mask_creator->sub_sampling.Mask;
+mask_creator->compressed_sensing.Mask;
+slice_selector2->sub_sampling.Input;
+sub_sampling->compressed_sensing.Input;
+
+compressed_sensing->fft;
+fft->module_phase;
+module_phase.Module->jpeg_exporter;
+
+self.Input->reader.Input;

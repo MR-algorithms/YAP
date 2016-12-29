@@ -60,12 +60,12 @@ Yap::ExtractTextureMatrix::ExtractTextureMatrix():
 	AddProperty(PropertyInt, L"GLSZMSize", L"The GLSZM matrix size");
 	SetInt(L"GrayLevel", 256);
 	SetInt(L"GLSZMSize", 256);
-	SetString(L"Direction", L"DirectionAll");
+	SetString(L"Direction", L"DirectionRight");
 	SetInt(L"StepSize", 1);
 	//All Type data to Int (0~n) n:8~256
 	AddInput(L"Input", 2, DataTypeAll);
-	AddOutput(L"GLCM", 2, DataTypeUnsignedInt);
-	AddOutput(L"GLSZM", 2, DataTypeUnsignedInt);
+	AddOutput(L"GLCM", 1, DataTypeFloat);
+	AddOutput(L"GLSZM", 2, DataTypeFloat);
 }
 
 Yap::ExtractTextureMatrix::~ExtractTextureMatrix()
@@ -86,6 +86,7 @@ bool Yap::ExtractTextureMatrix::Input(const wchar_t * name, IData * data)
 	unsigned int glszm_size = GetInt(L"GLSZMSize");
 	wstring direction = GetString(L"Direction");
 	unsigned int step_size = GetInt(L"StepSize");
+
 	TODO(不知道gray_level的大小限制在8~256范围内是否合适)
 	if (GetDirectionFromName(direction) < 0)
 			return false;
@@ -108,25 +109,34 @@ bool Yap::ExtractTextureMatrix::Input(const wchar_t * name, IData * data)
 
 	if (OutportLinked(L"GLCM") || OutportLinked(L"Output"))
 	{
-		auto glcm = new unsigned int[(size_t)gray_level * gray_level];
+		auto glcm = new unsigned int[(size_t)_gray_level * _gray_level];
 
 		GLCM(normalize_data, glcm, data_helper.GetWidth(), data_helper.GetHeight());
 
+		
+		//glcm_index: size-5: 0: asm, 1: contrast, 2: IDM, 3: entropy, 4: corration.
+		//glcm_percent: 矩阵的概率形式
+		float glcm_index[(size_t)5];
+
+		ExtractGLCMFeature(glcm, glcm_index);
+
 		Dimensions dimensions;
-		dimensions(DimensionReadout, 0U, gray_level)(DimensionPhaseEncoding, 0U, gray_level);
-		auto glcm_shared = Yap::YapShared(new UnsignedIntData(glcm, dimensions, nullptr, true));
+		dimensions(DimensionReadout, 0U, 5)(DimensionPhaseEncoding, 0U, 5);
+		auto glcm_shared = Yap::YapShared(new FloatData(glcm_index, dimensions, nullptr, true));
 
 		Feed(L"GLCM", glcm_shared.get());
 
 		return true;
 
 	}
+	
 	if (OutportLinked(L"GLSZM"))
 	{
 		//The size of glszm is row=gray_level and column=glszm_size
 		auto glszm = new unsigned int[(size_t)gray_level * glszm_size];
 
 		GLSZM(normalize_data, glszm, data_helper.GetWidth(), data_helper.GetHeight());
+
 
 		Dimensions dimensions;
 		dimensions(DimensionReadout, 0U, glszm_size)(DimensionPhaseEncoding, 0U, glszm_size);
@@ -142,11 +152,6 @@ bool Yap::ExtractTextureMatrix::Input(const wchar_t * name, IData * data)
 Yap::IProcessor * Yap::ExtractTextureMatrix::Clone()
 {
 	return new(nothrow) ExtractTextureMatrix(*this);
-}
-
-bool Yap::ExtractTextureMatrix::OnInit()
-{
-	return true;
 }
 
 void Yap::ExtractTextureMatrix::GLCM(unsigned int * input_data, 
@@ -411,6 +416,67 @@ void Yap::ExtractTextureMatrix::Normalization(IData * data, unsigned int * out)
 			return;
 	}
 
+}
+
+void Yap::ExtractTextureMatrix::ExtractGLCMFeature(unsigned int * input_data, float * output_data)
+{
+	auto glcm_percent = new float[(size_t)_gray_level * _gray_level];
+	auto m = 0;
+
+	for (int i = 0; i < _gray_level * _gray_level; ++i)
+		m += input_data[i];
+
+	for (int i = 0; i < _gray_level * _gray_level; ++i)
+		glcm_percent[i] /= (float)input_data[i] / m;
+	//x方向的平均值： u(i) = sum sum i*p(i,j)
+	//y方向的平均值： u(j) = sum sum j*p(i,j)
+	//x方向的均方差：s(i)^2 = sum sum p(i,j) * (i - u(i))^2
+	//y方向的均方差：s(j)^2 = sum sum p(i,j) * (j - u(j))^2
+	float u_x = 0.0, u_y = 0.0, s_x = 0.0, s_y = 0.0;
+	//u_x,u_y,s_x,s_y的计算公式不确定是否正确
+	for (unsigned int i = 0; i < _gray_level; ++i)
+	{
+		for (unsigned int j = 0; j < _gray_level; ++j)
+		{
+			u_x += (i + 1) * glcm_percent[i * _gray_level + j];
+			u_y += (j + 1) * glcm_percent[i * _gray_level + j];
+		}
+	}
+
+	for (unsigned int i = 0; i < _gray_level; ++i)
+	{
+		for (unsigned int j = 0; j < _gray_level; ++j)
+		{
+			s_x += glcm_percent[i * _gray_level + j] * (i - u_x) * (i - u_x);
+			s_y += glcm_percent[i * _gray_level + j] * (j - u_y) * (j - u_y);
+		}
+	}
+	s_x = sqrt(s_x);
+	s_y = sqrt(s_y);
+	auto u_xy = u_x * u_y;
+	auto s_xy = s_x * s_y;
+
+	//output_data[0]: asm 能量 sum sum p^2
+	//output_data[1]: contrast:反差/对比： (i-j)^2 * P(i,j)
+	//output_data[2]: IDM: (逆差矩，局部平稳)： sum(sum(p(i,j)/(1 + (i-j)^2)))
+	//output_data[3]: Entropy:(熵) ： sum(sum( p(i,j) * ln(p(i,j)) ))
+	//output_data[4]: correlation相关性: sum(sum( (i*j*p(i,j)*-u(i)*u(j)) / s(i)*s(j) ))
+	output_data[0] = 0.0;
+	output_data[1] = 0.0;
+	output_data[2] = 0.0;
+	output_data[3] = 0.0;
+	output_data[4] = 0.0;
+	for (unsigned int i = 0; i < _gray_level; ++i)
+	{
+		for (unsigned int j = 0; j < _gray_level; ++j)
+		{
+			output_data[0] += glcm_percent[i * _gray_level + j] * glcm_percent[i * _gray_level + j];
+			output_data[1] += (i - j) * (i - j) * glcm_percent[i * _gray_level + j];
+			output_data[2] += glcm_percent[i *_gray_level + j] / (1 + (i - j)* (i - j));
+			output_data[3] += -glcm_percent[i *_gray_level + j] * log(glcm_percent[i *_gray_level + j]);
+			output_data[4] += (i * j * glcm_percent[i * _gray_level + j] - u_xy) / s_xy;
+		}
+	}
 }
 
 void Yap::ExtractTextureMatrix::SetGLSZMSize(unsigned int glszm_size)

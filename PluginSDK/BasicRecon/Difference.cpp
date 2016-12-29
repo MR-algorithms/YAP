@@ -75,7 +75,6 @@ bool Yap::Difference::Input(const wchar_t * port, IData * data)
 
 			calc_difference(GetDataArray<float>(data), GetDataArray<float>(_reference_data.get()),
 				GetDataArray<float>(output_data.get()), input_data.GetDataSize());
-
 			Feed(L"Output", output_data.get());
 		}
 		else

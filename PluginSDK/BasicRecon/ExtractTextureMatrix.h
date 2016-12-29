@@ -31,7 +31,7 @@ namespace Yap
 		virtual bool Input(const wchar_t * name, IData * data);
 		virtual IProcessor * Clone() override;
 
-		virtual bool OnInit() override;
+		//virtual bool OnInit() override;
 		
 		void SetDirection(unsigned int direction);
 		unsigned int GetDirection();
@@ -51,6 +51,7 @@ namespace Yap
 			unsigned int * output_data,
 			unsigned int input_width,
 			unsigned int input_height);
+		
 
 		// GLCM refers to the Gray Level Coordinate Matrix »Ò¶È¹²Éú¾ØÕó
 		void GLCM(unsigned int * input_data,  
@@ -58,6 +59,7 @@ namespace Yap
 			unsigned int input_width, 
 			unsigned int input_height);
 		void Normalization(IData * data, unsigned int * out);	//the GLCM size or gray level number.
+		void ExtractGLCMFeature(unsigned int * input_data,float * output_data);//Feature size: now the size is 5U
 
 		void AddDirection(unsigned int * input_data,
 			unsigned int * output_data,
