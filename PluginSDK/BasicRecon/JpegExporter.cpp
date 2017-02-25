@@ -133,7 +133,7 @@ JpegExporter::JpegExporter() :
 {
 	_impl = shared_ptr<JpegExporterImp>(new JpegExporterImp);
 	AddInput(L"Input", 2, DataTypeFloat | DataTypeUnsignedShort);
-	AddProperty(PropertyString, L"ExportFolder", L"Set folder used to hold exported images.");
+	_properties->AddProperty(PropertyString, L"ExportFolder", L"Set folder used to hold exported images.");
 
 }
 
@@ -165,13 +165,13 @@ bool JpegExporter::Input( const wchar_t * name, IData * data)
 	{
 		_impl->ExportImage(GetDataArray<float>(data),
 			data_helper.GetWidth(), data_helper.GetHeight(),
-			GetString(L"ExportFolder"));
+			_properties->GetString(L"ExportFolder"));
 	}
 	else if (data->GetDataType() == DataTypeUnsignedShort)
 	{
 		_impl->ExportImage(GetDataArray<unsigned short>(data),
 			data_helper.GetWidth(), data_helper.GetHeight(),
-			GetString(L"ExportFolder"));
+			_properties->GetString(L"ExportFolder"));
 	}
 
 	return true;

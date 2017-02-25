@@ -150,9 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clipboard.h" />
-    <ClInclude Include="easysize.h" />
     <ClInclude Include="FileSystem.h" />
-    <ClInclude Include="gdiplusHelper.h" />
     <ClInclude Include="macros.h" />
     <ClInclude Include="Markup.h" />
     <ClInclude Include="scrrun.h" />

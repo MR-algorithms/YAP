@@ -37,7 +37,7 @@ NiuMriImageReader::NiuMriImageReader(void) :
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
 
-	AddProperty(PropertyString, L"DataPath", L"数据文件夹和文件名。");
+	_properties->AddProperty(PropertyString, L"DataPath", L"数据文件夹和文件名。");
 }
 
 Yap::NiuMriImageReader::NiuMriImageReader(const NiuMriImageReader& rhs) :
@@ -63,7 +63,7 @@ IProcessor * Yap::NiuMriImageReader::Clone()
 
 bool Yap::NiuMriImageReader::ReadNiuMriImageData()
 {
-	std::wostringstream output(GetString(L"DataPath"));
+	std::wostringstream output(_properties->GetString(L"DataPath"));
 	wstring data_path = output.str();
 
 	try

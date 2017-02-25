@@ -13,9 +13,12 @@
 #include "Interface/Implement/ContainerImpl.h"
 #include "Interface/IProperty.h"
 #include "Interface/IMemory.h"
+#include "variableManager.h"
 
 namespace Yap
 {
+	class VariableManager;
+
 	struct Anchor
 	{
 		IProcessor * processor;
@@ -58,21 +61,8 @@ namespace Yap
 
 		bool Feed(const wchar_t * name, IData * data);
 
-		bool AddProperty(PropertyType type, const wchar_t * name, const wchar_t * description);
-
-		void SetInt(const wchar_t * name, int value);
-		int GetInt(const wchar_t * name);
-		void SetFloat(const wchar_t * name, double value);
-		double GetFloat(const wchar_t * name);
-		void SetBool(const wchar_t * name, bool value);
-		bool GetBool(const wchar_t * name);
-		void SetString(const wchar_t * name, const wchar_t * value);
-		const wchar_t * GetString(const wchar_t * name);
-
 		SmartPtr<ContainerImpl<IPort>> _input;
 		SmartPtr<ContainerImpl<IPort>> _output;
-
-		SmartPtr<ContainerImpl<IProperty>> _properties;
 
 		std::multimap<std::wstring, Anchor> _links;
 		std::map<std::wstring, std::wstring> _property_links;
@@ -80,6 +70,7 @@ namespace Yap
 		std::wstring _instance_id;
 		std::wstring _class_id;
 
+		std::shared_ptr<VariableManager> _properties;
 		IPropertyContainer * _system_variables;
 
 	private:

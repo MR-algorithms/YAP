@@ -14,12 +14,12 @@ using namespace Yap;
 Grappa::Grappa(void) :
 	ProcessorImpl(L"Grappa")
 {
-	AddProperty(PropertyInt, L"Rate", L"The acceleration factor.");
-	SetInt(L"Rate", 2);
-	AddProperty(PropertyInt, L"AcsCount", L"The auto-calibration signal.");
-	SetInt(L"AcsCount", 16);
-	AddProperty(PropertyInt, L"Block", L"The number of blocks.");
-	SetInt(L"Block", 4);
+	_properties->AddProperty(PropertyInt, L"Rate", L"The acceleration factor.");
+	_properties->SetInt(L"Rate", 2);
+	_properties->AddProperty(PropertyInt, L"AcsCount", L"The auto-calibration signal.");
+	_properties->SetInt(L"AcsCount", 16);
+	_properties->AddProperty(PropertyInt, L"Block", L"The number of blocks.");
+	_properties->SetInt(L"Block", 4);
 
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
@@ -38,9 +38,9 @@ bool Grappa::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) != L"Input")
 		return false;
-		auto R = GetInt(L"Rate");
-		auto Acs = GetInt(L"AcsCount");
-		auto Block = GetInt(L"Block");
+		auto R = _properties->GetInt(L"Rate");
+		auto Acs = _properties->GetInt(L"AcsCount");
+		auto Block = _properties->GetInt(L"Block");
 
 		DataHelper input_data(data);  //输入数据为欠采添零的K空间数据
 		if (input_data.GetDataType() != DataTypeComplexDouble && input_data.GetDataType() != DataTypeComplexFloat)
@@ -143,14 +143,12 @@ complex<float> * Grappa::MakeFidelity(complex<float> * recon_data, vector<comple
 	unsigned int first = ((height - acs) / (2 * r)) * r + 1;
 	for (unsigned int coil_index = 0; coil_index < num_coil; ++coil_index)
 	{
-				auto acs_position = width * height * coil_index + first * width;
-					memcpy(recon_data + acs_position, acs_data.data() + 
-						width * acs * coil_index, acs * width * sizeof(complex<float>));
+		auto acs_position = width * height * coil_index + first * width;
+		memcpy(recon_data + acs_position, acs_data.data() + 
+			width * acs * coil_index, acs * width * sizeof(complex<float>));
 	}
 	return recon_data;
 }
-
-
 
 arma::cx_fmat Grappa::FitCoef(complex<float> * subsampled_data, 
 	unsigned int r, unsigned int acs, unsigned int block, unsigned int width, unsigned int height, unsigned int num_coil)

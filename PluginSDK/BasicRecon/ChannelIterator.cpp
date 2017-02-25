@@ -12,8 +12,8 @@ ChannelIterator::ChannelIterator():
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddOutput(L"Output", 2, DataTypeComplexFloat);
 
-	AddProperty(PropertyInt, L"SliceIndex", L"The index of the slice you want to get.");
-	SetInt(L"SliceIndex", 0);
+	_properties->AddProperty(PropertyInt, L"SliceIndex", L"The index of the slice you want to get.");
+	_properties->SetInt(L"SliceIndex", 0);
 }
 
 
@@ -34,7 +34,7 @@ bool Yap::ChannelIterator::Input(const wchar_t * name, IData * data)
 	DataHelper helper(data);
 
 	unsigned int slice_block_size = helper.GetBlockSize(DimensionSlice);
-	unsigned int slice_index = GetInt(L"SliceIndex");
+	unsigned int slice_index = _properties->GetInt(L"SliceIndex");
 
 	Dimension channel_dimension = helper.GetDimension(DimensionChannel);
 	assert(channel_dimension.type == DimensionChannel);

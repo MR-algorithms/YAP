@@ -245,7 +245,6 @@ private:
 		}
 	}
 
-
 	template<typename TYPE> friend SmartPtr<TYPE> YapShared(TYPE * object);
 	template<typename TYPE> friend SmartPtr<TYPE> YapShared(IClonable * object);
 };

@@ -11,8 +11,8 @@ ChannelDataCollector::ChannelDataCollector(void):
 {
 	AddInput(L"Input", 2, DataTypeComplexFloat);
 	AddOutput(L"Output", 3, DataTypeComplexFloat);
-	AddProperty(PropertyInt, L"ChannelCount", L"The total channel count.");
-	SetInt(L"ChannelCount", 4);
+	_properties->AddProperty(PropertyInt, L"ChannelCount", L"The total channel count.");
+	_properties->SetInt(L"ChannelCount", 4);
 }
 
 
@@ -53,7 +53,7 @@ bool Yap::ChannelDataCollector::Input(const wchar_t * name, IData * data)
 			data->GetDimensions()->GetDimensionInfo(i, type, index, length);
 			if (type == DimensionChannel)
 			{
-				collector_dimensions.SetDimensionInfo(i, type, index, GetInt(L"ChannelCount"));
+				collector_dimensions.SetDimensionInfo(i, type, index, _properties->GetInt(L"ChannelCount"));
 			}
 			else
 			{
@@ -83,7 +83,7 @@ bool Yap::ChannelDataCollector::Input(const wchar_t * name, IData * data)
 	}
 
 
-	if (iter->second.count == GetInt(L"ChannelCount"))
+	if (iter->second.count == _properties->GetInt(L"ChannelCount"))
 	{
 		Feed(L"Output", iter->second.buffer.get());
 	}

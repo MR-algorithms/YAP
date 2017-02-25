@@ -12,8 +12,8 @@ extern "C" void pre_cuFft2D(std::complex<float> * h_kspace, std::complex<float> 
 cuFft2D::cuFft2D():
 	ProcessorImpl(L"cuFft2D")
 {
-	AddProperty(PropertyBool, L"fft_forward", L"The direction of cuFFT2D.");
-	SetBool(L"fft_forward", true);
+	_properties->AddProperty(PropertyBool, L"fft_forward", L"The direction of cuFFT2D.");
+	_properties->SetBool(L"fft_forward", true);
 
 	AddInput(L"Input", 2, DataTypeComplexFloat);
 	AddOutput(L"Output", 2, DataTypeComplexFloat);
@@ -46,7 +46,7 @@ bool Yap::cuFft2D::Input(const wchar_t * port, IData * data)
 	auto data_array = GetDataArray<complex<float>>(data);
 	auto out_data = YapShared(new ComplexFloatData(data->GetDimensions()));
 
-	pre_cuFft2D(data_array, GetDataArray<complex<float>>(out_data.get()), GetBool(L"fft_forward"), width, height);
+	pre_cuFft2D(data_array, GetDataArray<complex<float>>(out_data.get()), _properties->GetBool(L"fft_forward"), width, height);
 
 	Feed(L"Output", out_data.get());
 	return true;

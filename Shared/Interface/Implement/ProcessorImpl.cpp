@@ -5,13 +5,14 @@
 #include <assert.h>
 #include "PropertyImpl.h"
 #include "Interface/IMemory.h"
+#include "VariableManager.h"
 
 using namespace std;
 using namespace Yap;
 
 namespace Yap
 {
-namespace details
+namespace _details
 {
 	class Port : 
 		public IPort,
@@ -58,12 +59,12 @@ namespace details
 	typedef ContainerImpl<IPort> PortContainer;
 };	// namespace Yap::details
 
-	using namespace details;
+	using namespace _details;
 
 	ProcessorImpl::ProcessorImpl(const wchar_t * class_id) :
 		_system_variables(nullptr),
 		_class_id(class_id),
-		_properties(YapShared(new ContainerImpl<IProperty>)),
+		_properties(shared_ptr<VariableManager>(new VariableManager)),
 		_input(YapShared(new ContainerImpl<IPort>)),
 		_output(YapShared(new ContainerImpl<IPort>))
 	{
@@ -73,7 +74,7 @@ namespace details
 	Yap::ProcessorImpl::ProcessorImpl(const ProcessorImpl& rhs) :
 		_input(YapShared<ContainerImpl<IPort>>(rhs._input->Clone())),
 		_output(YapShared<ContainerImpl<IPort>>(rhs._output->Clone())),
-		_properties(YapShared<ContainerImpl<IProperty>>(rhs._properties->Clone())),
+		_properties(shared_ptr<VariableManager>(new VariableManager(rhs._properties.get()))),
 		_instance_id(rhs._instance_id),
 		_class_id(rhs._class_id),
 		_system_variables(nullptr)
@@ -142,151 +143,10 @@ namespace details
 		return true;
 	}
 
-	bool ProcessorImpl::AddProperty(PropertyType type,
-		const wchar_t * name,
-		const wchar_t * description)
-	{
-		try
-		{
-			switch (type)
-			{
-			case PropertyBool:
-				return _properties->Add(name, new BoolProperty(name, description));
-			case PropertyInt:
-				return _properties->Add(name, new IntProperty(name, description));
-			case PropertyFloat:
-				return _properties->Add(name, new DoubleProperty(name, description));
-			case PropertyString:
-				return _properties->Add(name, new StringProperty(name, description));
-			default:
-				return false;
-			}
-		}
-		catch (std::bad_alloc&)
-		{
-			return false;
-		}
-	}
-
+	
 	IPropertyContainer * ProcessorImpl::GetProperties()
 	{
-		return _properties.get();
-	}
-
-	void ProcessorImpl::SetInt(const wchar_t * name, int value)
-	{
-		assert(name != nullptr && name[0] != 0);
-
-		auto property = _properties->Find(name);
-		if (property == nullptr)
-			throw PropertyException(name, PropertyException::PropertyNotFound);
-
-		if (property->GetType() != PropertyInt)
-			throw PropertyException(name, PropertyException::TypeNotMatch);
-
-		auto int_value = dynamic_cast<IInt*>(property);
-		assert(int_value != nullptr);
-		int_value->SetInt(value);
-	}
-
-	int ProcessorImpl::GetInt(const wchar_t * name)
-	{
-		assert(name != nullptr && name[0] != 0);
-
-		auto property = _properties->Find(name);
-		if (property == nullptr)
-			throw PropertyException(name, PropertyException::PropertyNotFound);
-
-		if (property->GetType() != PropertyInt)
-			throw PropertyException(name, PropertyException::TypeNotMatch);
-
-		auto int_value = dynamic_cast<IInt*>(property);
-		assert(int_value != nullptr);
-
-		return int_value->GetInt();
-	}
-
-	void ProcessorImpl::SetFloat(const wchar_t * name, double value)
-	{
-		assert(name != nullptr && name[0] != 0);
-
-		auto property = _properties->Find(name);
-		if (property == nullptr)
-			throw PropertyException(name, PropertyException::PropertyNotFound);
-
-		if (property->GetType() != PropertyFloat)
-			throw PropertyException(name, PropertyException::TypeNotMatch);
-
-		auto float_value = dynamic_cast<IDouble*>(property);
-		assert(float_value != nullptr);
-		float_value->SetDouble(value);
-	}
-
-	double ProcessorImpl::GetFloat(const wchar_t * name)
-	{
-		assert(name != nullptr && name[0] != 0);
-
-		auto property = _properties->Find(name);
-		if (property == nullptr)
-			throw PropertyException(name, PropertyException::PropertyNotFound);
-
-		if (property->GetType() != PropertyFloat)
-			throw PropertyException(name, PropertyException::TypeNotMatch);
-
-		auto float_value = dynamic_cast<IDouble*>(property);
-		assert(float_value != nullptr);
-
-		return float_value->GetDouble();
-	}
-
-	void ProcessorImpl::SetBool(const wchar_t * name, bool value)
-	{
-		assert(name != nullptr && name[0] != 0);
-
-		auto property = _properties->Find(name);
-		if (property == nullptr)
-			throw PropertyException(name, PropertyException::PropertyNotFound);
-
-		if (property->GetType() != PropertyBool)
-			throw PropertyException(name, PropertyException::TypeNotMatch);
-
-		auto bool_value = dynamic_cast<IBoolean*>(property);
-		assert(bool_value != nullptr);
-		bool_value->SetBool(value);
-	}
-
-
-	void ProcessorImpl::SetString(const wchar_t * name, const wchar_t * value)
-	{
-		assert(name != nullptr && name[0] != 0);
-
-		auto property = _properties->Find(name);
-		if (property == nullptr)
-			throw PropertyException(name, PropertyException::PropertyNotFound);
-
-		if (property->GetType() != PropertyString)
-			throw PropertyException(name, PropertyException::TypeNotMatch);
-
-		auto string_value = dynamic_cast<IString*>(property);
-		assert(string_value != nullptr);
-		string_value->SetString(value);
-	}
-
-
-	const wchar_t * ProcessorImpl::GetString(const wchar_t * name)
-	{
-		assert(name != nullptr && name[0] != 0);
-
-		auto property = _properties->Find(name);
-		if (property == nullptr)
-			throw PropertyException(name, PropertyException::PropertyNotFound);
-
-		if (property->GetType() != PropertyString)
-			throw PropertyException(name, PropertyException::TypeNotMatch);
-
-		auto string_value = dynamic_cast<IString*>(property);
-		assert(string_value != nullptr);
-		return string_value->GetString();
+		return _properties->GetProperties().get();
 	}
 
 	const wchar_t * Yap::ProcessorImpl::GetClassId()
@@ -311,7 +171,7 @@ namespace details
 
 	bool Yap::ProcessorImpl::LinkProperty(const wchar_t * property_id, const wchar_t * param_id)
 	{
-		if (_properties->Find(property_id) != nullptr)
+		if (_properties->GetProperties()->Find(property_id) != nullptr)
 		{
 			return false;
 		}
@@ -325,7 +185,7 @@ namespace details
 	{
 		for (auto link : _property_links)
 		{
-			auto property = _properties->Find(link.first.c_str());
+			auto property = _properties->GetProperties()->Find(link.first.c_str());
 			if (property == nullptr)
 				return false;
 
@@ -400,22 +260,5 @@ namespace details
 		return (_links.find(out_port_name) != _links.end());
 	}
 
-	bool ProcessorImpl::GetBool(const wchar_t * name)
-	{
-		assert(name != nullptr && name[0] != 0);
-
-		auto property = _properties->Find(name);
-		if (property == nullptr)
-			throw PropertyException(name, PropertyException::PropertyNotFound);
-
-		if (property->GetType() != PropertyBool)
-			throw PropertyException(name, PropertyException::TypeNotMatch);
-
-		auto bool_value = dynamic_cast<IBoolean*>(property);
-		assert(bool_value != nullptr);
-
-		return bool_value->GetBool();
-	}
-	
 };	// namepace Yap
 

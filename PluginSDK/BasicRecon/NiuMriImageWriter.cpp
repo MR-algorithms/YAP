@@ -12,7 +12,7 @@ NiuMriImageWriter::NiuMriImageWriter(void) :
 	ProcessorImpl(L"NiuMriImageWriter")
 {
 	AddInput(L"Input", 2, DataTypeUnsignedShort);
-	AddProperty(PropertyString, L"ExportFolder", L"Set folder used to write images.");
+	_properties->AddProperty(PropertyString, L"ExportFolder", L"Set folder used to write images.");
 }
 
 NiuMriImageWriter::NiuMriImageWriter(const NiuMriImageWriter& rhs) :
@@ -33,7 +33,7 @@ bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)
 	static unsigned int niumag_img_index = 0;
 	file_name << ++niumag_img_index;
 
-	auto output_folder = GetString(L"ExportFolder");
+	auto output_folder = _properties->GetString(L"ExportFolder");
 	wstring file_path = output_folder;
 	if (wcslen(output_folder) > 3)
 	{
