@@ -59,6 +59,12 @@ Yap::IProcessorIter * Yap::ModuleAgent::GetIterator()
 	return _manager ? _manager->GetIterator() : nullptr;
 }
 
+bool Yap::ModuleAgent::Add(const wchar_t * name, IProcessor * processor)
+{
+	assert(_manager);
+	return _manager ? _manager->Add(name, processor) : false;
+}
+
 Yap::IProcessor * Yap::ModuleAgent::Find(const wchar_t * name)
 {
 	assert(_manager);

@@ -1,6 +1,6 @@
 #pragma once
-#include "ContainerImpl.h"
 #include "..\IProperty.h"
+#include "..\IMemory.h"
 
 namespace Yap {
 
@@ -8,12 +8,14 @@ namespace Yap {
 	{
 	public:
 		VariableManager();
-		VariableManager(VariableManager * rhs);
+		explicit VariableManager(IPropertyContainer * properties);
+		VariableManager(const VariableManager& rhs);
 
 		~VariableManager();
 
 		bool AddProperty(PropertyType type, const wchar_t * name, const wchar_t * description);
-		SmartPtr<ContainerImpl<IProperty>> GetProperties();
+		IPropertyContainer * GetProperties();
+		const IPropertyContainer * GetProperties() const;
 
 		void SetInt(const wchar_t * name, int value);
 		int GetInt(const wchar_t * name);
@@ -24,7 +26,7 @@ namespace Yap {
 		void SetString(const wchar_t * name, const wchar_t * value);
 		const wchar_t * GetString(const wchar_t * name);
 	protected:
-		SmartPtr<ContainerImpl<IProperty>> _properties;
+		SmartPtr<IPropertyContainer> _properties;
 	};
 
 }

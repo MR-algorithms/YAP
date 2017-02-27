@@ -97,7 +97,7 @@ namespace Yap
 			return new (std::nothrow) Iterator<TYPE>(*this);
 		}
 
-		bool Add(const wchar_t * name, TYPE * element)
+		virtual bool Add(const wchar_t * name, TYPE * element) override
 		{
 			if (element == nullptr)
 				return false;

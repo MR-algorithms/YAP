@@ -21,3 +21,4 @@ void Yap::SharedObjectImpl::Release()
 		delete this;
 	}
 }
+

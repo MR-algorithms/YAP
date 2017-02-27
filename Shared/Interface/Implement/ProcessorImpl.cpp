@@ -74,7 +74,7 @@ namespace _details
 	Yap::ProcessorImpl::ProcessorImpl(const ProcessorImpl& rhs) :
 		_input(YapShared<ContainerImpl<IPort>>(rhs._input->Clone())),
 		_output(YapShared<ContainerImpl<IPort>>(rhs._output->Clone())),
-		_properties(shared_ptr<VariableManager>(new VariableManager(rhs._properties.get()))),
+		_properties(new VariableManager(*(rhs._properties))),
 		_instance_id(rhs._instance_id),
 		_class_id(rhs._class_id),
 		_system_variables(nullptr)
@@ -146,7 +146,7 @@ namespace _details
 	
 	IPropertyContainer * ProcessorImpl::GetProperties()
 	{
-		return _properties->GetProperties().get();
+		return _properties->GetProperties();
 	}
 
 	const wchar_t * Yap::ProcessorImpl::GetClassId()

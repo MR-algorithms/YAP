@@ -123,9 +123,9 @@ public:
 	}
 
 	template <typename SOURCE_TYPE>
-	SmartPtr(SmartPtr<SOURCE_TYPE>&& source) : _pointer(source.get())
+	SmartPtr(SmartPtr<SOURCE_TYPE>&& source) : _pointer(dynamic_cast<TYPE*>(source.get()))
 	{
-		if (dynamic_cast<TYPE*>(source.get()) == nullptr)
+		if (_pointer == nullptr)
 			throw std::bad_cast();
 
 		auto shared_object = dynamic_cast<ISharedObject*>(_pointer);

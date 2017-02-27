@@ -18,6 +18,7 @@ namespace Yap
 
 		virtual ELEMENT_TYPE * Find(const wchar_t * name) = 0;
 		virtual iterator * GetIterator() = 0;
+		virtual bool Add(const wchar_t * name, ELEMENT_TYPE * element) = 0;
 	};
 
 	struct IPort;

@@ -1,5 +1,7 @@
 #include "VariableManager.h"
 #include "..\Implement\SharedObjectImpl.h"
+#include <string>
+#include "ContainerImpl.h"
 
 
 using namespace Yap;
@@ -166,12 +168,17 @@ namespace Yap
 	}  // end Yap::_details
 
 VariableManager::VariableManager() :
-	_properties(YapShared<ContainerImpl<IProperty>>(new ContainerImpl<IProperty>))
+	_properties(YapShared(new ContainerImpl<IProperty>))
 {
 }
 
-VariableManager::VariableManager(VariableManager * rhs) :
-	_properties(YapShared<ContainerImpl<IProperty>>(rhs->_properties->Clone()))
+VariableManager::VariableManager(IPropertyContainer * properties) :
+	_properties(YapShared(properties))
+{
+}
+
+VariableManager::VariableManager(const VariableManager& rhs) :
+ 	_properties(YapShared(dynamic_cast<const IClonable*>(rhs.GetProperties())->Clone()))
 {
 }
 
@@ -207,9 +214,14 @@ bool VariableManager::AddProperty(PropertyType type,
 	}
 }
 
-SmartPtr<ContainerImpl<IProperty>> VariableManager::GetProperties()
+IPropertyContainer* VariableManager::GetProperties()
 {
-	return _properties;
+	return _properties.get();
+}
+
+const IPropertyContainer* VariableManager::GetProperties() const
+{
+	return _properties.get();
 }
 
 void VariableManager::SetInt(const wchar_t * name, int value)

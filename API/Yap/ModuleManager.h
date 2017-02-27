@@ -38,6 +38,7 @@ namespace Yap
 
 		virtual IProcessor * Find(const wchar_t * name) override;
 		virtual IProcessorIter * GetIterator() override;
+		virtual bool Add(const wchar_t * name, IProcessor * processor);
 
 		bool LoadModule(const wchar_t * module_path);
 

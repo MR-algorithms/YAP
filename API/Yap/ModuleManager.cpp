@@ -61,6 +61,12 @@ IProcessorIter * Yap::ModuleManager::GetIterator()
 	}
 }
 
+bool Yap::ModuleManager::Add(const wchar_t * name, IProcessor * processor)
+{
+	assert(0 && "Do not add processor to module manager with this function.");
+	return false;
+}
+
 Yap::IProcessor * Yap::ModuleManager::FindProcessorInAllModules(const wchar_t * name)
 {
 	vector<IProcessor*> processors;
