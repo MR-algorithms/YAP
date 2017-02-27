@@ -4,10 +4,12 @@
 #define CompositeProcessor_h__20160813
 
 #include "ProcessorImpl.h"
+#include "../Yap/Interface/IMemory.h"
 
 #include <string>
 #include <memory>
 #include <map>
+#include <set>
 
 namespace Yap
 {
@@ -17,7 +19,6 @@ namespace Yap
 	public:
 		CompositeProcessor(const wchar_t * class_id);
 		CompositeProcessor(CompositeProcessor& rhs);
-		virtual ~CompositeProcessor();
 
 		virtual IProcessor * Clone() override;
 
@@ -32,11 +33,31 @@ namespace Yap
 		bool AddProcessor(IProcessor * processor);
 		IProcessor * Find(const wchar_t * instance_id);
 	protected:
+        virtual ~CompositeProcessor();
+
 		std::map<std::wstring, SmartPtr<IProcessor>> _processors;
 		std::map<std::wstring, Anchor> _output;
 		std::map<std::wstring, Anchor> _inputs;
 
 	};
+
+    class ModuleAgent;
+
+    class Pipeline : public CompositeProcessor
+    {
+    public:
+        Pipeline(const wchar_t * class_id);
+        Pipeline(Pipeline& rhs);
+        virtual IProcessor * Clone() override;
+
+
+    protected:
+        virtual ~Pipeline();
+        std::set<std::shared_ptr<ModuleAgent>> _modules;
+        void AddModule(std::shared_ptr<ModuleAgent> module);
+
+        friend class PipelineConstructor;
+    };
 }
 
 #endif // CompositeProcessor_h__

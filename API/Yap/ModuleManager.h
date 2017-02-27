@@ -47,6 +47,8 @@ namespace Yap
 		void Reset();
 	protected:
 		ModuleContainer _modules;
+
+        friend class PipelineConstructor;
 	};
 }
 #endif // ModuleManager_h__

@@ -9,6 +9,9 @@
 #include <stack>
 #include <memory>
 
+#include "../Yap/Interface/IMemory.h"
+#include "../Yap/Interface/Implement/CompositeProcessor.h"
+
 namespace Yap
 {
 	class CompositeProcessor;
@@ -137,7 +140,7 @@ namespace Yap
 		const Token& GetToken(unsigned int index);
 
 		/// Get the last token in the statement.
-		const Token& GetLastToken() const;;
+        const Token& GetLastToken() const;
 
 		/// Output the information about the statement for debugging purpose.
 		void DebugOutput(std::wostream& output);
@@ -182,11 +185,11 @@ namespace Yap
 		PipelineCompiler();
 		~PipelineCompiler();
 
-		std::shared_ptr<CompositeProcessor> CompileFile(const wchar_t * path);
-		std::shared_ptr<CompositeProcessor> Compile(const wchar_t * text);
+        SmartPtr<CompositeProcessor> CompileFile(const wchar_t * path);
+        SmartPtr<CompositeProcessor> Compile(const wchar_t * text);
 
 	protected:
-		std::shared_ptr<CompositeProcessor> DoCompile(std::wistream& input);
+        SmartPtr<CompositeProcessor> DoCompile(std::wistream& input);
 
 		std::vector<std::wstring> _script_lines;
 		std::vector<Token> _tokens;

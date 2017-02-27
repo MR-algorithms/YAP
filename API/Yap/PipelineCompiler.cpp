@@ -1,8 +1,6 @@
 #include "PipelineCompiler.h"
 #include "PipelineConstructor.h"
 
-#include "Utilities/macros.h"
-
 #include <boost/assign/list_of.hpp>
 
 #include <cassert>
@@ -56,7 +54,7 @@ void Statement::CheckFor(TokenType type, bool move_next)
 
 	if (move_next)
 	{
-		++_iter;
+        ++_iter;
 	}
 }
 
@@ -453,7 +451,7 @@ PipelineCompiler::~PipelineCompiler(void)
 }
 
 
-std::shared_ptr<CompositeProcessor> Yap::PipelineCompiler::Compile(const wchar_t * text)
+Yap::SmartPtr<CompositeProcessor> Yap::PipelineCompiler::Compile(const wchar_t * text)
 {
 	wistringstream input;
 	input.str(text);
@@ -461,7 +459,7 @@ std::shared_ptr<CompositeProcessor> Yap::PipelineCompiler::Compile(const wchar_t
 	return DoCompile(input);
 }
 
-shared_ptr<CompositeProcessor> PipelineCompiler::CompileFile(const wchar_t * path)
+Yap::SmartPtr<CompositeProcessor> PipelineCompiler::CompileFile(const wchar_t * path)
 {
 	wifstream script_file;
 	script_file.open(path);
@@ -470,13 +468,13 @@ shared_ptr<CompositeProcessor> PipelineCompiler::CompileFile(const wchar_t * pat
 	{
 		wstring message = wstring(L"Failed to open script file: ") + path;
 		// throw CompileError(Token(), CompileErrorFailedOpenFile, message);
-		return shared_ptr<CompositeProcessor>();
+        return SmartPtr<CompositeProcessor>();
 	}
 
 	return DoCompile(script_file);
 }
 
-std::shared_ptr<CompositeProcessor> PipelineCompiler::DoCompile(std::wistream& input)
+Yap::SmartPtr<CompositeProcessor> PipelineCompiler::DoCompile(std::wistream& input)
 {
 	Preprocess(input);
 
@@ -493,7 +491,7 @@ std::shared_ptr<CompositeProcessor> PipelineCompiler::DoCompile(std::wistream& i
 			return _constructor->GetPipeline();
 		}
 
-		return std::shared_ptr<CompositeProcessor>();
+        return Yap::SmartPtr<CompositeProcessor>();
 	}
 	catch (CompileError& e)
 	{
@@ -505,7 +503,7 @@ std::shared_ptr<CompositeProcessor> PipelineCompiler::DoCompile(std::wistream& i
 
 		wcerr << output.str();
 
-		return std::shared_ptr<CompositeProcessor>();
+        return SmartPtr<CompositeProcessor>();
 	}
 }
 

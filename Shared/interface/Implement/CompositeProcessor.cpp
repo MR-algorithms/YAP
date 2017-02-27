@@ -106,3 +106,30 @@ IProcessor * Yap::CompositeProcessor::Find(const wchar_t * instance_id)
 	return iter->second.get();
 }
 
+Pipeline::Pipeline(const wchar_t * class_id) :
+    CompositeProcessor(class_id)
+{
+}
+
+Pipeline::Pipeline(Pipeline& rhs) :
+    _modules(rhs._modules),
+    CompositeProcessor(rhs)
+{
+}
+
+IProcessor * Pipeline::Clone()
+{
+    return new(nothrow) Pipeline(*this);
+}
+
+void Pipeline::AddModule(std::shared_ptr<ModuleAgent> module)
+{
+    _modules.insert(module);
+}
+
+Pipeline::~Pipeline()
+{
+    _processors.clear();
+    _modules.clear();
+}
+
