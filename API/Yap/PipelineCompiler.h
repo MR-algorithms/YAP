@@ -9,8 +9,8 @@
 #include <stack>
 #include <memory>
 
-#include "../Yap/Interface/IMemory.h"
-#include "../Yap/Interface/Implement/CompositeProcessor.h"
+#include "../shared/Interface/IMemory.h"
+#include "../shared/Interface/Implement/CompositeProcessor.h"
 
 namespace Yap
 {

@@ -4,7 +4,7 @@
 #define CompositeProcessor_h__20160813
 
 #include "ProcessorImpl.h"
-#include "../Yap/Interface/IMemory.h"
+#include "../shared/Interface/IMemory.h"
 
 #include <string>
 #include <memory>
