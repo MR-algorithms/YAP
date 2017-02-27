@@ -20,6 +20,10 @@ NiumagFidWriter::NiumagFidWriter(const NiumagFidWriter& rhs) :
 {
 }
 
+NiumagFidWriter::~NiumagFidWriter()
+{
+}
+
 IProcessor * Yap::NiumagFidWriter::Clone()
 {
 	return new(nothrow) NiumagFidWriter(*this);

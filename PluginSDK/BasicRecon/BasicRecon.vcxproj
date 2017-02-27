@@ -192,6 +192,7 @@
     <ClInclude Include="Nlmeans.h" />
     <ClInclude Include="SamplingMaskCreator.h" />
     <ClInclude Include="SliceIterator.h" />
+    <ClInclude Include="SliceMerger.h" />
     <ClInclude Include="SliceSelector.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SubSampling.h" />
@@ -295,6 +296,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SliceMerger.cpp" />
     <ClCompile Include="SliceSelector.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>

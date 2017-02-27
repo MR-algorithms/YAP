@@ -15,7 +15,7 @@ namespace Yap
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
 	protected:
-		virtual ~ZeroFilling();
+		~ZeroFilling();
 
 		virtual IProcessor * Clone() override;
 	};

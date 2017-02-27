@@ -1,0 +1,9 @@
+diff a/PluginSDK/BasicRecon/SliceMerger.cpp b/PluginSDK/BasicRecon/SliceMerger.cpp	(rejected hunks)
+@@ -0,6 +0,7 @@
+ 	AddInput(L"Input", 2, DataTypeAll);
+ 	AddOutput(L"Output", 3, DataTypeAll);
+ 
++	AddProperty(PropertyInt, L"SliceCount", L"Slice count.");
+ }
+ 
+ SliceMerger::SliceMerger(const SliceMerger& rhs)

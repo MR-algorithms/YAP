@@ -15,12 +15,13 @@ namespace Yap
 	{
 	public:
 		Fft1D();
-		virtual ~Fft1D();
-
+		
 		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
 	protected:
+		~Fft1D();
+
 		void FFTShift(std::complex<double>* data, size_t size);
 		void SwapBlock(std::complex<double> * block1, std::complex<double> * block2,
 			size_t width);

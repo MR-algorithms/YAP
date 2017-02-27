@@ -41,6 +41,10 @@ NiumagFidReader::NiumagFidReader(const NiumagFidReader& rhs):
 {
 }
 
+NiumagFidReader::~NiumagFidReader()
+{
+}
+
 bool Yap::NiumagFidReader::Input(const wchar_t * name, IData * data)
 {
 	// Should not pass in data to start raw data file reading.

@@ -18,6 +18,7 @@ namespace Yap
 
 	protected:
 		~Difference();
+
 		SmartPtr<IData> _reference_data;
 	};
 }

@@ -12,10 +12,12 @@ namespace Yap
 	{
 	public:
 		DcRemover();
-		~DcRemover();
 
 		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * port, IData * data) override;
+
+	protected:
+		~DcRemover();
 	};
 }
 

@@ -12,9 +12,12 @@ namespace Yap
 	public:
 		SliceIterator(void);
 		SliceIterator(const SliceIterator& rhs);
-		~SliceIterator(void);
+		
 		virtual IProcessor* Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
+
+	protected:
+		~SliceIterator(void);
 	};
 }
 #endif // SliceIterator_h__

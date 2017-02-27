@@ -22,6 +22,7 @@ namespace Yap
 
 	protected:
 		~SamplingMaskCreator();
+
 		std::vector<unsigned int> GetRandomSamplingPattern(unsigned int row_count,
 			float pow, float sample_percent, float radius);
 		std::vector<unsigned int> GetEqualSamplingPattern(unsigned int height, unsigned int acs, unsigned int rate);

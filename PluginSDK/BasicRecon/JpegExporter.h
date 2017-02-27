@@ -15,8 +15,10 @@ namespace Yap
 	public:
 		JpegExporter();
 		JpegExporter(const JpegExporter& rhs);
-		~JpegExporter();
+		
 	protected:
+		~JpegExporter();
+
 		virtual IProcessor* Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
 

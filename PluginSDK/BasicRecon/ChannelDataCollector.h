@@ -9,12 +9,13 @@ namespace Yap
 	public:
 		ChannelDataCollector(void);
 		ChannelDataCollector(const ChannelDataCollector& rhs);
-		virtual ~ChannelDataCollector(void);
 
 		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
 	protected:
+		~ChannelDataCollector(void);
+
 		struct CollectorBuffer
 		{
 			SmartPtr<ComplexFloatData> buffer;
