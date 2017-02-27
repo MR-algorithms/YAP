@@ -12,12 +12,12 @@ namespace Yap
 	{
 	public:
 		Difference();
-		virtual ~Difference();
-
+	
 		virtual bool Input(const wchar_t * port, IData * data) override;
 		virtual IProcessor * Clone() override;
 
 	protected:
+		~Difference();
 		SmartPtr<IData> _reference_data;
 	};
 }

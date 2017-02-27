@@ -45,6 +45,10 @@ Yap::NiuMriImageReader::NiuMriImageReader(const NiuMriImageReader& rhs) :
 {
 }
 
+Yap::NiuMriImageReader::~NiuMriImageReader()
+{
+}
+
 bool Yap::NiuMriImageReader::Input(const wchar_t * name, IData * data)
 {
 	// Should not pass in data to start raw data file reading.

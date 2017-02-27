@@ -165,7 +165,8 @@ namespace Yap
 		};
 	}  // end Yap::_details
 
-VariableManager::VariableManager()
+VariableManager::VariableManager() :
+	_properties(YapShared<ContainerImpl<IProperty>>(new ContainerImpl<IProperty>))
 {
 }
 

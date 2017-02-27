@@ -68,12 +68,12 @@ int main()
 	debugger.DebugPlugin(L"BasicRecon.dll");
 //	debugger.DebugPlugin(L"GrappaRecon.dll");
 //	debugger.DebugPlugin(L"CompressedSensing.dll");
-	debugger.DebugPlugin(L"BasicRecon_GPU.dll");
+//	debugger.DebugPlugin(L"BasicRecon_GPU.dll");
 
 //	 ConstructorTest();
 
 	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"Test.pipeline");
+	auto pipeline = compiler.CompileFile(L"niumag_recon.pipeline");
 	if (pipeline)
 	{
 		pipeline->Input(L"Input", nullptr);

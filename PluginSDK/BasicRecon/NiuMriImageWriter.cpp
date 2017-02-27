@@ -20,6 +20,10 @@ NiuMriImageWriter::NiuMriImageWriter(const NiuMriImageWriter& rhs) :
 {
 }
 
+Yap::NiuMriImageWriter::NiuMriImageWriter()
+{
+}
+
 IProcessor * Yap::NiuMriImageWriter::Clone()
 {
 	return new(nothrow) NiuMriImageWriter(*this);

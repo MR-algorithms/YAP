@@ -45,6 +45,10 @@ Yap::NiumagImgReader::NiumagImgReader(const NiumagImgReader& rhs):
 {
 }
 
+NiumagImgReader::~NiumagImgReader()
+{
+}
+
 bool Yap::NiumagImgReader::Input(const wchar_t * name, IData * data)
 {
 	// Should not pass in data to start raw data file reading.
