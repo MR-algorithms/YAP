@@ -1,10 +1,11 @@
 #include "VariableManager.h"
 #include "..\Implement\SharedObjectImpl.h"
-#include <string>
 #include "ContainerImpl.h"
-
+#include <fstream>
+#include <string>
 
 using namespace Yap;
+using namespace std;
 
 namespace Yap
 {
@@ -32,7 +33,7 @@ namespace Yap
 				const wchar_t * description) :
 				_type(type),
 				_name(name),
-				_description(description)
+                _description(description != nullptr ? description : L"")
 			{
 			}
 
@@ -352,7 +353,76 @@ const wchar_t * VariableManager::GetString(const wchar_t * name)
 
 	auto string_value = dynamic_cast<IString*>(property);
 	assert(string_value != nullptr);
-	return string_value->GetString();
+    return string_value->GetString();
+}
+
+bool VariableManager::Load(const wchar_t *path)
+{
+    wifstream input(path);
+    if (!input)
+        return false;
+
+    wstring line;
+    while (getline(input, line, L'\n'))
+    {
+        ProcessLine(line);
+    }
+
+    return true;
+}
+
+bool VariableManager::ProcessLine(std::wstring& line)
+{
+    size_t pos = line.find_first_not_of(L" \t\n", 0);
+    if (pos == wstring::npos)
+        return true; // empty line
+
+    if (line.substr(pos, 2) == L"//")
+        return true;
+
+    size_t separator_pos = line.find_first_of(L" \t", pos);
+    if (separator_pos == wstring::npos)
+        return false; // variable name should be on the same line as type. E.g. float D1;
+
+    wstring type = line.substr(pos, separator_pos - pos);
+    pos = line.find_first_not_of(L" \t", separator_pos);
+    if (pos == wstring::npos)
+        return false;  // variable name should be on the same line as type. E.g. float D1;
+
+    separator_pos = line.find_first_of(L";", pos);
+    if (separator_pos == wstring::npos)
+        return false; // variable name should be on the same line as type. E.g. float D1;
+
+    wstring id = line.substr(pos, separator_pos - pos);
+
+    if (id.empty())
+        return false;
+
+    if (type == L"float")
+    {
+        return AddProperty(PropertyFloat, id.c_str(), L"");
+    }
+    else if (type == L"int")
+    {
+        return AddProperty(PropertyInt, id.c_str(), L"");
+    }
+    else if (type == L"string")
+    {
+        return AddProperty(PropertyString, id.c_str(), L"");
+    }
+    else if (type == L"bool")
+    {
+        return AddProperty(PropertyString, id.c_str(), L"");
+    }
+    else if (type.substr(0, 5) == L"array")
+    {
+        return true; // 暂未处理
+    }
+    else
+    {
+        return false;
+    }
+
 }
 
 }	// end Yap

@@ -28,9 +28,8 @@ SOURCES += ModuleManager.cpp \
     ../../shared/Interface/Implement/CompositeProcessor.cpp \
     ../../shared/Interface/Implement/DataObject.cpp \
     ../../shared/Interface/Implement/ProcessorImpl.cpp \
-    ../../shared/Interface/Implement/PropertyImpl.cpp \
     ../../shared/Interface/Implement/SharedObjectImpl.cpp \
-    ../../Shared/Interface/Implement/VariableManager.cpp
+    ../../shared/Interface/Implement/VariableManager.cpp
 
 HEADERS += ProcessorManagerAgent.h \
     ModuleManager.h \
@@ -44,14 +43,14 @@ HEADERS += ProcessorManagerAgent.h \
     ../../shared/Interface/Implement/ContainerImpl.h \
     ../../shared/Interface/Implement/DataObject.h \
     ../../shared/Interface/Implement/ProcessorImpl.h \
-    ../../shared/Interface/Implement/PropertyImpl.h \
     ../../shared/Interface/Implement/SharedObjectImpl.h \
     ../../shared/Interface/Implement/YapImplement.h \
     ../../shared/Interface/IContainer.h \
     ../../shared/Interface/IData.h \
     ../../shared/Interface/IMemory.h \
     ../../shared/Interface/IProcessor.h \
-    ../../shared/Interface/IProperty.h
+    ../../shared/Interface/IProperty.h \
+    ../../shared/Interface/Implement/VariableManager.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

@@ -3,7 +3,6 @@
 #include <iostream>
 #include <algorithm>
 #include <assert.h>
-#include "PropertyImpl.h"
 #include "Interface/IMemory.h"
 #include "VariableManager.h"
 

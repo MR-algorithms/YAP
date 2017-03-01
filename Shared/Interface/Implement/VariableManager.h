@@ -1,6 +1,7 @@
 #pragma once
 #include "..\IProperty.h"
 #include "..\IMemory.h"
+#include <string>
 
 namespace Yap {
 
@@ -25,8 +26,11 @@ namespace Yap {
 		bool GetBool(const wchar_t * name);
 		void SetString(const wchar_t * name, const wchar_t * value);
 		const wchar_t * GetString(const wchar_t * name);
+
+        bool Load(const wchar_t * path);
 	protected:
 		SmartPtr<IPropertyContainer> _properties;
+        bool ProcessLine(std::wstring& line);
 	};
 
 }
