@@ -63,13 +63,23 @@ IProcessorIter * Yap::ModuleManager::GetIterator()
 
 bool Yap::ModuleManager::Add(const wchar_t * name, IProcessor * processor)
 {
-	assert(0 && "Do not add processor to module manager with this function.");
-	return false;
+    if (Find(name) != nullptr)
+        return false;
+
+    _processors.insert(make_pair(name, YapShared(processor)));
+    return true;
 }
 
 Yap::IProcessor * Yap::ModuleManager::FindProcessorInAllModules(const wchar_t * name)
 {
 	vector<IProcessor*> processors;
+
+    auto iter = _processors.find(name);
+    if (iter != _processors.end())
+    {
+        processors.push_back(iter->second.get());
+    }
+
 	for (auto& module : _modules)
 	{
 		auto processor = module.second->Find(name);

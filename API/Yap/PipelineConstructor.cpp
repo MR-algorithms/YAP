@@ -52,7 +52,12 @@ void PipelineConstructor::Reset(bool reset_modules)
 	if (reset_modules)
     {
 		_module_manager->Reset();
-	}
+    }
+}
+
+bool PipelineConstructor::AddProcessor(const wchar_t *class_id, IProcessor *processor)
+{
+    return _module_manager->Add(class_id, processor);
 }
 
 bool Yap::PipelineConstructor::LoadModule(const wchar_t * module_name)

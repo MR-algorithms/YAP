@@ -48,6 +48,7 @@ namespace Yap
 		void Reset();
 	protected:
 		ModuleContainer _modules;
+        std::map <std::wstring, Yap::SmartPtr<IProcessor>> _processors;
 
         friend class PipelineConstructor;
 	};

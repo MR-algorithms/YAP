@@ -37,12 +37,12 @@ map<TokenType, wstring> token_map = boost::assign::map_list_of
 	(TokenNumericLiteral, L"numeric literal")
 	(TokenKeyword, L"keyword");
 
-/// Èç¹ûµü´úÆäÖ¸ÏòµÄtokenµÄÀàÐÍ²»ÊÇtype£¬ÔòÅ×³ö±àÒë´íÎó¡£
+/// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½tokenï¿½ï¿½ï¿½ï¿½ï¿½Í²ï¿½ï¿½ï¿½typeï¿½ï¿½ï¿½ï¿½ï¿½×³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void Statement::CheckFor(TokenType type, bool move_next)
 {
 	if (_iter == _tokens.end())
 	{
-		throw (CompileError(*_iter, CompileErrorUnexpectedEndOfStatement, L"²»ÍêÕûµÄÓï¾ä¡£"));
+		throw (CompileError(*_iter, CompileErrorUnexpectedEndOfStatement, L"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ä¡£"));
 	}
 
 	if ((_iter->type != type) &&
@@ -58,13 +58,13 @@ void Statement::CheckFor(TokenType type, bool move_next)
 	}
 }
 
-/// ¼ì²éµü´úÆ÷Ö¸ÏòµÄtokenÊÇ·ñÖ¸¶¨µÄÀàÐÍ¡£¸Ãº¯Êý²»ÒýÆðµü´úÆ÷±ä»¯¡£
+/// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½tokenï¿½Ç·ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¡ï¿½ï¿½Ãºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ä»¯ï¿½ï¿½
 bool Statement::IsType(TokenType type)
 {
 	return _iter->type == type;
 }
 
-/// ÊÔÍ¼ÌáÈ¡Ò»¸öId£¬µü´úÆ÷ÒÆ¶¯µ½ÌáÈ¡ÄÚÈÝÖ®ºó¡£
+/// ï¿½ï¿½Í¼ï¿½ï¿½È¡Ò»ï¿½ï¿½Idï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½ï¿½ï¿½
 std::wstring Statement::GetId()
 {
 	CheckFor(TokenId, false);
@@ -84,7 +84,7 @@ std::wstring Statement::GetLiteralValue()
 	return (_iter++)->text;
 }
 
-/// ÊÔÍ¼ÌáÈ¡´¦ÀíÆ÷/³ÉÔ±£¨ÊôÐÔ»òÕß¶Ë¿Ú£©¶Ô£¬µü´úÆ÷ÒÆ¶¯µ½ÌáÈ¡ÄÚÈÝÖ®ºó¡£
+/// ï¿½ï¿½Í¼ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½ï¿½Ô»ï¿½ï¿½ß¶Ë¿Ú£ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½ï¿½ï¿½
 std::pair<std::wstring, std::wstring> Statement::GetProcessorMember(bool empty_member_allowed)
 {
 	pair<wstring, wstring> result;
@@ -106,7 +106,7 @@ std::pair<std::wstring, std::wstring> Statement::GetProcessorMember(bool empty_m
 	return result;
 }
 
-/// ÊÔÍ¼ÌáÈ¡²ÎÊýid¡£µü´úÆ÷ÒÆ¶¯µ½ÌáÈ¡ÄÚÈÝÖ®ºó¡£
+/// ï¿½ï¿½Í¼ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½idï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½ï¿½ï¿½
 std::wstring Statement::GetParamId()
 {
 	wstring param_id;
@@ -115,7 +115,7 @@ std::wstring Statement::GetParamId()
 	{
 		if (!((id_expected && _iter->type == TokenId) || (!id_expected && _iter->type == TokenOperatorDot)))
 		{
-			throw CompileError(*_iter, CompileErrorParamIdInvalid, L"²ÎÊýIdµÄÐÎÊ½²»ºÏ·¨¡£");
+			throw CompileError(*_iter, CompileErrorParamIdInvalid, L"ï¿½ï¿½ï¿½ï¿½Idï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½");
 		}
 		param_id += (_iter++)->text;
 		id_expected = !id_expected;
@@ -219,7 +219,7 @@ bool Statement::Process()
 }
 
 /**
-µü´úÆ÷Ö¸ÏòÄ£¿éÃû³Æ¡£
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½Æ¡ï¿½
 */
 bool Statement::ProcessImport()
 {
@@ -243,7 +243,7 @@ bool Statement::ProcessImport()
 
 	if (!_constructor.LoadModule(token.text.c_str()))
 	{
-		wstring output = wstring(L"ÎÞ·¨¼ÓÔØÄ£¿éÎÄ¼þ£º") + token.text;
+		wstring output = wstring(L"ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½") + token.text;
 		throw CompileError(token, CompileErrorLoadModule, output);
 	}
 
@@ -251,9 +251,9 @@ bool Statement::ProcessImport()
 }
 
 /**
-µü´úÆ÷Ö¸ÏòµÚÒ»¸öÔªËØ¡£Ò»°ãÐÎÊ½ÊÇ£º
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ôªï¿½Ø¡ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê½ï¿½Ç£ï¿½
 process1.output_port->process2.input_port;
-ÆäÖÐ.output_portºÍ.input_portÊÇ¿ÉÑ¡µÄ£¬Èç¹ûÊ¡ÂÔ£¬ÔòÊ¹ÓÃÈ±Ê¡µÄOutputºÍInput¡£
+ï¿½ï¿½ï¿½ï¿½.output_portï¿½ï¿½.input_portï¿½Ç¿ï¿½Ñ¡ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½Ê¡ï¿½Ô£ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½È±Ê¡ï¿½ï¿½Outputï¿½ï¿½Inputï¿½ï¿½
 */
 bool Statement::ProcessPortLink()
 {
@@ -456,7 +456,16 @@ Yap::SmartPtr<CompositeProcessor> Yap::PipelineCompiler::Compile(const wchar_t *
 	wistringstream input;
 	input.str(text);
 
-	return DoCompile(input);
+    return DoCompile(input);
+}
+
+bool PipelineCompiler::AddProcessor(const wchar_t *class_id, IProcessor *processor)
+{
+    if (!_constructor)
+    {
+        _constructor = shared_ptr<PipelineConstructor>(new PipelineConstructor);
+    }
+    return _constructor->AddProcessor(class_id, processor);
 }
 
 Yap::SmartPtr<CompositeProcessor> PipelineCompiler::CompileFile(const wchar_t * path)
@@ -608,12 +617,12 @@ bool PipelineCompiler::PreprocessLine(std::wstring& line,
 			for (; i + pos < int(line.length()) && line[pos + i] != '\"'; ++i);
 			if (i + pos == line.length())
 			{
-				// ÔÚÍ¬Ò»ÐÐÉÏÃ»ÓÐÕÒµ½Æ¥ÅäµÄ½áÊøÒýºÅ
+				// ï¿½ï¿½Í¬Ò»ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Òµï¿½Æ¥ï¿½ï¿½ï¿½Ä½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				throw CompileError(Token(line_number, pos, i, TokenStringLiteral), CompileErrorNoMatchingQuote,
 					L"No matching quote found on the same line. String literals must be defined on one line.");
 			}
 
-			// tokenÖÐ²»°üº¬ÒýºÅ
+			// tokenï¿½Ð²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			_tokens.push_back(Token(line_number, pos + 1, i - 1, TokenStringLiteral));
 			pos += i + 1;
 			break;
@@ -622,7 +631,7 @@ bool PipelineCompiler::PreprocessLine(std::wstring& line,
 		{
 			if (pos + 1 < int(line.length()) && line[pos + 1] == '/')
 			{
-				// ×¢ÊÍ²¿·Ö
+				// ×¢ï¿½Í²ï¿½ï¿½ï¿½
 				return true;
 			}
 			break;

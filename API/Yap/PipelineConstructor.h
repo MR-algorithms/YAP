@@ -56,6 +56,8 @@ namespace Yap
 
 		void Reset(bool reset_module_manager = true);
 
+        bool AddProcessor(const wchar_t * class_id, Yap::IProcessor * processor);
+
 		bool LoadModule(const wchar_t * module_name);
 
 		void SetPluginFolder(const wchar_t * path);
