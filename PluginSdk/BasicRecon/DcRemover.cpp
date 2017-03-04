@@ -57,7 +57,7 @@ void RemoveDC(T * input_data,
 }
 
 DcRemover::DcRemover() :
-	ProcessorImpl(L"DcRemove")
+	ProcessorImpl(L"DcRemover")
 {
 	AddInput(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 	

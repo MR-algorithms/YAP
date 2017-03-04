@@ -148,7 +148,6 @@
     <ClCompile Include="CompositeProcessor.cpp" />
     <ClCompile Include="DataObject.cpp" />
     <ClCompile Include="ProcessorImpl.cpp" />
-    <ClCompile Include="PropertyImpl.cpp" />
     <ClCompile Include="SharedObjectImpl.cpp" />
     <ClCompile Include="VariableManager.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -162,7 +161,6 @@
     <ClInclude Include="ContainerImpl.h" />
     <ClInclude Include="DataObject.h" />
     <ClInclude Include="ProcessorImpl.h" />
-    <ClInclude Include="PropertyImpl.h" />
     <ClInclude Include="SharedObjectImpl.h" />
     <ClInclude Include="VariableManager.h" />
     <ClInclude Include="YapImplement.h" />

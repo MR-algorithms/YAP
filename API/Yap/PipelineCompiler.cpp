@@ -1,4 +1,4 @@
-#include "PipelineCompiler.h"
+﻿#include "PipelineCompiler.h"
 #include "PipelineConstructor.h"
 
 #include <boost/assign/list_of.hpp>
@@ -37,12 +37,18 @@ map<TokenType, wstring> token_map = boost::assign::map_list_of
 	(TokenNumericLiteral, L"numeric literal")
 	(TokenKeyword, L"keyword");
 
-/// ����������ָ����token�����Ͳ���type�����׳�����������
+/// Check to see whether next token in the statement is of specified type. 
+/**
+	\remarks This function check to see whether next token in the statement is if specified type.
+	If not, a compiler error exception will be thrown.
+	\param type
+	\param move_next, if \true, extract the next token.
+*/
 void Statement::CheckFor(TokenType type, bool move_next)
 {
 	if (_iter == _tokens.end())
 	{
-		throw (CompileError(*_iter, CompileErrorUnexpectedEndOfStatement, L"�����������䡣"));
+		throw (CompileError(*_iter, CompileErrorUnexpectedEndOfStatement, L"Unexpected end of statement."));
 	}
 
 	if ((_iter->type != type) &&
@@ -54,17 +60,21 @@ void Statement::CheckFor(TokenType type, bool move_next)
 
 	if (move_next)
 	{
-        ++_iter;
+		++_iter;
 	}
 }
 
-/// ����������ָ����token�Ƿ�ָ�������͡��ú����������������仯��
+/// Check to see whether the current token is of the given type.
 bool Statement::IsType(TokenType type)
 {
 	return _iter->type == type;
 }
 
-/// ��ͼ��ȡһ��Id���������ƶ�����ȡ����֮����
+/// Extract an Id from the statement.
+/**
+	\remarks Id may be a class id, variable id, processor id, etc. Current token will be consumed.
+	\return The Id extracted from the statement. 
+*/
 std::wstring Statement::GetId()
 {
 	CheckFor(TokenId, false);
@@ -84,7 +94,6 @@ std::wstring Statement::GetLiteralValue()
 	return (_iter++)->text;
 }
 
-/// ��ͼ��ȡ������/��Ա�����Ի��߶˿ڣ��ԣ��������ƶ�����ȡ����֮����
 std::pair<std::wstring, std::wstring> Statement::GetProcessorMember(bool empty_member_allowed)
 {
 	pair<wstring, wstring> result;
@@ -106,7 +115,7 @@ std::pair<std::wstring, std::wstring> Statement::GetProcessorMember(bool empty_m
 	return result;
 }
 
-/// ��ͼ��ȡ����id���������ƶ�����ȡ����֮����
+/// 锟斤拷图锟斤拷取锟斤拷锟斤拷id锟斤拷锟斤拷锟斤拷锟斤拷锟狡讹拷锟斤拷锟斤拷取锟斤拷锟斤拷之锟斤拷锟斤拷
 std::wstring Statement::GetParamId()
 {
 	wstring param_id;
@@ -115,7 +124,7 @@ std::wstring Statement::GetParamId()
 	{
 		if (!((id_expected && _iter->type == TokenId) || (!id_expected && _iter->type == TokenOperatorDot)))
 		{
-			throw CompileError(*_iter, CompileErrorParamIdInvalid, L"����Id����ʽ���Ϸ���");
+			throw CompileError(*_iter, CompileErrorParamIdInvalid, L"锟斤拷锟斤拷Id锟斤拷锟斤拷式锟斤拷锟较凤拷锟斤拷");
 		}
 		param_id += (_iter++)->text;
 		id_expected = !id_expected;
@@ -219,7 +228,7 @@ bool Statement::Process()
 }
 
 /**
-������ָ��ģ�����ơ�
+锟斤拷锟斤拷锟斤拷指锟斤拷模锟斤拷锟斤拷锟狡★拷
 */
 bool Statement::ProcessImport()
 {
@@ -243,7 +252,7 @@ bool Statement::ProcessImport()
 
 	if (!_constructor.LoadModule(token.text.c_str()))
 	{
-		wstring output = wstring(L"�޷�����ģ���ļ���") + token.text;
+		wstring output = wstring(L"锟睫凤拷锟斤拷锟斤拷模锟斤拷锟侥硷拷锟斤拷") + token.text;
 		throw CompileError(token, CompileErrorLoadModule, output);
 	}
 
@@ -251,9 +260,9 @@ bool Statement::ProcessImport()
 }
 
 /**
-������ָ����һ��Ԫ�ء�һ����ʽ�ǣ�
+锟斤拷锟斤拷锟斤拷指锟斤拷锟斤拷一锟斤拷元锟截★拷一锟斤拷锟斤拷式锟角ｏ拷
 process1.output_port->process2.input_port;
-����.output_port��.input_port�ǿ�ѡ�ģ�����ʡ�ԣ���ʹ��ȱʡ��Output��Input��
+锟斤拷锟斤拷.output_port锟斤拷.input_port锟角匡拷选锟侥ｏ拷锟斤拷锟斤拷省锟皆ｏ拷锟斤拷使锟斤拷缺省锟斤拷Output锟斤拷Input锟斤拷
 */
 bool Statement::ProcessPortLink()
 {
@@ -456,7 +465,7 @@ Yap::SmartPtr<CompositeProcessor> Yap::PipelineCompiler::Compile(const wchar_t *
 	wistringstream input;
 	input.str(text);
 
-    return DoCompile(input);
+	return DoCompile(input);
 }
 
 Yap::SmartPtr<CompositeProcessor> PipelineCompiler::CompileFile(const wchar_t * path)
@@ -468,7 +477,7 @@ Yap::SmartPtr<CompositeProcessor> PipelineCompiler::CompileFile(const wchar_t * 
 	{
 		wstring message = wstring(L"Failed to open script file: ") + path;
 		// throw CompileError(Token(), CompileErrorFailedOpenFile, message);
-        return SmartPtr<CompositeProcessor>();
+		return SmartPtr<CompositeProcessor>();
 	}
 
 	return DoCompile(script_file);
@@ -491,7 +500,7 @@ Yap::SmartPtr<CompositeProcessor> PipelineCompiler::DoCompile(std::wistream& inp
 			return _constructor->GetPipeline();
 		}
 
-        return Yap::SmartPtr<CompositeProcessor>();
+		return Yap::SmartPtr<CompositeProcessor>();
 	}
 	catch (CompileError& e)
 	{
@@ -503,7 +512,7 @@ Yap::SmartPtr<CompositeProcessor> PipelineCompiler::DoCompile(std::wistream& inp
 
 		wcerr << output.str();
 
-        return SmartPtr<CompositeProcessor>();
+		return SmartPtr<CompositeProcessor>();
 	}
 }
 
@@ -608,12 +617,12 @@ bool PipelineCompiler::PreprocessLine(std::wstring& line,
 			for (; i + pos < int(line.length()) && line[pos + i] != '\"'; ++i);
 			if (i + pos == line.length())
 			{
-				// ��ͬһ����û���ҵ�ƥ���Ľ�������
+				// 锟斤拷同一锟斤拷锟斤拷没锟斤拷锟揭碉拷匹锟斤拷锟侥斤拷锟斤拷锟斤拷锟斤拷
 				throw CompileError(Token(line_number, pos, i, TokenStringLiteral), CompileErrorNoMatchingQuote,
 					L"No matching quote found on the same line. String literals must be defined on one line.");
 			}
 
-			// token�в���������
+			// token锟叫诧拷锟斤拷锟斤拷锟斤拷锟斤拷
 			_tokens.push_back(Token(line_number, pos + 1, i - 1, TokenStringLiteral));
 			pos += i + 1;
 			break;
@@ -622,7 +631,7 @@ bool PipelineCompiler::PreprocessLine(std::wstring& line,
 		{
 			if (pos + 1 < int(line.length()) && line[pos + 1] == '/')
 			{
-				// ע�Ͳ���
+				// 注锟酵诧拷锟斤拷
 				return true;
 			}
 			break;
