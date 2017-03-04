@@ -188,8 +188,6 @@ namespace Yap
         SmartPtr<CompositeProcessor> CompileFile(const wchar_t * path);
         SmartPtr<CompositeProcessor> Compile(const wchar_t * text);
 
-        bool AddProcessor(const wchar_t * class_id, Yap::IProcessor * processor);
-
 	protected:
         SmartPtr<CompositeProcessor> DoCompile(std::wistream& input);
 

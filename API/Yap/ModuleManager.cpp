@@ -8,6 +8,8 @@
 using namespace Yap;
 using namespace std;
 
+std::map <std::wstring, Yap::SmartPtr<IProcessor>> ModuleManager::s_processors;
+
 std::wstring GetFileNameFromPath(const wchar_t * path)
 {
 	wstring path_string(path);
@@ -61,21 +63,18 @@ IProcessorIter * Yap::ModuleManager::GetIterator()
 	}
 }
 
-bool Yap::ModuleManager::Add(const wchar_t * name, IProcessor * processor)
+bool Yap::ModuleManager::Add(const wchar_t * /*name*/, IProcessor * /*processor*/)
 {
-    if (Find(name) != nullptr)
-        return false;
-
-    _processors.insert(make_pair(name, YapShared(processor)));
-    return true;
+    assert( 0 && "Don't use this function. Use RegisterProcessor() instead.");
+    return false;
 }
 
 Yap::IProcessor * Yap::ModuleManager::FindProcessorInAllModules(const wchar_t * name)
 {
 	vector<IProcessor*> processors;
 
-    auto iter = _processors.find(name);
-    if (iter != _processors.end())
+    auto iter = s_processors.find(name);
+    if (iter != s_processors.end())
     {
         processors.push_back(iter->second.get());
     }
@@ -116,7 +115,17 @@ Yap::IProcessor * Yap::ModuleManager::CreateProcessor(const wchar_t * class_id,
 
 void Yap::ModuleManager::Reset()
 {
-	_modules.clear();
+    _modules.clear();
+}
+
+bool ModuleManager::RegisterProcessor(const wchar_t *name, IProcessor * processor)
+{
+    if (s_processors.find(name) != s_processors.end())
+        return false;
+
+    s_processors.insert(make_pair(name, YapShared(processor)));
+    return true;
+
 }
 
 bool Yap::ModuleManager::LoadModule(const wchar_t * module_path)

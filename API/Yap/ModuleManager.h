@@ -46,9 +46,11 @@ namespace Yap
 		IProcessor * CreateProcessor(const wchar_t * class_id, const wchar_t * instance_id);
 
 		void Reset();
+
+        static bool RegisterProcessor(const wchar_t * name, IProcessor * procesor);
 	protected:
 		ModuleContainer _modules;
-        std::map <std::wstring, Yap::SmartPtr<IProcessor>> _processors;
+        static std::map <std::wstring, Yap::SmartPtr<IProcessor>> s_processors;
 
         friend class PipelineConstructor;
 	};

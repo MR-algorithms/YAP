@@ -55,11 +55,6 @@ void PipelineConstructor::Reset(bool reset_modules)
     }
 }
 
-bool PipelineConstructor::AddProcessor(const wchar_t *class_id, IProcessor *processor)
-{
-    return _module_manager->Add(class_id, processor);
-}
-
 bool Yap::PipelineConstructor::LoadModule(const wchar_t * module_name)
 {
 	wstring plugin_path = L".";

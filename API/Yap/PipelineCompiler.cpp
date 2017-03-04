@@ -459,15 +459,6 @@ Yap::SmartPtr<CompositeProcessor> Yap::PipelineCompiler::Compile(const wchar_t *
     return DoCompile(input);
 }
 
-bool PipelineCompiler::AddProcessor(const wchar_t *class_id, IProcessor *processor)
-{
-    if (!_constructor)
-    {
-        _constructor = shared_ptr<PipelineConstructor>(new PipelineConstructor);
-    }
-    return _constructor->AddProcessor(class_id, processor);
-}
-
 Yap::SmartPtr<CompositeProcessor> PipelineCompiler::CompileFile(const wchar_t * path)
 {
 	wifstream script_file;
