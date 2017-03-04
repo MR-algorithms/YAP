@@ -510,6 +510,7 @@ Yap::SmartPtr<CompositeProcessor> PipelineCompiler::DoCompile(std::wistream& inp
 			<< ": Error code " << e.GetErrorNumber()
 			<< " " << e.GetErrorMessage();
 
+        wstring erorr_messge = output.str();
 		wcerr << output.str();
 
 		return SmartPtr<CompositeProcessor>();
