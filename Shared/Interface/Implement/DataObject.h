@@ -80,12 +80,12 @@ namespace Yap
 			return &_dimensions;
 		}
 
-		virtual T * GetData()
+                virtual T * GetData() override
 		{
 			return _data;
 		}
 
-		virtual void Lock()
+                virtual void Lock() override
 		{
 			++_use_count;
 			if (_parent)
@@ -94,7 +94,7 @@ namespace Yap
 			}
 		}
 
-		virtual void Release()
+                virtual void Release() override
 		{
 			if (_parent)
 			{

@@ -12,10 +12,19 @@ namespace Yap
 
 		int GetDataType();
 		unsigned int GetDimensionCount();
-		/// 计算数据的实际维数。
+
+                /// Return the actual number of dimensions of the data.
 		/**
-		例如：维度信息表示为Readout 0， 255；phaseencoding 0， 255；slice 0, 1；channel 0，1;
-		实际数据的维度只是 2。若维度信息中slice 0, 2;其它不变，则实际数据的维度为3，以此类推。
+                \remarks
+                For example, if dimension information is:
+                    \li Readout 0， 255；
+                    \li phaseencoding 0， 255；
+                    \li slice 0, 1；
+                    \li channel 0，1;
+
+                then the actual number of dimensions is 2。If we change the slice to
+                0, 2 while keeping all other dimensions unchanged, then the actual
+                number of dimensions is 3.
 		*/
 		unsigned int GetActualDimensionCount() const;
 

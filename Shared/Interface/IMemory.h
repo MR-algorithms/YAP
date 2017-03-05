@@ -101,38 +101,37 @@ public:
  	}
 
 	template <typename SOURCE_TYPE>
-	SmartPtr(SmartPtr<SOURCE_TYPE>& source) : _pointer(source.get())
+        SmartPtr(const SmartPtr<SOURCE_TYPE>& source) : _pointer(source.get())
 	{
-		if (dynamic_cast<TYPE*>(source.get()) == nullptr)
-			throw std::bad_cast();
+            if (source.get() == nullptr)
+                return;
 
-		auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
-		if (shared_object != nullptr)
-		{
-			shared_object->Lock();
-		}
+            if (dynamic_cast<TYPE*>(source.get()) == nullptr)
+                throw std::bad_cast();
+
+            auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
+            if (shared_object != nullptr)
+            {
+                 shared_object->Lock();
+            }
 	}
 
-	SmartPtr(SmartPtr<TYPE>&& source) : _pointer(source._pointer) 
+        SmartPtr(SmartPtr<TYPE>&& source) : _pointer(source._pointer)
 	{
-		auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
-		if (shared_object != nullptr)
-		{
-			shared_object->Lock();
-		}
+            source._pointer = nullptr;
 	}
 
 	template <typename SOURCE_TYPE>
-	SmartPtr(SmartPtr<SOURCE_TYPE>&& source) : _pointer(dynamic_cast<TYPE*>(source.get()))
+        SmartPtr(SmartPtr<SOURCE_TYPE>&& source) : _pointer(dynamic_cast<TYPE*>(source.get()))
 	{
-		if (_pointer == nullptr)
+                if (_pointer == nullptr && source.get() != nullptr)
 			throw std::bad_cast();
 
-		auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
-		if (shared_object != nullptr)
-		{
-			shared_object->Lock();
-		}
+                auto shared_pointer = dynamic_cast<ISharedObject*>(_pointer);
+                if (shared_pointer != nullptr)
+                {
+                    shared_pointer->Lock();
+                }
 	}
 
 	~SmartPtr()
@@ -141,7 +140,7 @@ public:
 
 		if (shared_object != nullptr)
 		{
-			shared_object->Release();
+                    shared_object->Release();
 		}
 	}
 
@@ -177,11 +176,7 @@ public:
 			}
 
 			_pointer = source._pointer;
-			auto new_shared_object = dynamic_cast<ISharedObject*>(_pointer);
-			if (new_shared_object != nullptr)
-			{
-				new_shared_object->Lock();
-			}
+                        source._pointer = nullptr;
 		}
 
 		return *this;
@@ -299,7 +294,6 @@ SmartPtr<TYPE> YapShared(IClonable * clonable)
 
 /**
 	This function clones an object and wraps it with SmartPtr.
-
 	It requires that the object implement IClonable and ISharedObject.
 */
 template <typename TYPE>
