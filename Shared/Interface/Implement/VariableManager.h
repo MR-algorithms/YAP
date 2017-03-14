@@ -1,9 +1,22 @@
 #pragma once
-#include "..\IProperty.h"
-#include "..\IMemory.h"
+#include "..\interfaces.h"
+#include "..\smartptr.h"
 #include <string>
 
 namespace Yap {
+
+	struct PropertyException
+	{
+		enum Type
+		{
+			PropertyNotFound,
+			TypeNotMatch,
+			InvalidType,
+		};
+		std::wstring property_name;
+		Type type;
+		PropertyException(const wchar_t * name, Type type_) : property_name(name), type(type_) {}
+	};
 
 	class VariableManager
 	{
@@ -29,6 +42,7 @@ namespace Yap {
 
         bool Load(const wchar_t * path);
 	protected:
+		IProperty * GetProperty(const wchar_t * name, PropertyType expected_type);
 		SmartPtr<IPropertyContainer> _properties;
         bool ProcessLine(std::wstring& line);
 	};

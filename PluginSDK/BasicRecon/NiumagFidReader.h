@@ -14,6 +14,7 @@ namespace Yap
 	class NiumagFidReader :
 		public ProcessorImpl
 	{
+		IMPLEMENT_SHARED(NiumagFidReader)
 	public:
 		NiumagFidReader(void);
 		NiumagFidReader(const NiumagFidReader& rhs);
@@ -22,7 +23,6 @@ namespace Yap
 		~NiumagFidReader();
 
 		virtual bool Input(const wchar_t * name, IData * data);
-		virtual IProcessor * Clone() override;
 
 		bool ReadNiumagFidData();
 	};

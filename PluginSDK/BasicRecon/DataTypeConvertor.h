@@ -10,12 +10,12 @@ namespace Yap
 	class DataTypeConvertor :
 		public ProcessorImpl
 	{
+		IMPLEMENT_SHARED(DataTypeConvertor)
 	public:
 		DataTypeConvertor(void);
 		DataTypeConvertor(const DataTypeConvertor& rhs);
 
 		virtual bool Input(const wchar_t * port, IData * data) override;
-		virtual IProcessor * Clone() override;
 
 	protected:
 		~DataTypeConvertor();

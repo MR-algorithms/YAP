@@ -141,7 +141,3 @@ bool Fft1D::Fft(std::complex<double> * data,
 	return true;
 }
 
-Yap::IProcessor * Yap::Fft1D::Clone()
-{
-	return new(nothrow) Fft1D(*this);
-}

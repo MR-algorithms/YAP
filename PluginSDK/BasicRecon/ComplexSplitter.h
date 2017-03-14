@@ -10,7 +10,7 @@ namespace Yap
 {
 	class ComplexSplitter :public ProcessorImpl
 	{
-
+		IMPLEMENT_SHARED(ComplexSplitter)
 	public:
 		ComplexSplitter();
 		
@@ -19,7 +19,6 @@ namespace Yap
 		~ComplexSplitter();
 
 		virtual bool Input(const wchar_t * port, IData * data) override;
-		virtual IProcessor * Clone() override;
 
 		void Split(std::complex<double> * data, double * real, double * imaginary, size_t size);
 		void ExtractReal(std::complex<double> * data, double * real, size_t size);

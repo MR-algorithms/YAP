@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "NiumagFidReader.h"
 
 #include <sstream>
@@ -33,7 +33,7 @@ NiumagFidReader::NiumagFidReader(void):
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
-	_properties->AddProperty(PropertyString, L"DataPath", L"Êı¾İÎÄ¼ş¼ĞºÍÎÄ¼şÃû¡£");
+	_properties->AddProperty(PropertyString, L"DataPath", L"æ•°æ®æ–‡ä»¶å¤¹å’Œæ–‡ä»¶åã€‚");
 }
 
 NiumagFidReader::NiumagFidReader(const NiumagFidReader& rhs):
@@ -54,11 +54,6 @@ bool Yap::NiumagFidReader::Input(const wchar_t * name, IData * data)
 		return false;
 
 	return true;
-}
-
-IProcessor * Yap::NiumagFidReader::Clone()
-{
-	return new(nothrow) NiumagFidReader(*this);
 }
 
 bool Yap::NiumagFidReader::ReadNiumagFidData()

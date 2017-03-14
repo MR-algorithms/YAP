@@ -18,11 +18,6 @@ NLM::~NLM()
 {
 }
 
-IProcessor * Yap::NLM::Clone()
-{
-	return new (std::nothrow) NLM(*this);
-}
-
 bool Yap::NLM::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && Yap::GetDataArray<float>(data) != nullptr);

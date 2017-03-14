@@ -7,11 +7,9 @@
 #include <map>
 #include <memory>
 
-#include "Interface/IProcessor.h"
-
 namespace Yap
 {
-	class ModuleManager : public IProcessorContainer
+	class ModuleManager
 	{
 		typedef std::map<std::wstring, std::shared_ptr<ModuleAgent>> ModuleContainer;
 		typedef ModuleContainer::iterator ModuleIter;
@@ -35,11 +33,9 @@ namespace Yap
 		ModuleManager();
 		~ModuleManager();
 
-
-		virtual IProcessor * Find(const wchar_t * name) override;
-		virtual IProcessorIter * GetIterator() override;
-		virtual bool Add(const wchar_t * name, IProcessor * processor);
-
+		IProcessor * Find(const wchar_t * name);
+		IProcessorIter * GetIterator();
+		bool Add(const wchar_t * name, IProcessor * processor);
 		bool LoadModule(const wchar_t * module_path);
 
 		IProcessor * FindProcessorInAllModules(const wchar_t * name);

@@ -14,14 +14,15 @@ CompositeProcessor::~CompositeProcessor()
 {
 }
 
-Yap::CompositeProcessor::CompositeProcessor(CompositeProcessor& rhs) :
+Yap::CompositeProcessor::CompositeProcessor(const CompositeProcessor& rhs) :
 	ProcessorImpl(rhs.GetClassId())
 {
 
 }
 
-Yap::IProcessor * Yap::CompositeProcessor::Clone()
+Yap::IProcessor * Yap::CompositeProcessor::Clone()  const
 {
+	NOT_IMPLEMENTED
 	throw std::logic_error("The method or operation is not implemented.");
 }
 
@@ -111,15 +112,10 @@ Pipeline::Pipeline(const wchar_t * class_id) :
 {
 }
 
-Pipeline::Pipeline(Pipeline& rhs) :
+Pipeline::Pipeline(const Pipeline& rhs) :
     _modules(rhs._modules),
     CompositeProcessor(rhs)
 {
-}
-
-IProcessor * Pipeline::Clone()
-{
-    return new(nothrow) Pipeline(*this);
 }
 
 void Pipeline::AddModule(std::shared_ptr<ModuleAgent> module)

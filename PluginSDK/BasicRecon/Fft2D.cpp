@@ -137,8 +137,3 @@ void Fft2D::Plan(size_t width, size_t height, bool inverse, bool in_place)
 	_plan_in_place = in_place;
 }
 
-Yap::IProcessor * Yap::Fft2D::Clone()
-{
-	return new (nothrow) Fft2D(*this);
-}
-

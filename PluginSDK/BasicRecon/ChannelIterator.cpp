@@ -21,11 +21,6 @@ ChannelIterator::~ChannelIterator()
 {
 }
 
-IProcessor * Yap::ChannelIterator::Clone()
-{
-	return new (nothrow) ChannelIterator(*this);
-}
-
 bool Yap::ChannelIterator::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && (Yap::GetDataArray<complex<float>>(data) != nullptr));

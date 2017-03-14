@@ -18,11 +18,11 @@ namespace Yap
 	class Nlmeans :
 		public ProcessorImpl
 	{
+		IMPLEMENT_SHARED(Nlmeans)
 	public:
 		Nlmeans(void);
 		Nlmeans(const Nlmeans& rhs);
 
-		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
 	protected:

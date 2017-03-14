@@ -131,11 +131,6 @@ DataTypeConvertor::~DataTypeConvertor()
 {
 }
 
-IProcessor * Yap::DataTypeConvertor::Clone()
-{
-	return new (nothrow) DataTypeConvertor(*this);
-}
-
 static int DataTypeFromPortName(const wchar_t * port_name)
 {
 	static map<wstring, int> data_type_from_port_name = {

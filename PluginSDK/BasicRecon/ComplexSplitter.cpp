@@ -1,4 +1,4 @@
-#include "ComplexSplitter.h"
+ï»¿#include "ComplexSplitter.h"
 
 using namespace std;
 using namespace Yap;
@@ -28,7 +28,7 @@ bool ComplexSplitter::Input(const wchar_t * port, IData * data)
 	auto want_real = OutportLinked(L"Real");
 	auto want_imaginary = OutportLinked(L"Imaginary");
 
-	//one, two and three dimension(s), ANY¡¡DIMENSION
+	//one, two and three dimension(s), ANYã€€DIMENSION
 	auto size = static_cast<unsigned int> (input_data.GetDataSize());
 	auto data_array = GetDataArray<complex<double>>(data);
 	if (want_real && want_imaginary)
@@ -69,11 +69,6 @@ void Yap::ComplexSplitter::Split(std::complex<double> * data,
 		*real++ = *cursor++;
 		*imaginary++ = *cursor++;
 	}
-}
-
-Yap::IProcessor * Yap::ComplexSplitter::Clone()
-{
-	return new(nothrow) ComplexSplitter(*this);
 }
 
 void ComplexSplitter::ExtractReal(std::complex<double> * data, double * real, size_t size)

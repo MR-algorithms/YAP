@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "NiumagImgReader.h"
 
 #include <sstream>
@@ -37,7 +37,7 @@ NiumagImgReader::NiumagImgReader():
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
 
-	_properties->AddProperty(PropertyString, L"DataPath", L"Êı¾İÎÄ¼ş¼ĞºÍÎÄ¼şÃû¡£");
+	_properties->AddProperty(PropertyString, L"DataPath", L"æ•°æ®æ–‡ä»¶å¤¹å’Œæ–‡ä»¶åã€‚");
 }
 
 Yap::NiumagImgReader::NiumagImgReader(const NiumagImgReader& rhs):
@@ -58,11 +58,6 @@ bool Yap::NiumagImgReader::Input(const wchar_t * name, IData * data)
 		return false;
 
 	return true;
-}
-
-IProcessor * Yap::NiumagImgReader::Clone()
-{
-	return new(nothrow) NiumagImgReader(*this);
 }
 
 bool Yap::NiumagImgReader::ReadNiumagImgData()

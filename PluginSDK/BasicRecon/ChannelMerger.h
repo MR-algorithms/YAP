@@ -11,11 +11,11 @@ namespace Yap
 	class ChannelMerger :
 		public ProcessorImpl
 	{
+		IMPLEMENT_SHARED(ChannelMerger)
 	public:
 		ChannelMerger(void);
 		ChannelMerger(const ChannelMerger& rhs);
 
-		virtual IProcessor* Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
 	
 	protected:

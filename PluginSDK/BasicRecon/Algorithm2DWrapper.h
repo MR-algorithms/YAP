@@ -13,6 +13,8 @@ namespace Yap
 	class Algorithm2DWrapper :
 		public ProcessorImpl
 	{
+		typedef Algorithm2DWrapper<INPUT_TYPE, OUTPUT_TYPE> this_class;
+		IMPLEMENT_SHARED(this_class)
 	public:
 		typedef void (*ProcessingFunc) (INPUT_TYPE * input_data, OUTPUT_TYPE * output_data, 
 			size_t width, size_t height);	
@@ -52,10 +54,6 @@ namespace Yap
 			Feed(L"Output", output_data.get());
 		}
 
-		virtual IProcessor * Clone() override
-		{
-			return new(nothrow) Algorithm2DWrapper<INPUT_TYPE, OUTPUT_TYPE>(*this);
-		}
 	protected:
 		~Algorithm2DWrapper() {}
 
@@ -67,14 +65,15 @@ namespace Yap
 	class Algorithm2DInPlaceWrapper :
 		public ProcessorImpl
 	{
+		IMPLEMENT_SHARED(Algorithm2DInPlaceWrapper<T>)
 	public:
 		typedef void(*ProcessingFunc) (T * input_data, size_t width, size_t height);
 
 		explicit Algorithm2DInPlaceWrapper(ProcessingFunc func, const wchar_t * processor_name) :
 			_func(func), ProcessorImpl(processor_name)
 		{
-			AddInput(L"Input", 2, type_id<T>::type);
-			AddOutput(L"Output", 2, type_id<T>::type);
+			AddInput(L"Input", 2, data_type_id<T>::type);
+			AddOutput(L"Output", 2, data_type_id<T>::type);
 		}
 
 		Algorithm2DInPlaceWrapper(const Algorithm2DInPlaceWrapper<T>& rhs) :
@@ -87,7 +86,7 @@ namespace Yap
 			if (std::wstring(port) != L"Input")
 				return false;
 
-			if (data->GetDataType() != type_id<T>::type)
+			if (data->GetDataType() != data_type_id<T>::type)
 				return false;
 
 			DataHelper input_data(data);
@@ -103,10 +102,6 @@ namespace Yap
 			return true;
 		}
 
-		virtual IProcessor * Clone() override
-		{
-			return new (std::nothrow) Algorithm2DInPlaceWrapper<T>(*this);
-		}
 	protected:
 		~Algorithm2DInPlaceWrapper() {}
 

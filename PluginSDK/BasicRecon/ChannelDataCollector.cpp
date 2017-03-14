@@ -27,11 +27,6 @@ ChannelDataCollector::~ChannelDataCollector(void)
 {
 }
 
-IProcessor * Yap::ChannelDataCollector::Clone()
-{
-	return new(nothrow) ChannelDataCollector(*this);
-}
-
 bool Yap::ChannelDataCollector::Input(const wchar_t * name, IData * data)
 {
 	assert(data != nullptr);

@@ -2,7 +2,7 @@
 #define ProcessorImp_h__20160813
 
 #pragma once
-#include "Interface/IProcessor.h"
+#include "Interface/Interfaces.h"
 
 #include <map>
 #include <string>
@@ -11,8 +11,6 @@
 #include "interface/Implement/DataObject.h"
 #include "Interface/Implement/SharedObjectImpl.h"
 #include "Interface/Implement/ContainerImpl.h"
-#include "Interface/IProperty.h"
-#include "Interface/IMemory.h"
 #include "variableManager.h"
 
 namespace Yap
@@ -27,8 +25,7 @@ namespace Yap
 	};
 
 	class ProcessorImpl :
-		public IProcessor, 
-		public SharedObjectImpl
+		public IProcessor
 	{
 	public:
 		explicit ProcessorImpl(const wchar_t * class_id);
@@ -37,12 +34,12 @@ namespace Yap
 		virtual IPortContainer * Inputs() override;
 		virtual IPortContainer * Outputs() override;
 
-		virtual const wchar_t * GetClassId() override;
+		virtual const wchar_t * GetClassId() const override;
 		virtual void SetClassId(const wchar_t * id) override;
-		virtual const wchar_t * GetInstanceId() override;
+		virtual const wchar_t * GetInstanceId() const override;
 		virtual void SetInstanceId(const wchar_t * instance_id) override;
 
-		virtual IPropertyContainer * GetProperties() override;
+		virtual IPropertyContainer * GetProperties();
 
 		virtual bool LinkProperty(const wchar_t * property_id, const wchar_t * param_id) override;
 		virtual bool UpdateProperties(IPropertyContainer * params) override;

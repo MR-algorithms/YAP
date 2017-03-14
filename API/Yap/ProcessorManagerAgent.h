@@ -3,24 +3,21 @@
 #ifndef ProcessorManagerAgent_h__20160813
 #define ProcessorManagerAgent_h__20160813
 
-#include "Interface/IProcessor.h"
-#include "Interface/IMemory.h"
+#include "Interface/Interfaces.h"
 
 #include <wtypes.h>
 
 namespace Yap
 {
-	class ModuleAgent :
-		public IProcessorContainer
+	class ModuleAgent
 	{
 	public:
 		ModuleAgent();
 
 		bool Load(const wchar_t * plugin_path);
-
-		virtual IProcessor * Find(const wchar_t * name) override;
-		virtual IProcessorIter * GetIterator() override;
-		virtual bool Add(const wchar_t * name, IProcessor * processor) override;
+		IProcessor * Find(const wchar_t * name);
+		IProcessorIter * GetIterator();
+		bool Add(const wchar_t * name, IProcessor * processor);
 
 		~ModuleAgent();
 

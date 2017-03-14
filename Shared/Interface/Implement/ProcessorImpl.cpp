@@ -3,7 +3,8 @@
 #include <iostream>
 #include <algorithm>
 #include <assert.h>
-#include "Interface/IMemory.h"
+#include "Interface/Interfaces.h"
+
 #include "VariableManager.h"
 
 using namespace std;
@@ -14,10 +15,9 @@ namespace Yap
 namespace _details
 {
 	class Port : 
-		public IPort,
-		public SharedObjectImpl,
-		public IClonable
+		public IPort
 	{
+		IMPLEMENT_SHARED(Port)
 	public:
 		Port::Port(const wchar_t * name, unsigned int dimension_count, int data_type) :
 			_name(name),
@@ -26,17 +26,17 @@ namespace _details
 		{
 		}
 	
-		virtual const wchar_t * GetName() override
+		virtual const wchar_t * GetName() const override
 		{
 			return _name.c_str();
 		}
 
-		virtual unsigned int GetDimensionCount() override
+		virtual unsigned int GetDimensionCount() const override
 		{
 			return _dimension_count;
 		}
 
-		virtual int GetDataType() override
+		virtual int GetDataType() const override
 		{
 			return _data_type;
 		}
@@ -45,14 +45,6 @@ namespace _details
 		std::wstring _name;
 		unsigned int _dimension_count;
 		int _data_type;
-
-
-		// Inherited via IClonable
-		virtual IClonable * Clone() const override
-		{
-			return new Port(*this);
-		}
-
 	};
 
 	typedef ContainerImpl<IPort> PortContainer;
@@ -143,12 +135,12 @@ namespace _details
 	}
 
 	
-	IPropertyContainer * ProcessorImpl::GetProperties()
+	IPropertyContainer * ProcessorImpl::GetProperties() 
 	{
 		return _properties->GetProperties();
 	}
 
-	const wchar_t * Yap::ProcessorImpl::GetClassId()
+	const wchar_t * Yap::ProcessorImpl::GetClassId() const
 	{
 		return _class_id.c_str();
 	}
@@ -158,7 +150,7 @@ namespace _details
 		_class_id = id;
 	}
 
-	const wchar_t * Yap::ProcessorImpl::GetInstanceId()
+	const wchar_t * Yap::ProcessorImpl::GetInstanceId() const
 	{
 		return _instance_id.c_str();
 	}
@@ -180,7 +172,7 @@ namespace _details
 		return true;
 	}
 
-	bool Yap::ProcessorImpl::UpdateProperties(IPropertyContainer * params)
+	bool Yap::ProcessorImpl::UpdateProperties(IPropertyContainer * source_params)
 	{
 		for (auto link : _property_links)
 		{
@@ -188,35 +180,32 @@ namespace _details
 			if (property == nullptr)
 				return false;
 
-			IProperty * system_variable = params->Find(link.second.c_str());
-			if (system_variable == nullptr)
+			IProperty * source = source_params->Find(link.second.c_str());
+			if (source == nullptr)
 				return false;
 
-			if (property->GetType() != system_variable->GetType())
+			if (property->GetType() != source->GetType())
 				return false;
 
-			try
+			switch (property->GetType())
 			{
-				switch (property->GetType())
-				{
-				case PropertyBool:
-					dynamic_cast<IBoolean&>(*property).SetBool(dynamic_cast<IBoolean&>(*system_variable).GetBool());
-					break;
-				case PropertyInt:
-					dynamic_cast<IInt&>(*property).SetInt(dynamic_cast<IInt&>(*system_variable).GetInt());
-					break;
-				case PropertyFloat:
-					dynamic_cast<IDouble&>(*property).SetDouble(dynamic_cast<IDouble&>(*system_variable).GetDouble());
-					break;
-				case PropertyString:
-					dynamic_cast<IString&>(*property).SetString(dynamic_cast<IString&>(*system_variable).GetString());
-					break;
-				default:
-					return false;
-				}
-			}
-			catch (std::bad_cast&)
-			{
+			case PropertyBool:
+				reinterpret_cast<IBoolValue*>(property->ValueInterface())->Set(
+					reinterpret_cast<IBoolValue*>(source->ValueInterface())->Get());
+				break;
+			case PropertyInt:
+				reinterpret_cast<IIntValue*>(property->ValueInterface())->Set(
+					reinterpret_cast<IIntValue*>(source->ValueInterface())->Get());
+				break;
+			case PropertyFloat:
+				reinterpret_cast<IDoubleValue*>(property->ValueInterface())->Set(
+					reinterpret_cast<IDoubleValue*>(source->ValueInterface())->Get());
+				break;
+			case PropertyString:
+				reinterpret_cast<IStringValue*>(property->ValueInterface())->Set(
+					reinterpret_cast<IStringValue*>(source->ValueInterface())->Get());
+				break;
+			default:
 				return false;
 			}
 		}

@@ -10,11 +10,10 @@ namespace Yap
 	class Difference :
 		public ProcessorImpl
 	{
+		IMPLEMENT_SHARED(Difference)
 	public:
 		Difference();
-	
 		virtual bool Input(const wchar_t * port, IData * data) override;
-		virtual IProcessor * Clone() override;
 
 	protected:
 		~Difference();

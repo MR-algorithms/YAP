@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #ifndef SamplingMaskCreator_h__20160814
 #define SamplingMaskCreator_h__20160814
@@ -14,10 +14,9 @@ namespace Yap
 	class SamplingMaskCreator :
 		public ProcessorImpl
 	{
+		IMPLEMENT_SHARED(SamplingMaskCreator)
 	public:
 		SamplingMaskCreator();
-		
-		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
 	protected:
@@ -27,11 +26,9 @@ namespace Yap
 			float pow, float sample_percent, float radius);
 		std::vector<unsigned int> GetEqualSamplingPattern(unsigned int height, unsigned int acs, unsigned int rate);
 
-		// Pdf Êı¾İÀàĞÍÓĞ´ı²¹³ä¡£
+		// Pdf æ•°æ®ç±»å‹æœ‰å¾…è¡¥å……ã€‚
 		std::vector<float> GeneratePdf(unsigned int row_count, float p, float sample_percent, float radius);
-
 		std::vector<float> LineSpace(float begin, float end, unsigned int count);
-
 		std::vector<float> GenerateRandomMask(unsigned int width, unsigned int height, float pow, float sample_percent, float radius);
 		std::vector<float> GenerateEqualMask(unsigned int width, unsigned int height, unsigned int acs, unsigned int rate);
 

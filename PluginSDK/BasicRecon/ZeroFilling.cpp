@@ -94,10 +94,5 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 	return true;
 }
 
-Yap::IProcessor * Yap::ZeroFilling::Clone()
-{
-	return new (std::nothrow) ZeroFilling(*this);
-}
-
 
 

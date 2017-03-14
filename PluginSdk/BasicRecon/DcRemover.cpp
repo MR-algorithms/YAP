@@ -131,8 +131,3 @@ bool DcRemover::Input(const wchar_t * port, IData * data)
 
 	return true;
 }
-
-Yap::IProcessor * Yap::DcRemover::Clone()
-{
-	return new (nothrow) DcRemover(*this);
-}

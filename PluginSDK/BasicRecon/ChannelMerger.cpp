@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "ChannelMerger.h"
 #include "Interface/Client/DataHelper.h"
 #include <utility>
@@ -12,9 +12,9 @@ ChannelMerger::ChannelMerger(void) :
 	AddOutput(L"Output", 2, DataTypeFloat);
 	AddInput(L"Input", 2, DataTypeFloat);
 
-	_properties->AddProperty(PropertyInt, L"ChannelCount", L"Í¨µÀÊý");
+	_properties->AddProperty(PropertyInt, L"ChannelCount", L"é€šé“æ•°");
 	_properties->SetInt(L"ChannelCount", 4);
-	_properties->AddProperty(PropertyInt, L"ChannelSwitch", L"Í¨µÀ¿ª¹ØÖ¸Ê¾Öµ");
+	_properties->AddProperty(PropertyInt, L"ChannelSwitch", L"é€šé“å¼€å…³æŒ‡ç¤ºå€¼");
 }
 
 ChannelMerger::ChannelMerger( const ChannelMerger& rhs )
@@ -24,11 +24,6 @@ ChannelMerger::ChannelMerger( const ChannelMerger& rhs )
 
 ChannelMerger::~ChannelMerger(void)
 {
-}
-
-IProcessor* ChannelMerger::Clone()
-{
-	return new(nothrow) ChannelMerger(*this);
 }
 
 bool ChannelMerger::Input(const wchar_t * name, IData * data)
@@ -42,7 +37,7 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 	auto iter = _merge_buffers.find(key);
 	if (iter == _merge_buffers.end())
 	{
-		Dimensions merge_dimensions(helper.GetDimensionCount() - 1); // Ïû³ýDimensionChannelÕâÒ»Î¬
+		Dimensions merge_dimensions(helper.GetDimensionCount() - 1); // æ¶ˆé™¤DimensionChannelè¿™ä¸€ç»´
 
 		DimensionType type = DimensionInvalid;
 		unsigned int index = 0, length = 0;
@@ -102,8 +97,8 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 // 	unsigned int used_channel_count = 0;
 // 	for (used_channel_count = 0; bit_number; ++used_channel_count)
 // 	{
-// 		bit_number &= (bit_number - 1);   // Ïû³ý×îµÍÎ»µÄ1.
-// 	}   // ×îºóused_channel_countµÃµ½1µÄ¸öÊý¡£¼´´ò¿ªµÄÍ¨µÀ×ÜÊý
+// 		bit_number &= (bit_number - 1);   // æ¶ˆé™¤æœ€ä½Žä½çš„1.
+// 	}   // æœ€åŽused_channel_countå¾—åˆ°1çš„ä¸ªæ•°ã€‚å³æ‰“å¼€çš„é€šé“æ€»æ•°
 
 	if (iter->second.count == _properties->GetInt(L"ChannelCount"))
 	{
@@ -134,10 +129,4 @@ std::vector<unsigned int> ChannelMerger::GetKey(IDimensions * dimensions)
 	}
 
 	return result;
-}
-
-template<typename T>
-T * GetData(IData * data)
-{
-
 }

@@ -147,11 +147,6 @@ JpegExporter::~JpegExporter()
 {
 }
 
-IProcessor* JpegExporter::Clone()
-{
-	return new (std::nothrow) JpegExporter(*this);
-}
-
 bool JpegExporter::Input( const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && ((GetDataArray<float>(data) != nullptr) || (GetDataArray<unsigned short>(data) != nullptr)));

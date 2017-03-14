@@ -4,8 +4,8 @@
 #ifndef ProcessorImpl_h_20160830
 #define ProcessorImpl_h_20160830
 
-#include "Interface/IContainer.h"
-#include "Interface/IMemory.h"
+#include "Interface/interfaces.h"
+#include "Interface/smartptr.h"
 
 #include <map>
 #include <string>
@@ -14,10 +14,10 @@ namespace Yap
 {
 	template <typename TYPE>
 	class ContainerImpl :
-		public IContainer<TYPE>, 
-		public SharedObjectImpl,
-		public IClonable
+		public IContainer<TYPE>
 	{
+		IMPLEMENT_LOCK_RELEASE
+
 		template <typename TYPE>
 		class Iterator : 
 			public IIterator<TYPE>,
@@ -56,14 +56,13 @@ namespace Yap
 			ContainerImpl& _container;
 			typename std::map<std::wstring, SmartPtr<TYPE>>::iterator _current;
 
-			
 			friend class ContainerImpl;
 		};
 
 	public:
 		ContainerImpl() {}
 
-		IClonable * Clone() const override
+		IContainer<TYPE> * Clone() const override
 		{
 			auto cloned = new (std::nothrow) ContainerImpl;
 			if (cloned == nullptr)
@@ -71,10 +70,9 @@ namespace Yap
 
 			for (auto element : _elements)
 			{
-				auto clonable = dynamic_cast<IClonable*>(element.second.get());
-				if (clonable != nullptr)
+				if (element.second)
 				{
-					auto cloned_element = dynamic_cast<TYPE *>(clonable->Clone());
+					auto cloned_element = dynamic_cast<TYPE *>(element.second->Clone());
 					if (cloned_element != nullptr)
 					{
 						cloned->Add(element.first.c_str(), cloned_element);

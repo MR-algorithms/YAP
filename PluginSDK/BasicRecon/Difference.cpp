@@ -93,8 +93,3 @@ bool Yap::Difference::Input(const wchar_t * port, IData * data)
 
 	return true;
 }
-
-IProcessor * Yap::Difference::Clone()
-{
-	return new (std::nothrow) Difference(*this);
-}

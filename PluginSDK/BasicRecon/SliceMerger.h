@@ -9,11 +9,11 @@ namespace Yap
 	class SliceMerger:
 		public ProcessorImpl
 	{
+		IMPLEMENT_SHARED(SliceMerger)
 	public:
 		SliceMerger(void);
 		SliceMerger(const SliceMerger& rhs);
 
-		virtual IProcessor* Clone() override;
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
 	protected:

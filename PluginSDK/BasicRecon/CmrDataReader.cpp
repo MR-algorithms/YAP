@@ -1,4 +1,4 @@
-
+ï»¿
 #include "CmrDataReader.h"
 
 #include <sstream>
@@ -40,16 +40,11 @@ CmrDataReader::CmrDataReader(const CmrDataReader& rhs)
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
-	_properties->AddProperty(PropertyString, L"DataPath",  L"°üº¬Ô­Ê¼Êı¾İÎÄ¼şµÄÎÄ¼ş¼Ğ¡£");
-	_properties->AddProperty(PropertyInt, L"ChannelCount",  L"Í¨µÀÊı");
-	_properties->AddProperty(PropertyInt, L"ChannelSwitch",  L"Í¨µÀ¿ª¹ØÖ¸Ê¾Öµ");
-	_properties->AddProperty(PropertyInt, L"GroupCount",  L"·Ö×éÉ¨ÃèÊı");}
+	_properties->AddProperty(PropertyString, L"DataPath",  L"åŒ…å«åŸå§‹æ•°æ®æ–‡ä»¶çš„æ–‡ä»¶å¤¹ã€‚");
+	_properties->AddProperty(PropertyInt, L"ChannelCount",  L"é€šé“æ•°");
+	_properties->AddProperty(PropertyInt, L"ChannelSwitch",  L"é€šé“å¼€å…³æŒ‡ç¤ºå€¼");
+	_properties->AddProperty(PropertyInt, L"GroupCount",  L"åˆ†ç»„æ‰«ææ•°");}
 
-
-IProcessor * CmrDataReader::Clone()
-{
-	return new(nothrow) CmrDataReader(*this);
-}
 
 bool CmrDataReader::Input(const wchar_t * name, IData * data)
 {
@@ -60,8 +55,8 @@ bool CmrDataReader::Input(const wchar_t * name, IData * data)
 	assert(channel_count > 0 && channel_count <= 32);
 	for (int channel_index = 0; channel_index < channel_count; ++channel_index)
 	{
-		unsigned int channel_mask = (1 << channel_index); // Ã¿´ÎÑ­»·¶¼ºÍ0»ò£¬µÃµ½Ä³Í¨µÀ0001(1),0010(2),0100(4),1000(8)
-		bool channel_used = ((channel_mask & _properties->GetInt(L"ChannelSwitch")) == channel_mask);    // channel_maskÖ»ÒªºÍ¸øµÄÍ¨µÀÒ»Ñù£¬¾Í±Ø¶¨µÈÓÚchannel_mask×Ô¼º
+		unsigned int channel_mask = (1 << channel_index); // æ¯æ¬¡å¾ªç¯éƒ½å’Œ0æˆ–ï¼Œå¾—åˆ°æŸé€šé“0001(1),0010(2),0100(4),1000(8)
+		bool channel_used = ((channel_mask & _properties->GetInt(L"ChannelSwitch")) == channel_mask);    // channel_maskåªè¦å’Œç»™çš„é€šé“ä¸€æ ·ï¼Œå°±å¿…å®šç­‰äºchannel_maskè‡ªå·±
 
 		if (channel_used)
 		{
@@ -82,7 +77,7 @@ bool CmrDataReader::ReadRawData(unsigned int channel_index)
 
 	std::vector<float*> channel_data_buffer;
 	std::vector<unsigned int> slices;
-	unsigned int width, height, dim4, total_slice_count = 0; // ¶ÔÓÚÎ´½øĞĞÀÛ¼Ó´¦ÀíµÄÊı¾İ£¬µÃµ½µÄsliceÊµ¼ÊÊÇ ÕæÊµµÄslice  ¡Á Êµ¼ÊÀÛ¼Ó´ÎÊı¡£
+	unsigned int width, height, dim4, total_slice_count = 0; // å¯¹äºæœªè¿›è¡Œç´¯åŠ å¤„ç†çš„æ•°æ®ï¼Œå¾—åˆ°çš„sliceå®é™…æ˜¯ çœŸå®çš„slice  Ã— å®é™…ç´¯åŠ æ¬¡æ•°ã€‚
 	int group_count = _properties->GetInt(L"GroupCount");
 	if (group_count == 0)
 	{
@@ -174,7 +169,7 @@ float* CmrDataReader::ReadEcnuFile(const wchar_t * file_path,
 	file.seekg(sizeof(details::EcnuRawSections) + sections.Section1Size + sections.Section2Size + sections.Section3Size,
 		ios::beg);
 
-	// Version 1.5701001ÒÔÉÏ°æ±¾, ÔÊĞí¸¡µãÎó²î
+	// Version 1.5701001ä»¥ä¸Šç‰ˆæœ¬, å…è®¸æµ®ç‚¹è¯¯å·®
 	if (sections.FileVersion - 1.5701 > 0.00000005)
 	{
 		int buf[5];
@@ -187,7 +182,7 @@ float* CmrDataReader::ReadEcnuFile(const wchar_t * file_path,
 	}
 	else
 	{
-		// 1.5702°æ±¾ÒÔÉÏµÄÆ×ÒÇ°æ±¾£¬Êı¾İÔö¼Óµ½5Î¬£¬Ä¿Ç°ÔİÊ±µÚ5Î¬Îª1.
+		// 1.5702ç‰ˆæœ¬ä»¥ä¸Šçš„è°±ä»ªç‰ˆæœ¬ï¼Œæ•°æ®å¢åŠ åˆ°5ç»´ï¼Œç›®å‰æš‚æ—¶ç¬¬5ç»´ä¸º1.
 		int buf[4];
 		file.read(reinterpret_cast<char*>(buf), sizeof(int) * 4);
 		width = buf[0];

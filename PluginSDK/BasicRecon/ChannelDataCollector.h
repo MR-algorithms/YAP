@@ -6,11 +6,11 @@ namespace Yap
 	class ChannelDataCollector :
 		public ProcessorImpl
 	{
+		IMPLEMENT_SHARED(ChannelDataCollector)
 	public:
 		ChannelDataCollector(void);
 		ChannelDataCollector(const ChannelDataCollector& rhs);
 
-		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
 	protected:

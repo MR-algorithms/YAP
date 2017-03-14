@@ -10,14 +10,13 @@ namespace Yap
 	class ZeroFilling :
 		public ProcessorImpl
 	{
+		IMPLEMENT_SHARED(ZeroFilling)
 	public:
 		ZeroFilling();
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
 	protected:
 		~ZeroFilling();
-
-		virtual IProcessor * Clone() override;
 	};
 }
 #endif // ZeroFilling_h__

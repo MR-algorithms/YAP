@@ -4,7 +4,6 @@
 #define CompositeProcessor_h__20160813
 
 #include "ProcessorImpl.h"
-#include "Interface/IMemory.h"
 
 #include <string>
 #include <memory>
@@ -16,11 +15,12 @@ namespace Yap
 	class CompositeProcessor :
 		public ProcessorImpl
 	{
+		IMPLEMENT_LOCK_RELEASE
 	public:
-		CompositeProcessor(const wchar_t * class_id);
-		CompositeProcessor(CompositeProcessor& rhs);
+		explicit CompositeProcessor(const wchar_t * class_id);
+		CompositeProcessor(const CompositeProcessor& rhs);
 
-		virtual IProcessor * Clone() override;
+		virtual IProcessor * Clone() const override;
 
 		virtual bool UpdateProperties(IPropertyContainer * params) override;
 
@@ -45,11 +45,10 @@ namespace Yap
 
     class Pipeline : public CompositeProcessor
     {
+		IMPLEMENT_CLONE(Pipeline)
     public:
         Pipeline(const wchar_t * class_id);
-        Pipeline(Pipeline& rhs);
-        virtual IProcessor * Clone() override;
-
+        Pipeline(const Pipeline& rhs);
 
     protected:
         virtual ~Pipeline();

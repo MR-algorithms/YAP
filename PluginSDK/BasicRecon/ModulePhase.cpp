@@ -121,10 +121,3 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 
 	return true;
 }
-
-Yap::IProcessor * Yap::ModulePhase::Clone()
-{
-	return new (nothrow) ModulePhase(*this);
-}
-
-

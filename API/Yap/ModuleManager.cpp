@@ -1,6 +1,5 @@
 #include "ModuleManager.h"
 #include "ProcessorManagerAgent.h"
-#include "Interface/IMemory.h"
 
 #include <utility>
 #include <vector>
@@ -30,6 +29,7 @@ ModuleManager::ModuleManager()
 
 ModuleManager::~ModuleManager()
 {
+	_modules.clear();
 }
 
 Yap::IProcessor * Yap::ModuleManager::Find(const wchar_t * name)

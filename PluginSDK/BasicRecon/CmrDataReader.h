@@ -21,12 +21,12 @@ namespace Yap
 	class CmrDataReader :
 		public ProcessorImpl
 	{
+		IMPLEMENT_SHARED(CmrDataReader)
 	public:
 		CmrDataReader(void);
 		CmrDataReader(const CmrDataReader& rhs);
 	private:
 		virtual bool Input(const wchar_t * name, IData * data);
-		virtual IProcessor * Clone() override;  
 
 		bool ReadRawData(unsigned int channel_index);
 		float* ReadEcnuFile(const wchar_t * file_path, unsigned int& width, unsigned int& height,

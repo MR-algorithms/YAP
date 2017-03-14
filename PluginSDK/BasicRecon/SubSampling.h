@@ -6,10 +6,10 @@ namespace Yap
 	class SubSampling :
 		public ProcessorImpl
 	{
+		IMPLEMENT_SHARED(SubSampling)
 	public:
 		SubSampling();
 
-		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * port, IData * data) override;
 	protected:
 		~SubSampling();

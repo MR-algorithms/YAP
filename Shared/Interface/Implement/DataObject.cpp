@@ -1,9 +1,9 @@
-#include "DataObject.h"
+ï»¿#include "DataObject.h"
 
 using namespace Yap;
 
 /**
-	»ñµÃÏà¹ØÊı¾İÊ¹ÓÃµÄ×ÜµÄÎ¬Êı¡£
+	è·å¾—ç›¸å…³æ•°æ®ä½¿ç”¨çš„æ€»çš„ç»´æ•°ã€‚
 */
 unsigned int Yap::Dimensions::GetDimensionCount() 
 {
@@ -11,11 +11,11 @@ unsigned int Yap::Dimensions::GetDimensionCount()
 }
 
 /**
-	»ñµÃÖ¸¶¨µÄÎ¬¶ÈµÄĞÅÏ¢¡£
-	@param  dimension_index Ö¸¶¨Ï£Íû»ñµÃÆäĞÅÏ¢µÄÎ¬¶ÈµÄË÷Òı£¬´Ó0¿ªÊ¼¡£
-	@param  dimension_type Êä³ö²ÎÊı£¬Ö¸¶¨Ë÷ÒıµÄÀàĞÍ£¨ÒâÒå£©¡£
-	@param  start_index Ïà¹ØµÄÊı¾İÔÚÕâ¸öÎ¬¶ÈÉÏµÄÆğÊ¼Î»ÖÃ¡£
-	@param  length Ïà¹ØµÄÊı¾İÔÚÕâ¸öÎ¬¶ÈÉÏµÄ¿í¶È¡£
+	è·å¾—æŒ‡å®šçš„ç»´åº¦çš„ä¿¡æ¯ã€‚
+	@param  dimension_index æŒ‡å®šå¸Œæœ›è·å¾—å…¶ä¿¡æ¯çš„ç»´åº¦çš„ç´¢å¼•ï¼Œä»0å¼€å§‹ã€‚
+	@param  dimension_type è¾“å‡ºå‚æ•°ï¼ŒæŒ‡å®šç´¢å¼•çš„ç±»å‹ï¼ˆæ„ä¹‰ï¼‰ã€‚
+	@param  start_index ç›¸å…³çš„æ•°æ®åœ¨è¿™ä¸ªç»´åº¦ä¸Šçš„èµ·å§‹ä½ç½®ã€‚
+	@param  length ç›¸å…³çš„æ•°æ®åœ¨è¿™ä¸ªç»´åº¦ä¸Šçš„å®½åº¦ã€‚
 	@return
 */
 bool Yap::Dimensions::GetDimensionInfo(unsigned int dimension_index, 
@@ -34,11 +34,6 @@ bool Yap::Dimensions::GetDimensionInfo(unsigned int dimension_index,
 	length = _dimension_info[dimension_index].length;
 
 	return true;
-}
-
-IClonable * Yap::Dimensions::Clone() const
-{
-	return new (std::nothrow) Dimensions(*this);
 }
 
 Dimensions & Yap::Dimensions::operator()(DimensionType type, unsigned int index, unsigned int length)
@@ -89,7 +84,7 @@ bool Yap::Dimensions::SetDimensionInfo(unsigned int dimension_index,
 												  unsigned int length)
 {
 	assert(dimension_index < _dimension_info.size());
-	_dimension_info[dimension_index].type = dimension_type; //type²»±äµÄÓ¦¸ÃÓÃmodify
+	_dimension_info[dimension_index].type = dimension_type; //typeä¸å˜çš„åº”è¯¥ç”¨modify
 
 	_dimension_info[dimension_index].start_index = start_index;
 	_dimension_info[dimension_index].length = length;

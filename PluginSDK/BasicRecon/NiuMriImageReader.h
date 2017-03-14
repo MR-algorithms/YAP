@@ -14,6 +14,7 @@ namespace Yap
 	class NiuMriImageReader :
 		public ProcessorImpl
 	{
+		IMPLEMENT_SHARED(NiuMriImageReader)
 	public:
 		NiuMriImageReader(void);
 		NiuMriImageReader(const NiuMriImageReader& rhs);
@@ -21,7 +22,6 @@ namespace Yap
 	private:
 		~NiuMriImageReader();
 
-		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data);
 
 		bool ReadNiuMriImageData();

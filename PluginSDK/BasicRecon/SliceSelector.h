@@ -10,11 +10,11 @@ namespace Yap
 	class SliceSelector :
 		public ProcessorImpl
 	{
+		IMPLEMENT_SHARED(SliceSelector)
 	public:
 		SliceSelector(void);
 		SliceSelector(const SliceSelector& rhs);
 		
-		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
 	protected:

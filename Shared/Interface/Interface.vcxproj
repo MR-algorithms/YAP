@@ -143,11 +143,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="IContainer.h" />
-    <ClInclude Include="IProcessor.h" />
-    <ClInclude Include="IData.h" />
-    <ClInclude Include="IMemory.h" />
-    <ClInclude Include="IProperty.h" />
+    <ClInclude Include="Interfaces.h" />
+    <ClInclude Include="smartptr.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

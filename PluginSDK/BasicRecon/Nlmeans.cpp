@@ -23,11 +23,6 @@ Nlmeans::~Nlmeans()
 {
 }
 
-IProcessor * Yap::Nlmeans::Clone()
-{
-	return new (std::nothrow) Nlmeans(*this);
-}
-
 bool Yap::Nlmeans::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && Yap::GetDataArray<float>(data) != nullptr);

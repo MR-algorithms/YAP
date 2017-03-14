@@ -27,11 +27,6 @@ NiuMriImageWriter::~NiuMriImageWriter()
 {
 }
 
-IProcessor * Yap::NiuMriImageWriter::Clone()
-{
-	return new(nothrow) NiuMriImageWriter(*this);
-}
-
 bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && (GetDataArray<unsigned short>(data) != nullptr));

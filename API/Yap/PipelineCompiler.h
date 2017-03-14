@@ -1,4 +1,4 @@
-#ifndef PipelineCompiler_h__
+ï»¿#ifndef PipelineCompiler_h__
 #define PipelineCompiler_h__
 
 #pragma once
@@ -9,7 +9,6 @@
 #include <stack>
 #include <memory>
 
-#include "Interface/IMemory.h"
 #include "Interface/Implement/CompositeProcessor.h"
 
 namespace Yap
@@ -149,22 +148,22 @@ namespace Yap
 		const Token& GetCurrentToken();
 		bool AtEnd() const;
 
-		/// Èç¹ûµü´úÆäÖ¸ÏòµÄtokenµÄÀàĞÍ²»ÊÇtype£¬ÔòÅ×³ö±àÒë´íÎó¡£È±Ê¡Çé¿öÏÂ¸Ãº¯Êı²»ÒıÆğµü´úÆ÷±ä»¯¡£
+		/// å¦‚æœè¿­ä»£å…¶æŒ‡å‘çš„tokençš„ç±»å‹ä¸æ˜¯typeï¼Œåˆ™æŠ›å‡ºç¼–è¯‘é”™è¯¯ã€‚ç¼ºçœæƒ…å†µä¸‹è¯¥å‡½æ•°ä¸å¼•èµ·è¿­ä»£å™¨å˜åŒ–ã€‚
 		void CheckFor(TokenType type, bool move_next = false);
 
-		/// ¼ì²éµü´úÆ÷Ö¸ÏòµÄtokenÊÇ·ñÖ¸¶¨µÄÀàĞÍ¡£¸Ãº¯Êı²»ÒıÆğµü´úÆ÷±ä»¯¡£
+		/// æ£€æŸ¥è¿­ä»£å™¨æŒ‡å‘çš„tokenæ˜¯å¦æŒ‡å®šçš„ç±»å‹ã€‚è¯¥å‡½æ•°ä¸å¼•èµ·è¿­ä»£å™¨å˜åŒ–ã€‚
 		bool IsType(TokenType type);
 
-		/// ÊÔÍ¼ÌáÈ¡Ò»¸öId£¬µü´úÆ÷ÒÆ¶¯µ½ÌáÈ¡ÄÚÈİÖ®ºó¡£
+		/// è¯•å›¾æå–ä¸€ä¸ªIdï¼Œè¿­ä»£å™¨ç§»åŠ¨åˆ°æå–å†…å®¹ä¹‹åã€‚
 		std::wstring GetId();
 		std::wstring GetLiteralValue();
 		/// Try to extract a variable id from the statement and move to next token.
 		std::wstring GetVariableId();
 
-		/// ÊÔÍ¼ÌáÈ¡´¦ÀíÆ÷/³ÉÔ±£¨ÊôĞÔ»òÕß¶Ë¿Ú£©¶Ô£¬µü´úÆ÷ÒÆ¶¯µ½ÌáÈ¡ÄÚÈİÖ®ºó¡£
+		/// è¯•å›¾æå–å¤„ç†å™¨/æˆå‘˜ï¼ˆå±æ€§æˆ–è€…ç«¯å£ï¼‰å¯¹ï¼Œè¿­ä»£å™¨ç§»åŠ¨åˆ°æå–å†…å®¹ä¹‹åã€‚
 		std::pair<std::wstring, std::wstring> GetProcessorMember(bool empty_member_allowed = false);
 
-		/// ÊÔÍ¼ÌáÈ¡²ÎÊıid¡£µü´úÆ÷ÒÆ¶¯µ½ÌáÈ¡ÄÚÈİÖ®ºó¡£
+		/// è¯•å›¾æå–å‚æ•°idã€‚è¿­ä»£å™¨ç§»åŠ¨åˆ°æå–å†…å®¹ä¹‹åã€‚
 		std::wstring GetParamId();
 
 		bool ProcessImport();
@@ -195,8 +194,8 @@ namespace Yap
 		std::vector<Token> _tokens;
 		std::set<std::wstring> _key_words;
 
-		/** Õâ¸ö±äÁ¿ÓÃÓÚÀ¨ºÅÆ¥Åä¼ì²é£¬Óöµ½×óÀ¨ºÅÊ±Ñ¹Èë£¬Óöµ½ÓÒÀ¨ºÅµ¯³ö£¬Í¬Ê±¼ì²éÀàĞÍÊÇ·ñÒ»ÖÂ¡£
-		Èç¹ûÀàĞÍ²»Ò»ÖÂ£¬»òÕßÎÄ¼ş´¦ÀíÍê±Ïºó¸ÃÕ»²»Îª¿Õ£¬ÔòËµÃ÷Æ¥Åä´íÎó¡£*/
+		/** è¿™ä¸ªå˜é‡ç”¨äºæ‹¬å·åŒ¹é…æ£€æŸ¥ï¼Œé‡åˆ°å·¦æ‹¬å·æ—¶å‹å…¥ï¼Œé‡åˆ°å³æ‹¬å·å¼¹å‡ºï¼ŒåŒæ—¶æ£€æŸ¥ç±»å‹æ˜¯å¦ä¸€è‡´ã€‚
+		å¦‚æœç±»å‹ä¸ä¸€è‡´ï¼Œæˆ–è€…æ–‡ä»¶å¤„ç†å®Œæ¯•åè¯¥æ ˆä¸ä¸ºç©ºï¼Œåˆ™è¯´æ˜åŒ¹é…é”™è¯¯ã€‚*/
 		std::stack<Token> _matching_check;
 
 		std::shared_ptr<PipelineConstructor> _constructor;

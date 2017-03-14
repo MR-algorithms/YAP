@@ -1,4 +1,4 @@
-
+ï»¿
 #include "SamplingMaskCreator.h"
 #include "Interface/Client/DataHelper.h"
 #include "Interface/Implement/DataObject.h"
@@ -40,11 +40,6 @@ SamplingMaskCreator::SamplingMaskCreator():
 
 SamplingMaskCreator::~SamplingMaskCreator()
 {
-}
-
-IProcessor * Yap::SamplingMaskCreator::Clone()
-{
-	return new (nothrow) SamplingMaskCreator(*this);
 }
 
 bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
@@ -165,7 +160,7 @@ std::vector<unsigned int> Yap::SamplingMaskCreator::GetRandomSamplingPattern(uns
 	fftwf_plan p = fftwf_plan_dft_1d(int(normalized_sampling_pattern.size()),
 		(fftwf_complex*)normalized_sampling_pattern.data(),
 		(fftwf_complex*)fft_result.data(),
-		FFTW_BACKWARD, FFTW_ESTIMATE);	//´Ók¿Õ¼äµ½Í¼ÏñÊÇ·´¸µÀïÒ¶±ä»»
+		FFTW_BACKWARD, FFTW_ESTIMATE);	//ä»kç©ºé—´åˆ°å›¾åƒæ˜¯åå‚…é‡Œå¶å˜æ¢
 
 	for (unsigned int i = 0; i < _try_count; ++i)
 	{
@@ -182,13 +177,13 @@ std::vector<unsigned int> Yap::SamplingMaskCreator::GetRandomSamplingPattern(uns
 			}
 		}
 
-		//×ª»»Îª¸´ÊıĞÎÊ½
+		//è½¬æ¢ä¸ºå¤æ•°å½¢å¼
 
 		for (unsigned int t = 0; t < pdf.size(); t++)
 		{
 			normalized_sampling_pattern[t] = std::complex<float>(sampling_pattern[t] / pdf[t], 0);
 		}
-		// ¸µÀïÒ¶±ä»»
+		// å‚…é‡Œå¶å˜æ¢
 		fftwf_execute(p);
 		for (auto iter = fft_result.begin() + 1; iter != fft_result.end(); ++iter)
 		{
@@ -272,7 +267,7 @@ std::vector<float> Yap::SamplingMaskCreator::GeneratePdf(unsigned int row_count,
 
 	if (floor(sum) > line_count)
 	{
-		return vector<float>();  //pÖµÆ«Ğ¡¡£
+		return vector<float>();  //på€¼åå°ã€‚
 	}
 
 	std::vector<float> pdf_temp;

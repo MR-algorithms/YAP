@@ -3,43 +3,32 @@
 #ifndef ProcessorAgent_h__20160813
 #define ProcessorAgent_h__20160813
 
-#include "Interface/IProcessor.h"
-#include "Interface/IMemory.h"
-#include "Interface/IProperty.h"
+#include "Interface/Interfaces.h"
 
 namespace Yap
 {
-	class ProcessorAgent :
-		public IProcessor
+	class VariableManager;
+
+	class ProcessorAgent
 	{
 	public:
 		ProcessorAgent(IProcessor * processor);
 		virtual ~ProcessorAgent();
 
 	public:
-		virtual IProcessor * Clone() override;
+		const wchar_t * GetClassId() const;
+		void SetClassId(const wchar_t * id);
+		const wchar_t * GetInstanceId() const;
+		void SetInstanceId(const wchar_t * instance_id);
 
-		virtual const wchar_t * GetClassId() override;
+		IPortContainer * Inputs();
+		IPortContainer * Outputs();
+		IPropertyContainer * GetProperties();
 
-		virtual void SetClassId(const wchar_t * id) override;
-
-		virtual const wchar_t * GetInstanceId() override;
-
-		virtual void SetInstanceId(const wchar_t * instance_id) override;
-
-		virtual IPortContainer * Inputs() override;
-
-		virtual IPortContainer * Outputs() override;
-
-		virtual IPropertyContainer * GetProperties() override;
-
-		virtual bool LinkProperty(const wchar_t * property_id, const wchar_t * param_id) override;
-
-		virtual bool UpdateProperties(IPropertyContainer * params) override;
-
-		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) override;
-
-		virtual bool Input(const wchar_t * name, IData * data) override;
+		bool LinkProperty(const wchar_t * property_id, const wchar_t * param_id);
+		bool UpdateProperties(IPropertyContainer * params);
+		bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input);
+		bool Input(const wchar_t * name, IData * data);
 
 		bool SetInt(const wchar_t * property_name, int value);
 		bool SetBool(const wchar_t * property_name, bool value);
@@ -49,6 +38,7 @@ namespace Yap
 		operator bool();
 	protected:
 		SmartPtr<IProcessor> _processor;
+		std::shared_ptr<VariableManager> _variables;
 	};
 }
 

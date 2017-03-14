@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Interface\IData.h"
 #include <complex>
 #include <vector>
-#include "Interface/IMemory.h"
+#include "Interface/Interfaces.h"
 #include "Interface/Implement/SharedObjectImpl.h"
 #include <assert.h>
 
@@ -11,9 +10,9 @@ namespace Yap
 {
 
 	class Dimensions : 
-		public IDimensions, 
-		public IClonable
+		public IDimensions
 	{
+		IMPLEMENT_SHARED(Dimensions)
 	public:
 		Dimensions();
 		explicit Dimensions(unsigned int dimension_count);
@@ -35,7 +34,6 @@ namespace Yap
 		virtual bool SetDimensionInfo(unsigned int dimension_index, DimensionType dimension_type, 
 			unsigned int start_index, unsigned int length);
 
-		virtual IClonable * Clone() const override;
 		Dimensions & operator() (DimensionType type, unsigned int index, unsigned int length);
 	private:
 		std::vector<Dimension> _dimension_info;
@@ -43,10 +41,9 @@ namespace Yap
 
 	template<typename T>
 	class DataObject : 
-		public IData, 
-		public IDataArray<T>,
-		public ISharedObject
+		public IDataArray<T>
 	{
+		IMPLEMENT_CLONE(DataObject<T>)
 	public:
 		DataObject(T* data, const Dimensions& dimensions, ISharedObject * parent = nullptr, bool own_data = false) :
 			_data(data), _own_memory(own_data), _use_count(0), 
@@ -75,17 +72,35 @@ namespace Yap
 			_data = new T[total_size];
 		}
 
+		/// Copy constructor
+		/**
+			\remarks  Deep copy a data object. The new object will own the copied data
+			even if the rhs does not own its data.
+		*/
+		DataObject(const DataObject& rhs) : _own_memory{true}, _dimensions{rhs._dimensions}, _use_count(0)
+		{
+			unsigned int total_size = 1;
+
+			for (unsigned int i = 0; i < _dimensions.GetDimensionCount(); ++i)
+			{
+				total_size *= _dimensions.GetLength(i);
+			}
+
+			_data = new T[total_size];
+			memcpy(_data, rhs._data, total_size * sizeof(T));
+		}
+
 		virtual IDimensions * GetDimensions() override
 		{
 			return &_dimensions;
 		}
 
-                virtual T * GetData() override
+		virtual T * GetData() override
 		{
 			return _data;
 		}
 
-                virtual void Lock() override
+		virtual void Lock() override
 		{
 			++_use_count;
 			if (_parent)
@@ -94,7 +109,7 @@ namespace Yap
 			}
 		}
 
-                virtual void Release() override
+		virtual void Release() override
 		{
 			if (_parent)
 			{
@@ -123,7 +138,7 @@ namespace Yap
 
 		virtual int GetDataType() override
 		{
-			return type_id<T>::type;
+			return data_type_id<T>::type;
 		}
 
 		T * _data;

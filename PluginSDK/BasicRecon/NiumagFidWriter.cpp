@@ -24,11 +24,6 @@ NiumagFidWriter::~NiumagFidWriter()
 {
 }
 
-IProcessor * Yap::NiumagFidWriter::Clone()
-{
-	return new(nothrow) NiumagFidWriter(*this);
-}
-
 bool Yap::NiumagFidWriter::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && (GetDataArray<complex<float>>(data) != nullptr));

@@ -19,12 +19,6 @@ SubSampling::~SubSampling()
 {
 }
 
-
-IProcessor * Yap::SubSampling::Clone()
-{
-	return new (nothrow) SubSampling(*this);
-}
-
 bool Yap::SubSampling::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) == L"Mask")

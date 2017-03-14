@@ -1,12 +1,9 @@
 #include "stdafx.h"
 
 #include "ProcessorDebugger.h"
+#include "Interface/Implement/DataObject.h"
 
 #include <iostream>
-
-#include "Interface/Implement/DataObject.h"
-#include "Interface/IProcessor.h"
-#include "Interface/IProperty.h"
 
 using namespace Yap;
 using namespace std;
@@ -65,26 +62,26 @@ bool YapDebugger::DebugProperties(IPropertyIter& properties)
 		{
 		case PropertyBool:
 		{
-			auto value_interface = dynamic_cast<IBoolean*>(property);
-			wcout << value_interface->GetBool();
+			auto value_interface = reinterpret_cast<IBoolValue*>(property->ValueInterface());
+			wcout << value_interface->Get();
 			break;
 		}
 		case PropertyFloat:
 		{
-			auto value_interface = dynamic_cast<IDouble*>(property);
-			wcout << value_interface->GetDouble();
+			auto value_interface = reinterpret_cast<IDoubleValue*>(property->ValueInterface());
+			wcout << value_interface->Get();
 			break;
 		}
 		case PropertyInt:
 		{
-			auto value_interface = dynamic_cast<IInt*>(property);
-			wcout << value_interface->GetInt();
+			auto value_interface = reinterpret_cast<IIntValue*>(property->ValueInterface());
+			wcout << value_interface->Get();
 			break;
 		}
 		case PropertyString:
 		{
-			auto value_interface = dynamic_cast<IString*>(property);
-			wcout << value_interface->GetString();
+			auto value_interface = reinterpret_cast<IStringValue*>(property);
+			wcout << value_interface->Get();
 			break;
 		}
 		default:

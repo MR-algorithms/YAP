@@ -1,13 +1,13 @@
 #include "ProcessorAgent.h"
-#include "Interface\IProperty.h"
 
 #include <cassert>
-#include "Interface\IMemory.h"
+#include "Interface\Implement\VariableManager.h"
 
 using namespace Yap;
 
 ProcessorAgent::ProcessorAgent(IProcessor* processor) :
-	_processor(YapShared(processor))
+	_processor(YapShared(processor)),
+	_variables{std::make_shared<VariableManager>(processor->GetProperties())}
 {
 }
 
@@ -15,13 +15,7 @@ ProcessorAgent::~ProcessorAgent()
 {
 }
 
-Yap::IProcessor * Yap::ProcessorAgent::Clone()
-{
-	assert(_processor);
-	return _processor->Clone();
-}
-
-const wchar_t * Yap::ProcessorAgent::GetClassId()
+const wchar_t * Yap::ProcessorAgent::GetClassId() const 
 {
 	assert(_processor);
 	return _processor->GetClassId();
@@ -33,7 +27,7 @@ void Yap::ProcessorAgent::SetClassId(const wchar_t * id)
 	_processor->SetClassId(id);
 }
 
-const wchar_t * Yap::ProcessorAgent::GetInstanceId()
+const wchar_t * Yap::ProcessorAgent::GetInstanceId() const
 {
 	assert(_processor);
 	return _processor->GetInstanceId();
@@ -87,73 +81,32 @@ bool Yap::ProcessorAgent::Input(const wchar_t * name, IData * data)
 	return _processor->Input(name, data);
 }
 
+#define HANDLE_EXCEPTION(statement) try{statement;}catch(PropertyException&){return false;} return true;
+
 bool Yap::ProcessorAgent::SetInt(const wchar_t * property_name,
 	int value)
 {
-	assert(_processor);
-	auto properties = _processor->GetProperties();
-	assert(properties != nullptr);
-
-	IProperty * property = properties->Find(property_name);
-	assert(property != nullptr && property->GetType() == PropertyInt);
-
-	IInt * int_property = dynamic_cast<IInt*>(property);
-	assert(int_property != nullptr);
-
-	int_property->SetInt(value);
-
-	return true;
+	assert(_variables);
+	HANDLE_EXCEPTION(_variables->SetInt(property_name, value));
 }
 
 bool Yap::ProcessorAgent::SetBool(const wchar_t * property_name, bool value)
 {
-	assert(_processor);
-	auto properties = _processor->GetProperties();
-	assert(properties != nullptr);
-
-	IProperty * property = properties->Find(property_name);
-	assert(property != nullptr && property->GetType() == PropertyBool);
-	IBoolean * bool_property = dynamic_cast<IBoolean*>(property);
-	assert(bool_property != nullptr);
-
-	bool_property->SetBool(value);
-
-	return true;
+	assert(_variables);
+	HANDLE_EXCEPTION(_variables->SetBool(property_name, value));
 }
 
 bool Yap::ProcessorAgent::SetFloat(const wchar_t * property_name, double value)
 {
-	assert(_processor);
-	auto properties = _processor->GetProperties();
-	assert(properties != nullptr);
-
-	IProperty * property = properties->Find(property_name);
-	assert(property != nullptr && property->GetType() == PropertyFloat);
-
-	IDouble * float_property = dynamic_cast<IDouble*>(property);
-	assert(float_property != nullptr);
-
-	float_property->SetDouble(value);
-
-	return true;
+	assert(_variables);
+	HANDLE_EXCEPTION(_variables->SetFloat(property_name, value));
 }
 
 bool Yap::ProcessorAgent::SetString(const wchar_t* property_name, 
 	const wchar_t* value)
 {
-	assert(_processor);
-	auto properties = _processor->GetProperties();
-	assert(properties != nullptr);
-
-	IProperty * property = properties->Find(property_name);
-	assert(property != nullptr && property->GetType() == PropertyString);
-
-	IString * string_property = dynamic_cast<IString*>(property);
-	assert(string_property != nullptr);
-
-	string_property->SetString(value);
-
-	return true;
+	assert(_variables);
+	HANDLE_EXCEPTION(_variables->SetString(property_name, value));
 }
 
 Yap::ProcessorAgent::operator bool()

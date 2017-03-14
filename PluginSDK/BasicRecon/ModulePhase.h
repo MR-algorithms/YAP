@@ -10,11 +10,11 @@ namespace Yap
 	class ModulePhase :
 		public ProcessorImpl
 	{
+		IMPLEMENT_SHARED(ModulePhase)
 	public:
 		ModulePhase(void);
 		ModulePhase(const ModulePhase& rhs);
 		
-		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
 	protected:

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "SliceMerger.h"
 
 #include <complex.h>
@@ -26,11 +26,6 @@ SliceMerger::~SliceMerger()
 {
 }
 
-IProcessor * SliceMerger::Clone()
-{
-	return new (std::nothrow) SliceMerger(*this);
-}
-
 bool SliceMerger::Input(const wchar_t * port, IData * data)
 {
 	if (wstring(port) != L"Input")
@@ -51,7 +46,7 @@ bool SliceMerger::Input(const wchar_t * port, IData * data)
 			(DimensionPhaseEncoding, 0, height)
 			(DimensionSlice, 0, slice_count);
 		
-		TODO(ÈÃSliceMergerÊÊÓ¦²»Í¬Êı¾İÀàĞÍ);
+		TODO(è®©SliceMergeré€‚åº”ä¸åŒæ•°æ®ç±»å‹);
 		_data = YapShared(new UnsignedShortData(&dims));
 
 		++slice_num;

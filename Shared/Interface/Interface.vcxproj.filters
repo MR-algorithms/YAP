@@ -15,19 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IProcessor.h">
+    <ClInclude Include="Interfaces.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IMemory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IContainer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IProperty.h">
+    <ClInclude Include="smartptr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

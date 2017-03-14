@@ -8,10 +8,10 @@ namespace Yap
 	class NLM :
 		public ProcessorImpl
 	{
+		IMPLEMENT_SHARED(NLM)
 	public:
 		NLM(void);
 
-		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
 	protected:

@@ -9,6 +9,7 @@ namespace Yap
 	class NiumagFidWriter :
 		public ProcessorImpl
 	{
+		IMPLEMENT_SHARED(NiumagFidWriter)
 	public:
 		NiumagFidWriter(void);
 		NiumagFidWriter(const NiumagFidWriter& rhs);
@@ -16,10 +17,8 @@ namespace Yap
 	private:
 		~NiumagFidWriter();
 
-		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * name, IData * data);
 	};
-
 }
 
 #endif // NiumagFidWriter_h__

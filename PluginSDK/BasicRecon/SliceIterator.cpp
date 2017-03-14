@@ -26,11 +26,6 @@ SliceIterator::~SliceIterator(void)
 {
 }
 
-IProcessor* SliceIterator::Clone()
-{
-	return new (std::nothrow) SliceIterator(*this);
-}
-
 bool SliceIterator::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && ((Yap::GetDataArray<complex<float>>(data) != nullptr) || Yap::GetDataArray<unsigned short>(data) != nullptr));

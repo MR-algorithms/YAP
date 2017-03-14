@@ -26,11 +26,6 @@ SliceSelector::~SliceSelector()
 {
 }
 
-IProcessor * Yap::SliceSelector::Clone()
-{
-	return new (std::nothrow) SliceSelector(*this);
-}
-
 bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && Yap::GetDataArray<complex<float>>(data) != nullptr);

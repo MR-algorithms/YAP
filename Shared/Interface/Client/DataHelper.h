@@ -1,7 +1,7 @@
-#ifndef DATAHELPER_H_20160813
+ï»¿#ifndef DATAHELPER_H_20160813
 #define DATAHELPER_H_20160813
 
-#include "Interface/IData.h"
+#include "Interface/Interfaces.h"
 
 namespace Yap
 {
@@ -17,12 +17,12 @@ namespace Yap
 		/**
                 \remarks
                 For example, if dimension information is:
-                    \li Readout 0£¬ 255£»
-                    \li phaseencoding 0£¬ 255£»
-                    \li slice 0, 1£»
-                    \li channel 0£¬1;
+                    \li Readout 0ï¼Œ 255ï¼›
+                    \li phaseencoding 0ï¼Œ 255ï¼›
+                    \li slice 0, 1ï¼›
+                    \li channel 0ï¼Œ1;
 
-                then the actual number of dimensions is 2¡£If we change the slice to
+                then the actual number of dimensions is 2ã€‚If we change the slice to
                 0, 2 while keeping all other dimensions unchanged, then the actual
                 number of dimensions is 3.
 		*/

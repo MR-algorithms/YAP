@@ -13,10 +13,10 @@ namespace Yap
 	class Fft1D :
 		public ProcessorImpl
 	{
+		IMPLEMENT_SHARED(Fft1D)
 	public:
 		Fft1D();
 		
-		virtual IProcessor * Clone() override;
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
 	protected:
