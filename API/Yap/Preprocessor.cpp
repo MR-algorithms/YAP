@@ -44,6 +44,11 @@ Statement::Statement(const vector<Token>& tokens) :
 	_begin = _iter = tokens.cbegin();
 }
 
+void Statement::StartProcessingStatement()
+{
+	_iter = _begin;
+}
+
 void Statement::FinishProcessingStatement()
 {
 	AssertToken(TokenSemiColon, true);
@@ -91,41 +96,32 @@ void Statement::AssertToken(TokenType type, bool move_next)
 /// Check to see whether next token in the statement is of specified type. 
 /**
 \remarks This function check to see whether next token in the statement is if specified type.
+This function will not move the pointer.
 \return true if the next token is of the specified type, false otherwise.
 \param type
-\param skip, if \true, skip the next token. Note: the next token is skipped only when it is of the given type,
 
 */
-bool Statement::IsNextTokenOfType(TokenType type, bool skip)
+bool Statement::IsNextTokenOfType(TokenType type)
 {
 	if (_iter == _tokens.end())
 	{
 		throw (CompileError(*_iter, CompileErrorUnexpectedEndOfStatement, L"Unexpected end of file."));
 	}
 
-	if (((++_iter)->type != type) &&
-		!(type == TokenId && _iter->type == TokenKeywordSelf)) // treat keyword 'self' as id
-	{
-		if (!skip)
-		{
-			--_iter;
-		}
-
-		return false;
-	}
-
-	if (!skip)
-	{
-		--_iter;
-	}
-
-	return true;
+	return (((_iter + 1)->type == type) ||
+		(type == TokenId && (_iter + 1)->type == TokenKeywordSelf)); // treat keyword 'self' as id
 }
 
 /// Check to see whether the current token is of the given type.
-bool Statement::IsType(TokenType type)
+bool Statement::IsTokenOfType(TokenType type, bool move_next)
 {
-	return _iter->type == type;
+	auto result = (_iter->type == type);
+	if (move_next && result)
+	{
+		++_iter;
+	}
+
+	return result;
 }
 
 bool Statement::IsFirstTokenInStatement() const
@@ -174,7 +170,7 @@ std::pair<std::wstring, std::wstring> Statement::GetProcessorMember(bool empty_m
 
 	if (empty_member_allowed)
 	{
-		if (IsType(TokenOperatorDot))
+		if (IsTokenOfType(TokenOperatorDot))
 		{
 			++_iter;
 			result.second = GetId();

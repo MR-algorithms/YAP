@@ -26,6 +26,7 @@ bool PipelineCompiler::ProcessImport(Statement& statement)
 {
 	assert(statement.GetType() == StatementImport);
 
+	statement.StartProcessingStatement();
 	statement.AssertToken(TokenKeywordImport, true);
 	wstring path = statement.GetStringLiteral();
 
@@ -49,11 +50,12 @@ If the output_port and input_port is not specified, they default to "Output" and
 bool PipelineCompiler::ProcessPortLink(Statement& statement)
 {
 	assert(_constructor);
+	statement.StartProcessingStatement();
 
 	auto source_processor = statement.GetId();
 
 	wstring source_port(L"Output");
-	if (statement.IsNextTokenOfType(TokenOperatorDot, true))
+	if (statement.IsTokenOfType(TokenOperatorDot, true))
 	{
 		source_port = statement.GetId();
 	}
@@ -62,7 +64,7 @@ bool PipelineCompiler::ProcessPortLink(Statement& statement)
 
 	auto dest_processor = statement.GetId();
 	wstring dest_port(L"Input");
-	if (statement.IsNextTokenOfType(TokenOperatorDot, true))
+	if (statement.IsTokenOfType(TokenOperatorDot, true))
 	{
 		dest_port = statement.GetId();
 	}
@@ -76,20 +78,22 @@ bool PipelineCompiler::ProcessPortLink(Statement& statement)
 		}
 		else
 		{
+			statement.FinishProcessingStatement();
 			return _constructor->MapInput(source_port.c_str(), dest_processor.c_str(), dest_port.c_str());
 		}
 	}
 	else if (dest_processor == L"self")
 	{
+		statement.FinishProcessingStatement();
 		return _constructor->MapOutput(dest_port.c_str(), source_processor.c_str(), source_port.c_str());
 	}
 	else
 	{
+		statement.FinishProcessingStatement();
 		return _constructor->Link(source_processor.c_str(), source_port.empty() ? L"Output" : source_port.c_str(),
 			dest_processor.c_str(), dest_port.empty() ? L"Input" : dest_port.c_str());
 	}
 
-	statement.FinishProcessingStatement();
 }
 
 bool PipelineCompiler::ProcessDeclaration(Statement& statement)
@@ -97,6 +101,7 @@ bool PipelineCompiler::ProcessDeclaration(Statement& statement)
 	assert(_constructor);
 	assert(statement.GetType() == StatementDeclaration);
 
+	statement.StartProcessingStatement();
 	wstring class_id = statement.GetId();
 	wstring instance_id = statement.GetId();
 
@@ -106,11 +111,11 @@ bool PipelineCompiler::ProcessDeclaration(Statement& statement)
 			wstring(L"Instance id specified for the processor already exists: ") + instance_id);
 	}
 
-	if (statement.IsNextTokenOfType(TokenSemiColon, false))
+	if (statement.IsTokenOfType(TokenSemiColon, false))
 	{
 		_constructor->CreateProcessor(class_id.c_str(), instance_id.c_str());
 	}
-	else if (!statement.IsNextTokenOfType(TokenLeftParenthesis, true)) 
+	else if (!statement.IsTokenOfType(TokenLeftParenthesis, true)) 
 	{
 		// must be the parameter list.
 		throw CompileError(statement.GetCurrentToken(), CompileErrorSemicolonExpected,
@@ -123,12 +128,12 @@ bool PipelineCompiler::ProcessDeclaration(Statement& statement)
 		{
 			wstring property = statement.GetId();
 
-			if (statement.IsNextTokenOfType(TokenOperatorAssign, true))
+			if (statement.IsTokenOfType(TokenOperatorAssign, true))
 			{
 				wstring value = statement.GetLiteralValue();
 				_constructor->SetProperty(instance_id.c_str(), property.c_str(), value.c_str());
 			}
-			else if (statement.IsNextTokenOfType(TokenOperatorLink))
+			else if (statement.IsTokenOfType(TokenOperatorLink, true))
 			{
 				wstring variable_id = statement.GetVariableId();
 				_constructor->LinkProperty(instance_id.c_str(), property.c_str(), variable_id.c_str());
@@ -139,11 +144,11 @@ bool PipelineCompiler::ProcessDeclaration(Statement& statement)
 					L"Property operator must be specified, you can use either \'=\' or \'<=>\'.");
 			}
 
-			if (statement.IsNextTokenOfType(TokenRightParenthesis, true))
+			if (statement.IsTokenOfType(TokenRightParenthesis, true))
 			{
 				break;
 			}
-			else if (!statement.IsNextTokenOfType(TokenComma, true))
+			else if (!statement.IsTokenOfType(TokenComma, true))
 			{
 				throw CompileError(statement.GetCurrentToken(), CompileErrorCommaExpected,
 					L"Comma \',\' or right parenthesis \')\' expected.");
@@ -160,6 +165,7 @@ bool PipelineCompiler::ProcessPropertyLink(Statement& statement)
 {
 	assert(_constructor);
 	assert(statement.GetType() == StatementPropertyLink);
+	statement.StartProcessingStatement();
 
 	wstring processor_instance_id = statement.GetId();
 	if (!_constructor->InstanceIdExists(processor_instance_id.c_str()))
@@ -182,6 +188,7 @@ bool PipelineCompiler::ProcessAssignment(Statement& statement)
 {
 	assert(_constructor);
 	assert(statement.GetType() == StatementAssign);
+	statement.StartProcessingStatement();
 
 	wstring processor_instance_id = statement.GetId();
 	if (!_constructor->InstanceIdExists(processor_instance_id.c_str()))
@@ -285,6 +292,10 @@ bool PipelineCompiler::Process()
 					statement.SetType(StatementAssign);
 					ProcessAssignment(statement);
 				}
+				else
+				{
+					statement.Next();
+				}
 				break;
 			case TokenOperatorLink:
 				if (statement.GetType() == StatementUnknown)
@@ -292,16 +303,26 @@ bool PipelineCompiler::Process()
 					statement.SetType(StatementPropertyLink);
 					ProcessPropertyLink(statement);
 				}
+				else
+				{
+					statement.Next();
+				}
 				break;
 			case TokenOperatorPortLink:
 				statement.SetType(StatementPortLink);
 				ProcessPortLink(statement);
 				break;
 			case TokenId:
-				if (statement.IsFirstTokenInStatement() && statement.IsType(TokenId) && statement.IsNextTokenOfType(TokenId))
+			case TokenKeywordSelf:
+				if (statement.IsFirstTokenInStatement() && statement.IsTokenOfType(TokenId) && 
+					statement.IsNextTokenOfType(TokenId))
 				{
 					statement.SetType(StatementDeclaration);
 					ProcessDeclaration(statement);
+				}
+				else
+				{
+					statement.Next();
 				}
 				break;
 			case TokenSemiColon:
@@ -310,6 +331,12 @@ bool PipelineCompiler::Process()
 					throw(CompileError(statement.GetLastToken(),
 									   CompileErrorIncompleteStatement, L"Statement not complete."));
 				}
+				else
+				{
+					statement.Next();
+				}
+			case TokenOperatorDot:
+				statement.Next();
 			default:
 				;
 		}

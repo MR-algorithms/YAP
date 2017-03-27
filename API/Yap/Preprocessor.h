@@ -141,6 +141,7 @@ namespace Yap
 	public:
 		explicit Statement(const std::vector<Token>& tokens);
 
+		void StartProcessingStatement();
 		/// Clear the tokens in the statement.
 		void FinishProcessingStatement();
 
@@ -171,10 +172,10 @@ namespace Yap
 		/// 如果迭代其指向的token的类型不是type，则抛出编译错误。缺省情况下该函数不引起迭代器变化。
 		void AssertToken(TokenType type, bool move_next = false);
 
-		bool IsNextTokenOfType(TokenType type, bool skip = false);
+		bool IsNextTokenOfType(TokenType type);
 
 		/// 检查迭代器指向的token是否指定的类型。该函数不引起迭代器变化。
-		bool IsType(TokenType type);
+		bool IsTokenOfType(TokenType type, bool move_next = false);
 
 		/// 试图提取一个Id，迭代器移动到提取内容之后。
 		std::wstring GetId();
