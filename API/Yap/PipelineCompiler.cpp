@@ -36,7 +36,7 @@ bool PipelineCompiler::ProcessImport(Statement& statement)
 		throw CompileError(statement.GetCurrentToken(), CompileErrorLoadModule, output);
 	}
 
-	statement.AssertToken(TokenSemiColon, true);
+	statement.AssertToken(TokenSemiColon, false); //是不是可以去掉？
 	statement.FinishProcessingStatement();
 
 	return true;
@@ -268,7 +268,7 @@ bool PipelineCompiler::Process()
 		switch (statement.GetCurrentToken().type)
 		{
 			case TokenKeywordImport:
-				if (statement.IsCurrentStatementEmpty())
+				if (!statement.IsCurrentStatementEmpty())
 				{
 					statement.SetType(StatementImport);
 					ProcessImport(statement);

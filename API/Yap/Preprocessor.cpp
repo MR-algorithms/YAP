@@ -103,15 +103,20 @@ bool Statement::IsNextTokenOfType(TokenType type, bool skip)
 		throw (CompileError(*_iter, CompileErrorUnexpectedEndOfStatement, L"Unexpected end of file."));
 	}
 
-	if ((_iter->type != type) &&
+	if (((++_iter)->type != type) &&
 		!(type == TokenId && _iter->type == TokenKeywordSelf)) // treat keyword 'self' as id
 	{
+		if (!skip)
+		{
+			--_iter;
+		}
+
 		return false;
 	}
 
-	if (skip)
+	if (!skip)
 	{
-		++_iter;
+		--_iter;
 	}
 
 	return true;
@@ -451,8 +456,8 @@ bool Preprocessor::PreprocessLine(std::wstring& line,
 			next_separator = line.find_first_of(L" \t\n\"{}()+-.,*/=<>;", pos);
 			token.length = int(((next_separator == -1) ? line.length() : next_separator) - token.column);
 
-			auto token_string = line.substr(token.column, token.length);
-			auto iter = _keywords.find(token_string);
+			token.text = line.substr(token.column, token.length);
+			auto iter = _keywords.find(token.text);
 
 			token.type = (iter != _keywords.end()) ? iter->second : TokenId;
 
