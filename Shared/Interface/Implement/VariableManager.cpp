@@ -279,6 +279,11 @@ bool VariableManager::Load(const wchar_t *path)
 	return true;
 }
 
+void VariableManager::Reset()
+{
+	_properties = YapShared(new ContainerImpl<IProperty>);
+}
+
 bool VariableManager::ProcessLine(std::wstring& line)
 {
 	size_t pos = line.find_first_not_of(L" \t\n", 0);

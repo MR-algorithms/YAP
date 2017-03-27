@@ -25,8 +25,8 @@ PipelineCompiler::~PipelineCompiler(void)
 bool PipelineCompiler::ProcessImport(Statement& statement)
 {
 	assert(statement.GetType() == StatementImport);
+	Statement::Guard guard(statement);
 
-	statement.StartProcessingStatement();
 	statement.AssertToken(TokenKeywordImport, true);
 	wstring path = statement.GetStringLiteral();
 
@@ -38,7 +38,6 @@ bool PipelineCompiler::ProcessImport(Statement& statement)
 	}
 
 	statement.AssertToken(TokenSemiColon, false); //是不是可以去掉？
-	statement.FinishProcessingStatement();
 
 	return true;
 }
@@ -50,7 +49,7 @@ If the output_port and input_port is not specified, they default to "Output" and
 bool PipelineCompiler::ProcessPortLink(Statement& statement)
 {
 	assert(_constructor);
-	statement.StartProcessingStatement();
+	Statement::Guard guard(statement);
 
 	auto source_processor = statement.GetId();
 
@@ -78,22 +77,18 @@ bool PipelineCompiler::ProcessPortLink(Statement& statement)
 		}
 		else
 		{
-			statement.FinishProcessingStatement();
 			return _constructor->MapInput(source_port.c_str(), dest_processor.c_str(), dest_port.c_str());
 		}
 	}
 	else if (dest_processor == L"self")
 	{
-		statement.FinishProcessingStatement();
 		return _constructor->MapOutput(dest_port.c_str(), source_processor.c_str(), source_port.c_str());
 	}
 	else
 	{
-		statement.FinishProcessingStatement();
 		return _constructor->Link(source_processor.c_str(), source_port.empty() ? L"Output" : source_port.c_str(),
 			dest_processor.c_str(), dest_port.empty() ? L"Input" : dest_port.c_str());
 	}
-
 }
 
 bool PipelineCompiler::ProcessDeclaration(Statement& statement)
@@ -101,7 +96,8 @@ bool PipelineCompiler::ProcessDeclaration(Statement& statement)
 	assert(_constructor);
 	assert(statement.GetType() == StatementDeclaration);
 
-	statement.StartProcessingStatement();
+	Statement::Guard guard(statement);
+
 	wstring class_id = statement.GetId();
 	wstring instance_id = statement.GetId();
 
@@ -156,8 +152,6 @@ bool PipelineCompiler::ProcessDeclaration(Statement& statement)
 		}
 	}
 
-	statement.FinishProcessingStatement();
-
 	return true;
 }
 
@@ -165,7 +159,7 @@ bool PipelineCompiler::ProcessPropertyLink(Statement& statement)
 {
 	assert(_constructor);
 	assert(statement.GetType() == StatementPropertyLink);
-	statement.StartProcessingStatement();
+	Statement::Guard guard(statement);
 
 	wstring processor_instance_id = statement.GetId();
 	if (!_constructor->InstanceIdExists(processor_instance_id.c_str()))
@@ -179,7 +173,6 @@ bool PipelineCompiler::ProcessPropertyLink(Statement& statement)
 
 	statement.AssertToken(TokenOperatorLink, true);
 	wstring variable_id = statement.GetVariableId();
-	statement.FinishProcessingStatement();
 
 	return _constructor->LinkProperty(processor_instance_id.c_str(), property.c_str(), variable_id.c_str());
 }
@@ -188,7 +181,7 @@ bool PipelineCompiler::ProcessAssignment(Statement& statement)
 {
 	assert(_constructor);
 	assert(statement.GetType() == StatementAssign);
-	statement.StartProcessingStatement();
+	Statement::Guard guard(statement);
 
 	wstring processor_instance_id = statement.GetId();
 	if (!_constructor->InstanceIdExists(processor_instance_id.c_str()))
@@ -202,8 +195,6 @@ bool PipelineCompiler::ProcessAssignment(Statement& statement)
 
 	statement.AssertToken(TokenOperatorAssign, true);
 	wstring value = statement.GetLiteralValue();
-
-	statement.FinishProcessingStatement();
 
 	return _constructor->SetProperty(processor_instance_id.c_str(), property.c_str(), value.c_str());
 }

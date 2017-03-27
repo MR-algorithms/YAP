@@ -106,6 +106,7 @@ namespace Yap
 
 	const int CompilerErrorUnknownToken				= 1033;
 	const int CompilerErrorInvalidImport = 1034;
+	const int CompilerErrorTypeExpected = 1035;
 	class CompileError
 	{
 	public:
@@ -139,6 +140,15 @@ namespace Yap
 	class Statement
 	{
 	public:
+		class Guard
+		{
+		public: 
+			Guard(Statement& statement);
+			~Guard();
+		private:
+			Statement& _statement;
+		};
+
 		explicit Statement(const std::vector<Token>& tokens);
 
 		void StartProcessingStatement();

@@ -36,6 +36,16 @@ map<TokenType, wstring> token_map = {
 	{TokenKeywordFalse, L"false"},
 };
 
+Statement::Guard::Guard(Statement& statement) :
+	_statement{statement}
+{
+	_statement.StartProcessingStatement();
+}
+
+Statement::Guard::~Guard()
+{
+	_statement.FinishProcessingStatement();
+}
 
 Statement::Statement(const vector<Token>& tokens) :
 	_tokens{tokens},

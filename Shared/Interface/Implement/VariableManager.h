@@ -41,6 +41,8 @@ namespace Yap {
 		const wchar_t * GetString(const wchar_t * name);
 
         bool Load(const wchar_t * path);
+		void Reset();
+
 	protected:
 		IProperty * GetProperty(const wchar_t * name, PropertyType expected_type);
 		SmartPtr<IPropertyContainer> _properties;
