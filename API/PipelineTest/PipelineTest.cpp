@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <time.h>
+#include "Yap/VdfParser.h"
 
 using namespace std;
 using namespace Yap;
@@ -65,7 +66,7 @@ int main()
 {
 	time_t start = clock();
 	YapDebugger debugger;
-	debugger.DebugPlugin(L"BasicRecon.dll");
+//	debugger.DebugPlugin(L"BasicRecon.dll");
 //	debugger.DebugPlugin(L"GrappaRecon.dll");
 //	debugger.DebugPlugin(L"CompressedSensing.dll");
 //	debugger.DebugPlugin(L"BasicRecon_GPU.dll");
@@ -78,6 +79,9 @@ int main()
 	{
 		pipeline->Input(L"Input", nullptr);
 	}
+
+	VdfParser parser;
+	auto variable_manager = parser.CompileFile(L"sysParams_yap.txt");
 
 	time_t end = clock();
 	printf("the running time is : %f\n", float(end - start) / CLOCKS_PER_SEC);

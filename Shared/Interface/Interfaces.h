@@ -149,7 +149,10 @@ namespace Yap
 		PropertyFloat,
 		PropertyString,
 		PropertyStruct,
-		PropertyArray,
+		PropertyBoolArray,
+		PropertyIntArray,
+		PropertyFloatArray,
+		PropertyStringArray,
 	};
 
 	template<typename T> struct property_type_id
@@ -168,6 +171,11 @@ namespace Yap
 		virtual PropertyType GetType() const = 0;
 		virtual const wchar_t * GetName() const = 0;
 		virtual const wchar_t * GetDescription() const = 0;
+		/// Returns pointer to one of the value interfaces.
+		/**
+		\return Returned pointer can be reinterpret_cast to a 'value interface' corresponding 
+		to the type of the variable, such as IDoubleValue, IIntValue, IBoolValue, IStringValue.
+		*/
 		virtual void * ValueInterface() = 0;
 	};
 	typedef IContainer<IProperty> IPropertyContainer;
@@ -189,6 +197,15 @@ namespace Yap
 		virtual void Set(const wchar_t* value) = 0;
 	};
 
+	template <typename VALUE_TYPE>
+	struct IArrayValue
+	{
+		virtual size_t GetSize() const = 0;
+		virtual void SetSize(size_t size) = 0;
+		virtual VALUE_TYPE * Elements() = 0;
+	};
+
+	typedef IPropertyContainer IStructValue;
 
 	struct IPort : public ISharedObject
 	{

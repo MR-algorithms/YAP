@@ -3,6 +3,7 @@
 #include "ContainerImpl.h"
 #include <fstream>
 #include <string>
+#include <vector>
 
 using namespace Yap;
 using namespace std;
@@ -48,6 +49,66 @@ namespace Yap
 			std::wstring _value;
 		};
 
+		template <typename VALUE_TYPE>
+		class ArrayValueImpl : public IArrayValue<VALUE_TYPE>
+		{
+		public:
+			ArrayValueImpl() {}
+
+			ArrayValueImpl(size_t size)
+			{
+				_elements.resize(size);
+			}
+
+			virtual size_t GetSize() const override
+			{
+				return _elements.size();
+			}
+
+			virtual void SetSize(size_t size) override
+			{
+				_elements.resize(size);
+			}
+
+			virtual VALUE_TYPE * Elements() override
+			{
+				return _elements.data();
+			}
+		private:
+			vector<VALUE_TYPE> _elements;
+		};
+
+		template<>
+		class ArrayValueImpl<bool> : public IArrayValue<bool>
+		{
+		public:
+			ArrayValueImpl()
+			{}
+
+			ArrayValueImpl(size_t size)
+			{
+				_elements.resize(size);
+			}
+
+			virtual size_t GetSize() const override
+			{
+				return _elements.size();
+			}
+
+			virtual void SetSize(size_t size) override
+			{
+				_elements.resize(size);
+			}
+
+			virtual bool * Elements() override
+			{
+				return reinterpret_cast<bool*>(_elements.data());
+			}
+
+		private:
+			vector<unsigned char> _elements;
+		};
+
 
 		class PropertyImpl :
 			public IProperty
@@ -75,6 +136,18 @@ namespace Yap
 					break;
 				case PropertyString:
 					_value_interface = new StringValueImpl(L"");
+					break;
+				case PropertyBoolArray:
+					_value_interface = new ArrayValueImpl<bool>();
+					break;
+				case PropertyIntArray:
+					_value_interface = new ArrayValueImpl<int>();
+					break;
+				case PropertyFloatArray:
+					_value_interface = new ArrayValueImpl<double>();
+					break;
+				case PropertyStringArray:
+					_value_interface = new ArrayValueImpl<wstring>();
 					break;
 				default:
 					throw PropertyException(name, PropertyException::InvalidType);
@@ -277,6 +350,11 @@ bool VariableManager::Load(const wchar_t *path)
 	}
 
 	return true;
+}
+
+void VariableManager::Reset()
+{
+	_properties = YapShared(new ContainerImpl<IProperty>);
 }
 
 bool VariableManager::ProcessLine(std::wstring& line)

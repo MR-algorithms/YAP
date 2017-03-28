@@ -36,12 +36,27 @@ map<TokenType, wstring> token_map = {
 	{TokenKeywordFalse, L"false"},
 };
 
+Statement::Guard::Guard(Statement& statement) :
+	_statement{statement}
+{
+	_statement.StartProcessingStatement();
+}
+
+Statement::Guard::~Guard()
+{
+	_statement.FinishProcessingStatement();
+}
 
 Statement::Statement(const vector<Token>& tokens) :
 	_tokens{tokens},
 	_type{StatementUnknown}
 {
 	_begin = _iter = tokens.cbegin();
+}
+
+void Statement::StartProcessingStatement()
+{
+	_iter = _begin;
 }
 
 void Statement::FinishProcessingStatement()
@@ -78,8 +93,7 @@ void Statement::AssertToken(TokenType type, bool move_next)
 	if ((_iter->type != type) &&
 		!(type == TokenId && _iter->type == TokenKeywordSelf)) // treat keyword 'self' as id
 	{
-		wstring message = L"Incorrect token type, " + token_map[type] + L" expected.";
-		throw (CompileError(*_iter, CompileErrorTokenType, message));
+		throw CompileErrorTokenType(*_iter, type);
 	}
 
 	if (move_next)
@@ -91,36 +105,32 @@ void Statement::AssertToken(TokenType type, bool move_next)
 /// Check to see whether next token in the statement is of specified type. 
 /**
 \remarks This function check to see whether next token in the statement is if specified type.
+This function will not move the pointer.
 \return true if the next token is of the specified type, false otherwise.
 \param type
-\param skip, if \true, skip the next token. Note: the next token is skipped only when it is of the given type,
 
 */
-bool Statement::IsNextTokenOfType(TokenType type, bool skip)
+bool Statement::IsNextTokenOfType(TokenType type)
 {
 	if (_iter == _tokens.end())
 	{
 		throw (CompileError(*_iter, CompileErrorUnexpectedEndOfStatement, L"Unexpected end of file."));
 	}
 
-	if ((_iter->type != type) &&
-		!(type == TokenId && _iter->type == TokenKeywordSelf)) // treat keyword 'self' as id
-	{
-		return false;
-	}
+	return (((_iter + 1)->type == type) ||
+		(type == TokenId && (_iter + 1)->type == TokenKeywordSelf)); // treat keyword 'self' as id
+}
 
-	if (skip)
+/// Check to see whether the current token is of the given type.
+bool Statement::IsTokenOfType(TokenType type, bool move_next)
+{
+	auto result = (_iter->type == type);
+	if (move_next && result)
 	{
 		++_iter;
 	}
 
-	return true;
-}
-
-/// Check to see whether the current token is of the given type.
-bool Statement::IsType(TokenType type)
-{
-	return _iter->type == type;
+	return result;
 }
 
 bool Statement::IsFirstTokenInStatement() const
@@ -169,7 +179,7 @@ std::pair<std::wstring, std::wstring> Statement::GetProcessorMember(bool empty_m
 
 	if (empty_member_allowed)
 	{
-		if (IsType(TokenOperatorDot))
+		if (IsTokenOfType(TokenOperatorDot))
 		{
 			++_iter;
 			result.second = GetId();
@@ -241,7 +251,8 @@ std::wstring Yap::Statement::GetVariableId()
 {
 	wstring variable_id;
 	bool id_expected = true;
-	while (_iter != _tokens.end() && _iter->type != TokenComma && _iter->type != TokenRightParenthesis)
+	while (_iter != _tokens.end() && _iter->type != TokenComma && _iter->type != TokenRightParenthesis
+			&& _iter->type != TokenSemiColon && _iter->type != TokenSharp)
 	{
 		if ((!id_expected && _iter->type != TokenOperatorDot) || (id_expected && _iter->type != TokenId))
 		{
@@ -437,6 +448,7 @@ bool Preprocessor::PreprocessLine(std::wstring& line,
 			token.type = TokenNumericLiteral;
 			next_separator = line.find_first_of(L" \t\n\"{}()+-,*/=<>;", pos);
 			token.length = int(((next_separator == -1) ? line.length() : next_separator) - token.column);
+			token.text = line.substr(token.column, token.length);
 
 			_tokens.push_back(token);
 			pos = int(next_separator);
@@ -451,8 +463,8 @@ bool Preprocessor::PreprocessLine(std::wstring& line,
 			next_separator = line.find_first_of(L" \t\n\"{}()+-.,*/=<>;", pos);
 			token.length = int(((next_separator == -1) ? line.length() : next_separator) - token.column);
 
-			auto token_string = line.substr(token.column, token.length);
-			auto iter = _keywords.find(token_string);
+			token.text = line.substr(token.column, token.length);
+			auto iter = _keywords.find(token.text);
 
 			token.type = (iter != _keywords.end()) ? iter->second : TokenId;
 
@@ -627,4 +639,10 @@ void Preprocessor::TestTokens()
 			}
 		}
 	}
+}
+
+Yap::CompileErrorTokenType::CompileErrorTokenType(const Token& token, TokenType expected_token) :
+	CompileError{token, ErrorCodeTokenType, std::wstring()}
+{
+	_error_message = token_map[expected_token] + (L" expected.");
 }

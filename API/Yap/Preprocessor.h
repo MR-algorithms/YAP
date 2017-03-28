@@ -97,7 +97,7 @@ namespace Yap
 	const int CompileErrorSemicolonExpected			= 1024;
 	const int CompileErrorStringExpected			= 1025;
 	const int CompileErrorTooManyTokens				= 1026;
-	const int CompileErrorTokenType					= 1027;
+	const int ErrorCodeTokenType					= 1027;
 	const int CompileErrorUnexpectedEndOfStatement	= 1028;
 	const int CompileErrorUnrecognizedSymbol		= 1029;
 	const int CompileErrorValueExpected				= 1030;
@@ -106,10 +106,14 @@ namespace Yap
 
 	const int CompilerErrorUnknownToken				= 1033;
 	const int CompilerErrorInvalidImport = 1034;
+	const int CompilerErrorTypeExpected = 1035;
+	const int CompilerErrorTokenExpected = 1036;
+
 	class CompileError
 	{
 	public:
 		CompileError() : _error_number(CompileErrorSuccess) {}
+		~CompileError() {}
 		CompileError(const Token& token, int error_number, const std::wstring& error_message) :
 			_error_message(error_message), _error_number(error_number), _token(token) {}
 
@@ -120,6 +124,12 @@ namespace Yap
 		std::wstring _error_message;
 		int _error_number;
 		Token _token;
+	};
+
+	class CompileErrorTokenType : public CompileError
+	{
+	public:
+		CompileErrorTokenType(const Token& token, TokenType expected_token);
 	};
 
 	enum StatementType
@@ -139,8 +149,18 @@ namespace Yap
 	class Statement
 	{
 	public:
+		class Guard
+		{
+		public: 
+			Guard(Statement& statement);
+			~Guard();
+		private:
+			Statement& _statement;
+		};
+
 		explicit Statement(const std::vector<Token>& tokens);
 
+		void StartProcessingStatement();
 		/// Clear the tokens in the statement.
 		void FinishProcessingStatement();
 
@@ -171,10 +191,10 @@ namespace Yap
 		/// 如果迭代其指向的token的类型不是type，则抛出编译错误。缺省情况下该函数不引起迭代器变化。
 		void AssertToken(TokenType type, bool move_next = false);
 
-		bool IsNextTokenOfType(TokenType type, bool skip = false);
+		bool IsNextTokenOfType(TokenType type);
 
 		/// 检查迭代器指向的token是否指定的类型。该函数不引起迭代器变化。
-		bool IsType(TokenType type);
+		bool IsTokenOfType(TokenType type, bool move_next = false);
 
 		/// 试图提取一个Id，迭代器移动到提取内容之后。
 		std::wstring GetId();
