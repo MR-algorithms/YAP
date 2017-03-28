@@ -129,7 +129,7 @@ bool VdfParser::ProcessSimpleDeclaration(Statement& statement)
 
 	_variables->AddProperty(token_to_property[type], id.c_str(), L"");
 
-	return false;
+	return true;
 }
 
 bool VdfParser::ProcessArrayDeclaration(Statement& statement)

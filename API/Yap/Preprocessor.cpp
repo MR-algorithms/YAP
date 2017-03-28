@@ -252,7 +252,8 @@ std::wstring Yap::Statement::GetVariableId()
 {
 	wstring variable_id;
 	bool id_expected = true;
-	while (_iter != _tokens.end() && _iter->type != TokenComma && _iter->type != TokenRightParenthesis)
+	while (_iter != _tokens.end() && _iter->type != TokenComma && _iter->type != TokenRightParenthesis
+			&& _iter->type != TokenSemiColon)
 	{
 		if ((!id_expected && _iter->type != TokenOperatorDot) || (id_expected && _iter->type != TokenId))
 		{
