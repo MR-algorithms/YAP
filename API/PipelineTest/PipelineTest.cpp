@@ -65,7 +65,7 @@ int main()
 {
 	time_t start = clock();
 	YapDebugger debugger;
-	debugger.DebugPlugin(L"BasicRecon.dll");
+//	debugger.DebugPlugin(L"BasicRecon.dll");
 //	debugger.DebugPlugin(L"GrappaRecon.dll");
 //	debugger.DebugPlugin(L"CompressedSensing.dll");
 //	debugger.DebugPlugin(L"BasicRecon_GPU.dll");

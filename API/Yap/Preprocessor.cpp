@@ -448,6 +448,7 @@ bool Preprocessor::PreprocessLine(std::wstring& line,
 			token.type = TokenNumericLiteral;
 			next_separator = line.find_first_of(L" \t\n\"{}()+-,*/=<>;", pos);
 			token.length = int(((next_separator == -1) ? line.length() : next_separator) - token.column);
+			token.text = line.substr(token.column, token.length);
 
 			_tokens.push_back(token);
 			pos = int(next_separator);
