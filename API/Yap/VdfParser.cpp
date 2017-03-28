@@ -114,6 +114,7 @@ static map<TokenType, PropertyType> token_to_property{
 	{TokenKeywordInt, PropertyInt},
 	{TokenKeywordString, PropertyString},
 	{TokenKeywordBool, PropertyBool},
+
 };
 
 bool VdfParser::ProcessSimpleDeclaration(Statement& statement)
@@ -126,15 +127,69 @@ bool VdfParser::ProcessSimpleDeclaration(Statement& statement)
 		   type == TokenKeywordBool || type == TokenKeywordString);
 	statement.Next();
 	auto id = statement.GetVariableId();
+	if (!statement.IsTokenOfType(TokenSharp, true))
+	{
+		_variables->AddProperty(token_to_property[type], id.c_str(), L"");
+	}
+	else
+	{
+		statement.AssertToken(TokenLessThen, true);
+		auto start_index = _wtoi(statement.GetLiteralValue().c_str());
+		statement.AssertToken(TokenComma, true);
+		auto end_index = _wtoi(statement.GetLiteralValue().c_str());
+		statement.AssertToken(TokenGreaterThen, true);
 
-	_variables->AddProperty(token_to_property[type], id.c_str(), L"");
+		for (int i = start_index; i <= end_index; ++i)
+		{
+			wostringstream output;
+			output << id << i;
+			_variables->AddProperty(token_to_property[type], output.str().c_str(), L"");
+		}
+	}
 
 	return true;
 }
 
+static map<TokenType, PropertyType> token_to_array_property{
+	{TokenKeywordFloat, PropertyFloatArray},
+	{TokenKeywordInt, PropertyIntArray},
+	{TokenKeywordString, PropertyStringArray},
+	{TokenKeywordBool, PropertyBoolArray},
+
+};
 bool VdfParser::ProcessArrayDeclaration(Statement& statement)
 {
 	Statement::Guard guard(statement);
+	statement.AssertToken(TokenKeywordArray, true);
+	statement.AssertToken(TokenLessThen, true);
+
+	auto type = statement.GetCurrentToken().type;
+	assert(type == TokenKeywordFloat || type == TokenKeywordInt ||
+		   type == TokenKeywordBool || type == TokenKeywordString);
+	statement.Next();
+	statement.AssertToken(TokenGreaterThen, true);
+
+	auto id = statement.GetVariableId();
+	if (!statement.IsTokenOfType(TokenSharp, true))
+	{
+		_variables->AddProperty(token_to_array_property[type], id.c_str(), L"");
+	}
+	else
+	{
+		statement.AssertToken(TokenLessThen, true);
+		auto start_index = _wtoi(statement.GetLiteralValue().c_str());
+		statement.AssertToken(TokenComma, true);
+		auto end_index = _wtoi(statement.GetLiteralValue().c_str());
+		statement.AssertToken(TokenGreaterThen, true);
+
+		for (int i = start_index; i <= end_index; ++i)
+		{
+			wostringstream output;
+			output << id << i;
+			_variables->AddProperty(token_to_array_property[type], output.str().c_str(), L"");
+		}
+	}
+
 	return false;
 }
 

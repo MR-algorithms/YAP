@@ -93,8 +93,7 @@ void Statement::AssertToken(TokenType type, bool move_next)
 	if ((_iter->type != type) &&
 		!(type == TokenId && _iter->type == TokenKeywordSelf)) // treat keyword 'self' as id
 	{
-		wstring message = L"Incorrect token type, " + token_map[type] + L" expected.";
-		throw (CompileError(*_iter, CompileErrorTokenType, message));
+		throw CompileErrorTokenType(*_iter, type);
 	}
 
 	if (move_next)
@@ -253,7 +252,7 @@ std::wstring Yap::Statement::GetVariableId()
 	wstring variable_id;
 	bool id_expected = true;
 	while (_iter != _tokens.end() && _iter->type != TokenComma && _iter->type != TokenRightParenthesis
-			&& _iter->type != TokenSemiColon)
+			&& _iter->type != TokenSemiColon && _iter->type != TokenSharp)
 	{
 		if ((!id_expected && _iter->type != TokenOperatorDot) || (id_expected && _iter->type != TokenId))
 		{
@@ -640,4 +639,10 @@ void Preprocessor::TestTokens()
 			}
 		}
 	}
+}
+
+Yap::CompileErrorTokenType::CompileErrorTokenType(const Token& token, TokenType expected_token) :
+	CompileError{token, ErrorCodeTokenType, std::wstring()}
+{
+	_error_message = token_map[expected_token] + (L" expected.");
 }

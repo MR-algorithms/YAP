@@ -97,7 +97,7 @@ namespace Yap
 	const int CompileErrorSemicolonExpected			= 1024;
 	const int CompileErrorStringExpected			= 1025;
 	const int CompileErrorTooManyTokens				= 1026;
-	const int CompileErrorTokenType					= 1027;
+	const int ErrorCodeTokenType					= 1027;
 	const int CompileErrorUnexpectedEndOfStatement	= 1028;
 	const int CompileErrorUnrecognizedSymbol		= 1029;
 	const int CompileErrorValueExpected				= 1030;
@@ -107,10 +107,13 @@ namespace Yap
 	const int CompilerErrorUnknownToken				= 1033;
 	const int CompilerErrorInvalidImport = 1034;
 	const int CompilerErrorTypeExpected = 1035;
+	const int CompilerErrorTokenExpected = 1036;
+
 	class CompileError
 	{
 	public:
 		CompileError() : _error_number(CompileErrorSuccess) {}
+		~CompileError() {}
 		CompileError(const Token& token, int error_number, const std::wstring& error_message) :
 			_error_message(error_message), _error_number(error_number), _token(token) {}
 
@@ -121,6 +124,12 @@ namespace Yap
 		std::wstring _error_message;
 		int _error_number;
 		Token _token;
+	};
+
+	class CompileErrorTokenType : public CompileError
+	{
+	public:
+		CompileErrorTokenType(const Token& token, TokenType expected_token);
 	};
 
 	enum StatementType
