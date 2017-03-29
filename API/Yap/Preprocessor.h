@@ -31,9 +31,9 @@ namespace Yap
 		TokenLeftParenthesis,
 		TokenRightParenthesis,
 
-		TokenGreaterThen,
-		TokenLessThen,
-		TokenSharp, // #
+		TokenGreaterThen,		// >
+		TokenLessThen,			// <
+		TokenSharp,				// #
 
 		TokenStringLiteral,
 		TokenNumericLiteral,

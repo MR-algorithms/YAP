@@ -13,6 +13,9 @@ map<TokenType, wstring> token_map = {
 	{TokenOperatorLink, L"<=>"},
 	{TokenOperatorDot, L"."},
 	{TokenOperatorAssign, L"="},
+	{TokenLessThen, L"<"},
+	{TokenGreaterThen, L">"},
+	{TokenSharp, L"#"},
 	{TokenComma, L","},
 	{TokenSemiColon, L";"},
 	{TokenLeftBrace, L"{"},
@@ -446,7 +449,7 @@ bool Preprocessor::PreprocessLine(std::wstring& line,
 		if (isdigit(line[pos]))
 		{
 			token.type = TokenNumericLiteral;
-			next_separator = line.find_first_of(L" \t\n\"{}()+-,*/=<>;", pos);
+			next_separator = line.find_first_of(L" \t\n\"{}()+-,*/=<>#;", pos);
 			token.length = int(((next_separator == -1) ? line.length() : next_separator) - token.column);
 			token.text = line.substr(token.column, token.length);
 
@@ -460,7 +463,7 @@ bool Preprocessor::PreprocessLine(std::wstring& line,
 		}
 		else if (isalpha(line[pos]))
 		{
-			next_separator = line.find_first_of(L" \t\n\"{}()+-.,*/=<>;", pos);
+			next_separator = line.find_first_of(L" \t\n\"{}()+-.,*/=<>#;", pos);
 			token.length = int(((next_separator == -1) ? line.length() : next_separator) - token.column);
 
 			token.text = line.substr(token.column, token.length);
