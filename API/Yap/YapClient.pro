@@ -51,7 +51,9 @@ HEADERS += ProcessorManagerAgent.h \
     ../../shared/Interface/Implement/VariableManager.h \
     Preprocessor.h \
     VdfParser.h \
-    ScanFileParser.h
+    ScanFileParser.h \
+    ../../Shared/Interface/Interfaces.h \
+    ../../Shared/Interface/smartptr.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

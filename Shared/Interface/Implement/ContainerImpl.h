@@ -45,7 +45,6 @@ namespace Yap
 				return  (_current != _container._elements.end() && 
 						 ++_current != _container._elements.end()) ?
 					_current->second.get() : nullptr;
-
 			}
 
 			virtual void DeleteThis() override

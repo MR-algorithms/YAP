@@ -170,7 +170,9 @@ namespace Yap
 	{
 		virtual PropertyType GetType() const = 0;
 		virtual const wchar_t * GetName() const = 0;
+        virtual void SetName(const wchar_t * name) = 0;
 		virtual const wchar_t * GetDescription() const = 0;
+        virtual void SetDescription(const wchar_t * description) = 0;
 		/// Returns pointer to one of the value interfaces.
 		/**
 		\return Returned pointer can be reinterpret_cast to a 'value interface' corresponding 
@@ -196,6 +198,8 @@ namespace Yap
 		virtual const wchar_t* Get() const = 0;
 		virtual void Set(const wchar_t* value) = 0;
 	};
+
+    typedef IContainer<IProperty> IStructValue;
 
 	template <typename VALUE_TYPE>
 	struct IArrayValue

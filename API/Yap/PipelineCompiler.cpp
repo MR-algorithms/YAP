@@ -273,7 +273,7 @@ bool PipelineCompiler::Process()
 				}
 				else
 				{
-					throw CompileError(statement.GetCurrentToken(), CompilerErrorInvalidImport,
+                    throw CompileError(statement.GetCurrentToken(), CompileErrorInvalidImport,
 									   wstring(L"Invalid use of keyword import."));
 				}
 				break;

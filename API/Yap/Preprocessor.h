@@ -104,10 +104,13 @@ namespace Yap
 	const int CompileErrorParamIdInvalid			= 1031;
 	const int CompileErrorFailedOpenFile			= 1032;
 
-	const int CompilerErrorUnknownToken				= 1033;
-	const int CompilerErrorInvalidImport = 1034;
-	const int CompilerErrorTypeExpected = 1035;
-	const int CompilerErrorTokenExpected = 1036;
+    const int CompileErrorUnknownToken				= 1033;
+    const int CompileErrorInvalidImport = 1034;
+    const int CompileErrorTypeExpected = 1035;
+    const int CompileErrorTokenExpected = 1036;
+    const int CompileErrorTypeNotFound = 1037;
+    const int CompileErrorNestStruct = 1038;
+    const int CompileErrorMemeberExists = 1039;
 
 	class CompileError
 	{
