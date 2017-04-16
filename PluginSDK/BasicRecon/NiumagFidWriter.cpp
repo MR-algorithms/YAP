@@ -59,7 +59,7 @@ bool Yap::NiumagFidWriter::Input(const wchar_t * name, IData * data)
 
 	int dim1 = data_helper.GetWidth();
 	int dim2 = data_helper.GetHeight();
-	int dim3 = data_helper.GetSlice();
+	int dim3 = data_helper.GetSliceCount();
 	int dim4 = data_helper.GetDim4();
 
 	unsigned buffer_size = dim1 * dim2 * dim3 * dim4;

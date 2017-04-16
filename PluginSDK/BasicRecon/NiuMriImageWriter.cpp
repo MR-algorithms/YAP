@@ -61,7 +61,7 @@ bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)
 
 	int dim1 = data_helper.GetWidth();
 	int dim2 = data_helper.GetHeight();
-	int dim3 = data_helper.GetSlice();
+	int dim3 = data_helper.GetSliceCount();
 
 	unsigned buffer_size = dim1 * dim2 * dim3;
 	unsigned short * img_data = GetDataArray<unsigned short>(data);
