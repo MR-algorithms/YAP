@@ -29,7 +29,10 @@ SOURCES += ModuleManager.cpp \
     ../../shared/Interface/Implement/DataObject.cpp \
     ../../shared/Interface/Implement/ProcessorImpl.cpp \
     ../../shared/Interface/Implement/SharedObjectImpl.cpp \
-    ../../shared/Interface/Implement/VariableManager.cpp
+    ../../shared/Interface/Implement/VariableManager.cpp \
+    Preprocessor.cpp \
+    VdfParser.cpp \
+    ScanFileParser.cpp
 
 HEADERS += ProcessorManagerAgent.h \
     ModuleManager.h \
@@ -45,12 +48,12 @@ HEADERS += ProcessorManagerAgent.h \
     ../../shared/Interface/Implement/ProcessorImpl.h \
     ../../shared/Interface/Implement/SharedObjectImpl.h \
     ../../shared/Interface/Implement/YapImplement.h \
-    ../../shared/Interface/IContainer.h \
-    ../../shared/Interface/IData.h \
-    ../../shared/Interface/IMemory.h \
-    ../../shared/Interface/IProcessor.h \
-    ../../shared/Interface/IProperty.h \
-    ../../shared/Interface/Implement/VariableManager.h
+    ../../shared/Interface/Implement/VariableManager.h \
+    Preprocessor.h \
+    VdfParser.h \
+    ScanFileParser.h \
+    ../../Shared/Interface/Interfaces.h \
+    ../../Shared/Interface/smartptr.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

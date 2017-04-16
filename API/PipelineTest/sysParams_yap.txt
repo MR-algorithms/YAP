@@ -9,12 +9,7 @@ bool RECReady;
 bool DACReady;
 
 int ScanMode;		//ScanMode(smRTZG, smZG)
-// array<int, 32> C;	//C1 ~ C31
-int C1;
-int C2;
-int C3;
-int C4;
-
+int C#<0, 31>;
 int TD;
 int GxOffset;
 int GyOffset;
@@ -32,46 +27,20 @@ int FidDim1Size;
 int FidDim2Size;
 int FidDim3Size;
 int FidDim4Size;
-int DRG1;
-int DRG2;
-int DRG3;
-int DRG4;
-int PRG1;
-int PRG2;
-int PRG3;
-int PRG4;
+int DRG#<1, 4>;
+int PRG#<1, 4>;
 
 float SFO1;
 float SW;
-float P1;		//P1 ~ P31
-float P2;
-float P3;
-float P4;
-
-// float D#<0, 31>
-float D0;
-float D1;		// D0 ~ D31
-float D2;
-float D3;
-float D4;
-float D5;
-
-float RFA0;
-float RFA1;		// RFA0 ~ RFA15
-float RFA2;
-
-float FQ0;		//FQ0 ~ FQ15
-float GA0;		//GA0 ~ GA31
-
-float RG1;
-float RG2;
-float RG3;
-float RG4;
-
+float P#<0, 31>;
+float D#<0, 31>;
+float RFA#<0, 15>;
+float FQ#<0, 15>;		//FQ0 ~ FQ15
+float GA#<0, 15>;		//GA0 ~ GA31
+float RG#<1, 4>;
 float ACQ;
 float DT2;
 float AmpRatio;
-
 float Freq;
 
 string Sequence;
@@ -163,11 +132,11 @@ string Serial;
 //float Gz.K4;
 //float Gz.A5;
 //float Gz.K5;
-//
-//array<float> VDL0;	//VDL0 ~ VDL15
-//array<float> RFAL0;	//RFAL0 ~ RFAL15
-//array<float> FQL0;	//FQL0 ~ FQL15
-//array<float> PHL0;	//PHL0 ~ PHL15
-//array<float> PCL0;	//PCL0 ~ PCL15
-//array<float> GL0;	//GL0 ~ GL15
-//array<int> DBL0;	//DBL0 ~ DBL15
+
+array<float> VDL#<0, 15>;
+array<float> RFAL#<0, 15>;	//RFAL0 ~ RFAL15
+array<float> FQL#<0, 15>;	//FQL0 ~ FQL15
+array<float> PHL#<0, 15>;	//PHL0 ~ PHL15
+array<float> PCL#<0, 15>;	//PCL0 ~ PCL15
+array<float> GL#<0, 15>;	//GL0 ~ GL15
+array<int> DBL#<0, 15>;	//DBL0 ~ DBL15

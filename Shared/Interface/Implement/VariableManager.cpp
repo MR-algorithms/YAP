@@ -1,6 +1,8 @@
 #include "VariableManager.h"
 #include "../Interfaces.h"
 #include "ContainerImpl.h"
+#include "VdfParser.h"
+
 #include <fstream>
 #include <string>
 #include <vector>
@@ -149,6 +151,8 @@ namespace Yap
 				case PropertyStringArray:
 					_value_interface = new ArrayValueImpl<wstring>();
 					break;
+                case PropertyStruct:
+                    _value_interface = nullptr;
 				default:
 					throw PropertyException(name, PropertyException::InvalidType);
 				}
@@ -193,10 +197,20 @@ namespace Yap
 				return _name.c_str();
 			}
 
+            virtual void SetName(const wchar_t * name) override
+            {
+                _name = name;
+            }
+
 			virtual const wchar_t * GetDescription() const override
 			{
 				return _description.c_str();
 			}
+
+            virtual void SetDescription(const wchar_t * description) override
+            {
+                _description = description;
+            }
 
 			virtual void * ValueInterface() override
 			{
@@ -213,23 +227,38 @@ namespace Yap
 
 	}  // end Yap::_details
 
+using namespace _details;
+
 VariableManager::VariableManager() :
 	_properties(YapShared(new ContainerImpl<IProperty>))
 {
+    InitTypes();
 }
 
 VariableManager::VariableManager(IPropertyContainer * properties) :
 	_properties(YapShared(properties))
 {
+    InitTypes();
 }
 
 VariableManager::VariableManager(const VariableManager& rhs) :
 	_properties(YapShared(rhs.GetProperties()->Clone()))
 {
+    InitTypes();
 }
 
 VariableManager::~VariableManager()
 {
+}
+
+bool VariableManager::InitTypes()
+{
+    _types.insert(make_pair(L"int", new PropertyImpl(PropertyInt, nullptr, nullptr)));
+    _types.insert(make_pair(L"float", new PropertyImpl(PropertyFloat, nullptr, nullptr)));
+    _types.insert(make_pair(L"string", new PropertyImpl(PropertyString, nullptr, nullptr)));
+    _types.insert(make_pair(L"bool", new PropertyImpl(PropertyBool, nullptr, nullptr)));
+
+    return true;
 }
 
 using namespace _details;
@@ -240,13 +269,42 @@ bool VariableManager::AddProperty(PropertyType type,
 {
 	try
 	{
-		_properties->Add(name, new PropertyImpl(type, name, description));
+        auto new_property = new PropertyImpl(type, name, description);
+        _properties->Add(name, new_property);
 		return true;
 	}
 	catch (std::bad_alloc&)
 	{
 		return false;
 	}
+}
+
+bool VariableManager::AddProperty(const wchar_t * type,
+                                   const wchar_t * name,
+                                   const wchar_t * description)
+{
+    auto iter = _types.find(type);
+    if (iter == _types.end())
+        return false;
+
+    if (!iter->second)
+        return false;
+
+    auto new_property = dynamic_cast<IProperty*>(iter->second->Clone());
+    if (new_property == nullptr)
+        return false;
+
+    new_property->SetName(name);
+    new_property->SetDescription(description);
+    _properties->Add(name, new_property);
+
+    return true;
+}
+
+bool VariableManager::AddProperty(IProperty* property)
+{
+    assert(property != nullptr);
+    return _properties->Add(property->GetName(), property);
 }
 
 IPropertyContainer* VariableManager::GetProperties()
@@ -337,19 +395,10 @@ const wchar_t * VariableManager::GetString(const wchar_t * name)
 	return reinterpret_cast<IStringValue*>(property->ValueInterface())->Get();
 }
 
-bool VariableManager::Load(const wchar_t *path)
+shared_ptr<VariableManager> VariableManager::Load(const wchar_t * path)
 {
-	wifstream input(path);
-	if (!input)
-		return false;
-
-	wstring line;
-	while (getline(input, line, L'\n'))
-	{
-		ProcessLine(line);
-	}
-
-	return true;
+    VdfParser parser;
+    return parser.CompileFile(path);
 }
 
 void VariableManager::Reset()
@@ -357,58 +406,35 @@ void VariableManager::Reset()
 	_properties = YapShared(new ContainerImpl<IProperty>);
 }
 
-bool VariableManager::ProcessLine(std::wstring& line)
+bool VariableManager::TypeExists(const wchar_t * type) const
 {
-	size_t pos = line.find_first_not_of(L" \t\n", 0);
-	if (pos == wstring::npos)
-		return true; // empty line
+    return _types.find(type) != _types.end();
+}
 
-	if (line.substr(pos, 2) == L"//")
-		return true;
+bool VariableManager::PropertyExists(const wchar_t *property_id) const
+{
+    auto This = const_cast<VariableManager*>(this);
+    return This->_properties->Find(property_id) != nullptr;
+}
 
-	size_t separator_pos = line.find_first_of(L" \t", pos);
-	if (separator_pos == wstring::npos)
-		return false; // variable name should be on the same line as type. E.g. float D1;
+IProperty * VariableManager::GetType(const wchar_t * type) const
+{
+    auto iter = _types.find(type);
+    return (iter != _types.end()) ? iter->second.get() : nullptr;
+}
 
-	wstring type = line.substr(pos, separator_pos - pos);
-	pos = line.find_first_not_of(L" \t", separator_pos);
-	if (pos == wstring::npos)
-		return false;  // variable name should be on the same line as type. E.g. float D1;
+bool VariableManager::AddType(const wchar_t * type_id, IProperty *type)
+{
+    assert(_types.find(type_id) == _types.end());
+    assert(type != nullptr);
+    assert(type_id != nullptr);
 
-	separator_pos = line.find_first_of(L";", pos);
-	if (separator_pos == wstring::npos)
-		return false; // variable name should be on the same line as type. E.g. float D1;
+    if (_types.find(type_id) != _types.end())
+        return false;
 
-	wstring id = line.substr(pos, separator_pos - pos);
+    _types.insert({type_id, shared_ptr<IProperty>(type)});
 
-	if (id.empty())
-		return false;
-
-	if (type == L"float")
-	{
-		return AddProperty(PropertyFloat, id.c_str(), L"");
-	}
-	else if (type == L"int")
-	{
-		return AddProperty(PropertyInt, id.c_str(), L"");
-	}
-	else if (type == L"string")
-	{
-		return AddProperty(PropertyString, id.c_str(), L"");
-	}
-	else if (type == L"bool")
-	{
-		return AddProperty(PropertyString, id.c_str(), L"");
-	}
-	else if (type.substr(0, 5) == L"array")
-	{
-		return true; // 暂未处理
-	}
-	else
-	{
-		return false;
-	}
-
+    return true;
 }
 
 }	// end Yap

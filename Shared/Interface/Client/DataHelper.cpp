@@ -61,7 +61,7 @@ unsigned int DataHelper::GetHeight()
 	return length;
 }
 
-unsigned int DataHelper::GetSlice()
+unsigned int DataHelper::GetSliceCount()
 {
 	auto dimension = _data_object.GetDimensions();
 	DimensionType dimension_type;

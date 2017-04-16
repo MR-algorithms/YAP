@@ -85,51 +85,47 @@ bool VdfParser::Process()
 	{
 		switch (statement.GetCurrentToken().type)
 		{
-			case TokenKeywordBool:
-			case TokenKeywordInt:
-			case TokenKeywordFloat:
-			case TokenKeywordString:
-				ProcessSimpleDeclaration(statement);
-				break;
-			case TokenKeywordArray:
-				ProcessArrayDeclaration(statement);
-				break;
-			case TokenKeywordStruct:
-				ProcessStructDeclaration(statement);
-				break;
-			case TokenSemiColon:
-				statement.FinishProcessingStatement();
-			default:
+        case TokenKeywordBool:
+        case TokenKeywordInt:
+        case TokenKeywordFloat:
+        case TokenKeywordString:
+        case TokenId:
+            ProcessSimpleDeclaration(statement);
+            break;
+        case TokenKeywordArray:
+            ProcessArrayDeclaration(statement);
+            break;
+        case TokenKeywordStruct:
+            ProcessStructDeclaration(statement);
+            break;
+        case TokenSemiColon:
+            statement.FinishProcessingStatement();
+            break;
+            default:
 				throw(CompileError(statement.GetCurrentToken(),
-								   CompilerErrorTypeExpected, L"Expected one of float, int, string, bool, array, struct."));
-				;
+                                   CompileErrorTypeExpected, L"Expected one of float, int, string, bool, array, struct."));
 		}
 	}
 
 	return true;
 }
 
-static map<TokenType, PropertyType> token_to_property{
-	{TokenKeywordFloat, PropertyFloat},
-	{TokenKeywordInt, PropertyInt},
-	{TokenKeywordString, PropertyString},
-	{TokenKeywordBool, PropertyBool},
-
-};
-
 bool VdfParser::ProcessSimpleDeclaration(Statement& statement)
 {
-	assert(_variables);
+    assert(_variables);
 
 	Statement::Guard guard(statement);
 	auto type = statement.GetCurrentToken().type;
+    auto type_id = statement.GetCurrentToken().text;
+
 	assert(type == TokenKeywordFloat || type == TokenKeywordInt ||
-		   type == TokenKeywordBool || type == TokenKeywordString);
+           type == TokenKeywordBool || type == TokenKeywordString ||
+           type == TokenId);
 	statement.Next();
 	auto id = statement.GetVariableId();
 	if (!statement.IsTokenOfType(TokenSharp, true))
 	{
-		_variables->AddProperty(token_to_property[type], id.c_str(), L"");
+        _variables->AddProperty(type_id.c_str(), id.c_str(), L"");
 	}
 	else
 	{
@@ -143,23 +139,23 @@ bool VdfParser::ProcessSimpleDeclaration(Statement& statement)
 		{
 			wostringstream output;
 			output << id << i;
-			_variables->AddProperty(token_to_property[type], output.str().c_str(), L"");
+            _variables->AddProperty(type_id.c_str(), output.str().c_str(), L"");
 		}
 	}
 
 	return true;
 }
 
-static map<TokenType, PropertyType> token_to_array_property{
-	{TokenKeywordFloat, PropertyFloatArray},
-	{TokenKeywordInt, PropertyIntArray},
-	{TokenKeywordString, PropertyStringArray},
-	{TokenKeywordBool, PropertyBoolArray},
-
-};
 bool VdfParser::ProcessArrayDeclaration(Statement& statement)
 {
-	Statement::Guard guard(statement);
+    static map<TokenType, PropertyType> token_to_array_property{
+        {TokenKeywordFloat, PropertyFloatArray},
+        {TokenKeywordInt, PropertyIntArray},
+        {TokenKeywordString, PropertyStringArray},
+        {TokenKeywordBool, PropertyBoolArray},
+    };
+
+    Statement::Guard guard(statement);
 	statement.AssertToken(TokenKeywordArray, true);
 	statement.AssertToken(TokenLessThen, true);
 
@@ -190,12 +186,62 @@ bool VdfParser::ProcessArrayDeclaration(Statement& statement)
 		}
 	}
 
-	return false;
+    return true;
 }
 
 bool VdfParser::ProcessStructDeclaration(Statement& statement)
 {
 	Statement::Guard guard(statement);
-	return false;
+    statement.AssertToken(TokenKeywordStruct, true);
+    auto struct_id = statement.GetVariableId();
+    statement.AssertToken(TokenLeftBrace, true);
+
+    VariableManager struct_variables;
+
+    do
+    {
+        auto& type_token = statement.GetCurrentToken();
+        if (type_token.type != TokenKeywordBool && type_token.type != TokenKeywordFloat &&
+                type_token.type != TokenKeywordInt && type_token.type != TokenKeywordString &&
+                type_token.type != TokenId)
+        {
+            throw(CompileError(type_token, CompileErrorTypeExpected,
+                               L"Expected either one of float, int, string, bool, or a struct name."));
+        }
+
+        if (type_token.type == TokenId)
+        {
+            if (!_variables->TypeExists(type_token.text.c_str()))
+                throw CompileError(type_token, CompileErrorTypeNotFound, L"Type not found.");
+
+            if (type_token.text == struct_id)
+                throw CompileError(type_token, CompileErrorNestStruct, L"Nested struct definition not allowed.");
+
+        }
+        statement.Next();
+        auto& member_token = statement.GetCurrentToken();
+
+        if (struct_variables.PropertyExists(member_token.text.c_str()))
+            throw CompileError(type_token, CompileErrorMemeberExists, L"Duplicated struct member ids.");
+
+
+        auto prototype = _variables->GetType(type_token.text.c_str());
+        if (prototype == nullptr)
+            throw CompileError(type_token, CompileErrorTypeNotFound, L"Type not found.");
+
+        auto member = dynamic_cast<IProperty*>(prototype->Clone());
+        assert(member != nullptr);
+        member->SetName(member_token.text.c_str());
+        struct_variables.AddProperty(member);
+
+        statement.Next();
+        statement.AssertToken(TokenSemiColon, true);
+
+    } while (!statement.IsNextTokenOfType(TokenRightBrace));
+
+    statement.AssertToken(TokenRightBrace);
+    statement.AssertToken(TokenSemiColon);
+
+    return true;
 }
 

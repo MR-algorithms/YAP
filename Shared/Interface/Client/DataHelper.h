@@ -35,7 +35,7 @@ namespace Yap
 		size_t GetDataSize() const;
 		unsigned int GetBlockSize(DimensionType type) const;
 
-		unsigned int GetSlice();
+		unsigned int GetSliceCount();
 		unsigned int GetCoilCount();
 		unsigned int GetDim4();
 		IData * GetData();

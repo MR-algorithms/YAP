@@ -2,6 +2,7 @@
 #include "..\interfaces.h"
 #include "..\smartptr.h"
 #include <string>
+#include <map>
 
 namespace Yap {
 
@@ -28,6 +29,9 @@ namespace Yap {
 		~VariableManager();
 
 		bool AddProperty(PropertyType type, const wchar_t * name, const wchar_t * description);
+        bool AddProperty(const wchar_t * type, const wchar_t * name, const wchar_t * description);
+        bool AddProperty(IProperty* property);
+
 		IPropertyContainer * GetProperties();
 		const IPropertyContainer * GetProperties() const;
 
@@ -40,13 +44,19 @@ namespace Yap {
 		void SetString(const wchar_t * name, const wchar_t * value);
 		const wchar_t * GetString(const wchar_t * name);
 
-        bool Load(const wchar_t * path);
-		void Reset();
+        static std::shared_ptr<VariableManager> Load(const wchar_t * path);
 
+		void Reset();
+        bool TypeExists(const wchar_t * type_id) const;
+        bool PropertyExists(const wchar_t * property_id) const;
+        IProperty * GetType(const wchar_t * type_id) const;
+        bool AddType(const wchar_t * type_id, IProperty *type);
 	protected:
-		IProperty * GetProperty(const wchar_t * name, PropertyType expected_type);
+        bool InitTypes();
+        IProperty * GetProperty(const wchar_t * name, PropertyType expected_type);
 		SmartPtr<IPropertyContainer> _properties;
-        bool ProcessLine(std::wstring& line);
+
+        std::map<std::wstring, std::shared_ptr<IProperty>> _types;
 	};
 
 }
