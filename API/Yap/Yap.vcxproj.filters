@@ -36,6 +36,9 @@
     <ClCompile Include="VdfParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ScanFileParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ModuleManager.h">
@@ -57,6 +60,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VdfParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScanFileParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

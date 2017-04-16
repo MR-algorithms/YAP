@@ -26,8 +26,6 @@ namespace Yap
         std::shared_ptr<VariableManager> Compile(const wchar_t * text);
 
 	protected:
-		bool Preprocess();
-
         std::shared_ptr<VariableManager> DoCompile(std::wistream& input);
 		bool Process();
 		bool ProcessSimpleDeclaration(Statement& statement);
