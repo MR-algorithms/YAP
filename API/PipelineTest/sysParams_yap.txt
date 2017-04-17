@@ -56,82 +56,37 @@ string ConsoleVersion;
 string DllVersion;
 string Serial;
 
-// GradMatrix Rotation;
+struct GradMatrix
+{
+    float GSliceX;
+    float GSliceY;
+    float GSliceZ;
+    float GPhaseX;
+    float GPhaseY;
+    float GPhaseZ;
+    float GReadX;
+    float GReadY;
+    float GReadZ;
+};
+GradMatrix Rotation;
+array<GradMatrix> GradMatrixList;
 
-// struct GradMatrix
-// {
-//     float GSliceX;
-//     float GSliceY;
-//     float GSliceZ;
-//     float GPhaseX;
-//     float GPhaseY;
-//     float GPhaseZ;
-//     float GReadX;
-//     float GReadY;
-//     float GReadZ;
-// };
-// GradMatrix gradient;
-
-//float gradient.GSliceX;
-//float gradient.GSliceY;
-//float gradient.GSliceZ;
-//float gradient.GPhaseX;
-//float gradient.GPhaseY;
-//float gradient.GPhaseZ;
-//float gradient.GReadX;
-//float gradient.GReadY;
-//float gradient.GReadZ;
-
-// struct Preemphasis
-// {
-//     float A1;
-//     float K1;
-//     float A2;
-//     float K2;
-//     float A3;
-//     float K3;
-//     float A4;
-//     float K4;
-//     float A5;
-//     float K5;
-// };
-//
-// Preemphasis Gx;
-// Preemphasis Gy;
-// Preemphasis Gz;
-
-//float Gx.A1;
-//float Gx.K1;
-//float Gx.A2;
-//float Gx.K2;
-//float Gx.A3;
-//float Gx.K3;
-//float Gx.A4;
-//float Gx.K4;
-//float Gx.A5;
-//float Gx.K5;
-//
-//float Gy.A1;
-//float Gy.K1;
-//float Gy.A2;
-//float Gy.K2;
-//float Gy.A3;
-//float Gy.K3;
-//float Gy.A4;
-//float Gy.K4;
-//float Gy.A5;
-//float Gy.K5;
-//
-//float Gz.A1;
-//float Gz.K1;
-//float Gz.A2;
-//float Gz.K2;
-//float Gz.A3;
-//float Gz.K3;
-//float Gz.A4;
-//float Gz.K4;
-//float Gz.A5;
-//float Gz.K5;
+struct Preemphasis
+{
+    float A1;
+    float K1;
+    float A2;
+    float K2;
+    float A3;
+    float K3;
+    float A4;
+    float K4;
+    float A5;
+    float K5;
+};
+Preemphasis Gx;
+Preemphasis Gy;
+Preemphasis Gz;
 
 array<float> VDL#<0, 15>;
 array<float> RFAL#<0, 15>;	//RFAL0 ~ RFAL15

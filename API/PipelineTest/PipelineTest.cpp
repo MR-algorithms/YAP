@@ -65,7 +65,7 @@ void ConstructorTest()
 int main()
 {
 	time_t start = clock();
-	YapDebugger debugger;
+//	YapDebugger debugger;
 //	debugger.DebugPlugin(L"BasicRecon.dll");
 //	debugger.DebugPlugin(L"GrappaRecon.dll");
 //	debugger.DebugPlugin(L"CompressedSensing.dll");
@@ -73,12 +73,12 @@ int main()
 
 //	 ConstructorTest();
 
-	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"niumag_recon_yap.pipeline");
-	if (pipeline)
-	{
-		pipeline->Input(L"Input", nullptr);
-	}
+// 	PipelineCompiler compiler;
+// 	auto pipeline = compiler.CompileFile(L"niumag_recon_yap.pipeline");
+// 	if (pipeline)
+// 	{
+// 		pipeline->Input(L"Input", nullptr);
+// 	}
 
 	VdfParser parser;
 	auto variable_manager = parser.CompileFile(L"sysParams_yap.txt");

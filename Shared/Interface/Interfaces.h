@@ -153,6 +153,7 @@ namespace Yap
 		PropertyIntArray,
 		PropertyFloatArray,
 		PropertyStringArray,
+		PropertyStructArray,
 	};
 
 	template<typename T> struct property_type_id
