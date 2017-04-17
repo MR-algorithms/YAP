@@ -11,7 +11,6 @@
 
 using namespace Yap;
 using namespace std;
-using namespace _details;
 
 VdfParser::VdfParser() :
 	_preprocessor{make_shared<Preprocessor>(PreprocessVariableDefinition)},
@@ -245,7 +244,7 @@ bool VdfParser::ProcessStructDeclaration(Statement& statement)
 	statement.Next();
     statement.AssertToken(TokenSemiColon);
 
-	_variables->AddType(struct_id.c_str(), new PropertyImpl(PropertyStruct, struct_id.c_str(), nullptr));
+    _variables->AddType(struct_id.c_str(), struct_variables.GetProperties());
 
     return true;
 }
