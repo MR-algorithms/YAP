@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Yap::_details::Port" Collapsed="true">
+    <Position X="3.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAMgAAAAAAAAAAAAAQBAAAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>ProcessorImpl.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Yap::_details::ValueImpl&lt;VALUE_TYPE&gt;" Collapsed="true">
+    <Position X="1" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAABABAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>VariableManager.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Yap::_details::StringValueImpl" Collapsed="true">
+    <Position X="1" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAABABAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>VariableManager.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Yap::_details::ArrayValueImpl&lt;VALUE_TYPE&gt;" Collapsed="true">
+    <Position X="3" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAACAAAAYAAAAAAAAAAAAAAAAAAAQAAA=</HashCode>
+      <FileName>VariableManager.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Yap::_details::ArrayValueImpl&lt;bool&gt;" Collapsed="true">
+    <Position X="3" Y="4.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAACAAAAYAAAAAAAAAAAAAAAAAAAQAAA=</HashCode>
+      <FileName>VariableManager.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Yap::_details::ArrayValueImpl&lt;IProperty*&gt;" Collapsed="true">
+    <Position X="3" Y="5.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAABAAAAACAAAAYAAAAAAAAAAAAAAAAAAAQAAA=</HashCode>
+      <FileName>VariableManager.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Yap::_details::PropertyImpl" Collapsed="true">
+    <Position X="1.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIgAAAAAAAAQEIAACAAAAAAAAACMgAAAAQAAABAA=</HashCode>
+      <FileName>VariableManager.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Yap::CompositeProcessor" Collapsed="true">
+    <Position X="8.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAIAAAAAAAAAAAAQAAEEhAIAACAAAAAQAAAgBA=</HashCode>
+      <FileName>CompositeProcessor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Yap::Pipeline" Collapsed="true">
+    <Position X="10.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQACAAAAAACAAAAAAAAAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CompositeProcessor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Yap::ContainerImpl&lt;TYPE&gt;" Collapsed="true">
+    <Position X="2.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAACAABAAAAAAAAAAAAAAAAAEIAAAAAAAAAAAAABI=</HashCode>
+      <FileName>ContainerImpl.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Yap::Dimensions" Collapsed="true">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAEAAFAAAhAIAAAAAAAAAAAEAAEAAAAA=</HashCode>
+      <FileName>DataObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Yap::DataObject&lt;T&gt;" Collapsed="true">
+    <Position X="6.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAQAgAAFBAAAAAAQAAAAAAQAAEBAAAAAAAAABAAAIA=</HashCode>
+      <FileName>DataObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Yap::VariableManager" Collapsed="true">
+    <Position X="10.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EACAiAgABCgAFgQIAEAABAEAAACAAEkIAAAAAACAAAA=</HashCode>
+      <FileName>VariableManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Yap::ProcessorImpl" Collapsed="true">
+    <Position X="7" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAABCgAAACIREAGYBAIAQAAEFhAAAAAAAAAiQAAAgEA=</HashCode>
+      <FileName>ProcessorImpl.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Yap::SharedObjectImpl" Collapsed="true">
+    <Position X="4.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAACQAAAAAAAAAAAAAAAAAAAABIAAAA=</HashCode>
+      <FileName>SharedObjectImpl.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Yap::Anchor" Collapsed="true">
+    <Position X="10.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAEAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+      <FileName>ProcessorImpl.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Yap::PropertyException" Collapsed="true">
+    <Position X="10.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAAAAAAAAAAAAAAAABAAAAAAABAAAAAAA=</HashCode>
+      <FileName>VariableManager.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Typedef Name="Yap::_details::PortContainer" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProcessorImpl.cpp</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="Yap::IntData" Collapsed="true">
+    <Position X="8.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataObject.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="Yap::DoubleData" Collapsed="true">
+    <Position X="8.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataObject.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="Yap::FloatData" Collapsed="true">
+    <Position X="8.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataObject.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="Yap::CharData" Collapsed="true">
+    <Position X="8.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataObject.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="Yap::ComplexDoubleData" Collapsed="true">
+    <Position X="8.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataObject.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="Yap::ComplexFloatData" Collapsed="true">
+    <Position X="8.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataObject.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="Yap::UnsignedShortData" Collapsed="true">
+    <Position X="8.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataObject.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Font Name="Microsoft YaHei UI" Size="9" />
+</ClassDiagram>
