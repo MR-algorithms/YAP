@@ -134,42 +134,42 @@
     </TypeIdentifier>
   </Typedef>
   <Typedef Name="Yap::DoubleData" Collapsed="true">
-    <Position X="8.25" Y="5.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>DataObject.h</FileName>
-    </TypeIdentifier>
-  </Typedef>
-  <Typedef Name="Yap::FloatData" Collapsed="true">
     <Position X="8.25" Y="4.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DataObject.h</FileName>
     </TypeIdentifier>
   </Typedef>
-  <Typedef Name="Yap::CharData" Collapsed="true">
-    <Position X="8.25" Y="6" Width="1.5" />
+  <Typedef Name="Yap::FloatData" Collapsed="true">
+    <Position X="8.25" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DataObject.h</FileName>
     </TypeIdentifier>
   </Typedef>
-  <Typedef Name="Yap::ComplexDoubleData" Collapsed="true">
+  <Typedef Name="Yap::CharData" Collapsed="true">
     <Position X="8.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DataObject.h</FileName>
     </TypeIdentifier>
   </Typedef>
+  <Typedef Name="Yap::ComplexDoubleData" Collapsed="true">
+    <Position X="8.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataObject.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
   <Typedef Name="Yap::ComplexFloatData" Collapsed="true">
-    <Position X="8.25" Y="2.25" Width="1.5" />
+    <Position X="8.25" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DataObject.h</FileName>
     </TypeIdentifier>
   </Typedef>
   <Typedef Name="Yap::UnsignedShortData" Collapsed="true">
-    <Position X="8.25" Y="3.75" Width="1.5" />
+    <Position X="8.25" Y="2.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DataObject.h</FileName>

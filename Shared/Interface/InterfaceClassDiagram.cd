@@ -1,98 +1,98 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Yap::SmartPtr&lt;TYPE&gt;" Collapsed="true">
-    <Position X="12" Y="0.5" Width="1.5" />
+    <Position X="0.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAEAAAAAAAEAAAAQgAAACAAAAAEAAAgAAAAAAA=</HashCode>
       <FileName>smartptr.h</FileName>
     </TypeIdentifier>
   </Class>
   <Struct Name="Yap::data_type_id&lt;T&gt;" Collapsed="true">
-    <Position X="11.75" Y="4.25" Width="1.5" />
+    <Position X="11.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::data_type_id&lt;double&gt;" Collapsed="true">
-    <Position X="11.75" Y="6.25" Width="1.5" />
+    <Position X="11.5" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::data_type_id&lt;char&gt;" Collapsed="true">
-    <Position X="18.75" Y="5.25" Width="1.5" />
+    <Position X="18.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::data_type_id&lt;unsigned char&gt;" Collapsed="true">
-    <Position X="17" Y="5.25" Width="1.5" />
+    <Position X="16.75" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::data_type_id&lt;short&gt;" Collapsed="true">
-    <Position X="15.25" Y="5.25" Width="1.5" />
+    <Position X="15" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::data_type_id&lt;unsigned short&gt;" Collapsed="true">
-    <Position X="13.5" Y="6.25" Width="1.5" />
+    <Position X="13.25" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::data_type_id&lt;float&gt;" Collapsed="true">
-    <Position X="11.75" Y="5.25" Width="1.5" />
+    <Position X="11.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::data_type_id&lt;unsigned int&gt;" Collapsed="true">
-    <Position X="18.75" Y="4.25" Width="1.5" />
+    <Position X="18.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::data_type_id&lt;int&gt;" Collapsed="true">
-    <Position X="17" Y="4.25" Width="1.5" />
+    <Position X="16.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::data_type_id&lt;std::complex&lt;float&gt;&gt;" Collapsed="true">
-    <Position X="15.25" Y="4.25" Width="1.5" />
+    <Position X="15" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::data_type_id&lt;std::complex&lt;double&gt;&gt;" Collapsed="true">
-    <Position X="13.5" Y="5.25" Width="1.5" />
+    <Position X="13.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::data_type_id&lt;bool&gt;" Collapsed="true">
-    <Position X="13.5" Y="4.25" Width="1.5" />
+    <Position X="13.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::Dimension" Collapsed="true">
-    <Position X="12" Y="2.75" Width="1.5" />
+    <Position X="0.5" Y="7.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>gAAAAAAAAAAAAAAAAEAAAAAAAAABQAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
@@ -106,7 +106,7 @@
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::IGeometry" Collapsed="true">
-    <Position X="12" Y="2" Width="1.5" />
+    <Position X="0.5" Y="6.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AEAIAAAAIAAAAABAAAgAAIYAYRAEAAAAAgQAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
@@ -127,7 +127,7 @@
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::IIterator&lt;ELEMENT_TYPE&gt;" Collapsed="true">
-    <Position X="14" Y="0.5" Width="1.5" />
+    <Position X="2.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAQAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
@@ -135,13 +135,6 @@
   </Struct>
   <Struct Name="Yap::IContainer&lt;ELEMENT_TYPE&gt;" Collapsed="true">
     <Position X="2.5" Y="1.75" Width="1.5" />
-    <NestedTypes>
-      <Typedef Name="Yap::IContainer&lt;ELEMENT_TYPE&gt;::iterator" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Interfaces.h</NewMemberFileName>
-        </TypeIdentifier>
-      </Typedef>
-    </NestedTypes>
     <TypeIdentifier>
       <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAI=</HashCode>
       <FileName>Interfaces.h</FileName>
@@ -155,37 +148,37 @@
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::property_type_id&lt;T&gt;" Collapsed="true">
-    <Position X="11.75" Y="7.25" Width="1.5" />
+    <Position X="11.5" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::property_type_id&lt;bool&gt;" Collapsed="true">
-    <Position X="13.5" Y="7.25" Width="1.5" />
+    <Position X="13.25" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::property_type_id&lt;int&gt;" Collapsed="true">
-    <Position X="15.25" Y="7.25" Width="1.5" />
+    <Position X="15" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::property_type_id&lt;double&gt;" Collapsed="true">
-    <Position X="17" Y="7.25" Width="1.5" />
+    <Position X="16.75" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::property_type_id&lt;std::wstring&gt;" Collapsed="true">
-    <Position X="18.75" Y="7.25" Width="1.5" />
+    <Position X="18.5" Y="3.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Struct>
@@ -225,7 +218,7 @@
     </TypeIdentifier>
   </Struct>
   <Struct Name="Yap::IDynamicObject" Collapsed="true">
-    <Position X="12" Y="1.25" Width="1.5" />
+    <Position X="0.5" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>smartptr.h</FileName>
@@ -239,7 +232,7 @@
     </TypeIdentifier>
   </Struct>
   <Typedef Name="Yap::IProcessorIter" Collapsed="true">
-    <Position X="15.75" Y="0.5" Width="1.5" />
+    <Position X="4.25" Y="5.25" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
@@ -253,21 +246,21 @@
     </TypeIdentifier>
   </Typedef>
   <Typedef Name="Yap::IPropertyIter" Collapsed="true">
-    <Position X="15.75" Y="2" Width="1.5" />
+    <Position X="4.25" Y="6.75" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Typedef>
   <Typedef Name="Yap::IDoubleValue" Collapsed="true">
-    <Position X="4" Y="3.75" Width="1.5" />
+    <Position X="5.75" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Typedef>
   <Typedef Name="Yap::IIntValue" Collapsed="true">
-    <Position X="5.75" Y="3.75" Width="1.5" />
+    <Position X="4" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
@@ -295,7 +288,7 @@
     </TypeIdentifier>
   </Typedef>
   <Typedef Name="Yap::IPortIter" Collapsed="true">
-    <Position X="15.75" Y="1.25" Width="1.5" />
+    <Position X="4.25" Y="6" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
@@ -309,14 +302,14 @@
     </TypeIdentifier>
   </Typedef>
   <Enum Name="Yap::DimensionType" Collapsed="true">
-    <Position X="18.25" Y="0.5" Width="1.5" />
+    <Position X="8.25" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAFABAAAAICAQAAFAAIAKAAAAAAAgAQAAgAAAIAAA=</HashCode>
       <FileName>Interfaces.h</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="Yap::PropertyType" Collapsed="true">
-    <Position X="18.25" Y="1.25" Width="1.5" />
+    <Position X="8.25" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAABAAAAAAQAAAAAAABAoCAAAAAAAgABAgAgAA=</HashCode>
       <FileName>Interfaces.h</FileName>
