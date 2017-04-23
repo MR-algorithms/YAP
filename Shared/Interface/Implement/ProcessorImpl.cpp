@@ -46,8 +46,6 @@ namespace _details
 		unsigned int _dimension_count;
 		int _data_type;
 	};
-
-	typedef ContainerImpl<IPort> PortContainer;
 };	// namespace Yap::details
 
 	using namespace _details;

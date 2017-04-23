@@ -139,8 +139,8 @@ namespace Yap
 	};
 
 	struct IProcessor;
-
-	typedef IIterator<IProcessor> IProcessorIter;
+	typedef IContainer<IProcessor> IProcessorContainer;
+	typedef IProcessorContainer::iterator IProcessorIter;
 
 	enum PropertyType
 	{
@@ -209,8 +209,6 @@ namespace Yap
 		virtual void SetSize(size_t size) = 0;
 		virtual VALUE_TYPE * Elements() = 0;
 	};
-
-	typedef IPropertyContainer IStructValue;
 
 	struct IPort : public ISharedObject
 	{

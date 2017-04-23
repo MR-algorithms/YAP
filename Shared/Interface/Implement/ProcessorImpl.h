@@ -9,7 +9,6 @@
 #include <memory>
 #include "Utilities/macros.h"
 #include "interface/Implement/DataObject.h"
-#include "Interface/Implement/SharedObjectImpl.h"
 #include "Interface/Implement/ContainerImpl.h"
 #include "variableManager.h"
 
