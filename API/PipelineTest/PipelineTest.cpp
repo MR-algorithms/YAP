@@ -62,26 +62,41 @@ void ConstructorTest()
 	}
 }
 
+void PluginDebugTest()
+{
+	YapDebugger debugger;
+	debugger.DebugPlugin(L"BasicRecon.dll");
+	debugger.DebugPlugin(L"GrappaRecon.dll");
+	debugger.DebugPlugin(L"CompressedSensing.dll");
+	debugger.DebugPlugin(L"BasicRecon_GPU.dll");
+}
+
+void PipelineTest()
+{
+	PipelineCompiler compiler;
+	auto pipeline = compiler.CompileFile(L"niumag_recon_yap.pipeline");
+	if (pipeline)
+	{
+		pipeline->Input(L"Input", nullptr);
+	}
+}
+
+bool VdfParserTest()
+{
+	VdfParser parser;
+	auto variable_manager = parser.CompileFile(L"sysParams_yap.txt");
+
+	return variable_manager.get() != nullptr;
+}
+
 int main()
 {
 	time_t start = clock();
-//	YapDebugger debugger;
-//	debugger.DebugPlugin(L"BasicRecon.dll");
-//	debugger.DebugPlugin(L"GrappaRecon.dll");
-//	debugger.DebugPlugin(L"CompressedSensing.dll");
-//	debugger.DebugPlugin(L"BasicRecon_GPU.dll");
 
 //	 ConstructorTest();
+//  PipelineTest();
 
-// 	PipelineCompiler compiler;
-// 	auto pipeline = compiler.CompileFile(L"niumag_recon_yap.pipeline");
-// 	if (pipeline)
-// 	{
-// 		pipeline->Input(L"Input", nullptr);
-// 	}
-
-	VdfParser parser;
-	auto variable_manager = parser.CompileFile(L"sysParams_yap.txt");
+	VdfParserTest();
 
 	time_t end = clock();
 	printf("the running time is : %f\n", float(end - start) / CLOCKS_PER_SEC);

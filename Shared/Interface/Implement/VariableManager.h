@@ -56,6 +56,7 @@ namespace Yap {
     protected:
         bool InitTypes();
         IProperty * GetProperty(const wchar_t * name, PropertyType expected_type);
+		IProperty * GetProperty(IPropertyContainer * properties, const wchar_t * name, PropertyType type);
         SmartPtr<IPropertyContainer> _properties;
 
         std::map<std::wstring, SmartPtr<IProperty>> _types;

@@ -89,6 +89,8 @@ bool VdfParser::Process()
         case TokenKeywordInt:
         case TokenKeywordFloat:
         case TokenKeywordString:
+			ProcessSimpleDeclaration(statement);
+			break;
         case TokenId:
             ProcessSimpleDeclaration(statement);
             break;

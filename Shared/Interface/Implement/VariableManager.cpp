@@ -450,18 +450,42 @@ const IPropertyContainer* VariableManager::GetProperties() const
 	return _properties.get();
 }
 
+IProperty * VariableManager::GetProperty(IPropertyContainer * properties,
+	const wchar_t * name,
+	PropertyType type)
+{
+	assert(properties != nullptr);
+	assert(name != nullptr);
+
+	wstring property_id{ name };
+	auto dot_pos = property_id.find_first_of(L'.');
+	if (dot_pos != wstring::npos)
+	{
+		auto struct_property = properties->Find(property_id.substr(0, dot_pos).c_str());
+		if (struct_property == nullptr)
+			throw PropertyException(name, PropertyException::PropertyNotFound);
+		assert(struct_property->GetType() != PropertyStruct);
+		auto sub_properties = reinterpret_cast<IPropertyContainer*>(struct_property->ValueInterface());
+
+		return GetProperty(sub_properties, property_id.substr(dot_pos + 1).c_str(), type);
+	}
+	else
+	{
+		auto property = _properties->Find(name);
+		if (property == nullptr)
+			throw PropertyException(name, PropertyException::PropertyNotFound);
+
+		if (property->GetType() != type)
+			throw PropertyException(name, PropertyException::TypeNotMatch);
+
+		return property;
+	}
+}
+
 IProperty * VariableManager::GetProperty(const wchar_t * name, PropertyType expected_type)
 {
 	assert(name != nullptr && name[0] != 0);
-
-	auto property = _properties->Find(name);
-	if (property == nullptr)
-		throw PropertyException(name, PropertyException::PropertyNotFound);
-
-	if (property->GetType() != expected_type)
-		throw PropertyException(name, PropertyException::TypeNotMatch);
-
-	return property;
+	return GetProperty(_properties.get(), name, expected_type);
 }
 
 void VariableManager::SetInt(const wchar_t * name, int value)
