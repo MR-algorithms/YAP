@@ -1,7 +1,7 @@
 #include "VariableManager.h"
 #include "../Interfaces.h"
 #include "ContainerImpl.h"
-#include "VdfParser.h"
+#include "../API/Yap/VdfParser.h"
 
 #include <fstream>
 #include <string>
@@ -12,220 +12,353 @@ using namespace std;
 
 namespace Yap
 {
-	namespace _details
-	{
-		template <typename VALUE_TYPE>
-		class ValueImpl : public IValue<VALUE_TYPE>
-		{
-		public:
-			explicit ValueImpl(VALUE_TYPE value) : _value{ value } {}
-			ValueImpl(const ValueImpl& rhs) : _value{ rhs.value } {}
-			ValueImpl(const IValue<VALUE_TYPE>& rhs) : _value{ rhs.Get() } {}
+namespace _details
+{
+    template <typename VALUE_TYPE>
+    class ValueImpl : public IValue<VALUE_TYPE>
+    {
+    public:
+        explicit ValueImpl(VALUE_TYPE value) : _value{ value } {}
+        ValueImpl(const ValueImpl& rhs) : _value{ rhs.value } {}
+        ValueImpl(const IValue<VALUE_TYPE>& rhs) : _value{ rhs.Get() } {}
 
-			virtual VALUE_TYPE Get() const {
-				return _value;
-			}
+        virtual VALUE_TYPE Get() const {
+            return _value;
+        }
 
-			virtual void Set(const VALUE_TYPE value) {
-				_value = value;
-			}
-		private:
-			VALUE_TYPE _value;
-		};
+        virtual void Set(const VALUE_TYPE value) {
+            _value = value;
+        }
+    private:
+        VALUE_TYPE _value;
+    };
 
-		class StringValueImpl : public IStringValue
-		{
-		public:
-			StringValueImpl(const wchar_t * value) : _value{ value } {}
-			StringValueImpl(const StringValueImpl& rhs) : _value{ rhs._value } {}
-			StringValueImpl(const IStringValue& rhs) : _value{ rhs.Get() } {}
+    class StringValueImpl : public IStringValue
+    {
+    public:
+        StringValueImpl(const wchar_t * value) : _value{ value } {}
+        StringValueImpl(const StringValueImpl& rhs) : _value{ rhs._value } {}
+        StringValueImpl(const IStringValue& rhs) : _value{ rhs.Get() } {}
 
-			virtual const wchar_t * Get() const override {
-				return _value.c_str();
-			}
+        virtual const wchar_t * Get() const override {
+            return _value.c_str();
+        }
 
-			virtual void Set(const wchar_t * value) override {
-				_value = value;
-			}
-		private:
-			std::wstring _value;
-		};
+        virtual void Set(const wchar_t * value) override {
+            _value = value;
+        }
+    private:
+        std::wstring _value;
+    };
 
-		template <typename VALUE_TYPE>
-		class ArrayValueImpl : public IArrayValue<VALUE_TYPE>
-		{
-		public:
-			ArrayValueImpl() {}
-
-			ArrayValueImpl(size_t size)
-			{
-				_elements.resize(size);
-			}
-
-			virtual size_t GetSize() const override
-			{
-				return _elements.size();
-			}
-
-			virtual void SetSize(size_t size) override
-			{
-				_elements.resize(size);
-			}
-
-			virtual VALUE_TYPE * Elements() override
-			{
-				return _elements.data();
-			}
-		private:
-			vector<VALUE_TYPE> _elements;
-		};
-
-		template<>
-		class ArrayValueImpl<bool> : public IArrayValue<bool>
-		{
-		public:
-			ArrayValueImpl()
-			{}
-
-			ArrayValueImpl(size_t size)
-			{
-				_elements.resize(size);
-			}
-
-			virtual size_t GetSize() const override
-			{
-				return _elements.size();
-			}
-
-			virtual void SetSize(size_t size) override
-			{
-				_elements.resize(size);
-			}
-
-			virtual bool * Elements() override
-			{
-				return reinterpret_cast<bool*>(_elements.data());
-			}
-
-		private:
-			vector<unsigned char> _elements;
-		};
-
-
-		class PropertyImpl :
-			public IProperty
-		{
-			IMPLEMENT_SHARED(PropertyImpl)
-
-		public:
-			PropertyImpl(PropertyType type,
-				const wchar_t * name,
-				const wchar_t * description) :
-				_type(type),
-				_name(name),
-				_description(description != nullptr ? description : L"")
-			{
-				switch (type)
-				{
-				case PropertyBool:
-					_value_interface = new ValueImpl<bool>(false);
-					break;
-				case PropertyInt:
-					_value_interface = new ValueImpl<int>(0);
-					break;
-				case PropertyFloat:
-					_value_interface = new ValueImpl<double>(0.0);
-					break;
-				case PropertyString:
-					_value_interface = new StringValueImpl(L"");
-					break;
-				case PropertyBoolArray:
-					_value_interface = new ArrayValueImpl<bool>();
-					break;
-				case PropertyIntArray:
-					_value_interface = new ArrayValueImpl<int>();
-					break;
-				case PropertyFloatArray:
-					_value_interface = new ArrayValueImpl<double>();
-					break;
-				case PropertyStringArray:
-					_value_interface = new ArrayValueImpl<wstring>();
-					break;
-                case PropertyStruct:
-                    _value_interface = nullptr;
-				default:
-					throw PropertyException(name, PropertyException::InvalidType);
-				}
-			}
-
-			PropertyImpl(const IProperty& rhs) :
-				_type{ rhs.GetType() },
-				_name{ rhs.GetName() },
-				_description{ rhs.GetDescription() }
-			{
-				switch (rhs.GetType())
-				{
-				case PropertyBool:
-					_value_interface = new ValueImpl<bool>(
-						*reinterpret_cast<IBoolValue*>(const_cast<IProperty&>(rhs).ValueInterface()));
-					break;
-				case PropertyInt:
-					_value_interface = new ValueImpl<int>(
-						*reinterpret_cast<IIntValue*>(const_cast<IProperty&>(rhs).ValueInterface()));
-					break;
-				case PropertyFloat:
-					_value_interface = new ValueImpl<double>(
-						*reinterpret_cast<IDoubleValue*>(const_cast<IProperty&>(rhs).ValueInterface()));
-					break;
-				case PropertyString:
-					_value_interface = new StringValueImpl(
-						*reinterpret_cast<IStringValue*>(const_cast<IProperty&>(rhs).ValueInterface()));
-					break;
-				default:
-					throw PropertyException(_name.c_str(), PropertyException::InvalidType);
-
-				}
-			}
-
-			virtual PropertyType GetType() const override
-			{
-				return _type;
-			}
-
-			virtual const wchar_t * GetName() const override
-			{
-				return _name.c_str();
-			}
-
-            virtual void SetName(const wchar_t * name) override
+    template <typename VALUE_TYPE>
+    class ArrayValueImpl : public IArrayValue<VALUE_TYPE>
+    {
+    public:
+        ArrayValueImpl() {}
+        ArrayValueImpl(const ArrayValueImpl& rhs) : _elements(rhs._elements){}
+        ArrayValueImpl(const IArrayValue& rhs) : _elements(rhs.GetSize())
+        {
+            for (size_t i = 0; i < _elements.size(); ++i)
             {
-                _name = name;
+                _elements[i] = const_cast<IArrayValue&>(rhs).Elements()[i];
             }
+        }
 
-			virtual const wchar_t * GetDescription() const override
-			{
-				return _description.c_str();
-			}
+        ArrayValueImpl(size_t size)
+        {
+            _elements.resize(size);
+        }
 
-            virtual void SetDescription(const wchar_t * description) override
+        virtual size_t GetSize() const override
+        {
+            return _elements.size();
+        }
+
+        virtual void SetSize(size_t size) override
+        {
+            _elements.resize(size);
+        }
+
+        virtual VALUE_TYPE * Elements() override
+        {
+            return _elements.data();
+        }
+    private:
+        std::vector<VALUE_TYPE> _elements;
+    };
+
+    template<>
+    class ArrayValueImpl<bool> : public IArrayValue<bool>
+    {
+    public:
+        ArrayValueImpl()
+        {}
+
+        ArrayValueImpl(const ArrayValueImpl<bool>& rhs) : _elements(rhs.GetSize()){
+            for (size_t i = 0; i < _elements.size(); ++i)
             {
-                _description = description;
+                _elements[i] = const_cast<ArrayValueImpl<bool>&>(rhs).Elements()[i];
             }
+        }
 
-			virtual void * ValueInterface() override
-			{
-				return _value_interface;
-			}
+        ArrayValueImpl(const IArrayValue<bool>& rhs) : _elements(rhs.GetSize()){
+            for (size_t i = 0; i < _elements.size(); ++i)
+            {
+                _elements[i] = const_cast<IArrayValue<bool>&>(rhs).Elements()[i];
+            }
+        }
 
-		protected:
-			std::wstring _name;
-			std::wstring _description;
-			PropertyType _type;
-			
-			void * _value_interface;
-		};
+        ArrayValueImpl(size_t size)
+        {
+            _elements.resize(size);
+        }
 
-	}  // end Yap::_details
+        virtual size_t GetSize() const override
+        {
+            return _elements.size();
+        }
+
+        virtual void SetSize(size_t size) override
+        {
+            _elements.resize(size);
+        }
+
+        virtual bool * Elements() override
+        {
+            return reinterpret_cast<bool*>(_elements.data());
+        }
+
+    private:
+        std::vector<unsigned char> _elements;
+    };
+
+    template<>
+    class ArrayValueImpl<IProperty*> : public IArrayValue<IProperty*>
+    {
+    public:
+        ArrayValueImpl()
+        {}
+
+        ArrayValueImpl(const ArrayValueImpl<IProperty*>& rhs) : _elements(rhs.GetSize())
+        {
+            for (size_t i = 0; i < _elements.size(); ++i)
+            {
+                _elements[i] = dynamic_cast<IProperty*>(const_cast<ArrayValueImpl<IProperty*>&>(rhs).Elements()[i]->Clone());
+                _elements[i]->Lock();
+            }
+        }
+
+        ArrayValueImpl(const IArrayValue<IProperty*>& rhs) : _elements(rhs.GetSize())
+        {
+            for (size_t i = 0; i < _elements.size(); ++i)
+            {
+                _elements[i] = dynamic_cast<IProperty*>(const_cast<IArrayValue<IProperty*>&>(rhs).Elements()[i]->Clone());
+                _elements[i]->Lock();
+            }
+        }
+
+        ArrayValueImpl(size_t size)
+        {
+            _elements.resize(size);
+        }
+
+        ~ArrayValueImpl()
+        {
+            for (auto element : _elements)
+            {
+                element->Release();
+            }
+        }
+
+        virtual size_t GetSize() const override
+        {
+            return _elements.size();
+        }
+
+        virtual void SetSize(size_t size) override
+        {
+            _elements.resize(size);
+        }
+
+        virtual IProperty ** Elements() override
+        {
+            return reinterpret_cast<IProperty**>(_elements.data());
+        }
+
+    private:
+        std::vector<IProperty*> _elements;
+    };
+
+    class PropertyImpl :
+        public IProperty
+    {
+        IMPLEMENT_SHARED(PropertyImpl)
+
+    public:
+        PropertyImpl(PropertyType type,
+            const wchar_t * name,
+            const wchar_t * description) :
+            _type(type),
+            _name(name),
+            _description(description != nullptr ? description : L"")
+        {
+            switch (type)
+            {
+            case PropertyBool:
+                _value_interface = new ValueImpl<bool>(false);
+                break;
+            case PropertyInt:
+                _value_interface = new ValueImpl<int>(0);
+                break;
+            case PropertyFloat:
+                _value_interface = new ValueImpl<double>(0.0);
+                break;
+            case PropertyString:
+                _value_interface = new StringValueImpl(L"");
+                break;
+            case PropertyBoolArray:
+                _value_interface = new ArrayValueImpl<bool>();
+                break;
+            case PropertyIntArray:
+                _value_interface = new ArrayValueImpl<int>();
+                break;
+            case PropertyFloatArray:
+                _value_interface = new ArrayValueImpl<double>();
+                break;
+            case PropertyStringArray:
+                _value_interface = new ArrayValueImpl<std::wstring>();
+                break;
+            case PropertyStruct:
+                _value_interface = nullptr;
+                break;
+            case PropertyStructArray:
+                _value_interface = new ArrayValueImpl<IProperty*>();
+                break;
+            default:
+                throw PropertyException(name, PropertyException::InvalidType);
+            }
+        }
+
+        PropertyImpl(const IProperty& rhs) :
+            _type{ rhs.GetType() },
+            _name{ rhs.GetName() },
+            _description{ rhs.GetDescription() }
+        {
+            auto rhs_value_interface = const_cast<IProperty&>(rhs).ValueInterface();
+            switch (rhs.GetType())
+            {
+            case PropertyBool:
+                _value_interface = new ValueImpl<bool>(
+                    *reinterpret_cast<IBoolValue*>(rhs_value_interface));
+                break;
+            case PropertyInt:
+                _value_interface = new ValueImpl<int>(
+                    *reinterpret_cast<IIntValue*>(rhs_value_interface));
+                break;
+            case PropertyFloat:
+                _value_interface = new ValueImpl<double>(
+                    *reinterpret_cast<IDoubleValue*>(rhs_value_interface));
+                break;
+            case PropertyString:
+                _value_interface = new StringValueImpl(
+                    *reinterpret_cast<IStringValue*>(rhs_value_interface));
+                break;
+            case PropertyStruct:
+                _value_interface = reinterpret_cast<IStructValue*>(rhs_value_interface)->Clone();
+                break;
+            case PropertyBoolArray:
+                _value_interface = new ArrayValueImpl<bool>(
+                    *reinterpret_cast<IArrayValue<bool>*>(rhs_value_interface));
+                break;
+            case PropertyIntArray:
+                _value_interface = new ArrayValueImpl<int>(
+                    *reinterpret_cast<IArrayValue<int>*>(rhs_value_interface));
+                break;
+            case PropertyFloatArray:
+                _value_interface = new ArrayValueImpl<double>(
+                    *reinterpret_cast<IArrayValue<double>*>(rhs_value_interface));
+                break;
+            case PropertyStringArray:
+                _value_interface = new ArrayValueImpl<wstring>(
+                    *reinterpret_cast<IArrayValue<wstring>*>(rhs_value_interface));
+                break;
+            case PropertyStructArray:
+                _value_interface = new ArrayValueImpl<IProperty*>(
+                    *reinterpret_cast<IArrayValue<IProperty*>*>(rhs_value_interface));
+                break;
+            default:
+                throw PropertyException(_name.c_str(), PropertyException::InvalidType);
+
+            }
+        }
+
+        ~PropertyImpl()
+        {
+            switch (_type)
+            {
+            case PropertyBool:
+            case PropertyInt:
+            case PropertyFloat:
+            case PropertyString:
+            case PropertyBoolArray:
+            case PropertyIntArray:
+            case PropertyStringArray:
+            case PropertyFloatArray:
+                delete _value_interface;
+                break;
+            case PropertyStruct:
+                if (_value_interface != nullptr)
+                {
+                    reinterpret_cast<IStructValue*>(_value_interface)->Release();
+                }
+                break;
+            case PropertyStructArray:
+                BUG(Not implemented yet.);
+                break;
+            }
+        }
+
+        virtual PropertyType GetType() const override
+        {
+            return _type;
+        }
+
+        virtual const wchar_t * GetName() const override
+        {
+            return _name.c_str();
+        }
+
+        virtual void SetName(const wchar_t * name) override
+        {
+            _name = name;
+        }
+
+        virtual const wchar_t * GetDescription() const override
+        {
+            return _description.c_str();
+        }
+
+        virtual void SetDescription(const wchar_t * description) override
+        {
+            _description = description;
+        }
+
+        virtual void * ValueInterface() override
+        {
+            return _value_interface;
+        }
+
+    protected:
+        std::wstring _name;
+        std::wstring _description;
+        PropertyType _type;
+
+        void * _value_interface;
+        friend class VariableManager;
+    };
+
+}  // end Yap::_details
 
 using namespace _details;
 
@@ -253,10 +386,10 @@ VariableManager::~VariableManager()
 
 bool VariableManager::InitTypes()
 {
-    _types.insert(make_pair(L"int", new PropertyImpl(PropertyInt, nullptr, nullptr)));
-    _types.insert(make_pair(L"float", new PropertyImpl(PropertyFloat, nullptr, nullptr)));
-    _types.insert(make_pair(L"string", new PropertyImpl(PropertyString, nullptr, nullptr)));
-    _types.insert(make_pair(L"bool", new PropertyImpl(PropertyBool, nullptr, nullptr)));
+    _types.insert(make_pair(L"int", YapShared(new PropertyImpl(PropertyInt, L"int", nullptr))));
+    _types.insert(make_pair(L"float", YapShared(new PropertyImpl(PropertyFloat, L"float", nullptr))));
+    _types.insert(make_pair(L"string", YapShared(new PropertyImpl(PropertyString, L"string", nullptr))));
+    _types.insert(make_pair(L"bool", YapShared(new PropertyImpl(PropertyBool, L"bool", nullptr))));
 
     return true;
 }
@@ -317,18 +450,42 @@ const IPropertyContainer* VariableManager::GetProperties() const
 	return _properties.get();
 }
 
+IProperty * VariableManager::GetProperty(IPropertyContainer * properties,
+	const wchar_t * name,
+	PropertyType type)
+{
+	assert(properties != nullptr);
+	assert(name != nullptr);
+
+	wstring property_id{ name };
+	auto dot_pos = property_id.find_first_of(L'.');
+	if (dot_pos != wstring::npos)
+	{
+		auto struct_property = properties->Find(property_id.substr(0, dot_pos).c_str());
+		if (struct_property == nullptr)
+			throw PropertyException(name, PropertyException::PropertyNotFound);
+		assert(struct_property->GetType() != PropertyStruct);
+		auto sub_properties = reinterpret_cast<IPropertyContainer*>(struct_property->ValueInterface());
+
+		return GetProperty(sub_properties, property_id.substr(dot_pos + 1).c_str(), type);
+	}
+	else
+	{
+		auto property = _properties->Find(name);
+		if (property == nullptr)
+			throw PropertyException(name, PropertyException::PropertyNotFound);
+
+		if (property->GetType() != type)
+			throw PropertyException(name, PropertyException::TypeNotMatch);
+
+		return property;
+	}
+}
+
 IProperty * VariableManager::GetProperty(const wchar_t * name, PropertyType expected_type)
 {
 	assert(name != nullptr && name[0] != 0);
-
-	auto property = _properties->Find(name);
-	if (property == nullptr)
-		throw PropertyException(name, PropertyException::PropertyNotFound);
-
-	if (property->GetType() != expected_type)
-		throw PropertyException(name, PropertyException::TypeNotMatch);
-
-	return property;
+	return GetProperty(_properties.get(), name, expected_type);
 }
 
 void VariableManager::SetInt(const wchar_t * name, int value)
@@ -417,10 +574,25 @@ bool VariableManager::PropertyExists(const wchar_t *property_id) const
     return This->_properties->Find(property_id) != nullptr;
 }
 
-IProperty * VariableManager::GetType(const wchar_t * type) const
+const IProperty * VariableManager::GetType(const wchar_t * type) const
 {
     auto iter = _types.find(type);
     return (iter != _types.end()) ? iter->second.get() : nullptr;
+}
+
+bool VariableManager::AddType(const wchar_t * type_id, IContainer<IProperty> * properties)
+{
+    try
+    {
+        auto property = new PropertyImpl(PropertyStruct, type_id, nullptr);
+        properties->Lock();
+        property->_value_interface = properties;
+        return AddType(type_id, property);
+    }
+    catch(bad_alloc&)
+    {
+        return false;
+    }
 }
 
 bool VariableManager::AddType(const wchar_t * type_id, IProperty *type)
@@ -432,7 +604,7 @@ bool VariableManager::AddType(const wchar_t * type_id, IProperty *type)
     if (_types.find(type_id) != _types.end())
         return false;
 
-    _types.insert({type_id, shared_ptr<IProperty>(type)});
+    _types.insert({type_id, YapShared(type)});
 
     return true;
 }

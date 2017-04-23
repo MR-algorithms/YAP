@@ -3,7 +3,6 @@
 #include <complex>
 #include <vector>
 #include "Interface/Interfaces.h"
-#include "Interface/Implement/SharedObjectImpl.h"
 #include <assert.h>
 
 namespace Yap

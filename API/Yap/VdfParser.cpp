@@ -14,7 +14,7 @@ using namespace std;
 
 VdfParser::VdfParser() :
 	_preprocessor{make_shared<Preprocessor>(PreprocessVariableDefinition)},
-	_variables{make_shared<VariableManager>()}
+	_variables{shared_ptr<VariableManager>()}
 {}
 
 VdfParser::~VdfParser()
@@ -49,7 +49,7 @@ shared_ptr<VariableManager> VdfParser::DoCompile(std::wistream& input)
 
 	if (!_variables)
 	{
-		_variables = make_shared<VariableManager>();
+		_variables = shared_ptr<VariableManager>(new VariableManager());
 	}
 	_variables->Reset();
 
@@ -89,6 +89,8 @@ bool VdfParser::Process()
         case TokenKeywordInt:
         case TokenKeywordFloat:
         case TokenKeywordString:
+			ProcessSimpleDeclaration(statement);
+			break;
         case TokenId:
             ProcessSimpleDeclaration(statement);
             break;
@@ -153,6 +155,7 @@ bool VdfParser::ProcessArrayDeclaration(Statement& statement)
         {TokenKeywordInt, PropertyIntArray},
         {TokenKeywordString, PropertyStringArray},
         {TokenKeywordBool, PropertyBoolArray},
+		{TokenKeywordStruct, PropertyStructArray},
     };
 
     Statement::Guard guard(statement);
@@ -161,7 +164,8 @@ bool VdfParser::ProcessArrayDeclaration(Statement& statement)
 
 	auto type = statement.GetCurrentToken().type;
 	assert(type == TokenKeywordFloat || type == TokenKeywordInt ||
-		   type == TokenKeywordBool || type == TokenKeywordString);
+		   type == TokenKeywordBool || type == TokenKeywordString ||
+			type == TokenId);
 	statement.Next();
 	statement.AssertToken(TokenGreaterThen, true);
 
@@ -237,10 +241,12 @@ bool VdfParser::ProcessStructDeclaration(Statement& statement)
         statement.Next();
         statement.AssertToken(TokenSemiColon, true);
 
-    } while (!statement.IsNextTokenOfType(TokenRightBrace));
+    } while (!statement.IsTokenOfType(TokenRightBrace, false));
 
-    statement.AssertToken(TokenRightBrace);
+	statement.Next();
     statement.AssertToken(TokenSemiColon);
+
+    _variables->AddType(struct_id.c_str(), struct_variables.GetProperties());
 
     return true;
 }

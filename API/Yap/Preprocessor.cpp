@@ -19,9 +19,9 @@ map<TokenType, wstring> token_map = {
 	{TokenComma, L","},
 	{TokenSemiColon, L";"},
 	{TokenLeftBrace, L"{"},
-	{TokenRightParenthesis, L"}"},
+	{TokenRightBrace, L"}"},
 	{TokenLeftParenthesis, L"("},
-	{TokenRightParenthesis, L"}, "},
+	{TokenRightParenthesis, L"), "},
 	{TokenOperatorMinus, L"-"},
 	{TokenId, L"identifier"},
 	{TokenStringLiteral, L"string literal"},
@@ -255,7 +255,7 @@ std::wstring Yap::Statement::GetVariableId()
 	wstring variable_id;
 	bool id_expected = true;
 	while (_iter != _tokens.end() && _iter->type != TokenComma && _iter->type != TokenRightParenthesis
-			&& _iter->type != TokenSemiColon && _iter->type != TokenSharp)
+			&& _iter->type != TokenSemiColon && _iter->type != TokenSharp && _iter->type != TokenLeftBrace)
 	{
 		if ((!id_expected && _iter->type != TokenOperatorDot) || (id_expected && _iter->type != TokenId))
 		{
@@ -264,6 +264,7 @@ std::wstring Yap::Statement::GetVariableId()
 		variable_id += (_iter++)->text;
 		id_expected = !id_expected;
 	}
+
 	if (id_expected)
 	{
 		throw CompileError(*(_iter - 1), CompileErrorParamIdInvalid, L"Invalid format for system variable id.");
