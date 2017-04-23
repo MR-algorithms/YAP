@@ -164,6 +164,7 @@
     <ClInclude Include="YapImplement.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ImplememtClassDiagram.cd" />
     <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

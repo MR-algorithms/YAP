@@ -50,5 +50,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+    <None Include="ImplememtClassDiagram.cd" />
   </ItemGroup>
 </Project>

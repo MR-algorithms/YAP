@@ -386,10 +386,10 @@ VariableManager::~VariableManager()
 
 bool VariableManager::InitTypes()
 {
-    _types.insert(make_pair(L"int", new PropertyImpl(PropertyInt, L"int", nullptr)));
-    _types.insert(make_pair(L"float", new PropertyImpl(PropertyFloat, L"float", nullptr)));
-    _types.insert(make_pair(L"string", new PropertyImpl(PropertyString, L"string", nullptr)));
-    _types.insert(make_pair(L"bool", new PropertyImpl(PropertyBool, L"bool", nullptr)));
+    _types.insert(make_pair(L"int", YapShared(new PropertyImpl(PropertyInt, L"int", nullptr))));
+    _types.insert(make_pair(L"float", YapShared(new PropertyImpl(PropertyFloat, L"float", nullptr))));
+    _types.insert(make_pair(L"string", YapShared(new PropertyImpl(PropertyString, L"string", nullptr))));
+    _types.insert(make_pair(L"bool", YapShared(new PropertyImpl(PropertyBool, L"bool", nullptr))));
 
     return true;
 }
@@ -550,7 +550,7 @@ bool VariableManager::PropertyExists(const wchar_t *property_id) const
     return This->_properties->Find(property_id) != nullptr;
 }
 
-IProperty * VariableManager::GetType(const wchar_t * type) const
+const IProperty * VariableManager::GetType(const wchar_t * type) const
 {
     auto iter = _types.find(type);
     return (iter != _types.end()) ? iter->second.get() : nullptr;
@@ -580,7 +580,7 @@ bool VariableManager::AddType(const wchar_t * type_id, IProperty *type)
     if (_types.find(type_id) != _types.end())
         return false;
 
-    _types.insert({type_id, shared_ptr<IProperty>(type)});
+    _types.insert({type_id, YapShared(type)});
 
     return true;
 }
