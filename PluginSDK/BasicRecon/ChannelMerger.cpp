@@ -13,7 +13,7 @@ ChannelMerger::ChannelMerger(void) :
 	AddInput(L"Input", 2, DataTypeFloat);
 
 	_properties->AddProperty(PropertyInt, L"ChannelCount", L"通道数");
-	_properties->SetInt(L"ChannelCount", 4);
+	_properties->Set<int>(L"ChannelCount", 4);
 	_properties->AddProperty(PropertyInt, L"ChannelSwitch", L"通道开关指示值");
 }
 
@@ -100,7 +100,7 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 // 		bit_number &= (bit_number - 1);   // 消除最低位的1.
 // 	}   // 最后used_channel_count得到1的个数。即打开的通道总数
 
-	if (iter->second.count == _properties->GetInt(L"ChannelCount"))
+	if (iter->second.count == _properties->Get<int>(L"ChannelCount"))
 	{
 		Feed(L"Output", iter->second.buffer.get());
 	}

@@ -19,6 +19,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="sysParams_yap.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

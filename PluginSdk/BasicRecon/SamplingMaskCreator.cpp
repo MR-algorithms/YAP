@@ -20,21 +20,21 @@ SamplingMaskCreator::SamplingMaskCreator():
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeFloat);
 
 	_properties->AddProperty(PropertyFloat, L"pow", L"");
-	_properties->SetFloat(L"pow", 3.0f);
+	_properties->Set<double>(L"pow", 3.0f);
 	_properties->AddProperty(PropertyFloat, L"sample_percent", L"");
-	_properties->SetFloat(L"sample_percent", 0.4f);
+	_properties->Set<double>(L"sample_percent", 0.4f);
 	_properties->AddProperty(PropertyFloat, L"radius", L"");
-	_properties->SetFloat(L"radius", 0.2f);
+	_properties->Set<double>(L"radius", 0.2f);
 
 	_properties->AddProperty(PropertyBool, L"equal_subsampling", L"");
-	_properties->SetBool(L"equal_subsampling", true);
+	_properties->Set<bool>(L"equal_subsampling", true);
 	_properties->AddProperty(PropertyBool, L"random_subsampling", L"");
-	_properties->SetBool(L"random_subsampling", false);
+	_properties->Set<bool>(L"random_subsampling", false);
 
 	_properties->AddProperty(PropertyInt, L"Rate", L"");
-	_properties->SetInt(L"Rate", 2);
+	_properties->Set<int>(L"Rate", 2);
 	_properties->AddProperty(PropertyInt, L"AcsCount", L"");
-	_properties->SetInt(L"AcsCount", 16);
+	_properties->Set<int>(L"AcsCount", 16);
 }
 
 
@@ -51,13 +51,13 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
 		return false;
 
 	DataHelper input_data(data);
-	if (_properties->GetBool(L"random_subsampling"))
+	if (_properties->Get<bool>(L"random_subsampling"))
 	{
 		auto height = input_data.GetHeight();
 		auto width = input_data.GetWidth();
-		float pow = static_cast<float> (_properties->GetFloat(L"pow"));
-		float sample_percent = static_cast<float> (_properties->GetFloat(L"sample_percent"));
-		float radius = static_cast<float> (_properties->GetFloat(L"radius"));
+		float pow = static_cast<float> (_properties->Get<double>(L"pow"));
+		float sample_percent = static_cast<float> (_properties->Get<double>(L"sample_percent"));
+		float radius = static_cast<float> (_properties->Get<double>(L"radius"));
 
 		auto mask = GenerateRandomMask(width, height, pow, sample_percent, radius);
 		float * Mask = nullptr;
@@ -84,8 +84,8 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
 	}
 	else
 	{
-		unsigned int r = _properties->GetInt(L"Rate");
-		unsigned int acs = _properties->GetInt(L"AcsCount");
+		unsigned int r = _properties->Get<int>(L"Rate");
+		unsigned int acs = _properties->Get<int>(L"AcsCount");
 		auto height = input_data.GetHeight();
 		auto width = input_data.GetWidth();
 		auto mask = GenerateEqualMask(width, height, acs, r);

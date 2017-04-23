@@ -58,7 +58,7 @@ bool Yap::NiumagFidReader::Input(const wchar_t * name, IData * data)
 
 bool Yap::NiumagFidReader::ReadNiumagFidData()
 {
-	std::wostringstream output(_properties->GetString(L"DataPath"));
+	std::wostringstream output(_properties->Get<const wchar_t*>(L"DataPath"));
 	wstring data_path = output.str();
 
 	try

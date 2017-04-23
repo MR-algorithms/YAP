@@ -196,7 +196,7 @@ namespace _details
         IMPLEMENT_SHARED(PropertyImpl)
 
     public:
-        PropertyImpl(PropertyType type,
+        PropertyImpl(int type,
             const wchar_t * name,
             const wchar_t * description) :
             _type(type),
@@ -319,7 +319,7 @@ namespace _details
             }
         }
 
-        virtual PropertyType GetType() const override
+        virtual int GetType() const override
         {
             return _type;
         }
@@ -352,7 +352,7 @@ namespace _details
     protected:
         std::wstring _name;
         std::wstring _description;
-        PropertyType _type;
+        int _type;
 
         void * _value_interface;
         friend class VariableManager;
@@ -396,7 +396,7 @@ bool VariableManager::InitTypes()
 
 using namespace _details;
 
-bool VariableManager::AddProperty(PropertyType type,
+bool VariableManager::AddProperty(int type,
 	const wchar_t * name,
 	const wchar_t * description)
 {
@@ -452,7 +452,7 @@ const IPropertyContainer* VariableManager::GetProperties() const
 
 IProperty * VariableManager::GetProperty(IPropertyContainer * properties,
 	const wchar_t * name,
-	PropertyType type)
+	int type)
 {
 	assert(properties != nullptr);
 	assert(name != nullptr);
@@ -461,96 +461,85 @@ IProperty * VariableManager::GetProperty(IPropertyContainer * properties,
 	auto dot_pos = property_id.find_first_of(L'.');
 	if (dot_pos != wstring::npos)
 	{
-		auto struct_property = properties->Find(property_id.substr(0, dot_pos).c_str());
-		if (struct_property == nullptr)
-			throw PropertyException(name, PropertyException::PropertyNotFound);
-		assert(struct_property->GetType() != PropertyStruct);
-		auto sub_properties = reinterpret_cast<IPropertyContainer*>(struct_property->ValueInterface());
+		auto left_square_pos = property_id.find_first_of(L'[');
+		if (left_square_pos != wstring::npos && left_square_pos < dot_pos)
+		{
+			auto right_square_pos = property_id.find_first_of(L']', left_square_pos);
+			if (right_square_pos == wstring::npos || right_square_pos > dot_pos)
+				throw PropertyException(name, PropertyException::InvalidPropertyId);
 
-		return GetProperty(sub_properties, property_id.substr(dot_pos + 1).c_str(), type);
+			auto array_property = GetProperty(properties, property_id.substr(0, left_square_pos).c_str(), PropertyStructArray);
+			if (array_property == nullptr)
+				throw PropertyException(name, PropertyException::PropertyNotFound);
+
+			auto index = _wtoi(property_id.substr(left_square_pos + 1, right_square_pos - left_square_pos - 1).c_str());
+			auto array_interface = reinterpret_cast<IArrayValue<IProperty*>*>(array_property->ValueInterface());
+			assert(array_interface != nullptr);
+
+			if (index < 0 || index >= int(array_interface->GetSize()))
+				throw PropertyException(name, PropertyException::OutOfRange);
+
+			auto struct_property = array_interface->Elements()[index];
+
+			if (struct_property == nullptr)
+				throw PropertyException(name, PropertyException::PropertyNotFound);
+
+			if (struct_property->GetType() != PropertyStruct)
+				throw PropertyException(name, PropertyException::NotStruct);
+
+			auto sub_properties = reinterpret_cast<IPropertyContainer*>(struct_property->ValueInterface());
+
+			return GetProperty(sub_properties, property_id.substr(dot_pos + 1).c_str(), type);
+		}
+		else
+		{
+			auto lhs = property_id.substr(0, dot_pos); // left hand side of the dot operator.
+			auto struct_property = properties->Find(lhs.c_str());
+			if (struct_property == nullptr)
+				throw PropertyException(lhs.c_str(), PropertyException::PropertyNotFound);
+
+			if (struct_property->GetType() != PropertyStruct)
+				throw PropertyException(lhs.c_str(), PropertyException::NotStruct);
+			auto sub_properties = reinterpret_cast<IPropertyContainer*>(struct_property->ValueInterface());
+
+			return GetProperty(sub_properties, property_id.substr(dot_pos + 1).c_str(), type);
+		}
 	}
 	else
 	{
-		auto property = _properties->Find(name);
+		auto property = properties->Find(name);
 		if (property == nullptr)
 			throw PropertyException(name, PropertyException::PropertyNotFound);
 
-		if (property->GetType() != type)
+		if ((property->GetType() | type) != type)
 			throw PropertyException(name, PropertyException::TypeNotMatch);
 
 		return property;
 	}
 }
 
-IProperty * VariableManager::GetProperty(const wchar_t * name, PropertyType expected_type)
+IProperty * VariableManager::GetProperty(const wchar_t * name, int expected_type)
 {
 	assert(name != nullptr && name[0] != 0);
 	return GetProperty(_properties.get(), name, expected_type);
 }
 
-void VariableManager::SetInt(const wchar_t * name, int value)
-{
-	auto property = GetProperty(name, PropertyInt);
-	assert(property->ValueInterface() != nullptr);
-	reinterpret_cast<IIntValue*>(property->ValueInterface())->Set(value);
-}
-
-int VariableManager::GetInt(const wchar_t * name)
-{
-	auto property = GetProperty(name, PropertyInt);
-	assert(property->ValueInterface() != nullptr);
-
-	return reinterpret_cast<IIntValue*>(property->ValueInterface())->Get();
-}
-
-void VariableManager::SetFloat(const wchar_t * name, double value)
-{
-	auto property = GetProperty(name, PropertyFloat);
-	assert(property->ValueInterface() != nullptr);
-
-	reinterpret_cast<IDoubleValue*>(property->ValueInterface())->Set(value);
-}
-
-double VariableManager::GetFloat(const wchar_t * name)
-{
-	auto property = GetProperty(name, PropertyFloat);
-	assert(property->ValueInterface() != nullptr);
-
-	return reinterpret_cast<IDoubleValue*>(property->ValueInterface())->Get();
-}
-
-void VariableManager::SetBool(const wchar_t * name, bool value)
-{
-	auto property = GetProperty(name, PropertyBool);
-	assert(property->ValueInterface() != nullptr);
-
-	reinterpret_cast<IBoolValue*>(property->ValueInterface())->Set(value);
-}
-
-bool VariableManager::GetBool(const wchar_t * name)
-{
-	auto property = GetProperty(name, PropertyBool);
-	assert(property->ValueInterface() != nullptr);
-
-	return reinterpret_cast<IBoolValue*>(property->ValueInterface())->Get();
-}
-
-void VariableManager::SetString(const wchar_t * name, const wchar_t * value)
-{
-	auto property = GetProperty(name, PropertyString);
-	assert(property->ValueInterface() != nullptr);
-
-	reinterpret_cast<IStringValue*>(property->ValueInterface())->Set(value);
-}
-
-
-const wchar_t * VariableManager::GetString(const wchar_t * name)
-{
-	auto property = GetProperty(name, PropertyString);
-	assert(property->ValueInterface() != nullptr);
-
-	return reinterpret_cast<IStringValue*>(property->ValueInterface())->Get();
-}
+// void VariableManager::SetString(const wchar_t * name, const wchar_t * value)
+// {
+// 	auto property = GetProperty(name, PropertyString);
+// 	assert(property->ValueInterface() != nullptr);
+// 
+// 	reinterpret_cast<IStringValue*>(property->ValueInterface())->Set(value);
+// }
+// 
+// 
+// const wchar_t * VariableManager::GetString(const wchar_t * name)
+// {
+// 	auto property = GetProperty(name, PropertyString);
+// 	assert(property->ValueInterface() != nullptr);
+// 
+// 	return reinterpret_cast<IStringValue*>(property->ValueInterface())->Get();
+// }
 
 shared_ptr<VariableManager> VariableManager::Load(const wchar_t * path)
 {
@@ -607,6 +596,21 @@ bool VariableManager::AddType(const wchar_t * type_id, IProperty *type)
     _types.insert({type_id, YapShared(type)});
 
     return true;
+}
+
+bool VariableManager::ResizeArray(const wchar_t * id, size_t size)
+{
+	auto array = GetProperty(id, PropertyBoolArray | PropertyFloatArray | PropertyIntArray | PropertyStructArray);
+	if (array == nullptr)
+		return false;
+
+	assert(array->GetType() == PropertyBoolArray || array->GetType() == PropertyIntArray ||
+		array->GetType() == PropertyFloatArray || array->GetType() == PropertyStructArray);
+	auto array_interface = reinterpret_cast<IArray*>(array->ValueInterface());
+	assert(array_interface != nullptr);
+	array_interface->SetSize(size);
+
+	return true;
 }
 
 }	// end Yap

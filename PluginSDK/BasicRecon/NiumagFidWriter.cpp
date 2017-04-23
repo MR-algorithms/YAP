@@ -32,7 +32,7 @@ bool Yap::NiumagFidWriter::Input(const wchar_t * name, IData * data)
 	static unsigned int niumag_img_index = 0;
 	file_name << ++niumag_img_index;
 
-	auto output_folder = _properties->GetString(L"ExportFolder");
+	auto output_folder = _properties->Get<const wchar_t*>(L"ExportFolder");
 	wstring file_path = output_folder;
 	if (wcslen(output_folder) > 3)
 	{

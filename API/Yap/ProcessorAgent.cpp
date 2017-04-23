@@ -87,26 +87,26 @@ bool Yap::ProcessorAgent::SetInt(const wchar_t * property_name,
 	int value)
 {
 	assert(_variables);
-	HANDLE_EXCEPTION(_variables->SetInt(property_name, value));
+	HANDLE_EXCEPTION(_variables->Set<int>(property_name, value));
 }
 
 bool Yap::ProcessorAgent::SetBool(const wchar_t * property_name, bool value)
 {
 	assert(_variables);
-	HANDLE_EXCEPTION(_variables->SetBool(property_name, value));
+	HANDLE_EXCEPTION(_variables->Set<bool>(property_name, value));
 }
 
 bool Yap::ProcessorAgent::SetFloat(const wchar_t * property_name, double value)
 {
 	assert(_variables);
-	HANDLE_EXCEPTION(_variables->SetFloat(property_name, value));
+	HANDLE_EXCEPTION(_variables->Set<double>(property_name, value));
 }
 
 bool Yap::ProcessorAgent::SetString(const wchar_t* property_name, 
 	const wchar_t* value)
 {
 	assert(_variables);
-	HANDLE_EXCEPTION(_variables->SetString(property_name, value));
+	HANDLE_EXCEPTION(_variables->Set<const wchar_t*>(property_name, value));
 }
 
 Yap::ProcessorAgent::operator bool()

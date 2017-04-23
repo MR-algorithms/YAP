@@ -160,13 +160,13 @@ bool JpegExporter::Input( const wchar_t * name, IData * data)
 	{
 		_impl->ExportImage(GetDataArray<float>(data),
 			data_helper.GetWidth(), data_helper.GetHeight(),
-			_properties->GetString(L"ExportFolder"));
+			_properties->Get<const wchar_t*>(L"ExportFolder"));
 	}
 	else if (data->GetDataType() == DataTypeUnsignedShort)
 	{
 		_impl->ExportImage(GetDataArray<unsigned short>(data),
 			data_helper.GetWidth(), data_helper.GetHeight(),
-			_properties->GetString(L"ExportFolder"));
+			_properties->Get<const wchar_t*>(L"ExportFolder"));
 	}
 
 	return true;

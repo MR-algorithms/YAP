@@ -142,34 +142,42 @@ namespace Yap
 	typedef IContainer<IProcessor> IProcessorContainer;
 	typedef IProcessorContainer::iterator IProcessorIter;
 
-	enum PropertyType
-	{
-		PropertyBool,
-		PropertyInt,
-		PropertyFloat,
-		PropertyString,
-		PropertyStruct,
-		PropertyBoolArray,
-		PropertyIntArray,
-		PropertyFloatArray,
-		PropertyStringArray,
-		PropertyStructArray,
-	};
+	// bit flags for PropertyType
+	const int PropertyInvalid = 0;
+	const int PropertyBool = 1;
+	const int PropertyInt = 2;
+	const int PropertyFloat = 4;
+	const int PropertyString = 8;
+	const int PropertyStruct = 16;
+	const int PropertyBoolArray = 32;
+	const int PropertyIntArray = 64;
+	const int PropertyFloatArray = 128;
+	const int PropertyStringArray = 256;
+	const int PropertyStructArray = 512;
 
 	template<typename T> struct property_type_id
 	{
 		static const int type;
+		static const int array_type;
 	};
 
-	template <> struct property_type_id<bool> { static const int type = PropertyBool; };
-	template <> struct property_type_id<int> { static const int type = PropertyInt; };
-	template <> struct property_type_id<double> { static const int type = PropertyFloat; };
-	template <> struct property_type_id<std::wstring> { static const int type = PropertyString; };
+	template <> struct property_type_id<bool> { 
+		static const int type = PropertyBool; 
+		static const int array_type = PropertyBoolArray; };
+	template <> struct property_type_id<int> { 
+		static const int type = PropertyInt; 
+		static const int array_type = PropertyIntArray; };
+	template <> struct property_type_id<double> { 
+		static const int type = PropertyFloat;
+		static const int array_type = PropertyFloatArray; };
+	template <> struct property_type_id<const wchar_t *> { 
+		static const int type = PropertyString; 
+		static const int array_type = PropertyStringArray; };
 
 
 	struct IProperty : public ISharedObject
 	{
-		virtual PropertyType GetType() const = 0;
+		virtual int GetType() const = 0;
 		virtual const wchar_t * GetName() const = 0;
         virtual void SetName(const wchar_t * name) = 0;
 		virtual const wchar_t * GetDescription() const = 0;
@@ -202,11 +210,15 @@ namespace Yap
 
     typedef IContainer<IProperty> IStructValue;
 
-	template <typename VALUE_TYPE>
-	struct IArrayValue
+	struct IArray
 	{
 		virtual size_t GetSize() const = 0;
 		virtual void SetSize(size_t size) = 0;
+	};
+
+	template <typename VALUE_TYPE>
+	struct IArrayValue : public IArray
+	{
 		virtual VALUE_TYPE * Elements() = 0;
 	};
 

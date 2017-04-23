@@ -31,8 +31,8 @@ bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && (GetDataArray<unsigned short>(data) != nullptr));
 
-	auto output_folder = _properties->GetString(L"ExportFolder");
-	auto output_name = _properties->GetString(L"FileName");
+	auto output_folder = _properties->Get<const wchar_t*>(L"ExportFolder");
+	auto output_name = _properties->Get<const wchar_t*>(L"FileName");
 	auto file_path = GetFilePath(output_folder, output_name);
 
 	//write data

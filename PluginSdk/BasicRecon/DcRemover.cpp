@@ -62,9 +62,9 @@ DcRemover::DcRemover() :
 	AddInput(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 	
 	_properties->AddProperty(PropertyBool, L"Inplace", L"If the processed data will be stored in place.");
-	_properties->SetBool(L"Inplace", true);
+	_properties->Set<bool>(L"Inplace", true);
 	_properties->AddProperty(PropertyInt, L"CornerSize", L"Size of the corners used to estimate noise level.");
-	_properties->SetInt(L"CornerSize", 10);
+	_properties->Set<int>(L"CornerSize", 10);
 
 	AddOutput(L"Output", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 }
@@ -88,8 +88,8 @@ bool DcRemover::Input(const wchar_t * port, IData * data)
 
 	unsigned int width = input_data.GetWidth();
 	unsigned int height = input_data.GetHeight();
-	auto inplace = _properties->GetBool(L"Inplace");
-	unsigned int corner_size = _properties->GetInt(L"CornerSize");
+	auto inplace = _properties->Get<bool>(L"Inplace");
+	unsigned int corner_size = _properties->Get<int>(L"CornerSize");
 	if (corner_size >= height / 2 || corner_size >= width / 2 || corner_size < 2)
 		return false;
 

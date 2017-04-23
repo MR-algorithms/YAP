@@ -32,7 +32,7 @@ bool SliceMerger::Input(const wchar_t * port, IData * data)
 		return false;
 
 	static int slice_num = 0;
-	auto slice_count = _properties->GetInt(L"SliceCount");
+	auto slice_count = _properties->Get<int>(L"SliceCount");
 	assert(slice_count > 0);
 
 	if (slice_num == 0)
