@@ -86,6 +86,24 @@ bool VdfParserTest()
 	VdfParser parser;
 	auto variable_manager = parser.CompileFile(L"sysParams_yap.txt");
 
+	variable_manager->SetFloat(L"Rotation.GReadX", 7.77);
+	auto v1 = variable_manager->GetFloat(L"Rotation.GReadX");
+
+	variable_manager->SetFloat(L"Gx.A1", 1.00);
+	auto v2 = variable_manager->GetFloat(L"Gx.A1");
+
+	variable_manager->SetBool(L"Form", false);
+	auto v3 = variable_manager->GetBool(L"Form");
+
+	variable_manager->SetInt(L"TD", 256);
+	auto v4 = variable_manager->GetInt(L"TD");
+
+	variable_manager->SetString(L"Sequence", L"FID1");
+	auto v5 = variable_manager->GetString(L"Sequence");
+
+	variable_manager->SetFloat(L"VDL1", 8.88);
+	auto v6 = variable_manager->GetFloat(L"VDL1");
+
 	return variable_manager.get() != nullptr;
 }
 
