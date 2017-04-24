@@ -42,9 +42,14 @@ namespace Yap {
 		T Get(const wchar_t * id) {
 			std::wstring variable_id{ id };
 
-			auto left_square_pos = variable_id.find_last_of(L'[');
-			if (left_square_pos != wstring::npos) {
-				return Element<T>(variable_id);
+			if (variable_id[variable_id.size() - 1] == L']') {
+				auto left_square_pos = variable_id.find_last_of(L'[');
+				if (left_square_pos != wstring::npos) {
+					return Element<T>(variable_id);
+				}
+				else {
+					throw VariableException(id, VariableException::InvalidId);
+				}
 			}
 			else {
 				auto variable = GetVariable(id, variable_type_id<T>::type);
@@ -58,9 +63,14 @@ namespace Yap {
 		void Set(const wchar_t * id, T value) {
 			std::wstring variable_id{ id };
 
-			auto left_square_pos = variable_id.find_last_of(L'[');
-			if (left_square_pos != std::wstring::npos) {
-				Element<T>(variable_id) = value;
+			if (variable_id[variable_id.size() - 1] == L']') {
+				auto left_square_pos = variable_id.find_last_of(L'[');
+				if (left_square_pos != std::wstring::npos) {
+					Element<T>(variable_id) = value;
+				}
+				else {
+					throw VariableException(id, VariableException::InvalidId);
+				}
 			}
 			else {
 				auto variable = GetVariable(id, variable_type_id<T>::type);
@@ -120,6 +130,7 @@ namespace Yap {
 		}
 
 		bool InitTypes();
+
         IVariable * GetVariable(const wchar_t * name, int expected_type);
 		IVariable * GetVariable(IVariableContainer * variables, const wchar_t * name, int type);
         SmartPtr<IVariableContainer> _variables;

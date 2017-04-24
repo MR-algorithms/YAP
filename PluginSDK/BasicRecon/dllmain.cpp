@@ -34,6 +34,13 @@
 
 using namespace Yap;
 
+extern "C" {
+	__declspec(dllexport) ILogUser* GetLogUser() 
+	{
+		return nullptr;
+	}
+};
+
 BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(ChannelDataCollector)
 	ADD_PROCESSOR(ChannelIterator)

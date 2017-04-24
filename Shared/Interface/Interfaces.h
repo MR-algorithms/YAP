@@ -263,5 +263,25 @@ namespace Yap
 
 	typedef IContainer<IProcessor> IProcessorContainer;
 	typedef IProcessorContainer::iterator IProcessorIter;
+
+	enum LogLevel
+	{
+		LevelTrace,
+		LevelDebug,
+		LevelInfo,
+		LevelWarn,
+		LevelError,
+		LevelFatal,
+	};
+
+	struct ILog
+	{
+		virtual void Log(const wchar_t * module, const wchar_t * info, LogLevel level, const wchar_t * log_name = L"", bool flush = false) = 0;
+	};
+
+	struct ILogUser
+	{
+		virtual void SetLog(ILog * log) = 0;
+	};
 }
 #endif // IData_h__
