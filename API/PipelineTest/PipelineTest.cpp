@@ -102,9 +102,8 @@ bool VdfParserTest()
 	auto v5 = variable_manager->Get<const wchar_t*>(L"Sequence");
 
 	variable_manager->ResizeArray(L"VDL1", 5);
-	variable_manager->Set<double>(L"VDL1[0]", 1.00);
-	variable_manager->Set<double>(L"VDL1[1]", 2.00);
-	auto v6 = variable_manager->Get<double>(L"VDL1[1]");
+	variable_manager->Set<double>(L"VDL1[0]", 8.88);
+	auto v6 = variable_manager->Get<double>(L"VDL1");
 	double * vdl1 = variable_manager->GetArray<double>(L"VDL1");
 
 	return variable_manager.get() != nullptr;

@@ -155,7 +155,7 @@ bool VdfParser::ProcessArrayDeclaration(Statement& statement)
         {TokenKeywordInt, PropertyIntArray},
         {TokenKeywordString, PropertyStringArray},
         {TokenKeywordBool, PropertyBoolArray},
-		{TokenId, PropertyStructArray},
+		{TokenKeywordStruct, PropertyStructArray},
     };
 
     Statement::Guard guard(statement);
