@@ -36,13 +36,13 @@ ZeroFilling::ZeroFilling() : ProcessorImpl(L"ZeroFilling")
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 
 	_properties->AddProperty(PropertyInt, L"DestWidth", L"Destination width.");
-	_properties->SetInt(L"DestWidth", 256);
+	_properties->Set<int>(L"DestWidth", 256);
 	_properties->AddProperty(PropertyInt, L"DestHeight", L"Destination height.");
-	_properties->SetInt(L"DestHeight", 256);
+	_properties->Set<int>(L"DestHeight", 256);
 	_properties->AddProperty(PropertyInt, L"Left", L"X coordinate of top left corner of source data in destination data.");
-	_properties->SetInt(L"Left", 0);
+	_properties->Set<int>(L"Left", 0);
 	_properties->AddProperty(PropertyInt, L"Top", L"Y coordinate of top left corner of source data in destination data.");
-	_properties->SetInt(L"Top", 0);
+	_properties->Set<int>(L"Top", 0);
 }
 
 ZeroFilling::~ZeroFilling()
@@ -54,8 +54,8 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 	if (std::wstring(port) != L"Input")
 		return false;
 
-	unsigned int dest_width(_properties->GetInt(L"DestWidth"));
-	unsigned int dest_height(_properties->GetInt(L"DestHeight"));
+	unsigned int dest_width(_properties->Get<int>(L"DestWidth"));
+	unsigned int dest_height(_properties->Get<int>(L"DestHeight"));
 
 	DataHelper input_data(data);
 	if (input_data.GetDataType() != DataTypeComplexDouble && input_data.GetDataType() != DataTypeComplexFloat)

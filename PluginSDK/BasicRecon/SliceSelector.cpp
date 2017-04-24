@@ -14,7 +14,7 @@ SliceSelector::SliceSelector(void):
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
 	_properties->AddProperty(PropertyInt, L"SliceIndex", L"The index of the slice you want to get.");
-	_properties->SetInt(L"SliceIndex", 3);
+	_properties->Set<int>(L"SliceIndex", 3);
 }
 
 Yap::SliceSelector::SliceSelector(const SliceSelector & rhs)
@@ -31,7 +31,7 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 	assert((data != nullptr) && Yap::GetDataArray<complex<float>>(data) != nullptr);
 	assert(Inputs()->Find(name) != nullptr);
 
-	int slice_index = _properties->GetInt(L"SliceIndex");
+	int slice_index = _properties->Get<int>(L"SliceIndex");
 
 	DataHelper input_data(data);
 	Dimensions data_dimentions(data->GetDimensions());

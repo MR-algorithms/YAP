@@ -62,7 +62,7 @@ bool Yap::NiuMriImageReader::Input(const wchar_t * name, IData * data)
 
 bool Yap::NiuMriImageReader::ReadNiuMriImageData()
 {
-	std::wostringstream output(_properties->GetString(L"DataPath"));
+	std::wostringstream output(_properties->Get<const wchar_t*>(L"DataPath"));
 	wstring data_path = output.str();
 
 	try

@@ -150,7 +150,7 @@ bool VdfParser::ProcessSimpleDeclaration(Statement& statement)
 
 bool VdfParser::ProcessArrayDeclaration(Statement& statement)
 {
-    static map<TokenType, PropertyType> token_to_array_property{
+    static map<TokenType, int> token_to_array_property{
         {TokenKeywordFloat, PropertyFloatArray},
         {TokenKeywordInt, PropertyIntArray},
         {TokenKeywordString, PropertyStringArray},

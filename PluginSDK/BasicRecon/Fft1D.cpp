@@ -21,8 +21,8 @@ Fft1D::Fft1D() :
 	_properties->AddProperty(PropertyBool, L"Inverse", L"The direction of FFT1D.");
 	_properties->AddProperty(PropertyBool, L"InPlace", L"The position of FFT1D.");
 
-	_properties->SetBool(L"Inverse", false);
-	_properties->SetBool(L"InPlace", true);
+	_properties->Set<bool>(L"Inverse", false);
+	_properties->Set<bool>(L"InPlace", true);
 
 	AddInput(L"Input", 1, DataTypeComplexDouble);
 	AddOutput(L"Output", 1, DataTypeComplexDouble);
@@ -47,9 +47,9 @@ bool Fft1D::Input(const wchar_t * port, IData * data)
 
 	auto size = input_data.GetWidth();
 	auto data_array = GetDataArray<complex<double>>(data);
-	if (_properties->GetBool(L"InPlace"))
+	if (_properties->Get<bool>(L"InPlace"))
 	{
-		Fft(data_array, data_array, size, _properties->GetBool(L"Inverse"));
+		Fft(data_array, data_array, size, _properties->Get<bool>(L"Inverse"));
 		Feed(L"Output", data);
 	}
 	else
@@ -57,7 +57,7 @@ bool Fft1D::Input(const wchar_t * port, IData * data)
 		Yap::Dimensions dims;
 		dims(DimensionReadout, 0, size);
 		auto output = YapShared(new ComplexDoubleData(&dims));
-		Fft(data_array, GetDataArray<complex<double>>(output.get()), size, _properties->GetBool(L"Inverse"));
+		Fft(data_array, GetDataArray<complex<double>>(output.get()), size, _properties->Get<bool>(L"Inverse"));
 		Feed(L"Output", output.get());
 	}
 
