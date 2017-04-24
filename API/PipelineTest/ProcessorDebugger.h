@@ -11,7 +11,7 @@ namespace Yap
 	
 		void DebugOutput(IProcessor& processor);
 
-		bool DebugProperties(IPropertyIter& properties);
+		bool DebugProperties(IVariableIter& properties);
 
 		bool DebugPlugin(const wchar_t * path);
 

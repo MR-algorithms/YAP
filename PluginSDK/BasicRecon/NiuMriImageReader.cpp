@@ -37,7 +37,7 @@ NiuMriImageReader::NiuMriImageReader(void) :
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
 
-	_properties->AddProperty(PropertyString, L"DataPath", L"数据文件夹和文件名。");
+	_properties->Add(VariableString, L"DataPath", L"数据文件夹和文件名。");
 }
 
 Yap::NiuMriImageReader::NiuMriImageReader(const NiuMriImageReader& rhs) :

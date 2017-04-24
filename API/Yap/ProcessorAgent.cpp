@@ -51,7 +51,7 @@ Yap::IPortContainer * Yap::ProcessorAgent::Outputs()
 	return _processor->Outputs();
 }
 
-Yap::IPropertyContainer * Yap::ProcessorAgent::GetProperties()
+Yap::IVariableContainer * Yap::ProcessorAgent::GetProperties()
 {
 	assert(_processor);
 	return _processor->GetProperties();
@@ -63,7 +63,7 @@ bool Yap::ProcessorAgent::LinkProperty(const wchar_t * property_id, const wchar_
 	return _processor->LinkProperty(property_id, param_id);
 }
 
-bool Yap::ProcessorAgent::UpdateProperties(IPropertyContainer * params)
+bool Yap::ProcessorAgent::UpdateProperties(IVariableContainer * params)
 {
 	assert(_processor);
 	return _processor->UpdateProperties(params);
@@ -81,7 +81,7 @@ bool Yap::ProcessorAgent::Input(const wchar_t * name, IData * data)
 	return _processor->Input(name, data);
 }
 
-#define HANDLE_EXCEPTION(statement) try{statement;}catch(PropertyException&){return false;} return true;
+#define HANDLE_EXCEPTION(statement) try{statement;}catch(VariableException&){return false;} return true;
 
 bool Yap::ProcessorAgent::SetInt(const wchar_t * property_name,
 	int value)

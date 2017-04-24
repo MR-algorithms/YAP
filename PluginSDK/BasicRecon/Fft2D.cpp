@@ -16,8 +16,8 @@ Fft2D::Fft2D():
 	_plan_in_place(false),
 	_fft_plan(nullptr)
 {
-	_properties->AddProperty(PropertyBool, L"Inverse", L"The direction of FFT2D.");
-	_properties->AddProperty(PropertyBool, L"InPlace", L"The position of FFT2D.");
+	_properties->Add(VariableBool, L"Inverse", L"The direction of FFT2D.");
+	_properties->Add(VariableBool, L"InPlace", L"The position of FFT2D.");
 
 	_properties->Set<bool>(L"Inverse", false);
 	_properties->Set<bool>(L"InPlace", true);

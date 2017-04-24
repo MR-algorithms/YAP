@@ -40,10 +40,10 @@ CmrDataReader::CmrDataReader(const CmrDataReader& rhs)
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
-	_properties->AddProperty(PropertyString, L"DataPath",  L"包含原始数据文件的文件夹。");
-	_properties->AddProperty(PropertyInt, L"ChannelCount",  L"通道数");
-	_properties->AddProperty(PropertyInt, L"ChannelSwitch",  L"通道开关指示值");
-	_properties->AddProperty(PropertyInt, L"GroupCount",  L"分组扫描数");}
+	_properties->Add(VariableString, L"DataPath",  L"包含原始数据文件的文件夹。");
+	_properties->Add(VariableInt, L"ChannelCount",  L"通道数");
+	_properties->Add(VariableInt, L"ChannelSwitch",  L"通道开关指示值");
+	_properties->Add(VariableInt, L"GroupCount",  L"分组扫描数");}
 
 
 bool CmrDataReader::Input(const wchar_t * name, IData * data)

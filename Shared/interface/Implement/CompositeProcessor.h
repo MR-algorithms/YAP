@@ -22,7 +22,7 @@ namespace Yap
 
 		virtual IProcessor * Clone() const override;
 
-		virtual bool UpdateProperties(IPropertyContainer * params) override;
+		virtual bool UpdateProperties(IVariableContainer * params) override;
 
 		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) override;
 		virtual bool Input(const wchar_t * port, IData * data) override;

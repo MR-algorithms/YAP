@@ -12,7 +12,7 @@ void YapDebugger::DebugPort(IPortIter& ports)
 {
 	for (auto port = ports.GetFirst(); port != nullptr; port = ports.GetNext())
 	{
-		wcout << "Name: " << port->GetName() << "\t Dimensions: " << port->GetDimensionCount()
+		wcout << "Name: " << port->GetId() << "\t Dimensions: " << port->GetDimensionCount()
 			<< "\t int: " << port->GetDataType() << endl;
 	}
 }
@@ -52,33 +52,33 @@ void YapDebugger::DebugOutput(IProcessor& processor)
 	}
 }
 
-bool YapDebugger::DebugProperties(IPropertyIter& properties)
+bool YapDebugger::DebugProperties(IVariableIter& properties)
 {
 	for (auto property = properties.GetFirst(); property != nullptr;
 		property = properties.GetNext())
 	{
-		wcout << property->GetName() << " " << property->GetType() << " ";
+		wcout << property->GetId() << " " << property->GetType() << " ";
 		switch (property->GetType())
 		{
-		case PropertyBool:
+		case VariableBool:
 		{
 			auto value_interface = reinterpret_cast<IBoolValue*>(property->ValueInterface());
 			wcout << value_interface->Get();
 			break;
 		}
-		case PropertyFloat:
+		case VariableFloat:
 		{
 			auto value_interface = reinterpret_cast<IDoubleValue*>(property->ValueInterface());
 			wcout << value_interface->Get();
 			break;
 		}
-		case PropertyInt:
+		case VariableInt:
 		{
 			auto value_interface = reinterpret_cast<IIntValue*>(property->ValueInterface());
 			wcout << value_interface->Get();
 			break;
 		}
-		case PropertyString:
+		case VariableString:
 		{
 			auto value_interface = reinterpret_cast<IStringValue*>(property);
 			wcout << value_interface->Get();

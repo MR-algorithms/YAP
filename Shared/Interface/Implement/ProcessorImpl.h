@@ -38,10 +38,10 @@ namespace Yap
 		virtual const wchar_t * GetInstanceId() const override;
 		virtual void SetInstanceId(const wchar_t * instance_id) override;
 
-		virtual IPropertyContainer * GetProperties();
+		virtual IVariableContainer * GetProperties();
 
 		virtual bool LinkProperty(const wchar_t * property_id, const wchar_t * param_id) override;
-		virtual bool UpdateProperties(IPropertyContainer * params) override;
+		virtual bool UpdateProperties(IVariableContainer * params) override;
 
 		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) override;
 
@@ -67,7 +67,7 @@ namespace Yap
 		std::wstring _class_id;
 
 		std::shared_ptr<VariableManager> _properties;
-		IPropertyContainer * _system_variables;
+		IVariableContainer * _system_variables;
 
 	private:
 		ProcessorImpl(const ProcessorImpl&& rhs);

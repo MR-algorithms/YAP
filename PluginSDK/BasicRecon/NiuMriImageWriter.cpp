@@ -14,8 +14,8 @@ NiuMriImageWriter::NiuMriImageWriter(void) :
 	ProcessorImpl(L"NiuMriImageWriter")
 {
 	AddInput(L"Input", 3, DataTypeUnsignedShort);
-	_properties->AddProperty(PropertyString, L"ExportFolder", L"Set folder used to write images.");
-	_properties->AddProperty(PropertyString, L"FileName", L"Set file name.");
+	_properties->Add(VariableString, L"ExportFolder", L"Set folder used to write images.");
+	_properties->Add(VariableString, L"FileName", L"Set file name.");
 }
 
 NiuMriImageWriter::NiuMriImageWriter(const NiuMriImageWriter& rhs) :

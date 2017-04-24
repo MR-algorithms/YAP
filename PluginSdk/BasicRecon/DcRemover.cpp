@@ -61,9 +61,9 @@ DcRemover::DcRemover() :
 {
 	AddInput(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 	
-	_properties->AddProperty(PropertyBool, L"Inplace", L"If the processed data will be stored in place.");
+	_properties->Add(VariableBool, L"Inplace", L"If the processed data will be stored in place.");
 	_properties->Set<bool>(L"Inplace", true);
-	_properties->AddProperty(PropertyInt, L"CornerSize", L"Size of the corners used to estimate noise level.");
+	_properties->Add(VariableInt, L"CornerSize", L"Size of the corners used to estimate noise level.");
 	_properties->Set<int>(L"CornerSize", 10);
 
 	AddOutput(L"Output", 2, DataTypeComplexDouble | DataTypeComplexFloat);

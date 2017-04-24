@@ -19,21 +19,21 @@ SamplingMaskCreator::SamplingMaskCreator():
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeFloat);
 
-	_properties->AddProperty(PropertyFloat, L"pow", L"");
+	_properties->Add(VariableFloat, L"pow", L"");
 	_properties->Set<double>(L"pow", 3.0f);
-	_properties->AddProperty(PropertyFloat, L"sample_percent", L"");
+	_properties->Add(VariableFloat, L"sample_percent", L"");
 	_properties->Set<double>(L"sample_percent", 0.4f);
-	_properties->AddProperty(PropertyFloat, L"radius", L"");
+	_properties->Add(VariableFloat, L"radius", L"");
 	_properties->Set<double>(L"radius", 0.2f);
 
-	_properties->AddProperty(PropertyBool, L"equal_subsampling", L"");
+	_properties->Add(VariableBool, L"equal_subsampling", L"");
 	_properties->Set<bool>(L"equal_subsampling", true);
-	_properties->AddProperty(PropertyBool, L"random_subsampling", L"");
+	_properties->Add(VariableBool, L"random_subsampling", L"");
 	_properties->Set<bool>(L"random_subsampling", false);
 
-	_properties->AddProperty(PropertyInt, L"Rate", L"");
+	_properties->Add(VariableInt, L"Rate", L"");
 	_properties->Set<int>(L"Rate", 2);
-	_properties->AddProperty(PropertyInt, L"AcsCount", L"");
+	_properties->Add(VariableInt, L"AcsCount", L"");
 	_properties->Set<int>(L"AcsCount", 16);
 }
 

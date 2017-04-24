@@ -33,7 +33,7 @@ NiumagFidReader::NiumagFidReader(void):
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
-	_properties->AddProperty(PropertyString, L"DataPath", L"数据文件夹和文件名。");
+	_properties->Add(VariableString, L"DataPath", L"数据文件夹和文件名。");
 }
 
 NiumagFidReader::NiumagFidReader(const NiumagFidReader& rhs):
