@@ -133,7 +133,7 @@ JpegExporter::JpegExporter() :
 {
 	_impl = shared_ptr<JpegExporterImp>(new JpegExporterImp);
 	AddInput(L"Input", 2, DataTypeFloat | DataTypeUnsignedShort);
-	_properties->AddProperty(PropertyString, L"ExportFolder", L"Set folder used to hold exported images.");
+	_properties->Add(VariableString, L"ExportFolder", L"Set folder used to hold exported images.");
 
 }
 

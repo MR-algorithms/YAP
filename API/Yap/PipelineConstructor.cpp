@@ -203,7 +203,7 @@ bool PipelineConstructor::SetProperty(const wchar_t * processor_id,
 	bool result = false;
 	switch (property_type)
 	{
-	case PropertyBool:
+	case VariableBool:
 	{
 		if (wcscmp(value, L"true") == 0)
 		{
@@ -215,17 +215,17 @@ bool PipelineConstructor::SetProperty(const wchar_t * processor_id,
 		}
 	}
 	break;
-	case PropertyInt:
+	case VariableInt:
 	{
 		result = processor.SetInt(property_id, _wtoi(value));
 	}
 	break;
-	case PropertyFloat:
+	case VariableFloat:
 	{
 		result = processor.SetFloat(property_id, _wtof(value));
 	}
 	break;
-	case PropertyString:
+	case VariableString:
 	{
 		result = processor.SetString(property_id, value);
 	}

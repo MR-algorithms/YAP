@@ -14,7 +14,7 @@ SliceMerger::SliceMerger(void) :
 	AddInput(L"Input", 2, DataTypeAll);
 	AddOutput(L"Output", 3, DataTypeAll);
 
-	_properties->AddProperty(PropertyInt, L"SliceCount", L"Slice count");
+	_properties->Add(VariableInt, L"SliceCount", L"Slice count");
 }
 
 SliceMerger::SliceMerger(const SliceMerger& rhs)

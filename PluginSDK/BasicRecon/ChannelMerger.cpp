@@ -12,9 +12,9 @@ ChannelMerger::ChannelMerger(void) :
 	AddOutput(L"Output", 2, DataTypeFloat);
 	AddInput(L"Input", 2, DataTypeFloat);
 
-	_properties->AddProperty(PropertyInt, L"ChannelCount", L"通道数");
+	_properties->Add(VariableInt, L"ChannelCount", L"通道数");
 	_properties->Set<int>(L"ChannelCount", 4);
-	_properties->AddProperty(PropertyInt, L"ChannelSwitch", L"通道开关指示值");
+	_properties->Add(VariableInt, L"ChannelSwitch", L"通道开关指示值");
 }
 
 ChannelMerger::ChannelMerger( const ChannelMerger& rhs )

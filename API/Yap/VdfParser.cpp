@@ -127,7 +127,7 @@ bool VdfParser::ProcessSimpleDeclaration(Statement& statement)
 	auto id = statement.GetVariableId();
 	if (!statement.IsTokenOfType(TokenSharp, true))
 	{
-        _variables->AddProperty(type_id.c_str(), id.c_str(), L"");
+        _variables->Add(type_id.c_str(), id.c_str(), L"");
 	}
 	else
 	{
@@ -141,7 +141,7 @@ bool VdfParser::ProcessSimpleDeclaration(Statement& statement)
 		{
 			wostringstream output;
 			output << id << i;
-            _variables->AddProperty(type_id.c_str(), output.str().c_str(), L"");
+            _variables->Add(type_id.c_str(), output.str().c_str(), L"");
 		}
 	}
 
@@ -151,11 +151,11 @@ bool VdfParser::ProcessSimpleDeclaration(Statement& statement)
 bool VdfParser::ProcessArrayDeclaration(Statement& statement)
 {
     static map<TokenType, int> token_to_array_property{
-        {TokenKeywordFloat, PropertyFloatArray},
-        {TokenKeywordInt, PropertyIntArray},
-        {TokenKeywordString, PropertyStringArray},
-        {TokenKeywordBool, PropertyBoolArray},
-		{TokenKeywordStruct, PropertyStructArray},
+        {TokenKeywordFloat, VariableFloatArray},
+        {TokenKeywordInt, VariableIntArray},
+        {TokenKeywordString, VariableStringArray},
+        {TokenKeywordBool, VariableBoolArray},
+		{TokenId, VariableStructArray},
     };
 
     Statement::Guard guard(statement);
@@ -172,7 +172,7 @@ bool VdfParser::ProcessArrayDeclaration(Statement& statement)
 	auto id = statement.GetVariableId();
 	if (!statement.IsTokenOfType(TokenSharp, true))
 	{
-		_variables->AddProperty(token_to_array_property[type], id.c_str(), L"");
+		_variables->Add(token_to_array_property[type], id.c_str(), L"");
 	}
 	else
 	{
@@ -186,7 +186,7 @@ bool VdfParser::ProcessArrayDeclaration(Statement& statement)
 		{
 			wostringstream output;
 			output << id << i;
-			_variables->AddProperty(token_to_array_property[type], output.str().c_str(), L"");
+			_variables->Add(token_to_array_property[type], output.str().c_str(), L"");
 		}
 	}
 
@@ -225,7 +225,7 @@ bool VdfParser::ProcessStructDeclaration(Statement& statement)
         statement.Next();
         auto& member_token = statement.GetCurrentToken();
 
-        if (struct_variables.PropertyExists(member_token.text.c_str()))
+        if (struct_variables.VariableExists(member_token.text.c_str()))
             throw CompileError(type_token, CompileErrorMemeberExists, L"Duplicated struct member ids.");
 
 
@@ -233,10 +233,10 @@ bool VdfParser::ProcessStructDeclaration(Statement& statement)
         if (prototype == nullptr)
             throw CompileError(type_token, CompileErrorTypeNotFound, L"Type not found.");
 
-        auto member = dynamic_cast<IProperty*>(prototype->Clone());
+        auto member = dynamic_cast<IVariable*>(prototype->Clone());
         assert(member != nullptr);
-        member->SetName(member_token.text.c_str());
-        struct_variables.AddProperty(member);
+        member->SetId(member_token.text.c_str());
+        struct_variables.Add(member);
 
         statement.Next();
         statement.AssertToken(TokenSemiColon, true);
@@ -246,7 +246,7 @@ bool VdfParser::ProcessStructDeclaration(Statement& statement)
 	statement.Next();
     statement.AssertToken(TokenSemiColon);
 
-    _variables->AddType(struct_id.c_str(), struct_variables.GetProperties());
+    _variables->AddType(struct_id.c_str(), struct_variables.Variables());
 
     return true;
 }

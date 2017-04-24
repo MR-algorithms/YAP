@@ -35,13 +35,13 @@ ZeroFilling::ZeroFilling() : ProcessorImpl(L"ZeroFilling")
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 
-	_properties->AddProperty(PropertyInt, L"DestWidth", L"Destination width.");
+	_properties->Add(VariableInt, L"DestWidth", L"Destination width.");
 	_properties->Set<int>(L"DestWidth", 256);
-	_properties->AddProperty(PropertyInt, L"DestHeight", L"Destination height.");
+	_properties->Add(VariableInt, L"DestHeight", L"Destination height.");
 	_properties->Set<int>(L"DestHeight", 256);
-	_properties->AddProperty(PropertyInt, L"Left", L"X coordinate of top left corner of source data in destination data.");
+	_properties->Add(VariableInt, L"Left", L"X coordinate of top left corner of source data in destination data.");
 	_properties->Set<int>(L"Left", 0);
-	_properties->AddProperty(PropertyInt, L"Top", L"Y coordinate of top left corner of source data in destination data.");
+	_properties->Add(VariableInt, L"Top", L"Y coordinate of top left corner of source data in destination data.");
 	_properties->Set<int>(L"Top", 0);
 }
 

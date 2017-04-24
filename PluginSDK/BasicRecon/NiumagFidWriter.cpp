@@ -12,7 +12,7 @@ NiumagFidWriter::NiumagFidWriter(void) :
 	ProcessorImpl(L"NiumagFidWriter")
 {
 	AddInput(L"Input", 4, DataTypeComplexFloat);
-	_properties->AddProperty(PropertyString, L"ExportFolder", L"Set folder used to write fid.");
+	_properties->Add(VariableString, L"ExportFolder", L"Set folder used to write fid.");
 }
 
 NiumagFidWriter::NiumagFidWriter(const NiumagFidWriter& rhs) :

@@ -23,10 +23,10 @@ namespace Yap
 
 		IPortContainer * Inputs();
 		IPortContainer * Outputs();
-		IPropertyContainer * GetProperties();
+		IVariableContainer * GetProperties();
 
 		bool LinkProperty(const wchar_t * property_id, const wchar_t * param_id);
-		bool UpdateProperties(IPropertyContainer * params);
+		bool UpdateProperties(IVariableContainer * params);
 		bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input);
 		bool Input(const wchar_t * name, IData * data);
 

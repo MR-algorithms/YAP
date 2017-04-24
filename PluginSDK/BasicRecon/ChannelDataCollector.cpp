@@ -11,7 +11,7 @@ ChannelDataCollector::ChannelDataCollector(void):
 {
 	AddInput(L"Input", 2, DataTypeComplexFloat);
 	AddOutput(L"Output", 3, DataTypeComplexFloat);
-	_properties->AddProperty(PropertyInt, L"ChannelCount", L"The total channel count.");
+	_properties->Add(VariableInt, L"ChannelCount", L"The total channel count.");
 	_properties->Set<int>(L"ChannelCount", 4);
 }
 

@@ -18,8 +18,8 @@ Fft1D::Fft1D() :
 	_plan_inverse(false),
 	_plan_in_place(false)
 {
-	_properties->AddProperty(PropertyBool, L"Inverse", L"The direction of FFT1D.");
-	_properties->AddProperty(PropertyBool, L"InPlace", L"The position of FFT1D.");
+	_properties->Add(VariableBool, L"Inverse", L"The direction of FFT1D.");
+	_properties->Add(VariableBool, L"InPlace", L"The position of FFT1D.");
 
 	_properties->Set<bool>(L"Inverse", false);
 	_properties->Set<bool>(L"InPlace", true);

@@ -143,43 +143,43 @@ namespace Yap
 	typedef IProcessorContainer::iterator IProcessorIter;
 
 	// bit flags for PropertyType
-	const int PropertyInvalid = 0;
-	const int PropertyBool = 1;
-	const int PropertyInt = 2;
-	const int PropertyFloat = 4;
-	const int PropertyString = 8;
-	const int PropertyStruct = 16;
-	const int PropertyBoolArray = 32;
-	const int PropertyIntArray = 64;
-	const int PropertyFloatArray = 128;
-	const int PropertyStringArray = 256;
-	const int PropertyStructArray = 512;
+	const int VariableInvalid = 0;
+	const int VariableBool = 1;
+	const int VariableInt = 2;
+	const int VariableFloat = 4;
+	const int VariableString = 8;
+	const int VariableStruct = 16;
+	const int VariableBoolArray = 32;
+	const int VariableIntArray = 64;
+	const int VariableFloatArray = 128;
+	const int VariableStringArray = 256;
+	const int VariableStructArray = 512;
 
-	template<typename T> struct property_type_id
+	template<typename T> struct variable_type_id
 	{
 		static const int type;
 		static const int array_type;
 	};
 
-	template <> struct property_type_id<bool> { 
-		static const int type = PropertyBool; 
-		static const int array_type = PropertyBoolArray; };
-	template <> struct property_type_id<int> { 
-		static const int type = PropertyInt; 
-		static const int array_type = PropertyIntArray; };
-	template <> struct property_type_id<double> { 
-		static const int type = PropertyFloat;
-		static const int array_type = PropertyFloatArray; };
-	template <> struct property_type_id<const wchar_t *> { 
-		static const int type = PropertyString; 
-		static const int array_type = PropertyStringArray; };
+	template <> struct variable_type_id<bool> { 
+		static const int type = VariableBool; 
+		static const int array_type = VariableBoolArray; };
+	template <> struct variable_type_id<int> { 
+		static const int type = VariableInt; 
+		static const int array_type = VariableIntArray; };
+	template <> struct variable_type_id<double> { 
+		static const int type = VariableFloat;
+		static const int array_type = VariableFloatArray; };
+	template <> struct variable_type_id<const wchar_t *> { 
+		static const int type = VariableString; 
+		static const int array_type = VariableStringArray; };
 
 
-	struct IProperty : public ISharedObject
+	struct IVariable : public ISharedObject
 	{
 		virtual int GetType() const = 0;
-		virtual const wchar_t * GetName() const = 0;
-        virtual void SetName(const wchar_t * name) = 0;
+		virtual const wchar_t * GetId() const = 0;
+        virtual void SetId(const wchar_t * id) = 0;
 		virtual const wchar_t * GetDescription() const = 0;
         virtual void SetDescription(const wchar_t * description) = 0;
 		/// Returns pointer to one of the value interfaces.
@@ -189,8 +189,8 @@ namespace Yap
 		*/
 		virtual void * ValueInterface() = 0;
 	};
-	typedef IContainer<IProperty> IPropertyContainer;
-	typedef IPropertyContainer::iterator IPropertyIter;
+	typedef IContainer<IVariable> IVariableContainer;
+	typedef IVariableContainer::iterator IVariableIter;
 
 	template <typename VALUE_TYPE>
 	struct IValue
@@ -208,7 +208,7 @@ namespace Yap
 		virtual void Set(const wchar_t* value) = 0;
 	};
 
-    typedef IContainer<IProperty> IStructValue;
+    typedef IContainer<IVariable> IStructValue;
 
 	struct IArray
 	{
@@ -224,7 +224,7 @@ namespace Yap
 
 	struct IPort : public ISharedObject
 	{
-		virtual const wchar_t * GetName() const = 0;
+		virtual const wchar_t * GetId() const = 0;
 		virtual unsigned int GetDimensionCount() const = 0;
 		virtual int GetDataType() const = 0;
 	};
@@ -246,13 +246,13 @@ namespace Yap
 		virtual IPortContainer * Outputs() = 0;
 
 		/// 获得属性访问接口。
-		virtual IPropertyContainer * GetProperties() = 0;
+		virtual IVariableContainer * GetProperties() = 0;
 
 		/// 将指定名称的属性与参数空间的参数相关联。
 		virtual bool LinkProperty(const wchar_t * property_id, const wchar_t * param_id) = 0;
 
 		/// 接口用户调用这个函数来通知模块利用参数空间中的参数更新属性。
-		virtual bool UpdateProperties(IPropertyContainer * params) = 0;
+		virtual bool UpdateProperties(IVariableContainer * params) = 0;
 
 		/// 将指定处理模块的输入端口链接到当前模块指定的输出端口上。
 		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) = 0;

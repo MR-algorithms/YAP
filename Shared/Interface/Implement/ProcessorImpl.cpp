@@ -26,7 +26,7 @@ namespace _details
 		{
 		}
 	
-		virtual const wchar_t * GetName() const override
+		virtual const wchar_t * GetId() const override
 		{
 			return _name.c_str();
 		}
@@ -133,9 +133,9 @@ namespace _details
 	}
 
 	
-	IPropertyContainer * ProcessorImpl::GetProperties() 
+	IVariableContainer * ProcessorImpl::GetProperties() 
 	{
-		return _properties->GetProperties();
+		return _properties->Variables();
 	}
 
 	const wchar_t * Yap::ProcessorImpl::GetClassId() const
@@ -160,7 +160,7 @@ namespace _details
 
 	bool Yap::ProcessorImpl::LinkProperty(const wchar_t * property_id, const wchar_t * param_id)
 	{
-		if (_properties->GetProperties()->Find(property_id) != nullptr)
+		if (_properties->Variables()->Find(property_id) != nullptr)
 		{
 			return false;
 		}
@@ -170,15 +170,15 @@ namespace _details
 		return true;
 	}
 
-	bool Yap::ProcessorImpl::UpdateProperties(IPropertyContainer * source_params)
+	bool Yap::ProcessorImpl::UpdateProperties(IVariableContainer * source_params)
 	{
 		for (auto link : _property_links)
 		{
-			auto property = _properties->GetProperties()->Find(link.first.c_str());
+			auto property = _properties->Variables()->Find(link.first.c_str());
 			if (property == nullptr)
 				return false;
 
-			IProperty * source = source_params->Find(link.second.c_str());
+			IVariable * source = source_params->Find(link.second.c_str());
 			if (source == nullptr)
 				return false;
 
@@ -187,19 +187,19 @@ namespace _details
 
 			switch (property->GetType())
 			{
-			case PropertyBool:
+			case VariableBool:
 				reinterpret_cast<IBoolValue*>(property->ValueInterface())->Set(
 					reinterpret_cast<IBoolValue*>(source->ValueInterface())->Get());
 				break;
-			case PropertyInt:
+			case VariableInt:
 				reinterpret_cast<IIntValue*>(property->ValueInterface())->Set(
 					reinterpret_cast<IIntValue*>(source->ValueInterface())->Get());
 				break;
-			case PropertyFloat:
+			case VariableFloat:
 				reinterpret_cast<IDoubleValue*>(property->ValueInterface())->Set(
 					reinterpret_cast<IDoubleValue*>(source->ValueInterface())->Get());
 				break;
-			case PropertyString:
+			case VariableString:
 				reinterpret_cast<IStringValue*>(property->ValueInterface())->Set(
 					reinterpret_cast<IStringValue*>(source->ValueInterface())->Get());
 				break;
