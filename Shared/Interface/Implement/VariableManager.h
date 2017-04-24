@@ -101,7 +101,7 @@ namespace Yap {
 			auto left_square_pos = id.find_last_of(L'[');
 			assert(left_square_pos != std::wstring::npos);
 
-			auto right_square_pos = id.find_last_of(L']', left_square_pos);
+			auto right_square_pos = id.find_last_of(L']');
 			if (right_square_pos == std::wstring::npos)
 				throw PropertyException(id.c_str(), PropertyException::PropertyNotFound);
 
