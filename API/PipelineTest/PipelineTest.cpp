@@ -14,6 +14,8 @@
 #include <vector>
 #include <time.h>
 #include "Yap/VdfParser.h"
+#include "Interface/Implement/LogImpl.h"
+#include "PluginSDK/BasicRecon/LogUserImpl.h"
 
 using namespace std;
 using namespace Yap;
@@ -104,10 +106,21 @@ bool VdfParserTest()
 	variable_manager->ResizeArray(L"VDL1", 5);
 	variable_manager->Set<double>(L"VDL1[0]", 1.0);
 	variable_manager->Set<double>(L"VDL1[1]", 2.0);
-	variable_manager->Get<double>(L"VDL1[1]");
-
 	auto v6 = variable_manager->Get<double>(L"VDL1[1]");
 	double * vdl1 = variable_manager->GetArray<double>(L"VDL1");
+
+	variable_manager->ResizeArray(L"GradMatrixList", 7);
+	variable_manager->Set<double>(L"GradMatrixList[1].GReadX", 1.00);
+	variable_manager->Set<double>(L"GradMatrixList[2].GReadX", 2.00);
+	auto v7 = variable_manager->Get<double>(L"GradMatrixList[1].GReadX");
+	double * gml = variable_manager->GetArray<double>(L"GradMatrixList");
+
+	// 错误的参数输入测试
+//	variable_manager->Set<int>(L"abc", 4); // 无此变量名
+//	auto v = variable_manager->Get<int>(L"abc"); // 无此变量名
+//	variable_manager->Set<double>(L"TD", 6); // 名字和类型不匹配
+//	variable_manager->Set<double>(L"VDL1[6]", 6.0); // 数组越界
+//	auto v = variable_manager->Get<double>(L"VDL1[6]"); // 数组越界
 
 	return variable_manager.get() != nullptr;
 }
@@ -116,7 +129,7 @@ int main()
 {
 	time_t start = clock();
 
-//	 ConstructorTest();
+//	ConstructorTest();
 //  PipelineTest();
 
 	VdfParserTest();

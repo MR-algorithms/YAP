@@ -137,8 +137,22 @@ namespace _details
     class ArrayValueImpl<IVariable*> : public IArrayValue<IVariable*>
     {
     public:
-        ArrayValueImpl()
-        {}
+        ArrayValueImpl(const wchar_t * id, 
+					const wchar_t * description,
+					size_t size,
+                    IVariable * template_element)
+        {
+			assert(size >= 1 && L"Array size must be greater than 0!");
+			assert(template_element != nullptr && L"Template element must be specified!");
+
+			_elements.resize(size);
+			_elements[0] = template_element;
+			for (size_t i = 1; i < size; ++i)
+			{
+				_elements[i] = dynamic_cast<IVariable*>(const_cast<IVariable*>(template_element)->Clone());
+				_elements[i]->Lock();
+			}
+		}
 
         ArrayValueImpl(const ArrayValueImpl<IVariable*>& rhs) : _elements(rhs.GetSize())
         {
@@ -158,11 +172,6 @@ namespace _details
             }
         }
 
-        ArrayValueImpl(size_t size)
-        {
-            _elements.resize(size);
-        }
-
         ~ArrayValueImpl()
         {
             for (auto element : _elements)
@@ -178,7 +187,27 @@ namespace _details
 
         virtual void SetSize(size_t size) override
         {
-            _elements.resize(size);
+			assert(size >= 1);
+
+			size_t before_size = _elements.size();
+
+			if (size > before_size)
+			{
+				_elements.resize(size);
+				for (size_t i = before_size; i < size; ++i)
+				{
+					_elements[i] = dynamic_cast<IVariable*>(const_cast<IVariable*>(_elements[0])->Clone());
+					_elements[i]->Lock();
+				}
+			}
+
+			if (size < before_size)
+			{
+				for (size_t i = size; i < before_size; ++i)
+				{
+					_elements[i]->Release();
+				}
+			}           
         }
 
         virtual IVariable ** Elements() override
@@ -233,8 +262,11 @@ namespace _details
                 _value_interface = nullptr;
                 break;
             case VariableStructArray:
-                _value_interface = new ArrayValueImpl<IVariable*>();
-                break;
+			{
+				auto struct_in_array = YapShared(new VariableImpl(VariableStruct, id, L"struct in array"));
+                _value_interface = new ArrayValueImpl<IVariable*>(id, description, 1, struct_in_array.get());
+				break;
+			}
             default:
                 throw VariableException(id, VariableException::InvalidType);
             }

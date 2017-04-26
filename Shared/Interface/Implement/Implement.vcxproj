@@ -147,6 +147,7 @@
   <ItemGroup>
     <ClCompile Include="CompositeProcessor.cpp" />
     <ClCompile Include="DataObject.cpp" />
+    <ClCompile Include="LogImpl.cpp" />
     <ClCompile Include="ProcessorImpl.cpp" />
     <ClCompile Include="VariableManager.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -159,6 +160,7 @@
     <ClInclude Include="CompositeProcessor.h" />
     <ClInclude Include="ContainerImpl.h" />
     <ClInclude Include="DataObject.h" />
+    <ClInclude Include="LogImpl.h" />
     <ClInclude Include="ProcessorImpl.h" />
     <ClInclude Include="VariableManager.h" />
     <ClInclude Include="YapImplement.h" />

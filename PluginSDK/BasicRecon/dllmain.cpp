@@ -29,6 +29,7 @@
 #include "SliceSelector.h"
 #include "SubSampling.h"
 #include "ZeroFilling.h"
+#include "LogUserImpl.h"
 
 #include "Interface\Implement\YapImplement.h"
 
@@ -37,7 +38,7 @@ using namespace Yap;
 extern "C" {
 	__declspec(dllexport) ILogUser* GetLogUser() 
 	{
-		return nullptr;
+		return (ILogUser*) new LogUserImpl;
 	}
 };
 
