@@ -2,6 +2,7 @@
 #include "ChannelDataCollector.h"
 #include "Interface/Client/DataHelper.h"
 
+#include "LogUserImpl.h"
 
 using namespace Yap;
 using namespace std;
@@ -9,6 +10,8 @@ using namespace std;
 ChannelDataCollector::ChannelDataCollector(void):
 	ProcessorImpl(L"ChannelDataCollector")
 {
+	LOG_TRACE(L"ChannelDataCollector constructor called.", L"BasicRecon");
+
 	AddInput(L"Input", 2, DataTypeComplexFloat);
 	AddOutput(L"Output", 3, DataTypeComplexFloat);
 	_properties->Add(VariableInt, L"ChannelCount", L"The total channel count.");
@@ -19,12 +22,13 @@ ChannelDataCollector::ChannelDataCollector(void):
 Yap::ChannelDataCollector::ChannelDataCollector(const ChannelDataCollector& rhs):
 	ProcessorImpl(rhs)
 {
-
+	LOG_TRACE(L"BasicRecon", L"ChannelDataCollector constructor called.");
 }
 
 
 ChannelDataCollector::~ChannelDataCollector(void)
 {
+	LOG_TRACE(L"BasicRecon", L"ChannelDataCollector destructor called.");
 }
 
 bool Yap::ChannelDataCollector::Input(const wchar_t * name, IData * data)

@@ -38,7 +38,7 @@ using namespace Yap;
 extern "C" {
 	__declspec(dllexport) ILogUser* GetLogUser() 
 	{
-		return (ILogUser*) new LogUserImpl;
+		return (ILogUser*) &LogUserImpl::GetInstance();
 	}
 };
 

@@ -189,8 +189,24 @@ namespace Yap
 		*/
 		virtual void * ValueInterface() = 0;
 	};
+
 	typedef IContainer<IVariable> IVariableContainer;
 	typedef IVariableContainer::iterator IVariableIter;
+
+	template<typename VALUE_TYPE>
+	struct ISimpleVariable : public IVariable
+	{
+		virtual VALUE_TYPE Get() const = 0;
+		virtual void Set(const VALUE_TYPE value) = 0;
+	};
+
+	template<typename VALUE_TYPE>
+	struct IArrayVariable : public IVariable
+	{
+		virtual size_t GetSize() const = 0;
+		virtual void SetSize(size_t size) = 0;
+		virtual VALUE_TYPE * Elements() = 0;
+	};
 
 	template <typename VALUE_TYPE>
 	struct IValue

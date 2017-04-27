@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Interface/Interfaces.h"
+#include <log4cplus/logger.h>
 
 namespace Yap
 {
@@ -10,10 +11,14 @@ namespace Yap
 		public ILog
 	{
 	public:
-		LogImpl();
 		~LogImpl();
 
-		virtual void Log(const wchar_t * module, const wchar_t * info, LogLevel level, const wchar_t * log_name = L"", bool flush = false) override;
+		virtual void Log(const wchar_t * module, const wchar_t * info, LogLevel level, const wchar_t * log_name = L"", bool flush = true) override;
+		static LogImpl& GetInstance();
+	protected:
+		LogImpl();
+		static LogImpl s_instance;
+		std::map<std::wstring, log4cplus::Logger> _loggers;
 	};
 }
 
