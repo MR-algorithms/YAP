@@ -85,9 +85,6 @@
     <ClCompile Include="SliceMerger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LogUserImpl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm2DWrapper.h">
@@ -175,9 +172,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SliceMerger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LogUserImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

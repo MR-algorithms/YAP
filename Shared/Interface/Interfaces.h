@@ -129,7 +129,7 @@ namespace Yap
 	};
 
 	template <typename ELEMENT_TYPE>
-	struct IContainer : public ISharedObject
+	struct IPtrContainer : public ISharedObject
 	{
 		typedef IIterator<ELEMENT_TYPE> iterator;
 
@@ -139,7 +139,7 @@ namespace Yap
 	};
 
 	struct IProcessor;
-	typedef IContainer<IProcessor> IProcessorContainer;
+	typedef IPtrContainer<IProcessor> IProcessorContainer;
 	typedef IProcessorContainer::iterator IProcessorIter;
 
 	// bit flags for PropertyType
@@ -190,9 +190,10 @@ namespace Yap
 		virtual void * ValueInterface() = 0;
 	};
 
-	typedef IContainer<IVariable> IVariableContainer;
+	typedef IPtrContainer<IVariable> IVariableContainer;
 	typedef IVariableContainer::iterator IVariableIter;
 
+	// ================== new variable interfaces ========================
 	template<typename VALUE_TYPE>
 	struct ISimpleVariable : public IVariable
 	{
@@ -207,6 +208,12 @@ namespace Yap
 		virtual void SetSize(size_t size) = 0;
 		virtual VALUE_TYPE * Elements() = 0;
 	};
+
+	struct IStructVariable : public IVariable
+	{
+		virtual IPtrContainer<IVariable*> * Members() = 0;
+	};
+	// ================== end new variable interfaces ====================
 
 	template <typename VALUE_TYPE>
 	struct IValue
@@ -224,7 +231,7 @@ namespace Yap
 		virtual void Set(const wchar_t* value) = 0;
 	};
 
-    typedef IContainer<IVariable> IStructValue;
+    typedef IPtrContainer<IVariable> IStructValue;
 
 	struct IArray
 	{
@@ -245,7 +252,7 @@ namespace Yap
 		virtual int GetDataType() const = 0;
 	};
 
-	typedef IContainer<IPort> IPortContainer;
+	typedef IPtrContainer<IPort> IPortContainer;
 	typedef IPortContainer::iterator IPortIter;
 
 
@@ -277,7 +284,7 @@ namespace Yap
 		virtual bool Input(const wchar_t * name, IData * data) = 0;
 	};
 
-	typedef IContainer<IProcessor> IProcessorContainer;
+	typedef IPtrContainer<IProcessor> IProcessorContainer;
 	typedef IProcessorContainer::iterator IProcessorIter;
 
 	enum LogLevel

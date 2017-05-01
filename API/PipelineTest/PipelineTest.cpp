@@ -15,7 +15,7 @@
 #include <time.h>
 #include "Yap/VdfParser.h"
 #include "Interface/Implement/LogImpl.h"
-#include "PluginSDK/BasicRecon/LogUserImpl.h"
+#include "Interface/Implement/LogUserImpl.h"
 
 using namespace std;
 using namespace Yap;

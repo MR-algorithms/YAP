@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "LogUserImpl.h"
 
 using namespace Yap;
@@ -26,6 +25,8 @@ bool LogUserImpl::Init(const wchar_t * default_module, const wchar_t * default_l
 {
 	_module = default_module;
 	_log_name = default_log;
+
+	return true;
 }
 
 void LogUserImpl::SetLog(ILog* log)

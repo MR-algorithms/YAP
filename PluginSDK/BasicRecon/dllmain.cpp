@@ -29,8 +29,8 @@
 #include "SliceSelector.h"
 #include "SubSampling.h"
 #include "ZeroFilling.h"
-#include "LogUserImpl.h"
 
+#include "Interface/Implement/LogUserImpl.h"
 #include "Interface\Implement\YapImplement.h"
 
 using namespace Yap;

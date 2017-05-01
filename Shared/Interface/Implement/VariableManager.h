@@ -101,7 +101,7 @@ namespace Yap {
         bool VariableExists(const wchar_t * id) const;
         const IVariable * GetType(const wchar_t * type_id) const;
         bool AddType(const wchar_t * type_id, IVariable *type);
-        bool AddType(const wchar_t * type_id, IContainer<IVariable> * variables);
+        bool AddType(const wchar_t * type_id, IPtrContainer<IVariable> * variables);
 
     protected:
 

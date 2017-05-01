@@ -584,7 +584,7 @@ const IVariable * VariableManager::GetType(const wchar_t * type) const
     return (iter != _types.end()) ? iter->second.get() : nullptr;
 }
 
-bool VariableManager::AddType(const wchar_t * type_id, IContainer<IVariable> * variables)
+bool VariableManager::AddType(const wchar_t * type_id, IPtrContainer<IVariable> * variables)
 {
     try
     {

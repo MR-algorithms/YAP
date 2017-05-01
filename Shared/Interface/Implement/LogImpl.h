@@ -4,6 +4,7 @@
 
 #include "Interface/Interfaces.h"
 #include <log4cplus/logger.h>
+#include <map>
 
 namespace Yap
 {

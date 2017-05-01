@@ -2,7 +2,7 @@
 #include "ChannelDataCollector.h"
 #include "Interface/Client/DataHelper.h"
 
-#include "LogUserImpl.h"
+#include "Interface/Implement/LogUserImpl.h"
 
 using namespace Yap;
 using namespace std;

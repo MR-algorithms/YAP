@@ -186,7 +186,6 @@
     <ClInclude Include="Fft2D.h" />
     <ClInclude Include="imageProcessing.h" />
     <ClInclude Include="JpegExporter.h" />
-    <ClInclude Include="LogUserImpl.h" />
     <ClInclude Include="ModulePhase.h" />
     <ClInclude Include="NiumagFidReader.h" />
     <ClInclude Include="NiumagFidWriter.h" />
@@ -276,7 +275,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="LogUserImpl.cpp" />
     <ClCompile Include="ModulePhase.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
