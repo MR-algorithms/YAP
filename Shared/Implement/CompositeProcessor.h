@@ -13,7 +13,7 @@
 namespace Yap
 {
 	class CompositeProcessor :
-		public ProcessorImpl
+		public ProcessorImpl  
 	{
 		IMPLEMENT_LOCK_RELEASE
 	public:

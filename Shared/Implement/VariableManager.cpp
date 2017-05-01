@@ -1,5 +1,5 @@
 #include "VariableManager.h"
-#include "../Interfaces.h"
+#include "Interface/Interfaces.h"
 #include "ContainerImpl.h"
 #include "../API/Yap/VdfParser.h"
 

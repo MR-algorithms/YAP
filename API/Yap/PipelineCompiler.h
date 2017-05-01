@@ -9,7 +9,7 @@
 #include <stack>
 #include <memory>
 
-#include "Interface/Implement/CompositeProcessor.h"
+#include "Implement/CompositeProcessor.h"
 #include "Preprocessor.h"
 
 namespace Yap

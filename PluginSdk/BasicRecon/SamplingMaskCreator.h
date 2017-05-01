@@ -3,8 +3,8 @@
 #ifndef SamplingMaskCreator_h__20160814
 #define SamplingMaskCreator_h__20160814
 
-#include "Interface/Implement/ProcessorImpl.h"
-#include "Interface/Client/DataHelper.h"
+#include "Implement/ProcessorImpl.h"
+#include "Client/DataHelper.h"
 #include <vector>
 #include <fftw3.h>
 #include <complex>

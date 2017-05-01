@@ -4,7 +4,7 @@
 #define Algorithm2DWrapper_h__20160813
 
 
-#include "Interface/Implement/ProcessorImpl.h"
+#include "Implement/ProcessorImpl.h"
 #include <complex>
 
 namespace Yap

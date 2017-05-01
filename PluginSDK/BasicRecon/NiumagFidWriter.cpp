@@ -3,7 +3,7 @@
 
 #include <fstream>
 #include <iosfwd>
-#include "Interface\Client\DataHelper.h"
+#include "Client\DataHelper.h"
 
 using namespace Yap;
 using namespace std;

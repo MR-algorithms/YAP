@@ -1,8 +1,8 @@
 #include "PipelineConstructor.h"
 #include "ModuleManager.h"
 #include "ProcessorAgent.h"
-#include "Interface/Implement/CompositeProcessor.h"
-#include "Interface/Implement/LogImpl.h"
+#include "Implement/CompositeProcessor.h"
+#include "Implement/LogImpl.h"
 
 using namespace Yap;
 using namespace std;

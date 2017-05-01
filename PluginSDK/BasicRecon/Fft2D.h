@@ -3,8 +3,8 @@
 #ifndef fft2d_h_20160813
 #define fft2d_h_20160813
 
-#include "Interface/Implement/ProcessorImpl.h"
-#include "Interface/Client/DataHelper.h"
+#include "Implement/ProcessorImpl.h"
+#include "Client/DataHelper.h"
 #include <fftw3.h>
 #include <complex>
 

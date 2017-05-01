@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "ChannelDataCollector.h"
-#include "Interface/Client/DataHelper.h"
+#include "Client/DataHelper.h"
 
-#include "Interface/Implement/LogUserImpl.h"
+#include "Implement/LogUserImpl.h"
 
 using namespace Yap;
 using namespace std;

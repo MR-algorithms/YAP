@@ -1,7 +1,7 @@
 #include "ProcessorAgent.h"
 
 #include <cassert>
-#include "Interface\Implement\VariableManager.h"
+#include "Implement\VariableManager.h"
 
 using namespace Yap;
 

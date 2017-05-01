@@ -1,6 +1,6 @@
 #include "ProcessorManagerAgent.h"
 #include <assert.h>
-#include "Interface\Implement\LogImpl.h"
+#include "Implement\LogImpl.h"
 
 
 using namespace Yap;

@@ -8,8 +8,8 @@
 #include <string>
 #include <memory>
 #include "Utilities/macros.h"
-#include "interface/Implement/DataObject.h"
-#include "Interface/Implement/ContainerImpl.h"
+#include "Implement/DataObject.h"
+#include "Implement/ContainerImpl.h"
 #include "variableManager.h"
 
 namespace Yap

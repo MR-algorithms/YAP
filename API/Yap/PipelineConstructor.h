@@ -6,7 +6,7 @@
 #include <memory>
 #include <string>
 
-#include "Interface/Implement/CompositeProcessor.h"
+#include "Implement/CompositeProcessor.h"
 
 namespace Yap
 {

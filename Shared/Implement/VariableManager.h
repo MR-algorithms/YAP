@@ -1,6 +1,6 @@
 #pragma once
-#include "..\interfaces.h"
-#include "..\smartptr.h"
+#include "interface/interfaces.h"
+#include "interface/smartptr.h"
 #include <string>
 #include <map>
 

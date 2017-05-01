@@ -3,7 +3,7 @@
 #ifndef DataTypeConvertor_h__201609
 #define DataTypeConvertor_h__201609
 
-#include "Interface/Implement/ProcessorImpl.h"
+#include "Implement/ProcessorImpl.h"
 
 namespace Yap
 {

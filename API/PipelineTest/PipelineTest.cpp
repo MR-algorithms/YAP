@@ -6,16 +6,16 @@
 #include "ProcessorDebugger.h"
 #include "Yap/PipelineConstructor.h"
 #include "Yap/PipelineCompiler.h"
-#include "Interface/Implement/CompositeProcessor.h"
-#include "Interface/Implement/DataObject.h"
+#include "Implement/CompositeProcessor.h"
+#include "Implement/DataObject.h"
 
 #include <iostream>
 #include <string>
 #include <vector>
 #include <time.h>
 #include "Yap/VdfParser.h"
-#include "Interface/Implement/LogImpl.h"
-#include "Interface/Implement/LogUserImpl.h"
+#include "Implement/LogImpl.h"
+#include "Implement/LogUserImpl.h"
 
 using namespace std;
 using namespace Yap;

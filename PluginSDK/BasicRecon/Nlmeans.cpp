@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Nlmeans.h"
-#include "interface/Client/DataHelper.h"
-#include "Interface/Implement/DataObject.h"
+#include "Client/DataHelper.h"
+#include "Implement/DataObject.h"
 
 using namespace std;
 using namespace Yap;

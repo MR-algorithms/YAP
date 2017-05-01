@@ -2,7 +2,7 @@
 #ifndef NiumagFidReader_h__
 #define NiumagFidReader_h__
 
-#include "Interface/Implement/processorImpl.h"
+#include "Implement/processorImpl.h"
 
 namespace Yap
 {

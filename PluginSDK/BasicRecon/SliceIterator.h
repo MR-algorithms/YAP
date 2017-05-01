@@ -2,7 +2,7 @@
 #ifndef SliceIterator_h__20160814
 #define SliceIterator_h__20160814
 
-#include "Interface/Implement/ProcessorImpl.h"
+#include "Implement/ProcessorImpl.h"
 
 namespace Yap
 {

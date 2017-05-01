@@ -3,7 +3,7 @@
 #ifndef SliceMerger_h__20161221
 #define SliceMerger_h__20161221
 
-#include "Interface/Implement/ProcessorImpl.h"
+#include "Implement/ProcessorImpl.h"
 namespace Yap
 {
 	class SliceMerger:

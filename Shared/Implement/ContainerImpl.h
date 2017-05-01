@@ -18,7 +18,7 @@ namespace Yap
 	{
 		IMPLEMENT_LOCK_RELEASE
 
-		template <typename TYPE>
+		template <typename TYPE>  
 		class Iterator : 
 			public IIterator<TYPE>,
 			public IDynamicObject

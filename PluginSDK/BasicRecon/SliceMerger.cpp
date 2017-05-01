@@ -2,8 +2,8 @@
 #include "SliceMerger.h"
 
 #include <complex.h>
-#include "Interface/Client/DataHelper.h"
-#include "Interface/Implement/DataObject.h"
+#include "Client/DataHelper.h"
+#include "Implement/DataObject.h"
 
 using namespace Yap;
 using namespace std;

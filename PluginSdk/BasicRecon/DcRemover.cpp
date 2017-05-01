@@ -1,7 +1,7 @@
 #include "DcRemover.h"
 
-#include "Interface/Client/DataHelper.h"
-#include "Interface/Implement/DataObject.h"
+#include "Client/DataHelper.h"
+#include "Implement/DataObject.h"
 
 #include <string>
 

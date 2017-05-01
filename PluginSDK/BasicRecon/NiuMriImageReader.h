@@ -2,7 +2,7 @@
 #ifndef NiuMriImageReader_h__
 #define NiuMriImageReader_h__
 
-#include "Interface/Implement/processorImpl.h"
+#include "Implement/processorImpl.h"
 
 namespace Yap
 {

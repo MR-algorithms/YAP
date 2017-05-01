@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "SliceIterator.h"
 
-#include "Interface/Client/DataHelper.h"
+#include "Client/DataHelper.h"
 #include <complex>
-#include "Interface/Implement/DataObject.h"
+#include "Implement/DataObject.h"
 
 using namespace Yap;
 using namespace std;

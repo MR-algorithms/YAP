@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "DataTypeConvertor.h"
-#include "Interface\Client\DataHelper.h"
+#include "Client\DataHelper.h"
 
 using namespace Yap;
 using namespace std;
