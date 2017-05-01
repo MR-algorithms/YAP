@@ -182,12 +182,11 @@ namespace Yap
         virtual void SetId(const wchar_t * id) = 0;
 		virtual const wchar_t * GetDescription() const = 0;
         virtual void SetDescription(const wchar_t * description) = 0;
-		/// Returns pointer to one of the value interfaces.
-		/**
-		\return Returned pointer can be reinterpret_cast to a 'value interface' corresponding 
-		to the type of the variable, such as IDoubleValue, IIntValue, IBoolValue, IStringValue.
-		*/
-		virtual void * ValueInterface() = 0;
+	};
+
+	template <> struct variable_type_id <IVariable*> {
+		static const int type = VariableInvalid;
+		static const int array_type = VariableStructArray;
 	};
 
 	typedef IPtrContainer<IVariable> IVariableContainer;
@@ -201,49 +200,27 @@ namespace Yap
 		virtual void Set(const VALUE_TYPE value) = 0;
 	};
 
-	template<typename VALUE_TYPE>
-	struct IArrayVariable : public IVariable
+	struct IArrayBase : public IVariable
 	{
 		virtual size_t GetSize() const = 0;
 		virtual void SetSize(size_t size) = 0;
+	};
+
+	template<typename VALUE_TYPE>
+	struct IArrayVariable : public IArrayBase
+	{
 		virtual VALUE_TYPE * Elements() = 0;
 	};
+
+	typedef struct IArrayVariable<SmartPtr<IVariable>> IStructArray;
 
 	struct IStructVariable : public IVariable
 	{
-		virtual IPtrContainer<IVariable*> * Members() = 0;
-	};
-	// ================== end new variable interfaces ====================
-
-	template <typename VALUE_TYPE>
-	struct IValue
-	{
-		virtual VALUE_TYPE Get() const = 0;
-		virtual void Set(const VALUE_TYPE value) = 0;
-	};
-	typedef IValue<double> IDoubleValue;
-	typedef IValue<int> IIntValue;
-	typedef IValue<bool> IBoolValue;
-
-	struct IStringValue
-	{
-		virtual const wchar_t* Get() const = 0;
-		virtual void Set(const wchar_t* value) = 0;
+		virtual IPtrContainer<IVariable> * Members() = 0;
 	};
 
     typedef IPtrContainer<IVariable> IStructValue;
-
-	struct IArray
-	{
-		virtual size_t GetSize() const = 0;
-		virtual void SetSize(size_t size) = 0;
-	};
-
-	template <typename VALUE_TYPE>
-	struct IArrayValue : public IArray
-	{
-		virtual VALUE_TYPE * Elements() = 0;
-	};
+	// ================== end new variable interfaces ====================
 
 	struct IPort : public ISharedObject
 	{

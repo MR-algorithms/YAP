@@ -188,21 +188,37 @@ namespace _details
 			switch (property->GetType())
 			{
 			case VariableBool:
-				reinterpret_cast<IBoolValue*>(property->ValueInterface())->Set(
-					reinterpret_cast<IBoolValue*>(source->ValueInterface())->Get());
+			{
+				auto source_bool = dynamic_cast<ISimpleVariable<bool>*>(source);
+				auto dest_bool = dynamic_cast<ISimpleVariable<bool>*>(property);
+				assert(source_bool != nullptr && dest_bool != nullptr);
+				dest_bool->Set(source_bool->Get());
 				break;
+			}
 			case VariableInt:
-				reinterpret_cast<IIntValue*>(property->ValueInterface())->Set(
-					reinterpret_cast<IIntValue*>(source->ValueInterface())->Get());
+			{
+				auto source_int = dynamic_cast<ISimpleVariable<int>*>(source);
+				auto dest_int = dynamic_cast<ISimpleVariable<int>*>(property);
+				assert(source_int != nullptr && dest_int != nullptr);
+				dest_int->Set(source_int->Get());
 				break;
+			}
 			case VariableFloat:
-				reinterpret_cast<IDoubleValue*>(property->ValueInterface())->Set(
-					reinterpret_cast<IDoubleValue*>(source->ValueInterface())->Get());
+			{
+				auto source_double = dynamic_cast<ISimpleVariable<double>*>(source);
+				auto dest_double = dynamic_cast<ISimpleVariable<double>*>(property);
+				assert(source_double != nullptr && dest_double != nullptr);
+				dest_double->Set(source_double->Get());
 				break;
+			}
 			case VariableString:
-				reinterpret_cast<IStringValue*>(property->ValueInterface())->Set(
-					reinterpret_cast<IStringValue*>(source->ValueInterface())->Get());
+			{
+				auto source_string = dynamic_cast<ISimpleVariable<const wchar_t*>*>(source);
+				auto dest_string = dynamic_cast<ISimpleVariable<const wchar_t*>*>(property);
+				assert(source_string != nullptr && dest_string != nullptr);
+				dest_string->Set(source_string->Get());
 				break;
+			}
 			default:
 				return false;
 			}
