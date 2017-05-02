@@ -7,7 +7,7 @@
 
 namespace Yap
 {
-	class VariableManager;
+	class VariableSpace;
 
 	class ProcessorAgent
 	{
@@ -38,7 +38,7 @@ namespace Yap
 		operator bool();
 	protected:
 		SmartPtr<IProcessor> _processor;
-		std::shared_ptr<VariableManager> _variables;
+		std::shared_ptr<VariableSpace> _variables;
 	};
 }
 

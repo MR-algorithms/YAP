@@ -1,13 +1,13 @@
 #include "ProcessorAgent.h"
 
 #include <cassert>
-#include "Implement\VariableManager.h"
+#include "Implement\VariableSpace.h"
 
 using namespace Yap;
 
 ProcessorAgent::ProcessorAgent(IProcessor* processor) :
 	_processor(YapShared(processor)),
-	_variables{std::make_shared<VariableManager>(processor->GetProperties())}
+	_variables{std::make_shared<VariableSpace>(processor->GetProperties())}
 {
 }
 

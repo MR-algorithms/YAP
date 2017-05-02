@@ -10,11 +10,11 @@
 #include "Utilities/macros.h"
 #include "Implement/DataObject.h"
 #include "Implement/ContainerImpl.h"
-#include "variableManager.h"
+#include "VariableSpace.h"
 
 namespace Yap
 {
-	class VariableManager;
+	class VariableSpace;
 
 	struct Anchor
 	{
@@ -66,7 +66,7 @@ namespace Yap
 		std::wstring _instance_id;
 		std::wstring _class_id;
 
-		std::shared_ptr<VariableManager> _properties;
+		std::shared_ptr<VariableSpace> _properties;
 		IVariableContainer * _system_variables;
 
 	private:

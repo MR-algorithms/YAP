@@ -5,7 +5,7 @@
 #include <assert.h>
 #include "Interface/Interfaces.h"
 
-#include "VariableManager.h"
+#include "VariableSpace.h"
 
 using namespace std;
 using namespace Yap;
@@ -53,7 +53,7 @@ namespace _details
 	ProcessorImpl::ProcessorImpl(const wchar_t * class_id) :
 		_system_variables(nullptr),
 		_class_id(class_id),
-		_properties(shared_ptr<VariableManager>(new VariableManager)),
+		_properties(shared_ptr<VariableSpace>(new VariableSpace)),
 		_input(YapShared(new ContainerImpl<IPort>)),
 		_output(YapShared(new ContainerImpl<IPort>))
 	{
@@ -63,7 +63,7 @@ namespace _details
 	Yap::ProcessorImpl::ProcessorImpl(const ProcessorImpl& rhs) :
 		_input(YapShared<ContainerImpl<IPort>>(rhs._input->Clone())),
 		_output(YapShared<ContainerImpl<IPort>>(rhs._output->Clone())),
-		_properties(new VariableManager(*(rhs._properties))),
+		_properties(new VariableSpace(*(rhs._properties))),
 		_instance_id(rhs._instance_id),
 		_class_id(rhs._class_id),
 		_system_variables(nullptr)

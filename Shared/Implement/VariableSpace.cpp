@@ -1,4 +1,4 @@
-#include "VariableManager.h"
+#include "VariableSpace.h"
 #include "Interface/Interfaces.h"
 #include "ContainerImpl.h"
 #include "../API/Yap/VdfParser.h"
@@ -226,10 +226,12 @@ namespace _details
 		ArrayVariable(IArrayVariable<SmartPtr<IVariable>>& rhs) :
 			_id{ rhs.GetId() },
 			_type{ variable_type_id<IVariable*>::array_type },
-			_description{ rhs.GetDescription() } {
+			_description{ rhs.GetDescription() } 
+		{
 			auto source_elements = rhs.Elements();
 			_elements.resize(rhs.GetSize());
-			for (size_t i = 0; i < rhs.GetSize(); ++i) {
+			for (size_t i = 0; i < rhs.GetSize(); ++i)
+			{
 				_elements[i] = YapShared(source_elements[i]->Clone());
 			}
 		}
@@ -292,29 +294,29 @@ namespace _details
 
 using namespace _details;
 
-VariableManager::VariableManager() :
+VariableSpace::VariableSpace() :
 	_variables(YapShared(new ContainerImpl<IVariable>))
 {
     InitTypes();
 }
 
-VariableManager::VariableManager(IVariableContainer * variables) :
+VariableSpace::VariableSpace(IVariableContainer * variables) :
 	_variables(YapShared(variables))
 {
     InitTypes();
 }
 
-VariableManager::VariableManager(const VariableManager& rhs) :
+VariableSpace::VariableSpace(const VariableSpace& rhs) :
 	_variables(YapShared(rhs.Variables()->Clone()))
 {
     InitTypes();
 }
 
-VariableManager::~VariableManager()
+VariableSpace::~VariableSpace()
 {
 }
 
-bool VariableManager::InitTypes()
+bool VariableSpace::InitTypes()
 {
     _types.emplace(L"int", YapShared(new SimpleVariable<int>(L"int", nullptr)));
     _types.emplace(L"float", YapShared(new SimpleVariable<double>(L"float", nullptr)));
@@ -331,7 +333,7 @@ bool VariableManager::InitTypes()
 
 using namespace _details;
 
-bool VariableManager::Add(int type, const wchar_t * name, const wchar_t * description)
+bool VariableSpace::Add(int type, const wchar_t * name, const wchar_t * description)
 {
 	static map<int, wstring> type_to_string{
 		{VariableInt, L"int"},
@@ -347,7 +349,7 @@ bool VariableManager::Add(int type, const wchar_t * name, const wchar_t * descri
 	return Add(type_to_string[type].c_str(), name, description);
 }
 
-bool VariableManager::Add(const wchar_t * type,
+bool VariableSpace::Add(const wchar_t * type,
                           const wchar_t * id,
                           const wchar_t * description)
 {
@@ -369,23 +371,23 @@ bool VariableManager::Add(const wchar_t * type,
     return true;
 }
 
-bool VariableManager::Add(IVariable* variable)
+bool VariableSpace::Add(IVariable* variable)
 {
     assert(variable != nullptr);
     return _variables->Add(variable->GetId(), variable);
 }
 
-IVariableContainer* VariableManager::Variables()
+IVariableContainer* VariableSpace::Variables()
 {
 	return _variables.get();
 }
 
-const IVariableContainer* VariableManager::Variables() const
+const IVariableContainer* VariableSpace::Variables() const
 {
 	return _variables.get();
 }
 
-IVariable * VariableManager::GetVariable(IVariableContainer * variables,
+IVariable * VariableSpace::GetVariable(IVariableContainer * variables,
 	const wchar_t * id,
 	int type)
 {
@@ -450,41 +452,41 @@ IVariable * VariableManager::GetVariable(IVariableContainer * variables,
 	}
 }
 
-IVariable * VariableManager::GetVariable(const wchar_t * id, int expected_type)
+IVariable * VariableSpace::GetVariable(const wchar_t * id, int expected_type)
 {
 	assert(id != nullptr && id[0] != 0);
 	return GetVariable(_variables.get(), id, expected_type);
 }
 
-shared_ptr<VariableManager> VariableManager::Load(const wchar_t * path)
+shared_ptr<VariableSpace> VariableSpace::Load(const wchar_t * path)
 {
     VdfParser parser;
     return parser.CompileFile(path);
 }
 
-void VariableManager::Reset()
+void VariableSpace::Reset()
 {
 	_variables = YapShared(new ContainerImpl<IVariable>);
 }
 
-bool VariableManager::TypeExists(const wchar_t * type) const
+bool VariableSpace::TypeExists(const wchar_t * type) const
 {
     return _types.find(type) != _types.end();
 }
 
-bool VariableManager::VariableExists(const wchar_t *variable_id) const
+bool VariableSpace::VariableExists(const wchar_t *variable_id) const
 {
-    auto This = const_cast<VariableManager*>(this);
+    auto This = const_cast<VariableSpace*>(this);
     return This->_variables->Find(variable_id) != nullptr;
 }
 
-const IVariable * VariableManager::GetType(const wchar_t * type) const
+const IVariable * VariableSpace::GetType(const wchar_t * type) const
 {
     auto iter = _types.find(type);
     return (iter != _types.end()) ? iter->second.get() : nullptr;
 }
 
-bool VariableManager::AddType(const wchar_t * type_id, IPtrContainer<IVariable> * variables)
+bool VariableSpace::AddType(const wchar_t * type_id, IPtrContainer<IVariable> * variables)
 {
     try
     {
@@ -497,7 +499,7 @@ bool VariableManager::AddType(const wchar_t * type_id, IPtrContainer<IVariable> 
     }
 }
 
-bool VariableManager::AddType(const wchar_t * type_id, IVariable *type)
+bool VariableSpace::AddType(const wchar_t * type_id, IVariable *type)
 {
     assert(_types.find(type_id) == _types.end());
     assert(type != nullptr);
@@ -511,7 +513,7 @@ bool VariableManager::AddType(const wchar_t * type_id, IVariable *type)
     return true;
 }
 
-bool VariableManager::ResizeArray(const wchar_t * id, size_t size)
+bool VariableSpace::ResizeArray(const wchar_t * id, size_t size)
 {
 	auto array = GetVariable(id, VariableBoolArray | VariableFloatArray | VariableIntArray | VariableStructArray);
 	if (array == nullptr)

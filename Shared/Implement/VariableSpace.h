@@ -23,14 +23,14 @@ namespace Yap {
         VariableException(const wchar_t * id, Type type_) : variable_id(id), type(type_) {}
     };
 
-    class VariableManager
+    class VariableSpace
     {
     public:
-        VariableManager();
-        explicit VariableManager(IVariableContainer * variables);
-        VariableManager(const VariableManager& rhs);
+        VariableSpace();
+        explicit VariableSpace(IVariableContainer * variables);
+        VariableSpace(const VariableSpace& rhs);
 
-        ~VariableManager();
+        ~VariableSpace();
 
 		bool Add(int type, const wchar_t * name, const wchar_t * description);
         bool Add(const wchar_t * type, const wchar_t * name, const wchar_t * description);
@@ -97,7 +97,7 @@ namespace Yap {
 			return array_variable->Elements();
 		}
 
-		static std::shared_ptr<VariableManager> Load(const wchar_t * path);
+		static std::shared_ptr<VariableSpace> Load(const wchar_t * path);
 
         void Reset();
         bool TypeExists(const wchar_t * type_id) const;

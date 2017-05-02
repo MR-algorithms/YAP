@@ -24,13 +24,13 @@
     <ClCompile Include="DataObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VariableManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LogImpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LogUserImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VariableSpace.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,13 +50,13 @@
     <ClInclude Include="DataObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VariableManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LogImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LogUserImpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VariableSpace.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
