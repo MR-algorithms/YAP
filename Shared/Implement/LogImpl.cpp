@@ -37,7 +37,7 @@ void Yap::LogImpl::Log(const wchar_t * module,
 	auto iter = _loggers.find(log_name);
 	if (iter == _loggers.end())
 	{
-		SharedAppenderPtr append(new FileAppender(log_name, 16, flush));
+		SharedAppenderPtr append(new RollingFileAppender(log_name, 1024 * 1024, 7, flush));
 		append->setName(L"sysAppender");
 
 		const wchar_t * pattern = L"%d{%m/%d/%y  %H:%M:%S} [%-5p] - %m [%l]%n";
@@ -53,25 +53,29 @@ void Yap::LogImpl::Log(const wchar_t * module,
 		_loggers.insert(make_pair(log_name, logger));
 	}
 
+	wstring info_str(info);
+	wstring module_str(module);
+	wstring full_info = info_str + L" [" + module_str + L"]";
+
 	switch (level)
 	{
 	case Yap::LevelTrace:
-		LOG4CPLUS_TRACE(_loggers[log_name], info);
+		LOG4CPLUS_TRACE(_loggers[log_name], full_info.c_str());
 		break;
 	case Yap::LevelDebug:
-		LOG4CPLUS_DEBUG(_loggers[log_name], info);
+		LOG4CPLUS_DEBUG(_loggers[log_name], full_info.c_str());
 		break;
 	case Yap::LevelInfo:
-		LOG4CPLUS_INFO(_loggers[log_name], info);
+		LOG4CPLUS_INFO(_loggers[log_name], full_info.c_str());
 		break;
 	case Yap::LevelWarn:
-		LOG4CPLUS_WARN(_loggers[log_name], info);
+		LOG4CPLUS_WARN(_loggers[log_name], full_info.c_str());
 		break;
 	case Yap::LevelError:
-		LOG4CPLUS_ERROR(_loggers[log_name], info);
+		LOG4CPLUS_ERROR(_loggers[log_name], full_info.c_str());
 		break;
 	case Yap::LevelFatal:
-		LOG4CPLUS_FATAL(_loggers[log_name], info);
+		LOG4CPLUS_FATAL(_loggers[log_name], full_info.c_str());
 		break;
 	default:
 		assert(0 && L"Level doesn't exist.");

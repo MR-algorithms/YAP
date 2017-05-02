@@ -5,6 +5,11 @@
 #include "Interface/Interfaces.h"
 
 #define LOG_TRACE(info, module) LogUserImpl::GetInstance().Trace(info, module)
+#define LOG_DEBUG(info, module) LogUserImpl::GetInstance().Debug(info, module)
+#define LOG_INFO (info, module) LogUserImpl::GetInstance().Info (info, module)
+#define LOG_WARN (info, module) LogUserImpl::GetInstance().Warn (info, module)
+#define LOG_ERROR(info, module) LogUserImpl::GetInstance().Error(info, module)
+#define LOG_FATAL(info, module) LogUserImpl::GetInstance().Fatal(info, module)
 
 namespace Yap
 {

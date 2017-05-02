@@ -22,13 +22,13 @@ ChannelDataCollector::ChannelDataCollector(void):
 Yap::ChannelDataCollector::ChannelDataCollector(const ChannelDataCollector& rhs):
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"BasicRecon", L"ChannelDataCollector constructor called.");
+	LOG_TRACE(L"ChannelDataCollector constructor called.", L"BasicRecon");
 }
 
 
 ChannelDataCollector::~ChannelDataCollector(void)
 {
-	LOG_TRACE(L"BasicRecon", L"ChannelDataCollector destructor called.");
+	LOG_TRACE(L"ChannelDataCollector destructor called.", L"BasicRecon");
 }
 
 bool Yap::ChannelDataCollector::Input(const wchar_t * name, IData * data)
