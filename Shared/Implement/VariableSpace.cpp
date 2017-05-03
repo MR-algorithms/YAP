@@ -109,7 +109,7 @@ namespace _details
 	public:
 		ArrayVariable(size_t size, VALUE_TYPE value, const wchar_t * id, const wchar_t * description) :
 			_id{ id },
-			_description{ description },
+			_description{ description != nullptr ? description : L"" },
 			_type{ variable_type_id<VALUE_TYPE>::array_type } {
 			_elements.resize(size, value);
 		}
@@ -156,7 +156,7 @@ namespace _details
 	public:
 		ArrayVariable(size_t size, bool value, const wchar_t * id, const wchar_t * description) :
 			_id{ id },
-			_description{ description },
+			_description{ description != nullptr ? description : L"" },
 			_type{ variable_type_id<bool>::array_type } {
 			_elements.resize(size, value);
 		}
@@ -203,7 +203,7 @@ namespace _details
 	public:
 		ArrayVariable(size_t size, IVariable* value, const wchar_t * id, const wchar_t * description) :
 			_id{ id },
-			_description{ description },
+			_description{ description != nullptr ? description : L"" },
 			_type{ variable_type_id<IVariable*>::array_type } {
 			assert(size >= 1 && "There should be at least one element in the array.");
 			assert(value != nullptr && "The template could not be null.");
@@ -262,7 +262,9 @@ namespace _details
 		IMPLEMENT_VARIABLE
 	public:
 		StructVariable(const wchar_t * id, const wchar_t * description) :
-			_id{ id }, _description{ description }, _type{ VariableStruct },
+			_id{ id }, 
+			_description{ description != nullptr ? description : L"" },
+			_type{ VariableStruct },
 			_members{ YapShared(new ContainerImpl<IVariable>) } {}
 
 		StructVariable(const StructVariable& rhs) :
@@ -281,12 +283,12 @@ namespace _details
 		StructVariable(IPtrContainer<IVariable> * variables, const wchar_t * id, const wchar_t * description) :
 			_members{ YapShared(variables) },
 			_id{ id },
-			_description{ description },
+			_description{ description != nullptr ? description : L"" },
 			_type{ VariableStruct } {
 		}
 		virtual IPtrContainer<IVariable> * Members() override {
 			return _members.get();
-		};
+                }
 
 		SmartPtr<ContainerImpl<IVariable>> _members;
 	};

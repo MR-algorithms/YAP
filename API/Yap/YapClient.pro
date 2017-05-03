@@ -28,7 +28,7 @@ SOURCES += ModuleManager.cpp \
     ../../shared/Implement/CompositeProcessor.cpp \
     ../../shared/Implement/DataObject.cpp \
     ../../shared/Implement/ProcessorImpl.cpp \
-    ../../shared/Implement/VariableManager.cpp \
+    ../../shared/Implement/VariableSpace.cpp \
     ../../shared/Implement/LogImpl.cpp \
     ../../shared/Implement/LogUserImpl.cpp \
     Preprocessor.cpp \
@@ -48,7 +48,7 @@ HEADERS += ProcessorManagerAgent.h \
     ../../shared/Implement/DataObject.h \
     ../../shared/Implement/ProcessorImpl.h \
     ../../shared/Implement/YapImplement.h \
-    ../../shared/Implement/VariableManager.h \
+    ../../shared/Implement/VariableSpace.h \
     ../../shared/Implement/LogImpl.h \
     ../../shared/Implement/LogUserImpl.h \
     Preprocessor.h \
