@@ -4,6 +4,7 @@
 #include <complex.h>
 #include "Client/DataHelper.h"
 #include "Implement/DataObject.h"
+#include "Implement/LogUserImpl.h"
 
 using namespace Yap;
 using namespace std;
@@ -11,6 +12,7 @@ using namespace std;
 SliceMerger::SliceMerger(void) :
 	ProcessorImpl(L"SliceMerger")
 {
+	LOG_TRACE(L"SliceMerger constructor called.", L"BasicRecon");
 	AddInput(L"Input", 2, DataTypeAll);
 	AddOutput(L"Output", 3, DataTypeAll);
 
@@ -20,10 +22,12 @@ SliceMerger::SliceMerger(void) :
 SliceMerger::SliceMerger(const SliceMerger& rhs)
 	: ProcessorImpl(rhs)
 {
+	LOG_TRACE(L"SliceMerger constructor called.", L"BasicRecon");
 }
 
 SliceMerger::~SliceMerger()
 {
+	LOG_TRACE(L"SliceMerger destructor called.", L"BasicRecon");
 }
 
 bool SliceMerger::Input(const wchar_t * port, IData * data)

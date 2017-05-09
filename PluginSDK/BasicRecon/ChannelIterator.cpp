@@ -3,12 +3,14 @@
 #include "Client/DataHelper.h"
 #include <complex>
 #include "Implement/DataObject.h"
+#include "Implement/LogUserImpl.h"
 
 using namespace std;
 using namespace  Yap;
 ChannelIterator::ChannelIterator():
 	ProcessorImpl(L"ChannelIterator")
 {
+	LOG_TRACE(L"ChannelIterator constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddOutput(L"Output", 2, DataTypeComplexFloat);
 
@@ -16,9 +18,15 @@ ChannelIterator::ChannelIterator():
 	_properties->Set<int>(L"SliceIndex", 0);
 }
 
+ChannelIterator::ChannelIterator(const ChannelIterator& rhs)
+	: ProcessorImpl(rhs)
+{
+	LOG_TRACE(L"ChannelIterator constructor called.", L"BasicRecon");
+}
 
 ChannelIterator::~ChannelIterator()
 {
+	LOG_TRACE(L"ChannelIterator destructor called.", L"BasicRecon");
 }
 
 bool Yap::ChannelIterator::Input(const wchar_t * name, IData * data)

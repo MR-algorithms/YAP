@@ -3,12 +3,15 @@
 #include "Client/DataHelper.h"
 #include <utility>
 
+#include "Implement/LogUserImpl.h"
+
 using namespace Yap;
 using namespace std;
 
 ChannelMerger::ChannelMerger(void) :
 	ProcessorImpl(L"ChannelMerger")
 {
+	LOG_TRACE(L"ChannelMerger constructor called.", L"BasicRecon");
 	AddOutput(L"Output", 2, DataTypeFloat);
 	AddInput(L"Input", 2, DataTypeFloat);
 
@@ -20,10 +23,12 @@ ChannelMerger::ChannelMerger(void) :
 ChannelMerger::ChannelMerger( const ChannelMerger& rhs )
 	: ProcessorImpl(rhs)
 {
+	LOG_TRACE(L"ChannelMerger constructor called.", L"BasicRecon");
 }
 
 ChannelMerger::~ChannelMerger(void)
 {
+	LOG_TRACE(L"ChannelMerger destructor called.", L"BasicRecon");
 }
 
 bool ChannelMerger::Input(const wchar_t * name, IData * data)

@@ -15,10 +15,10 @@ namespace Yap
 		ModulePhase(void);
 		ModulePhase(const ModulePhase& rhs);
 		
-		virtual bool Input(const wchar_t * port, IData * data) override;
-
 	protected:
 		~ModulePhase();
+
+		virtual bool Input(const wchar_t * port, IData * data) override;
 	};
 }
 #endif // ModulePhase_h__

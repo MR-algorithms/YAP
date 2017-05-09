@@ -1,6 +1,7 @@
 #include "SliceSelector.h"
 #include "Client/DataHelper.h"
 #include "Implement/DataObject.h"
+#include "Implement/LogUserImpl.h"
 
 #include <complex>
 
@@ -10,6 +11,7 @@ using namespace Yap;
 SliceSelector::SliceSelector(void):
 	ProcessorImpl(L"SliceSelector")
 {
+	LOG_TRACE(L"SliceSelector constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
@@ -20,10 +22,12 @@ SliceSelector::SliceSelector(void):
 Yap::SliceSelector::SliceSelector(const SliceSelector & rhs)
 	: ProcessorImpl(rhs)
 {
+	LOG_TRACE(L"SliceSelector constructor called.", L"BasicRecon");
 }
 
 SliceSelector::~SliceSelector()
 {
+	LOG_TRACE(L"SliceSelector destructor called.", L"BasicRecon");
 }
 
 bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)

@@ -3,8 +3,10 @@
 #pragma once
 
 #include "Interface/Interfaces.h"
-#include <log4cplus/logger.h>
+
 #include <map>
+
+namespace log4cplus { class Logger; }
 
 namespace Yap
 {
@@ -16,9 +18,12 @@ namespace Yap
 
 		virtual void Log(const wchar_t * module, const wchar_t * info, LogLevel level, const wchar_t * log_name = L"", bool flush = true) override;
 		static LogImpl& GetInstance();
+
 	protected:
 		LogImpl();
-		static LogImpl s_instance;
+		static bool Init();
+		static std::shared_ptr<LogImpl> s_instance;
+
 		std::map<std::wstring, log4cplus::Logger> _loggers;
 	};
 }

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "DataTypeConvertor.h"
 #include "Client\DataHelper.h"
+#include "Implement\LogUserImpl.h"
 
 using namespace Yap;
 using namespace std;
@@ -107,6 +108,7 @@ Yap::SmartPtr<IData> Convert<complex<float>>(IData * input, int output_type)
 DataTypeConvertor::DataTypeConvertor(void):
 	ProcessorImpl(L"DataTypeConvertor")
 {
+	LOG_TRACE(L"DataTypeConvertor constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
 
 	AddOutput(L"Bool", YAP_ANY_DIMENSION, DataTypeBool);
@@ -124,11 +126,12 @@ DataTypeConvertor::DataTypeConvertor(void):
 DataTypeConvertor::DataTypeConvertor(const DataTypeConvertor& rhs) :
 	ProcessorImpl(rhs)
 {
-
+	LOG_TRACE(L"DataTypeConvertor constructor called.", L"BasicRecon");
 }
 
 DataTypeConvertor::~DataTypeConvertor()
 {
+	LOG_TRACE(L"DataTypeConvertor destructor called.", L"BasicRecon");
 }
 
 static int DataTypeFromPortName(const wchar_t * port_name)

@@ -13,10 +13,12 @@ namespace Yap
 		IMPLEMENT_SHARED(Difference)
 	public:
 		Difference();
-		virtual bool Input(const wchar_t * port, IData * data) override;
+		Difference(const Difference& rhs);
 
 	protected:
 		~Difference();
+
+		virtual bool Input(const wchar_t * port, IData * data) override;
 
 		SmartPtr<IData> _reference_data;
 	};

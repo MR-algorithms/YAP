@@ -2,6 +2,7 @@
 
 #include "Client/DataHelper.h"
 #include "Implement/DataObject.h"
+#include "Implement/LogUserImpl.h"
 
 #include <string>
 
@@ -16,6 +17,7 @@ Fft2D::Fft2D():
 	_plan_in_place(false),
 	_fft_plan(nullptr)
 {
+	LOG_TRACE(L"Fft2D constructor called.", L"BasicRecon");
 	_properties->Add(VariableBool, L"Inverse", L"The direction of FFT2D.");
 	_properties->Add(VariableBool, L"InPlace", L"The position of FFT2D.");
 
@@ -27,8 +29,16 @@ Fft2D::Fft2D():
 }
 
 
+Fft2D::Fft2D(const Fft2D& rhs)
+	:ProcessorImpl(rhs)
+{
+	LOG_TRACE(L"Fft2D constructor called.", L"BasicRecon");
+}
+
+
 Fft2D::~Fft2D()
 {
+	LOG_TRACE(L"Fft2D destructor called.", L"BasicRecon");
 }
 
 bool Fft2D::Input(const wchar_t * port, IData * data)

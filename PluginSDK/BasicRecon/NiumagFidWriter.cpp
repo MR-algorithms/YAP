@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "NiumagFidWriter.h"
+#include "Implement/LogUserImpl.h"
 
 #include <fstream>
 #include <iosfwd>
@@ -11,6 +12,7 @@ using namespace std;
 NiumagFidWriter::NiumagFidWriter(void) :
 	ProcessorImpl(L"NiumagFidWriter")
 {
+	LOG_TRACE(L"NiumagFidWriter constructor called.", L"BasicRecon");
 	AddInput(L"Input", 4, DataTypeComplexFloat);
 	_properties->Add(VariableString, L"ExportFolder", L"Set folder used to write fid.");
 }
@@ -18,10 +20,12 @@ NiumagFidWriter::NiumagFidWriter(void) :
 NiumagFidWriter::NiumagFidWriter(const NiumagFidWriter& rhs) :
 	ProcessorImpl(rhs)
 {
+	LOG_TRACE(L"NiumagFidWriter constructor called.", L"BasicRecon");
 }
 
 NiumagFidWriter::~NiumagFidWriter()
 {
+	LOG_TRACE(L"NiumagFidWriter destructor called.", L"BasicRecon");
 }
 
 bool Yap::NiumagFidWriter::Input(const wchar_t * name, IData * data)

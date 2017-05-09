@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "NiuMriImageReader.h"
+#include "Implement/LogUserImpl.h"
 
 #include <sstream>
 #include <iostream>
@@ -34,6 +35,7 @@ namespace Yap
 NiuMriImageReader::NiuMriImageReader(void) :
 	ProcessorImpl(L"NiuMriImageReader")
 {
+	LOG_TRACE(L"NiuMriImageReader constructor called.", L"BasicRecon");
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
 
@@ -43,10 +45,12 @@ NiuMriImageReader::NiuMriImageReader(void) :
 Yap::NiuMriImageReader::NiuMriImageReader(const NiuMriImageReader& rhs) :
 	ProcessorImpl(rhs)
 {
+	LOG_TRACE(L"NiuMriImageReader constructor called.", L"BasicRecon");
 }
 
 Yap::NiuMriImageReader::~NiuMriImageReader()
 {
+	LOG_TRACE(L"NiuMriImageReader destructor called.", L"BasicRecon");
 }
 
 bool Yap::NiuMriImageReader::Input(const wchar_t * name, IData * data)

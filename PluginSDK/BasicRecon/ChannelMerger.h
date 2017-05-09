@@ -16,10 +16,10 @@ namespace Yap
 		ChannelMerger(void);
 		ChannelMerger(const ChannelMerger& rhs);
 
-		virtual bool Input(const wchar_t * name, IData * data) override;
-	
 	protected:
 		~ChannelMerger(void);
+
+		virtual bool Input(const wchar_t * name, IData * data) override;
 
 		struct MergeBuffer
 		{

@@ -2,6 +2,7 @@
 #include "Nlmeans.h"
 #include "Client/DataHelper.h"
 #include "Implement/DataObject.h"
+#include "Implement/LogUserImpl.h"
 
 using namespace std;
 using namespace Yap;
@@ -10,6 +11,7 @@ using namespace arma;
 Nlmeans::Nlmeans(void):
 	ProcessorImpl(L"Nlmeans")
 {
+	LOG_TRACE(L"Nlmeans constructor called.", L"BasicRecon");
 	AddInput(L"Input", 2, DataTypeFloat);
 	AddOutput(L"Output", 2, DataTypeFloat);
 }
@@ -17,10 +19,12 @@ Nlmeans::Nlmeans(void):
 Yap::Nlmeans::Nlmeans(const Nlmeans & rhs) :
 	ProcessorImpl(rhs)
 {
+	LOG_TRACE(L"Nlmeans constructor called.", L"BasicRecon");
 }
 
 Nlmeans::~Nlmeans()
 {
+	LOG_TRACE(L"Nlmeans destructor called.", L"BasicRecon");
 }
 
 bool Yap::Nlmeans::Input(const wchar_t * name, IData * data)

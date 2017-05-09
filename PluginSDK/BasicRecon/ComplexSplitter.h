@@ -13,7 +13,7 @@ namespace Yap
 		IMPLEMENT_SHARED(ComplexSplitter)
 	public:
 		ComplexSplitter();
-		
+		ComplexSplitter(const ComplexSplitter& rhs);
 
 	protected:
 		~ComplexSplitter();

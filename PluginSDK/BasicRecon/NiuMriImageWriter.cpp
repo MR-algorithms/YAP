@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "NiuMriImageWriter.h"
+#include "Implement/LogUserImpl.h"
 
 #include <time.h>
 #include <stdio.h>
@@ -13,6 +14,7 @@ using namespace std;
 NiuMriImageWriter::NiuMriImageWriter(void) :
 	ProcessorImpl(L"NiuMriImageWriter")
 {
+	LOG_TRACE(L"NiuMriImageWriter constructor called.", L"BasicRecon");
 	AddInput(L"Input", 3, DataTypeUnsignedShort);
 	_properties->Add(VariableString, L"ExportFolder", L"Set folder used to write images.");
 	_properties->Add(VariableString, L"FileName", L"Set file name.");
@@ -21,10 +23,12 @@ NiuMriImageWriter::NiuMriImageWriter(void) :
 NiuMriImageWriter::NiuMriImageWriter(const NiuMriImageWriter& rhs) :
 	ProcessorImpl(rhs)
 {
+	LOG_TRACE(L"NiuMriImageWriter constructor called.", L"BasicRecon");
 }
 
 NiuMriImageWriter::~NiuMriImageWriter()
 {
+	LOG_TRACE(L"NiuMriImageWriter destructor called.", L"BasicRecon");
 }
 
 bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)

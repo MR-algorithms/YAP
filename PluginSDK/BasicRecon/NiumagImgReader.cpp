@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "NiumagImgReader.h"
+#include "Implement/LogUserImpl.h"
 
 #include <sstream>
 #include <iostream>
@@ -34,6 +35,7 @@ namespace Yap
 NiumagImgReader::NiumagImgReader():
 	ProcessorImpl(L"NiumagImgReader")
 {
+	LOG_TRACE(L"NiumagImgReader constructor called.", L"BasicRecon");
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
 
@@ -43,10 +45,12 @@ NiumagImgReader::NiumagImgReader():
 Yap::NiumagImgReader::NiumagImgReader(const NiumagImgReader& rhs):
 	ProcessorImpl(rhs)
 {
+	LOG_TRACE(L"NiumagImgReader constructor called.", L"BasicRecon");
 }
 
 NiumagImgReader::~NiumagImgReader()
 {
+	LOG_TRACE(L"NiumagImgReader destructor called.", L"BasicRecon");
 }
 
 bool Yap::NiumagImgReader::Input(const wchar_t * name, IData * data)

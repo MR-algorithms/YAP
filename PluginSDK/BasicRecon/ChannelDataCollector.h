@@ -11,10 +11,10 @@ namespace Yap
 		ChannelDataCollector(void);
 		ChannelDataCollector(const ChannelDataCollector& rhs);
 
-		virtual bool Input(const wchar_t * name, IData * data) override;
-
 	protected:
 		~ChannelDataCollector(void);
+
+		virtual bool Input(const wchar_t * name, IData * data) override;
 
 		struct CollectorBuffer
 		{

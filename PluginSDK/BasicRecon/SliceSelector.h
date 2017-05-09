@@ -14,11 +14,11 @@ namespace Yap
 	public:
 		SliceSelector(void);
 		SliceSelector(const SliceSelector& rhs);
-		
-		virtual bool Input(const wchar_t * name, IData * data) override;
 
 	protected:
 		~SliceSelector();
+
+		virtual bool Input(const wchar_t * name, IData * data) override;
 	};
 }
 #endif // SliceSelector_h__

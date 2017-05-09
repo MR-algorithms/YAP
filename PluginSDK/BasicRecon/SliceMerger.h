@@ -14,10 +14,10 @@ namespace Yap
 		SliceMerger(void);
 		SliceMerger(const SliceMerger& rhs);
 
-		virtual bool Input(const wchar_t * port, IData * data) override;
-
 	protected:
 		~SliceMerger();
+
+		virtual bool Input(const wchar_t * port, IData * data) override;
 
 		SmartPtr<IData> _data;
 	};

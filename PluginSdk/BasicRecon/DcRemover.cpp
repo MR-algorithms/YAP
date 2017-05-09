@@ -2,6 +2,7 @@
 
 #include "Client/DataHelper.h"
 #include "Implement/DataObject.h"
+#include "Implement/LogUserImpl.h"
 
 #include <string>
 
@@ -59,6 +60,7 @@ void RemoveDC(T * input_data,
 DcRemover::DcRemover() :
 	ProcessorImpl(L"DcRemover")
 {
+	LOG_TRACE(L"DcRemover constructor called.", L"BasicRecon");
 	AddInput(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 	
 	_properties->Add(VariableBool, L"Inplace", L"If the processed data will be stored in place.");
@@ -69,9 +71,15 @@ DcRemover::DcRemover() :
 	AddOutput(L"Output", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 }
 
+Yap::DcRemover::DcRemover(const DcRemover& rhs)
+	:ProcessorImpl(rhs)
+{
+	LOG_TRACE(L"DcRemover constructor called.", L"BasicRecon");
+}
 
 DcRemover::~DcRemover()
 {
+	LOG_TRACE(L"DcRemover destructor called.", L"BasicRecon");
 }
 
 bool DcRemover::Input(const wchar_t * port, IData * data)

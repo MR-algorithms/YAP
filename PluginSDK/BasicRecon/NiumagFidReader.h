@@ -22,7 +22,7 @@ namespace Yap
 	private:
 		~NiumagFidReader();
 
-		virtual bool Input(const wchar_t * name, IData * data);
+		virtual bool Input(const wchar_t * name, IData * data) override;
 
 		bool ReadNiumagFidData();
 	};

@@ -1,5 +1,6 @@
 ﻿
 #include "CmrDataReader.h"
+#include "Implement/LogUserImpl.h"
 
 #include <sstream>
 #include <iostream>
@@ -32,19 +33,26 @@ namespace Yap
 CmrDataReader::CmrDataReader(void) :
 	ProcessorImpl(L"CmrRawDataReader")
 {
-}
-
-CmrDataReader::CmrDataReader(const CmrDataReader& rhs)
-	: ProcessorImpl(rhs)
-{
+	LOG_TRACE(L"CmrDataReader constructor called.", L"BasicRecon");
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
 	_properties->Add(VariableString, L"DataPath",  L"包含原始数据文件的文件夹。");
 	_properties->Add(VariableInt, L"ChannelCount",  L"通道数");
 	_properties->Add(VariableInt, L"ChannelSwitch",  L"通道开关指示值");
-	_properties->Add(VariableInt, L"GroupCount",  L"分组扫描数");}
+	_properties->Add(VariableInt, L"GroupCount",  L"分组扫描数");
+}
 
+CmrDataReader::CmrDataReader(const CmrDataReader& rhs)
+	: ProcessorImpl(rhs)
+{
+	LOG_TRACE(L"CmrDataReader constructor called.", L"BasicRecon");
+}
+
+CmrDataReader::~CmrDataReader()
+{
+	LOG_TRACE(L"CmrDataReader destructor called.", L"BasicRecon");
+}
 
 bool CmrDataReader::Input(const wchar_t * name, IData * data)
 {

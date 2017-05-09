@@ -13,10 +13,12 @@ namespace Yap
 		IMPLEMENT_SHARED(DcRemover)
 	public:
 		DcRemover();
-		virtual bool Input(const wchar_t * port, IData * data) override;
+		DcRemover(const DcRemover& rhs);
 
 	protected:
 		~DcRemover();
+
+		virtual bool Input(const wchar_t * port, IData * data) override;
 	};
 }
 

@@ -11,21 +11,23 @@ using namespace Yap;
 using namespace log4cplus;
 using namespace log4cplus::helpers;
 
-LogImpl LogImpl::s_instance;
+shared_ptr<LogImpl> LogImpl::s_instance;
 
 Yap::LogImpl::LogImpl()
 {
-
 }
 
 Yap::LogImpl::~LogImpl()
 {
-
 }
 
 LogImpl& LogImpl::GetInstance()
 {
-	return s_instance;
+	if (!s_instance)
+	{
+		Init();
+	}
+	return *s_instance;
 }
 
 void Yap::LogImpl::Log(const wchar_t * module,
@@ -40,7 +42,7 @@ void Yap::LogImpl::Log(const wchar_t * module,
 		SharedAppenderPtr append(new RollingFileAppender(log_name, 1024 * 1024, 7, flush));
 		append->setName(L"sysAppender");
 
-		const wchar_t * pattern = L"%d{%m/%d/%y  %H:%M:%S} [%-5p] - %m [%l]%n";
+		const wchar_t * pattern = L"%d{%y/%m/%d %H:%M:%S} [%-5p] - %m [%l]%n";
 		std::unique_ptr<Layout> layout(new PatternLayout(pattern));
 
 		append->setLayout(move(layout));
@@ -81,4 +83,18 @@ void Yap::LogImpl::Log(const wchar_t * module,
 		assert(0 && L"Level doesn't exist.");
 		break;
 	}
+}
+
+bool Yap::LogImpl::Init()
+{
+	try
+	{
+		s_instance = shared_ptr<LogImpl>(new LogImpl);
+	}
+	catch (bad_alloc&)
+	{
+		return false;
+	}
+
+	return true;
 }

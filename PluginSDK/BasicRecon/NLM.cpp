@@ -2,6 +2,7 @@
 #include "NLM.h"
 #include "Client/DataHelper.h"
 #include "Implement/DataObject.h"
+#include "Implement/LogUserImpl.h"
 
 using namespace std;
 using namespace Yap;
@@ -10,12 +11,20 @@ using namespace arma;
 NLM::NLM(void):
 	ProcessorImpl(L"NLM")
 {
+	LOG_TRACE(L"NLM constructor called.", L"BasicRecon");
 	AddInput(L"Input", 2, DataTypeFloat);
 	AddOutput(L"Output", 2, DataTypeFloat);
 }
 
+NLM::NLM(const NLM& rhs)
+	:ProcessorImpl(rhs)
+{
+	LOG_TRACE(L"NLM constructor called.", L"BasicRecon");
+}
+
 NLM::~NLM()
 {
+	LOG_TRACE(L"NLM destructor called.", L"BasicRecon");
 }
 
 bool Yap::NLM::Input(const wchar_t * name, IData * data)

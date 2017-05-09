@@ -13,11 +13,11 @@ namespace Yap
 	public:
 		NiumagFidWriter(void);
 		NiumagFidWriter(const NiumagFidWriter& rhs);
-
-	private:
-		~NiumagFidWriter();
-
-		virtual bool Input(const wchar_t * name, IData * data);
+		
+	private:		
+		~NiumagFidWriter();		
+		
+		virtual bool Input(const wchar_t * name, IData * data) override;
 	};
 }
 

@@ -16,11 +16,12 @@ namespace Yap
 		IMPLEMENT_SHARED(Fft1D)
 	public:
 		Fft1D();
-		
-		virtual bool Input(const wchar_t * port, IData * data) override;
+		Fft1D(const Fft1D& rhs);
 
 	protected:
 		~Fft1D();
+
+		virtual bool Input(const wchar_t * port, IData * data) override;
 
 		void FFTShift(std::complex<double>* data, size_t size);
 		void SwapBlock(std::complex<double> * block1, std::complex<double> * block2,

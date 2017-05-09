@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "NiumagFidReader.h"
+#include "Implement/LogUserImpl.h"
 
 #include <sstream>
 #include <iostream>
@@ -30,6 +31,7 @@ namespace Yap
 NiumagFidReader::NiumagFidReader(void):
 	ProcessorImpl(L"NiumagFidReader")
 {
+	LOG_TRACE(L"NiumagFidReader constructor called.", L"BasicRecon");
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
@@ -39,10 +41,12 @@ NiumagFidReader::NiumagFidReader(void):
 NiumagFidReader::NiumagFidReader(const NiumagFidReader& rhs):
 	ProcessorImpl(rhs)
 {
+	LOG_TRACE(L"NiumagFidReader constructor called.", L"BasicRecon");
 }
 
 NiumagFidReader::~NiumagFidReader()
 {
+	LOG_TRACE(L"NiumagFidReader destructor called.", L"BasicRecon");
 }
 
 bool Yap::NiumagFidReader::Input(const wchar_t * name, IData * data)

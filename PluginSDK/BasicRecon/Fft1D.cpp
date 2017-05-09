@@ -2,6 +2,7 @@
 
 #include "Client/DataHelper.h"
 #include "Implement/DataObject.h"
+#include "Implement/LogUserImpl.h"
 
 #include <string.h>
 
@@ -18,6 +19,7 @@ Fft1D::Fft1D() :
 	_plan_inverse(false),
 	_plan_in_place(false)
 {
+	LOG_TRACE(L"Fft1D constructor called.", L"BasicRecon");
 	_properties->Add(VariableBool, L"Inverse", L"The direction of FFT1D.");
 	_properties->Add(VariableBool, L"InPlace", L"The position of FFT1D.");
 
@@ -28,8 +30,16 @@ Fft1D::Fft1D() :
 	AddOutput(L"Output", 1, DataTypeComplexDouble);
 }
 
+
+Fft1D::Fft1D(const Fft1D& rhs)
+	:ProcessorImpl(rhs)
+{
+	LOG_TRACE(L"Fft1D constructor called.", L"BasicRecon");
+}
+
 Fft1D::~Fft1D()
 {
+	LOG_TRACE(L"Fft1D destructor called.", L"BasicRecon");
 }
 
 

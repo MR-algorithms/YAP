@@ -9,10 +9,12 @@ namespace Yap
 		IMPLEMENT_SHARED(SubSampling)
 	public:
 		SubSampling();
+		SubSampling(const SubSampling& rhs);
 
-		virtual bool Input(const wchar_t * port, IData * data) override;
 	protected:
 		~SubSampling();
+
+		virtual bool Input(const wchar_t * port, IData * data) override;
 
 		void GetSubSampledData(std::complex<float> * input_data, float * mask, std::complex<float> * output_data, unsigned int width, unsigned int height);
 

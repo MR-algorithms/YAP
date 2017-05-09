@@ -8,11 +8,12 @@ namespace Yap
 		IMPLEMENT_SHARED(ChannelIterator)
 	public:
 		ChannelIterator();
-
-		virtual bool Input(const wchar_t * name, IData * data) override;
+		ChannelIterator(const ChannelIterator& rhs);
 
 	protected:
 		~ChannelIterator();
+
+		virtual bool Input(const wchar_t * name, IData * data) override;
 	};
 }
 

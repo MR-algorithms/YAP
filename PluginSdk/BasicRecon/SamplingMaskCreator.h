@@ -17,10 +17,12 @@ namespace Yap
 		IMPLEMENT_SHARED(SamplingMaskCreator)
 	public:
 		SamplingMaskCreator();
-		virtual bool Input(const wchar_t * name, IData * data) override;
+		SamplingMaskCreator(const SamplingMaskCreator& rhs);
 
 	protected:
 		~SamplingMaskCreator();
+
+		virtual bool Input(const wchar_t * name, IData * data) override;
 
 		std::vector<unsigned int> GetRandomSamplingPattern(unsigned int row_count,
 			float pow, float sample_percent, float radius);

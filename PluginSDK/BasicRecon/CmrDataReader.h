@@ -25,8 +25,11 @@ namespace Yap
 	public:
 		CmrDataReader(void);
 		CmrDataReader(const CmrDataReader& rhs);
+
 	private:
-		virtual bool Input(const wchar_t * name, IData * data);
+		~CmrDataReader();
+
+		virtual bool Input(const wchar_t * name, IData * data) override;
 
 		bool ReadRawData(unsigned int channel_index);
 		float* ReadEcnuFile(const wchar_t * file_path, unsigned int& width, unsigned int& height,

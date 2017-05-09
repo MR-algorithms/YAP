@@ -2,6 +2,7 @@
 
 #include "Client/DataHelper.h"
 #include "Implement/DataObject.h"
+#include "Implement/LogUserImpl.h"
 
 #include <string>
 #include <complex>
@@ -32,6 +33,7 @@ bool zero_filling(T* dest,
 
 ZeroFilling::ZeroFilling() : ProcessorImpl(L"ZeroFilling")
 {
+	LOG_TRACE(L"ZeroFilling constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 
@@ -45,8 +47,15 @@ ZeroFilling::ZeroFilling() : ProcessorImpl(L"ZeroFilling")
 	_properties->Set<int>(L"Top", 0);
 }
 
+ZeroFilling::ZeroFilling(const ZeroFilling& rhs)
+	:ProcessorImpl(rhs)
+{
+	LOG_TRACE(L"ZeroFilling constructor called.", L"BasicRecon");
+}
+
 ZeroFilling::~ZeroFilling()
 {
+	LOG_TRACE(L"ZeroFilling destructor called.", L"BasicRecon");
 }
 
 bool ZeroFilling::Input(const wchar_t * port, IData * data)
