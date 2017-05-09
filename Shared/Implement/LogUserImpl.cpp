@@ -6,7 +6,7 @@ Yap::LogUserImpl Yap::LogUserImpl::s_instance;
 
 LogUserImpl::LogUserImpl()
 {
-	_module = nullptr;
+	_module = L"";
 	_log_name = L"sys.log";
 	_flush = true;
 }

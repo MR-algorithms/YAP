@@ -34,6 +34,16 @@ bool Yap::ModuleAgent::Load(const wchar_t * plugin_path)
 		return false;
 	}
 
+	auto log_func = (Yap::ILogUser*(*)()) ::GetProcAddress(_module, "GetLogUser");
+	if (log_func != nullptr)
+	{
+		auto log_user = log_func();
+		if (log_user != nullptr)
+		{
+			log_user->SetLog(&LogImpl::GetInstance());
+		}
+	}
+
 	auto create_func = (Yap::IProcessorContainer*(*)())::GetProcAddress(
 		_module, "GetProcessorManager");
 	if (create_func == nullptr) 
@@ -49,16 +59,6 @@ bool Yap::ModuleAgent::Load(const wchar_t * plugin_path)
 		::FreeLibrary(_module);
 		_module = 0;
 		return false;
-	}
-
-	auto log_func = (Yap::ILogUser*(*)()) ::GetProcAddress(_module, "GetLogUser");
-	if (log_func != nullptr)
-	{
-		auto log_user = log_func();
-		if (log_user != nullptr)
-		{
-			log_user->SetLog(&LogImpl::GetInstance());
-		}
 	}
 
 	return true;
