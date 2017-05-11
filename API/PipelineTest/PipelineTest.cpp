@@ -16,6 +16,7 @@
 #include "Yap/VdfParser.h"
 #include "Implement/LogImpl.h"
 #include "Implement/LogUserImpl.h"
+#include <log4cplus/initializer.h>
 
 using namespace std;
 using namespace Yap;
@@ -128,16 +129,16 @@ bool VdfParserTest()
 
 int main()
 {
+	log4cplus::Initializer initializer;
 	time_t start = clock();
 
 //	ConstructorTest();
-  PipelineTest();
-
+	PipelineTest();
 //	VdfParserTest();
 
 // 	LogImpl::GetInstance().Log(L"test", L"test info debug", LevelDebug, L"sys.log");
 // 	LogImpl::GetInstance().Log(L"test", L"test info error", LevelError, L"sys.log");
-// 	LogImpl::GetInstance().Log(L"test", L"test info warn", LevelWarn, L"sys.log");
+//	LogImpl::GetInstance().Log(L"test", L"test info warn", LevelWarn, L"sys.log");
 
 	time_t end = clock();
 	printf("the running time is : %f\n", float(end - start) / CLOCKS_PER_SEC);

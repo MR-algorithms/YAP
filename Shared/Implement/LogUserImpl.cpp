@@ -1,16 +1,18 @@
 #include "LogUserImpl.h"
 
-using namespace Yap;
+#include <memory>
 
-Yap::LogUserImpl Yap::LogUserImpl::s_instance;
+using namespace Yap;
+using namespace std;
+
+shared_ptr<LogUserImpl> LogUserImpl::s_instance;
 
 LogUserImpl::LogUserImpl()
 {
-	_module = L"";
 	_log_name = L"sys.log";
+	_module = L"";
 	_flush = true;
 }
-
 
 LogUserImpl::~LogUserImpl()
 {
@@ -18,10 +20,14 @@ LogUserImpl::~LogUserImpl()
 
 LogUserImpl& LogUserImpl::GetInstance()
 {
-	return s_instance;
+	if (!s_instance)
+	{
+		s_instance = shared_ptr<LogUserImpl>(new LogUserImpl);
+	}
+	return *s_instance;
 }
 
-bool LogUserImpl::Init(const wchar_t * default_module, const wchar_t * default_log)
+bool LogUserImpl::Init(const wchar_t * default_log, const wchar_t * default_module)
 {
 	_module = default_module;
 	_log_name = default_log;

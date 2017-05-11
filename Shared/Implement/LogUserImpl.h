@@ -18,7 +18,7 @@ namespace Yap
 	public:
 		~LogUserImpl();
 
-		bool Init(const wchar_t * default_module, const wchar_t * default_log);
+		bool Init(const wchar_t * default_log, const wchar_t * default_module);
 		virtual void SetLog(ILog * log) override;
 
 		void Trace(const wchar_t * info, const wchar_t * module = nullptr, const wchar_t * log_name = nullptr);
@@ -32,7 +32,7 @@ namespace Yap
 	protected:
 		LogUserImpl();
 
-		static LogUserImpl s_instance;
+		static std::shared_ptr<LogUserImpl> s_instance;
 
 		ILog * _log;
 		std::wstring _module;

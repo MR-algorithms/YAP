@@ -5,6 +5,7 @@
 #include <log4cplus/layout.h>
 #include <log4cplus/loggingmacros.h>
 #include <memory>
+#include <log4cplus/initializer.h>
 
 using namespace std;
 using namespace Yap;
@@ -39,17 +40,16 @@ void Yap::LogImpl::Log(const wchar_t * module,
 	auto iter = _loggers.find(log_name);
 	if (iter == _loggers.end())
 	{
-		SharedAppenderPtr append(new RollingFileAppender(log_name, 1024 * 1024, 7, flush));
+		SharedAppenderPtr append(new RollingFileAppender(log_name, 1024 * 1024, 2, flush));
 		append->setName(L"sysAppender");
 
-		const wchar_t * pattern = L"%d{%y/%m/%d %H:%M:%S} [%-5p] - %m [%l]%n";
+		const wchar_t * pattern = L"%d{%y/%m/%d %H:%M:%S} [%-5p] - %m%n";
 		std::unique_ptr<Layout> layout(new PatternLayout(pattern));
 
 		append->setLayout(move(layout));
 
 		Logger logger = Logger::getInstance(log_name);
 		logger.addAppender(append);
-
 		logger.setLogLevel(ALL_LOG_LEVEL);
 
 		_loggers.insert(make_pair(log_name, logger));
