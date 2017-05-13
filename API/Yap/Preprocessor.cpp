@@ -302,8 +302,10 @@ Preprocessor::Preprocessor(PreprocessType type)
 		case PreprocessPipeline:
 			_supported_tokens = {
 				TokenId,
-				TokenOperatorPortLink,	// ->
+				TokenOperatorPortLink,			// ->
 				TokenOperatorInOutMapping,		// <=> 
+				TokenOperatorInMapping,			// <==
+				TokenOperatorOutMapping,		// ==>
 				TokenOperatorDot,
 				TokenOperatorAssign,
 				TokenSemiColon,
@@ -388,6 +390,8 @@ Preprocessor::Preprocessor(PreprocessType type)
 	_operators = {
 		{L"->", TokenOperatorPortLink},
 		{L"<=>", TokenOperatorInOutMapping},
+		{L"<==", TokenOperatorInMapping},
+		{L"==>", TokenOperatorOutMapping},
 		{L".", TokenOperatorDot},
 		{L"=", TokenOperatorAssign},
 		{L";", TokenSemiColon},
