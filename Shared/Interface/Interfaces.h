@@ -232,6 +232,11 @@ namespace Yap
 	typedef IPtrContainer<IPort> IPortContainer;
 	typedef IPortContainer::iterator IPortIter;
 
+	enum PropertyLinkType {
+		PropertyLinkInput		= 0,
+		PropertyLinkOutput		= 1,
+		PropertyLinkInputOutput = 2,
+	};
 
 	struct IProcessor : public ISharedObject
 	{
@@ -249,7 +254,8 @@ namespace Yap
 		virtual IVariableContainer * GetProperties() = 0;
 
 		/// 将指定名称的属性与参数空间的参数相关联。
-		virtual bool LinkProperty(const wchar_t * property_id, const wchar_t * param_id) = 0;
+		virtual bool LinkProperty(const wchar_t * property_id, const wchar_t * param_id,
+			bool input, bool output) = 0;
 
 		/// 接口用户调用这个函数来通知模块利用参数空间中的参数更新属性。
 		virtual bool UpdateProperties(IVariableContainer * params) = 0;

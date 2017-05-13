@@ -14,8 +14,7 @@ ChannelDataCollector::ChannelDataCollector(void):
 
 	AddInput(L"Input", 2, DataTypeComplexFloat);
 	AddOutput(L"Output", 3, DataTypeComplexFloat);
-	_properties->Add(VariableInt, L"ChannelCount", L"The total channel count.");
-	_properties->Set<int>(L"ChannelCount", 4);
+	AddProperty<int>(L"ChannelCount", 4, L"The total channel count.");
 }
 
 
@@ -52,7 +51,7 @@ bool Yap::ChannelDataCollector::Input(const wchar_t * name, IData * data)
 			data->GetDimensions()->GetDimensionInfo(i, type, index, length);
 			if (type == DimensionChannel)
 			{
-				collector_dimensions.SetDimensionInfo(i, type, index, _properties->Get<int>(L"ChannelCount"));
+				collector_dimensions.SetDimensionInfo(i, type, index, GetProperty<int>(L"ChannelCount"));
 			}
 			else
 			{
@@ -77,12 +76,12 @@ bool Yap::ChannelDataCollector::Input(const wchar_t * name, IData * data)
 		auto * source_data_array = Yap::GetDataArray<complex<float>>(data);
 		complex<float> * source_cursor = source_data_array;
 		
-		memcpy(collector_cursor + iter->second.count * helper.GetBlockSize(DimensionSlice), source_cursor, helper.GetBlockSize(DimensionSlice) * sizeof(complex<float>));
+		memcpy(collector_cursor + iter->second.count * helper.GetBlockSize(DimensionSlice), 
+			source_cursor, helper.GetBlockSize(DimensionSlice) * sizeof(complex<float>));
 		++iter->second.count;
 	}
 
-
-	if (iter->second.count == _properties->Get<int>(L"ChannelCount"))
+	if (iter->second.count == GetProperty<int>(L"ChannelCount"))
 	{
 		Feed(L"Output", iter->second.buffer.get());
 	}

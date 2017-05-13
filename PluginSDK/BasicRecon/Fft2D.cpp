@@ -18,11 +18,8 @@ Fft2D::Fft2D():
 	_fft_plan(nullptr)
 {
 	LOG_TRACE(L"Fft2D constructor called.", L"BasicRecon");
-	_properties->Add(VariableBool, L"Inverse", L"The direction of FFT2D.");
-	_properties->Add(VariableBool, L"InPlace", L"The position of FFT2D.");
-
-	_properties->Set<bool>(L"Inverse", false);
-	_properties->Set<bool>(L"InPlace", true);
+	AddProperty<bool>( L"Inverse", false, L"The direction of FFT2D.");
+	AddProperty<bool>( L"InPlace", true, L"The position of FFT2D.");
 
 	AddInput(L"Input", 2, DataTypeComplexFloat);
 	AddOutput(L"Output", 2, DataTypeComplexFloat);
@@ -58,9 +55,9 @@ bool Fft2D::Input(const wchar_t * port, IData * data)
 
 	auto data_array = GetDataArray<complex<float>>(data);
 
-	if (_properties->Get<bool>(L"InPlace"))
+	if (GetProperty<bool>(L"InPlace"))
 	{
-		Fft(data_array, data_array, width, height, _properties->Get<bool>(L"Inverse"));
+		Fft(data_array, data_array, width, height, GetProperty<bool>(L"Inverse"));
 		Feed(L"Output", data);
 	}
 	else
@@ -71,7 +68,7 @@ bool Fft2D::Input(const wchar_t * port, IData * data)
 		auto output = YapShared(new ComplexDoubleData(&dims));
 
 		Fft(data_array, GetDataArray<complex<float>>(output.get()),
-			width, height, _properties->Get<bool>(L"Inverse"));
+			width, height, GetProperty<bool>(L"Inverse"));
 		Feed(L"Output", output.get());
 	}
 	return true;

@@ -35,7 +35,7 @@ NiumagFidReader::NiumagFidReader(void):
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
-	_properties->Add(VariableString, L"DataPath", L"数据文件夹和文件名。");
+	AddProperty<const wchar_t*>(L"DataPath", L"", L"数据文件夹和文件名。");
 }
 
 NiumagFidReader::NiumagFidReader(const NiumagFidReader& rhs):
@@ -62,7 +62,7 @@ bool Yap::NiumagFidReader::Input(const wchar_t * name, IData * data)
 
 bool Yap::NiumagFidReader::ReadNiumagFidData()
 {
-	std::wostringstream output(_properties->Get<const wchar_t*>(L"DataPath"));
+	std::wostringstream output(GetProperty<const wchar_t*>(L"DataPath"));
 	wstring data_path = output.str();
 
 	try

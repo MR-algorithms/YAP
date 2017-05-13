@@ -15,9 +15,8 @@ ChannelMerger::ChannelMerger(void) :
 	AddOutput(L"Output", 2, DataTypeFloat);
 	AddInput(L"Input", 2, DataTypeFloat);
 
-	_properties->Add(VariableInt, L"ChannelCount", L"通道数");
-	_properties->Set<int>(L"ChannelCount", 4);
-	_properties->Add(VariableInt, L"ChannelSwitch", L"通道开关指示值");
+	AddProperty<int>(L"ChannelCount", 4, L"通道数");
+	AddProperty<int>(L"ChannelSwitch", 0xf, L"通道开关指示值");
 }
 
 ChannelMerger::ChannelMerger( const ChannelMerger& rhs )
@@ -105,7 +104,7 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 // 		bit_number &= (bit_number - 1);   // 消除最低位的1.
 // 	}   // 最后used_channel_count得到1的个数。即打开的通道总数
 
-	if (iter->second.count == _properties->Get<int>(L"ChannelCount"))
+	if (iter->second.count == GetProperty<int>(L"ChannelCount"))
 	{
 		Feed(L"Output", iter->second.buffer.get());
 	}

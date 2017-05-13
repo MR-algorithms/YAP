@@ -29,9 +29,12 @@ namespace Yap {
         VariableSpace();
         explicit VariableSpace(IVariableContainer * variables);
         VariableSpace(const VariableSpace& rhs);
+		VariableSpace(VariableSpace&& rhs);
 
         ~VariableSpace();
 
+		const VariableSpace& operator = (const VariableSpace& rhs);
+		const VariableSpace& operator = (VariableSpace&& rhs);
 		bool Add(int type, const wchar_t * name, const wchar_t * description);
         bool Add(const wchar_t * type, const wchar_t * name, const wchar_t * description);
         bool Add(IVariable* variable);

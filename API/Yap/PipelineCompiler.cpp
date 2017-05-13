@@ -132,7 +132,7 @@ bool PipelineCompiler::ProcessDeclaration(Statement& statement)
 			else if (statement.IsTokenOfType(TokenOperatorLink, true))
 			{
 				wstring variable_id = statement.GetVariableId();
-				_constructor->LinkProperty(instance_id.c_str(), property.c_str(), variable_id.c_str());
+				_constructor->LinkProperty(instance_id.c_str(), property.c_str(), variable_id.c_str(), true, true);
 			}
 			else
 			{
@@ -174,7 +174,7 @@ bool PipelineCompiler::ProcessPropertyLink(Statement& statement)
 	statement.AssertToken(TokenOperatorLink, true);
 	wstring variable_id = statement.GetVariableId();
 
-	return _constructor->LinkProperty(processor_instance_id.c_str(), property.c_str(), variable_id.c_str());
+	return _constructor->LinkProperty(processor_instance_id.c_str(), property.c_str(), variable_id.c_str(), true, true);
 }
 
 bool PipelineCompiler::ProcessAssignment(Statement& statement)

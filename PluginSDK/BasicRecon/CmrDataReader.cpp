@@ -37,10 +37,10 @@ CmrDataReader::CmrDataReader(void) :
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
-	_properties->Add(VariableString, L"DataPath",  L"包含原始数据文件的文件夹。");
-	_properties->Add(VariableInt, L"ChannelCount",  L"通道数");
-	_properties->Add(VariableInt, L"ChannelSwitch",  L"通道开关指示值");
-	_properties->Add(VariableInt, L"GroupCount",  L"分组扫描数");
+	AddProperty<const wchar_t*> (L"DataPath", L"", L"包含原始数据文件的文件夹。");
+	AddProperty<int>(L"ChannelCount", 4, L"通道数");
+	AddProperty<int>(L"ChannelSwitch", 0xf, L"通道开关指示值"); // 00001111, select all four channels.
+	AddProperty<int>(L"GroupCount", 1, L"分组扫描数");
 }
 
 CmrDataReader::CmrDataReader(const CmrDataReader& rhs)
@@ -59,12 +59,12 @@ bool CmrDataReader::Input(const wchar_t * name, IData * data)
 	// Should not pass in data to start raw data file reading.
 	assert(data == nullptr);
 
-	int channel_count = _properties->Get<int>(L"ChannelCount");
+	int channel_count = GetProperty<int>(L"ChannelCount");
 	assert(channel_count > 0 && channel_count <= 32);
 	for (int channel_index = 0; channel_index < channel_count; ++channel_index)
 	{
 		unsigned int channel_mask = (1 << channel_index); // 每次循环都和0或，得到某通道0001(1),0010(2),0100(4),1000(8)
-		bool channel_used = ((channel_mask & _properties->Get<int>(L"ChannelSwitch")) == channel_mask);    // channel_mask只要和给的通道一样，就必定等于channel_mask自己
+		bool channel_used = ((channel_mask & GetProperty<int>(L"ChannelSwitch")) == channel_mask);    // channel_mask只要和给的通道一样，就必定等于channel_mask自己
 
 		if (channel_used)
 		{
@@ -80,13 +80,13 @@ bool CmrDataReader::Input(const wchar_t * name, IData * data)
 bool CmrDataReader::ReadRawData(unsigned int channel_index)
 {
 	std::wostringstream output;
-	output << _properties->Get<const wchar_t*>(L"DataPath") << L"\\ChannelData"
+	output << GetProperty<const wchar_t*>(L"DataPath") << L"\\ChannelData"
 		<< setfill(L'0') << setw(2) << channel_index + 1 << L".fid";
 
 	std::vector<float*> channel_data_buffer;
 	std::vector<unsigned int> slices;
 	unsigned int width, height, dim4, total_slice_count = 0; // 对于未进行累加处理的数据，得到的slice实际是 真实的slice  × 实际累加次数。
-	int group_count = _properties->Get<int>(L"GroupCount");
+	int group_count = GetProperty<int>(L"GroupCount");
 	if (group_count == 0)
 	{
 		group_count = 1;

@@ -16,7 +16,7 @@ SliceMerger::SliceMerger(void) :
 	AddInput(L"Input", 2, DataTypeAll);
 	AddOutput(L"Output", 3, DataTypeAll);
 
-	_properties->Add(VariableInt, L"SliceCount", L"Slice count");
+	AddProperty<int>(L"SliceCount", 0, L"Slice count");
 }
 
 SliceMerger::SliceMerger(const SliceMerger& rhs)
@@ -36,7 +36,7 @@ bool SliceMerger::Input(const wchar_t * port, IData * data)
 		return false;
 
 	static int slice_num = 0;
-	auto slice_count = _properties->Get<int>(L"SliceCount");
+	auto slice_count = GetProperty<int>(L"SliceCount");
 	assert(slice_count > 0);
 
 	if (slice_num == 0)

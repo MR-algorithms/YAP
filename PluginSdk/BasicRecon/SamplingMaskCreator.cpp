@@ -20,22 +20,15 @@ SamplingMaskCreator::SamplingMaskCreator():
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeFloat);
 
-	_properties->Add(VariableFloat, L"pow", L"");
-	_properties->Set<double>(L"pow", 3.0f);
-	_properties->Add(VariableFloat, L"sample_percent", L"");
-	_properties->Set<double>(L"sample_percent", 0.4f);
-	_properties->Add(VariableFloat, L"radius", L"");
-	_properties->Set<double>(L"radius", 0.2f);
+	AddProperty<double>(L"pow", 3.0, L"");
+	AddProperty<double>(L"sample_percent", 0.4, L"");
+	AddProperty<double>(L"radius", 0.2, L"");
 
-	_properties->Add(VariableBool, L"equal_subsampling", L"");
-	_properties->Set<bool>(L"equal_subsampling", true);
-	_properties->Add(VariableBool, L"random_subsampling", L"");
-	_properties->Set<bool>(L"random_subsampling", false);
-
-	_properties->Add(VariableInt, L"Rate", L"");
-	_properties->Set<int>(L"Rate", 2);
-	_properties->Add(VariableInt, L"AcsCount", L"");
-	_properties->Set<int>(L"AcsCount", 16);
+	AddProperty<bool>(L"equal_subsampling", true, L"");
+	AddProperty<bool>(L"random_subsampling", false, L"");
+	
+	AddProperty<int>(L"Rate", 2, L"");
+	AddProperty<int>(L"AcsCount", 16, L"");
 }
 
 SamplingMaskCreator::SamplingMaskCreator(const SamplingMaskCreator& rhs)
@@ -57,13 +50,13 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
 		return false;
 
 	DataHelper input_data(data);
-	if (_properties->Get<bool>(L"random_subsampling"))
+	if (GetProperty<bool>(L"random_subsampling"))
 	{
 		auto height = input_data.GetHeight();
 		auto width = input_data.GetWidth();
-		float pow = static_cast<float> (_properties->Get<double>(L"pow"));
-		float sample_percent = static_cast<float> (_properties->Get<double>(L"sample_percent"));
-		float radius = static_cast<float> (_properties->Get<double>(L"radius"));
+		double pow = GetProperty<double>(L"pow");
+		double sample_percent = GetProperty<double>(L"sample_percent");
+		double radius = GetProperty<double>(L"radius");
 
 		auto mask = GenerateRandomMask(width, height, pow, sample_percent, radius);
 		float * Mask = nullptr;
@@ -90,8 +83,8 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
 	}
 	else
 	{
-		unsigned int r = _properties->Get<int>(L"Rate");
-		unsigned int acs = _properties->Get<int>(L"AcsCount");
+		unsigned int r = GetProperty<int>(L"Rate");
+		unsigned int acs = GetProperty<int>(L"AcsCount");
 		auto height = input_data.GetHeight();
 		auto width = input_data.GetWidth();
 		auto mask = GenerateEqualMask(width, height, acs, r);
@@ -137,7 +130,11 @@ std::vector<float> Yap::SamplingMaskCreator::GenerateRandomMask(unsigned int wid
 	return mask;
 }
 
-std::vector<float> Yap::SamplingMaskCreator::GenerateEqualMask(unsigned int width, unsigned int height, unsigned int acs, unsigned int rate)
+std::vector<float> Yap::SamplingMaskCreator::GenerateEqualMask(
+	unsigned int width, 
+	unsigned int height, 
+	unsigned int acs, 
+	unsigned int rate)
 {
 	std::vector<unsigned int> sampling_pattern = GetEqualSamplingPattern(height, acs, rate);
 	std::vector<float> mask(width * height);
@@ -153,7 +150,11 @@ std::vector<float> Yap::SamplingMaskCreator::GenerateEqualMask(unsigned int widt
 	return mask;
 }
 
-std::vector<unsigned int> Yap::SamplingMaskCreator::GetRandomSamplingPattern(unsigned int row_count, float pow, float sample_percent, float radius)
+std::vector<unsigned int> Yap::SamplingMaskCreator::GetRandomSamplingPattern(
+	unsigned int row_count, 
+	float pow, 
+	float sample_percent, 
+	float radius)
 {
 	float min_peak_interference((float)INT_MAX);
 	vector<float> pdf = GeneratePdf(row_count, pow, sample_percent, radius);
@@ -217,7 +218,10 @@ std::vector<unsigned int> Yap::SamplingMaskCreator::GetRandomSamplingPattern(uns
 	return min_interference_pattern;
 }
 
-std::vector<unsigned int> Yap::SamplingMaskCreator::GetEqualSamplingPattern(unsigned int height, unsigned int acs, unsigned int rate)
+std::vector<unsigned int> Yap::SamplingMaskCreator::GetEqualSamplingPattern(
+	unsigned int height, 
+	unsigned int acs, 
+	unsigned int rate)
 {
 	std::vector<unsigned int> sampling_pattern(height, 0);
 	for (unsigned int i = 0; i < height; ++i)
@@ -239,7 +243,11 @@ std::vector<unsigned int> Yap::SamplingMaskCreator::GetEqualSamplingPattern(unsi
 	return sampling_pattern;
 }
 
-std::vector<float> Yap::SamplingMaskCreator::GeneratePdf(unsigned int row_count, float p, float sample_percent, float radius)
+std::vector<float> Yap::SamplingMaskCreator::GeneratePdf(
+	unsigned int row_count, 
+	float p, 
+	float sample_percent,
+	float radius)
 {
 	float minval = 0.0;
 	float maxval = 1.0;
@@ -273,7 +281,7 @@ std::vector<float> Yap::SamplingMaskCreator::GeneratePdf(unsigned int row_count,
 
 	if (floor(sum) > line_count)
 	{
-		return vector<float>();  //p值偏小。
+		return vector<float>();  // p值偏小。
 	}
 
 	std::vector<float> pdf_temp;

@@ -309,13 +309,38 @@ VariableSpace::VariableSpace(IVariableContainer * variables) :
 }
 
 VariableSpace::VariableSpace(const VariableSpace& rhs) :
-	_variables(YapShared(rhs.Variables()->Clone()))
+	_variables{ YapShared(rhs.Variables()->Clone()) },
+	_types {rhs._types}
 {
     InitTypes();
 }
 
+VariableSpace::VariableSpace(VariableSpace&& rhs) :
+	_variables{rhs._variables},
+	_types{rhs._types}
+{
+	rhs._variables.reset();
+}
+
 VariableSpace::~VariableSpace()
 {
+}
+
+const VariableSpace& VariableSpace::operator = (const VariableSpace& rhs)
+{
+	_variables = YapShared(rhs.Variables()->Clone());
+	_types = rhs._types;
+
+	return *this;
+}
+
+const VariableSpace& VariableSpace::operator = (VariableSpace&& rhs)
+{
+	_variables = rhs._variables;
+	_types = rhs._types;
+	rhs._variables.reset();
+
+	return *this;
 }
 
 bool VariableSpace::InitTypes()

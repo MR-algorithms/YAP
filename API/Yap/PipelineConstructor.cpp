@@ -253,7 +253,8 @@ bool PipelineConstructor::InstanceIdExists(const wchar_t * id)
 
 bool PipelineConstructor::LinkProperty(const wchar_t * processor_id,
 	const wchar_t * property_id,
-	const wchar_t * param_id)
+	const wchar_t * variable_id, 
+	bool input, bool output)
 {
 	assert(_pipeline);
 
@@ -264,11 +265,11 @@ bool PipelineConstructor::LinkProperty(const wchar_t * processor_id,
 		throw ConstructError(0, ConstructErrorProcessorNotFound, output.c_str());
 	}
 
-	if (!processor->LinkProperty(property_id, param_id))
+	if (!processor->LinkProperty(property_id, variable_id, input, output))
 	{
 		wostringstream output;
 		output << L"Fail to link property to system variable. Property: " << property_id
-			<< L". System variable: " << param_id;
+			<< L". System variable: " << variable_id;
 		throw ConstructError(0, ConstructErrorPropertyLink, output.str());
 	}
 
