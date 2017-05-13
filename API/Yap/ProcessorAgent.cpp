@@ -61,13 +61,13 @@ bool Yap::ProcessorAgent::LinkProperty(const wchar_t * property_id, const wchar_
 	bool input, bool output)
 {
 	assert(_processor);
-	return _processor->LinkProperty(property_id, param_id, input, output);
+	return _processor->MapProperty(property_id, param_id, input, output);
 }
 
 bool Yap::ProcessorAgent::UpdateProperties(IVariableContainer * params)
 {
 	assert(_processor);
-	return _processor->UpdateProperties(params);
+	return _processor->SetGlobalVariables(params);
 }
 
 bool Yap::ProcessorAgent::Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input)

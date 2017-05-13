@@ -26,11 +26,11 @@ Yap::IProcessor * Yap::CompositeProcessor::Clone()  const
 	throw std::logic_error("The method or operation is not implemented.");
 }
 
-bool Yap::CompositeProcessor::UpdateProperties(IVariableContainer * params)
+bool Yap::CompositeProcessor::SetGlobalVariables(IVariableContainer * params)
 {
 	for (auto processor : _processors)
 	{
-		if (!processor.second->UpdateProperties(params))
+		if (!processor.second->SetGlobalVariables(params))
 			return false;
 	}
 

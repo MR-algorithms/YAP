@@ -69,7 +69,7 @@ namespace _details
 		_system_variables(nullptr)
 	{
 		_links.clear();
-		_input_property_links.clear();
+		_in_property_mapping.clear();
 	}
 
 	ProcessorImpl::~ProcessorImpl()
@@ -158,19 +158,19 @@ namespace _details
 		_instance_id = instance_id;
 	}
 
-	bool Yap::ProcessorImpl::LinkProperty(const wchar_t * property_id, const wchar_t * param_id, bool input, bool output)
+	bool Yap::ProcessorImpl::MapProperty(const wchar_t * property_id, const wchar_t * param_id, bool input, bool output)
 	{
 		if (_properties->Variables()->Find(property_id) != nullptr)
 		{
 			return false;
 		}
 
-		_input_property_links.insert(make_pair(wstring(property_id), wstring(param_id)));
+		_in_property_mapping.insert(make_pair(wstring(property_id), wstring(param_id)));
 
 		return true;
 	}
 
-	bool Yap::ProcessorImpl::UpdateProperties(IVariableContainer * source_params)
+	bool Yap::ProcessorImpl::SetGlobalVariables(IVariableContainer * source_params)
 	{
 		if (_system_variables.get() == nullptr || _system_variables->Variables() != source_params)
 		{
@@ -184,119 +184,6 @@ namespace _details
 			}
 		}
 
-		for (auto link : _input_property_links)
-		{
-			auto property = _properties->Variables()->Find(link.first.c_str());
-			if (property == nullptr)
-				return false;
-
-			IVariable * source = source_params->Find(link.second.c_str());
-			if (source == nullptr)
-				return false;
-
-			if (property->GetType() != source->GetType())
-				return false;
-
-			switch (property->GetType())
-			{
-			case VariableBool:
-			{
-				auto source_bool = dynamic_cast<ISimpleVariable<bool>*>(source);
-				auto dest_bool = dynamic_cast<ISimpleVariable<bool>*>(property);
-				assert(source_bool != nullptr && dest_bool != nullptr);
-				dest_bool->Set(source_bool->Get());
-				break;
-			}
-			case VariableInt:
-			{
-				auto source_int = dynamic_cast<ISimpleVariable<int>*>(source);
-				auto dest_int = dynamic_cast<ISimpleVariable<int>*>(property);
-				assert(source_int != nullptr && dest_int != nullptr);
-				dest_int->Set(source_int->Get());
-				break;
-			}
-			case VariableFloat:
-			{
-				auto source_double = dynamic_cast<ISimpleVariable<double>*>(source);
-				auto dest_double = dynamic_cast<ISimpleVariable<double>*>(property);
-				assert(source_double != nullptr && dest_double != nullptr);
-				dest_double->Set(source_double->Get());
-				break;
-			}
-			case VariableString:
-			{
-				auto source_string = dynamic_cast<ISimpleVariable<const wchar_t*>*>(source);
-				auto dest_string = dynamic_cast<ISimpleVariable<const wchar_t*>*>(property);
-				assert(source_string != nullptr && dest_string != nullptr);
-				dest_string->Set(source_string->Get());
-				break;
-			}
-			default:
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	bool Yap::ProcessorImpl::PropertyToVariable()
-	{
-// 		// no variables space linked to processor, no sync
-// 		if (_system_variables.get() == nullptr)
-// 			return true;
-// 		
-// 		for (auto link : _output_property_links)
-// 		{
-// 			auto property = _properties->Variables()->Find(link.first.c_str());
-// 			if (property == nullptr)
-// 				return false;
-// 
-// 			IVariable * source = source_params->Find(link.second.c_str());
-// 			if (source == nullptr)
-// 				return false;
-// 
-// 			if (property->GetType() != source->GetType())
-// 				return false;
-// 
-// 			switch (property->GetType())
-// 			{
-// 			case VariableBool:
-// 			{
-// 				auto source_bool = dynamic_cast<ISimpleVariable<bool>*>(source);
-// 				auto dest_bool = dynamic_cast<ISimpleVariable<bool>*>(property);
-// 				assert(source_bool != nullptr && dest_bool != nullptr);
-// 				dest_bool->Set(source_bool->Get());
-// 				break;
-// 			}
-// 			case VariableInt:
-// 			{
-// 				auto source_int = dynamic_cast<ISimpleVariable<int>*>(source);
-// 				auto dest_int = dynamic_cast<ISimpleVariable<int>*>(property);
-// 				assert(source_int != nullptr && dest_int != nullptr);
-// 				dest_int->Set(source_int->Get());
-// 				break;
-// 			}
-// 			case VariableFloat:
-// 			{
-// 				auto source_double = dynamic_cast<ISimpleVariable<double>*>(source);
-// 				auto dest_double = dynamic_cast<ISimpleVariable<double>*>(property);
-// 				assert(source_double != nullptr && dest_double != nullptr);
-// 				dest_double->Set(source_double->Get());
-// 				break;
-// 			}
-// 			case VariableString:
-// 			{
-// 				auto source_string = dynamic_cast<ISimpleVariable<const wchar_t*>*>(source);
-// 				auto dest_string = dynamic_cast<ISimpleVariable<const wchar_t*>*>(property);
-// 				assert(source_string != nullptr && dest_string != nullptr);
-// 				dest_string->Set(source_string->Get());
-// 				break;
-// 			}
-// 			default:
-// 				return false;
-// 			}
-// 		}
-// 
 		return true;
 	}
 

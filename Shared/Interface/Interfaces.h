@@ -254,11 +254,11 @@ namespace Yap
 		virtual IVariableContainer * GetProperties() = 0;
 
 		/// 将指定名称的属性与参数空间的参数相关联。
-		virtual bool LinkProperty(const wchar_t * property_id, const wchar_t * param_id,
+		virtual bool MapProperty(const wchar_t * property_id, const wchar_t * variable_id,
 			bool input, bool output) = 0;
 
 		/// 接口用户调用这个函数来通知模块利用参数空间中的参数更新属性。
-		virtual bool UpdateProperties(IVariableContainer * params) = 0;
+		virtual bool SetGlobalVariables(IVariableContainer * params) = 0;
 
 		/// 将指定处理模块的输入端口链接到当前模块指定的输出端口上。
 		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) = 0;

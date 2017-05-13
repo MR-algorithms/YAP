@@ -265,7 +265,7 @@ bool PipelineConstructor::LinkProperty(const wchar_t * processor_id,
 		throw ConstructError(0, ConstructErrorProcessorNotFound, output.c_str());
 	}
 
-	if (!processor->LinkProperty(property_id, variable_id, input, output))
+	if (!processor->MapProperty(property_id, variable_id, input, output))
 	{
 		wostringstream output;
 		output << L"Fail to link property to system variable. Property: " << property_id
