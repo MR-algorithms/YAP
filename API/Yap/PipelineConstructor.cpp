@@ -251,7 +251,7 @@ bool PipelineConstructor::InstanceIdExists(const wchar_t * id)
 	return _pipeline->Find(id) != nullptr;
 }
 
-bool PipelineConstructor::LinkProperty(const wchar_t * processor_id,
+bool PipelineConstructor::MapProperty(const wchar_t * processor_id,
 	const wchar_t * property_id,
 	const wchar_t * variable_id, 
 	bool input, bool output)

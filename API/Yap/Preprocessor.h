@@ -17,8 +17,10 @@ namespace Yap
 	{
 		TokenUnknown,
 		TokenId,
-		TokenOperatorPortLink,	// ->
-		TokenOperatorLink,		// <=> 
+		TokenOperatorPortLink,			// ->
+		TokenOperatorInOutMapping,		// <=> 
+		TokenOperatorInMapping,			// <==
+		TokenOperatorOutMapping,		// ==>
 		TokenOperatorDot,
 		TokenOperatorAssign,
 		TokenSemiColon,
@@ -141,7 +143,7 @@ namespace Yap
 		StatementImport,
 		StatementDeclaration,
 		StatementPortLink,
-		StatementPropertyLink,
+		StatementPropertyMapping,
 		StatementAssign,
 
 		StatementVariableDeclaration,

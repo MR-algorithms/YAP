@@ -3,6 +3,11 @@ import "BasicRecon_GPU.dll";
 
 CmrRawDataReader reader(DataPath = "D:\\test_data\\RawData_256\\RawData",
 	ChannelCount = 4, ChannelSwitch = 15);
+// property mapping can also be used in named property initialization. such as:
+// CmrRawDataReader reader(DataPath <== data_path,
+//	ChannelCount = 4, ChannelSwitch = 15);
+// where data_path is the variable id in global variable space, reference a variable holding the data file path.
+
 SliceSelector slice_selector;
 RemoveDC dc_remover;
 ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);

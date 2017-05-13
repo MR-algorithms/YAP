@@ -32,7 +32,7 @@ namespace Yap
 		bool ProcessImport(Statement& statement);
 		bool ProcessPortLink(Statement& statement);
 		bool ProcessDeclaration(Statement& statement);
-		bool ProcessPropertyLink(Statement& statement);
+		bool ProcessPropertyMapping(Statement& statement);
 		bool ProcessAssignment(Statement& statement);
 
 		std::shared_ptr<Preprocessor> _preprocessor;

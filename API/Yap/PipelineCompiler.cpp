@@ -129,10 +129,20 @@ bool PipelineCompiler::ProcessDeclaration(Statement& statement)
 				wstring value = statement.GetLiteralValue();
 				_constructor->SetProperty(instance_id.c_str(), property.c_str(), value.c_str());
 			}
-			else if (statement.IsTokenOfType(TokenOperatorLink, true))
+			else if (statement.IsTokenOfType(TokenOperatorInOutMapping, true))
 			{
 				wstring variable_id = statement.GetVariableId();
-				_constructor->LinkProperty(instance_id.c_str(), property.c_str(), variable_id.c_str(), true, true);
+				_constructor->MapProperty(instance_id.c_str(), property.c_str(), variable_id.c_str(), true, true);
+			}
+			else if (statement.IsTokenOfType(TokenOperatorInMapping, true))
+			{
+				wstring variable_id = statement.GetVariableId();
+				_constructor->MapProperty(instance_id.c_str(), property.c_str(), variable_id.c_str(), true, false);
+			}
+			else if (statement.IsTokenOfType(TokenOperatorOutMapping, true))
+			{
+				wstring variable_id = statement.GetVariableId();
+				_constructor->MapProperty(instance_id.c_str(), property.c_str(), variable_id.c_str(), false, true);
 			}
 			else
 			{
@@ -155,10 +165,10 @@ bool PipelineCompiler::ProcessDeclaration(Statement& statement)
 	return true;
 }
 
-bool PipelineCompiler::ProcessPropertyLink(Statement& statement)
+bool PipelineCompiler::ProcessPropertyMapping(Statement& statement)
 {
 	assert(_constructor);
-	assert(statement.GetType() == StatementPropertyLink);
+	assert(statement.GetType() == StatementPropertyMapping);
 	Statement::Guard guard(statement);
 
 	wstring processor_instance_id = statement.GetId();
@@ -171,10 +181,28 @@ bool PipelineCompiler::ProcessPropertyLink(Statement& statement)
 	statement.AssertToken(TokenOperatorDot, true);
 	wstring property = statement.GetId();
 
-	statement.AssertToken(TokenOperatorLink, true);
+	bool input = false, output = false;
+	if (statement.IsTokenOfType(TokenOperatorInOutMapping, true))
+	{
+		input = true;
+		output = true;
+	}
+	else if (statement.IsTokenOfType(TokenOperatorInMapping, true))
+	{
+		input = true;
+	}
+	else if (statement.IsTokenOfType(TokenOperatorOutMapping, true))
+	{
+		output = true;
+	}
+	else
+	{
+		throw CompileErrorTokenType(statement.GetCurrentToken(), TokenOperatorInOutMapping);
+	}
+
 	wstring variable_id = statement.GetVariableId();
 
-	return _constructor->LinkProperty(processor_instance_id.c_str(), property.c_str(), variable_id.c_str(), true, true);
+	return _constructor->MapProperty(processor_instance_id.c_str(), property.c_str(), variable_id.c_str(), input, output);
 }
 
 bool PipelineCompiler::ProcessAssignment(Statement& statement)
@@ -288,11 +316,13 @@ bool PipelineCompiler::Process()
 					statement.Next();
 				}
 				break;
-			case TokenOperatorLink:
+			case TokenOperatorInOutMapping:
+			case TokenOperatorInMapping:
+			case TokenOperatorOutMapping:
 				if (statement.GetType() == StatementUnknown)
 				{
-					statement.SetType(StatementPropertyLink);
-					ProcessPropertyLink(statement);
+					statement.SetType(StatementPropertyMapping);
+					ProcessPropertyMapping(statement);
 				}
 				else
 				{
