@@ -6,7 +6,7 @@
 #include <memory>
 #include <string>
 
-#include "Interface/Implement/CompositeProcessor.h"
+#include "Implement/CompositeProcessor.h"
 
 namespace Yap
 {
@@ -69,7 +69,8 @@ namespace Yap
 
 		bool SetProperty(const wchar_t * processor_id, const wchar_t * property_id, const wchar_t * value);
 
-		bool LinkProperty(const wchar_t * processor_id, const wchar_t * property_id, const wchar_t * param_id);
+		bool MapProperty(const wchar_t * processor_id, const wchar_t * property_id, const wchar_t * param_id, 
+			bool input, bool output);
 
 		bool MapInput(const wchar_t * pipeline_port, const wchar_t * inner_processor, const wchar_t * inner_port);
 

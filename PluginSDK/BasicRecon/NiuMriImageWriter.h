@@ -2,7 +2,7 @@
 #ifndef NiuMriImageWriter_h__
 #define NiuMriImageWriter_h__
 
-#include "Interface/Implement/processorImpl.h"
+#include "Implement/processorImpl.h"
 
 namespace Yap
 {
@@ -16,7 +16,9 @@ namespace Yap
 
 	private:
 		~NiuMriImageWriter();
-		virtual bool Input(const wchar_t * name, IData * data);
+
+		virtual bool Input(const wchar_t * name, IData * data) override;
+
 		std::wstring GetFilePath(const wchar_t * output_folder, const wchar_t * ouput_name);
 	};
 }

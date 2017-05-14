@@ -1,13 +1,13 @@
 #include "ProcessorAgent.h"
 
 #include <cassert>
-#include "Interface\Implement\VariableManager.h"
+#include "Implement\VariableSpace.h"
 
 using namespace Yap;
 
 ProcessorAgent::ProcessorAgent(IProcessor* processor) :
 	_processor(YapShared(processor)),
-	_variables{std::make_shared<VariableManager>(processor->GetProperties())}
+	_variables{std::make_shared<VariableSpace>(processor->GetProperties())}
 {
 }
 
@@ -57,16 +57,17 @@ Yap::IVariableContainer * Yap::ProcessorAgent::GetProperties()
 	return _processor->GetProperties();
 }
 
-bool Yap::ProcessorAgent::LinkProperty(const wchar_t * property_id, const wchar_t * param_id)
+bool Yap::ProcessorAgent::LinkProperty(const wchar_t * property_id, const wchar_t * param_id,
+	bool input, bool output)
 {
 	assert(_processor);
-	return _processor->LinkProperty(property_id, param_id);
+	return _processor->MapProperty(property_id, param_id, input, output);
 }
 
 bool Yap::ProcessorAgent::UpdateProperties(IVariableContainer * params)
 {
 	assert(_processor);
-	return _processor->UpdateProperties(params);
+	return _processor->SetGlobalVariables(params);
 }
 
 bool Yap::ProcessorAgent::Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input)

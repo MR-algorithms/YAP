@@ -3,7 +3,7 @@
 #ifndef RemoveDC_h__20160814
 #define RemoveDC_h__20160814
 
-#include "Interface/Implement/ProcessorImpl.h"
+#include "Implement/ProcessorImpl.h"
 
 namespace Yap
 {
@@ -13,10 +13,12 @@ namespace Yap
 		IMPLEMENT_SHARED(DcRemover)
 	public:
 		DcRemover();
-		virtual bool Input(const wchar_t * port, IData * data) override;
+		DcRemover(const DcRemover& rhs);
 
 	protected:
 		~DcRemover();
+
+		virtual bool Input(const wchar_t * port, IData * data) override;
 	};
 }
 

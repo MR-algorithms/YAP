@@ -1,7 +1,8 @@
 #include "stdafx.h"
 
 #include "JpegExporter.h"
-#include "Interface/Client/DataHelper.h"
+#include "Client/DataHelper.h"
+#include "Implement/LogUserImpl.h"
 
 #define min(a, b) (a) < (b) ? (a) : (b)
 #define max(a, b) (a) > (b) ? (a) : (b)
@@ -131,20 +132,22 @@ using namespace Yap::details;
 JpegExporter::JpegExporter() :
 	ProcessorImpl(L"JpegExporter")
 {
+	LOG_TRACE(L"JepgExporter constructor called.", L"BasicRecon");
 	_impl = shared_ptr<JpegExporterImp>(new JpegExporterImp);
 	AddInput(L"Input", 2, DataTypeFloat | DataTypeUnsignedShort);
-	_properties->Add(VariableString, L"ExportFolder", L"Set folder used to hold exported images.");
-
+	AddProperty<const wchar_t *>(L"ExportFolder", L"", L"Set folder used to hold exported images.");
 }
 
 JpegExporter::JpegExporter(const JpegExporter& rhs)
 	: ProcessorImpl(rhs)
 {
+	LOG_TRACE(L"JepgExporter constructor called.", L"BasicRecon");
 	_impl = std::shared_ptr<JpegExporterImp>(new JpegExporterImp(*rhs._impl));
 }
 
 JpegExporter::~JpegExporter()
 {
+	LOG_TRACE(L"JepgExporter destructor called.", L"BasicRecon");
 }
 
 bool JpegExporter::Input( const wchar_t * name, IData * data)
@@ -160,13 +163,13 @@ bool JpegExporter::Input( const wchar_t * name, IData * data)
 	{
 		_impl->ExportImage(GetDataArray<float>(data),
 			data_helper.GetWidth(), data_helper.GetHeight(),
-			_properties->Get<const wchar_t*>(L"ExportFolder"));
+			GetProperty<const wchar_t*>(L"ExportFolder"));
 	}
 	else if (data->GetDataType() == DataTypeUnsignedShort)
 	{
 		_impl->ExportImage(GetDataArray<unsigned short>(data),
 			data_helper.GetWidth(), data_helper.GetHeight(),
-			_properties->Get<const wchar_t*>(L"ExportFolder"));
+			GetProperty<const wchar_t*>(L"ExportFolder"));
 	}
 
 	return true;

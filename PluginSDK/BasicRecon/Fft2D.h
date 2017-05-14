@@ -3,8 +3,8 @@
 #ifndef fft2d_h_20160813
 #define fft2d_h_20160813
 
-#include "Interface/Implement/ProcessorImpl.h"
-#include "Interface/Client/DataHelper.h"
+#include "Implement/ProcessorImpl.h"
+#include "Client/DataHelper.h"
 #include <fftw3.h>
 #include <complex>
 
@@ -16,11 +16,12 @@ namespace Yap
 		IMPLEMENT_SHARED(Fft2D)
 	public:
 		Fft2D();
-
-		virtual bool Input(const wchar_t * port, IData * data) override;
+		Fft2D(const Fft2D& rhs);
 
 	protected:
 		~Fft2D();
+
+		virtual bool Input(const wchar_t * port, IData * data) override;
 
 		void FftShift(std::complex<float>* data, size_t width, size_t height);
 		void SwapBlock(std::complex<float> * block1, std::complex<float> * block2, size_t width, size_t height, size_t line_stride);

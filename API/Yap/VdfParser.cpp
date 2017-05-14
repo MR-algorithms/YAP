@@ -1,5 +1,5 @@
 ﻿#include "VdfParser.h"
-#include "Interface/Implement/VariableManager.h"
+#include "Implement/VariableSpace.h"
 #include "Preprocessor.h"
 
 #include <cassert>
@@ -14,13 +14,13 @@ using namespace std;
 
 VdfParser::VdfParser() :
 	_preprocessor{make_shared<Preprocessor>(PreprocessVariableDefinition)},
-	_variables{shared_ptr<VariableManager>()}
+	_variables{shared_ptr<VariableSpace>()}
 {}
 
 VdfParser::~VdfParser()
 {}
 
-shared_ptr<VariableManager> Yap::VdfParser::Compile(const wchar_t * text)
+shared_ptr<VariableSpace> Yap::VdfParser::Compile(const wchar_t * text)
 {
 	wistringstream input;
 	input.str(text);
@@ -28,7 +28,7 @@ shared_ptr<VariableManager> Yap::VdfParser::Compile(const wchar_t * text)
 	return DoCompile(input);
 }
 
-shared_ptr<VariableManager> VdfParser::CompileFile(const wchar_t * path)
+shared_ptr<VariableSpace> VdfParser::CompileFile(const wchar_t * path)
 {
 	wifstream script_file;
 	script_file.open(path);
@@ -37,19 +37,19 @@ shared_ptr<VariableManager> VdfParser::CompileFile(const wchar_t * path)
 	{
 		wstring message = wstring(L"Failed to open script file: ") + path;
 		// throw CompileError(Token(), CompileErrorFailedOpenFile, message);
-		return shared_ptr<VariableManager>();
+		return shared_ptr<VariableSpace>();
 	}
 
 	return DoCompile(script_file);
 }
 
-shared_ptr<VariableManager> VdfParser::DoCompile(std::wistream& input)
+shared_ptr<VariableSpace> VdfParser::DoCompile(std::wistream& input)
 {
 	_preprocessor->Preprocess(input);
 
 	if (!_variables)
 	{
-		_variables = shared_ptr<VariableManager>(new VariableManager());
+		_variables = shared_ptr<VariableSpace>(new VariableSpace());
 	}
 	_variables->Reset();
 
@@ -73,7 +73,7 @@ shared_ptr<VariableManager> VdfParser::DoCompile(std::wistream& input)
 		wcerr << output.str();
 	}
 
-	return shared_ptr<VariableManager>();
+	return shared_ptr<VariableSpace>();
 }
 
 bool VdfParser::Process()
@@ -200,7 +200,7 @@ bool VdfParser::ProcessStructDeclaration(Statement& statement)
     auto struct_id = statement.GetVariableId();
     statement.AssertToken(TokenLeftBrace, true);
 
-    VariableManager struct_variables;
+    VariableSpace struct_variables;
 
     do
     {

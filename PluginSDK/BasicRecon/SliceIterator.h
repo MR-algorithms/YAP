@@ -2,7 +2,7 @@
 #ifndef SliceIterator_h__20160814
 #define SliceIterator_h__20160814
 
-#include "Interface/Implement/ProcessorImpl.h"
+#include "Implement/ProcessorImpl.h"
 
 namespace Yap
 {
@@ -14,10 +14,10 @@ namespace Yap
 		SliceIterator(void);
 		SliceIterator(const SliceIterator& rhs);
 		
-		virtual bool Input(const wchar_t * name, IData * data) override;
-
 	protected:
 		~SliceIterator(void);
+
+		virtual bool Input(const wchar_t * name, IData * data) override;
 	};
 }
 #endif // SliceIterator_h__

@@ -10,7 +10,9 @@ using namespace std;
 
 map<TokenType, wstring> token_map = {
 	{TokenOperatorPortLink, L"->"},
-	{TokenOperatorLink, L"<=>"},
+	{TokenOperatorInOutMapping, L"<=>"},
+	{TokenOperatorInMapping, L"<=="},
+	{TokenOperatorOutMapping, L"==>"},
 	{TokenOperatorDot, L"."},
 	{TokenOperatorAssign, L"="},
 	{TokenLessThen, L"<"},
@@ -280,7 +282,7 @@ void Yap::Statement::DebugOutput(wostream& output)
 		{StatementAssign, L"Assign"},
 		{StatementDeclaration, L"Declaration"},
 		{StatementPortLink, L"PortLink"},
-		{StatementPropertyLink, L"PropertyLink"}
+		{StatementPropertyMapping, L"PropertyMapping"},
 	};
 
 	output << statment_label[_type] << L"\t\t: ";
@@ -300,8 +302,10 @@ Preprocessor::Preprocessor(PreprocessType type)
 		case PreprocessPipeline:
 			_supported_tokens = {
 				TokenId,
-				TokenOperatorPortLink,	// ->
-				TokenOperatorLink,		// <=> 
+				TokenOperatorPortLink,			// ->
+				TokenOperatorInOutMapping,		// <=> 
+				TokenOperatorInMapping,			// <==
+				TokenOperatorOutMapping,		// ==>
 				TokenOperatorDot,
 				TokenOperatorAssign,
 				TokenSemiColon,
@@ -385,7 +389,9 @@ Preprocessor::Preprocessor(PreprocessType type)
 
 	_operators = {
 		{L"->", TokenOperatorPortLink},
-		{L"<=>", TokenOperatorLink},
+		{L"<=>", TokenOperatorInOutMapping},
+		{L"<==", TokenOperatorInMapping},
+		{L"==>", TokenOperatorOutMapping},
 		{L".", TokenOperatorDot},
 		{L"=", TokenOperatorAssign},
 		{L";", TokenSemiColon},

@@ -6,14 +6,17 @@
 #include "ProcessorDebugger.h"
 #include "Yap/PipelineConstructor.h"
 #include "Yap/PipelineCompiler.h"
-#include "Interface/Implement/CompositeProcessor.h"
-#include "Interface/Implement/DataObject.h"
+#include "Implement/CompositeProcessor.h"
+#include "Implement/DataObject.h"
 
 #include <iostream>
 #include <string>
 #include <vector>
 #include <time.h>
 #include "Yap/VdfParser.h"
+#include "Implement/LogImpl.h"
+#include "Implement/LogUserImpl.h"
+#include <log4cplus/initializer.h>
 
 using namespace std;
 using namespace Yap;
@@ -75,6 +78,7 @@ void PipelineTest()
 {
 	PipelineCompiler compiler;
 	auto pipeline = compiler.CompileFile(L"niumag_recon_yap.pipeline");
+
 	if (pipeline)
 	{
 		pipeline->Input(L"Input", nullptr);
@@ -104,22 +108,37 @@ bool VdfParserTest()
 	variable_manager->ResizeArray(L"VDL1", 5);
 	variable_manager->Set<double>(L"VDL1[0]", 1.0);
 	variable_manager->Set<double>(L"VDL1[1]", 2.0);
-	variable_manager->Get<double>(L"VDL1[1]");
-
 	auto v6 = variable_manager->Get<double>(L"VDL1[1]");
 	double * vdl1 = variable_manager->GetArray<double>(L"VDL1");
+
+	variable_manager->ResizeArray(L"GradMatrixList", 7);
+	variable_manager->Set<double>(L"GradMatrixList[1].GReadX", 1.00);
+	variable_manager->Set<double>(L"GradMatrixList[2].GReadX", 2.00);
+	auto v7 = variable_manager->Get<double>(L"GradMatrixList[1].GReadX");
+	double * gml = variable_manager->GetArray<double>(L"GradMatrixList");
+
+	// 错误的参数输入测试
+//	variable_manager->Set<int>(L"abc", 4); // 无此变量名
+//	auto v = variable_manager->Get<int>(L"abc"); // 无此变量名
+//	variable_manager->Set<double>(L"TD", 6); // 名字和类型不匹配
+//	variable_manager->Set<double>(L"VDL1[6]", 6.0); // 数组越界
+//	auto v = variable_manager->Get<double>(L"VDL1[6]"); // 数组越界
 
 	return variable_manager.get() != nullptr;
 }
 
 int main()
 {
+	log4cplus::Initializer initializer;
 	time_t start = clock();
 
-//	 ConstructorTest();
-//  PipelineTest();
+//	ConstructorTest();
+	PipelineTest();
+//	VdfParserTest();
 
-	VdfParserTest();
+// 	LogImpl::GetInstance().Log(L"test", L"test info debug", LevelDebug, L"sys.log");
+// 	LogImpl::GetInstance().Log(L"test", L"test info error", LevelError, L"sys.log");
+//	LogImpl::GetInstance().Log(L"test", L"test info warn", LevelWarn, L"sys.log");
 
 	time_t end = clock();
 	printf("the running time is : %f\n", float(end - start) / CLOCKS_PER_SEC);

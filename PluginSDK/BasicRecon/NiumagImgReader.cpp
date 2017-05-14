@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "NiumagImgReader.h"
+#include "Implement/LogUserImpl.h"
 
 #include <sstream>
 #include <iostream>
@@ -34,19 +35,22 @@ namespace Yap
 NiumagImgReader::NiumagImgReader():
 	ProcessorImpl(L"NiumagImgReader")
 {
+	LOG_TRACE(L"NiumagImgReader constructor called.", L"BasicRecon");
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
 
-	_properties->Add(VariableString, L"DataPath", L"数据文件夹和文件名。");
+	AddProperty<const wchar_t *>(L"DataPath", L"",  L"数据文件夹和文件名。");
 }
 
 Yap::NiumagImgReader::NiumagImgReader(const NiumagImgReader& rhs):
 	ProcessorImpl(rhs)
 {
+	LOG_TRACE(L"NiumagImgReader constructor called.", L"BasicRecon");
 }
 
 NiumagImgReader::~NiumagImgReader()
 {
+	LOG_TRACE(L"NiumagImgReader destructor called.", L"BasicRecon");
 }
 
 bool Yap::NiumagImgReader::Input(const wchar_t * name, IData * data)
@@ -62,7 +66,7 @@ bool Yap::NiumagImgReader::Input(const wchar_t * name, IData * data)
 
 bool Yap::NiumagImgReader::ReadNiumagImgData()
 {
-	std::wostringstream output(_properties->Get<const wchar_t*>(L"DataPath"));
+	std::wostringstream output(GetProperty<const wchar_t*>(L"DataPath"));
 	wstring data_path = output.str();
 
 	try

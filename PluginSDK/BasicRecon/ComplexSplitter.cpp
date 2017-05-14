@@ -1,4 +1,5 @@
 ﻿#include "ComplexSplitter.h"
+#include "Implement/LogUserImpl.h"
 
 using namespace std;
 using namespace Yap;
@@ -6,6 +7,7 @@ using namespace Yap;
 ComplexSplitter::ComplexSplitter() :
 	ProcessorImpl(L"ComplexSplitter")
 {
+	LOG_TRACE(L"ComplexSplitter constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble);
 	AddOutput(L"Real", YAP_ANY_DIMENSION, DataTypeDouble);
 	AddOutput(L"Imaginary", YAP_ANY_DIMENSION, DataTypeDouble);
@@ -13,6 +15,7 @@ ComplexSplitter::ComplexSplitter() :
 
 ComplexSplitter::~ComplexSplitter()
 {
+	LOG_TRACE(L"ComplexSplitter destructor called.", L"BasicRecon");
 }
 
 bool ComplexSplitter::Input(const wchar_t * port, IData * data)
@@ -69,6 +72,12 @@ void Yap::ComplexSplitter::Split(std::complex<double> * data,
 		*real++ = *cursor++;
 		*imaginary++ = *cursor++;
 	}
+}
+
+Yap::ComplexSplitter::ComplexSplitter(const ComplexSplitter& rhs)
+	:ProcessorImpl(rhs)
+{
+	LOG_TRACE(L"ComplexSplitter constructor called.", L"BasicRecon");
 }
 
 void ComplexSplitter::ExtractReal(std::complex<double> * data, double * real, size_t size)

@@ -1,11 +1,12 @@
 #include "stdafx.h"
 #include "NiuMriImageWriter.h"
+#include "Implement/LogUserImpl.h"
 
 #include <time.h>
 #include <stdio.h>
 #include <fstream>
 #include <iosfwd>
-#include "Interface\Client\DataHelper.h"
+#include "Client\DataHelper.h"
 
 using namespace Yap;
 using namespace std;
@@ -13,26 +14,29 @@ using namespace std;
 NiuMriImageWriter::NiuMriImageWriter(void) :
 	ProcessorImpl(L"NiuMriImageWriter")
 {
+	LOG_TRACE(L"NiuMriImageWriter constructor called.", L"BasicRecon");
 	AddInput(L"Input", 3, DataTypeUnsignedShort);
-	_properties->Add(VariableString, L"ExportFolder", L"Set folder used to write images.");
-	_properties->Add(VariableString, L"FileName", L"Set file name.");
+	AddProperty<const wchar_t *>(L"ExportFolder", L"", L"Set folder used to write images.");
+	AddProperty<const wchar_t *>(L"FileName", L"", L"Set file name.");
 }
 
 NiuMriImageWriter::NiuMriImageWriter(const NiuMriImageWriter& rhs) :
 	ProcessorImpl(rhs)
 {
+	LOG_TRACE(L"NiuMriImageWriter constructor called.", L"BasicRecon");
 }
 
 NiuMriImageWriter::~NiuMriImageWriter()
 {
+	LOG_TRACE(L"NiuMriImageWriter destructor called.", L"BasicRecon");
 }
 
 bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && (GetDataArray<unsigned short>(data) != nullptr));
 
-	auto output_folder = _properties->Get<const wchar_t*>(L"ExportFolder");
-	auto output_name = _properties->Get<const wchar_t*>(L"FileName");
+	auto output_folder = GetProperty<const wchar_t*>(L"ExportFolder");
+	auto output_name = GetProperty<const wchar_t*>(L"FileName");
 	auto file_path = GetFilePath(output_folder, output_name);
 
 	//write data

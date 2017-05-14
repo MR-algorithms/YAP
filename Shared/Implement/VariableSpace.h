@@ -1,6 +1,6 @@
 #pragma once
-#include "..\interfaces.h"
-#include "..\smartptr.h"
+#include "interface/interfaces.h"
+#include "interface/smartptr.h"
 #include <string>
 #include <map>
 
@@ -16,22 +16,26 @@ namespace Yap {
 			OutOfRange,
 			InvalidId,
 			NotAStruct,
+			NotAnArray,
         };
         std::wstring variable_id;
         Type type;
         VariableException(const wchar_t * id, Type type_) : variable_id(id), type(type_) {}
     };
 
-    class VariableManager
+    class VariableSpace
     {
     public:
-        VariableManager();
-        explicit VariableManager(IVariableContainer * variables);
-        VariableManager(const VariableManager& rhs);
+        VariableSpace();
+        explicit VariableSpace(IVariableContainer * variables);
+        VariableSpace(const VariableSpace& rhs);
+		VariableSpace(VariableSpace&& rhs);
 
-        ~VariableManager();
+        ~VariableSpace();
 
-        bool Add(int type, const wchar_t * name, const wchar_t * description);
+		const VariableSpace& operator = (const VariableSpace& rhs);
+		const VariableSpace& operator = (VariableSpace&& rhs);
+		bool Add(int type, const wchar_t * name, const wchar_t * description);
         bool Add(const wchar_t * type, const wchar_t * name, const wchar_t * description);
         bool Add(IVariable* variable);
 
@@ -42,15 +46,21 @@ namespace Yap {
 		T Get(const wchar_t * id) {
 			std::wstring variable_id{ id };
 
-			auto left_square_pos = variable_id.find_last_of(L'[');
-			if (left_square_pos != wstring::npos) {
-				return Element<T>(variable_id);
+			if (variable_id[variable_id.size() - 1] == L']') {
+				auto left_square_pos = variable_id.find_last_of(L'[');
+				if (left_square_pos != wstring::npos) {
+					return Element<T>(variable_id);
+				}
+				else {
+					throw VariableException(id, VariableException::InvalidId);
+				}
 			}
 			else {
 				auto variable = GetVariable(id, variable_type_id<T>::type);
-				assert(variable != nullptr && "If parameter not found, GetProperty() should throw an PropertyException.");
-				assert(variable->ValueInterface() != nullptr);
-				return reinterpret_cast<IValue<T>*>(variable->ValueInterface())->Get();
+				assert(variable != nullptr && "If parameter not found, GetVariable() should throw an PropertyException.");
+				auto simple_variable = dynamic_cast<ISimpleVariable<T>*>(variable);
+				assert(simple_variable != nullptr);
+				return simple_variable->Get();
 			}
 		}
 
@@ -58,15 +68,21 @@ namespace Yap {
 		void Set(const wchar_t * id, T value) {
 			std::wstring variable_id{ id };
 
-			auto left_square_pos = variable_id.find_last_of(L'[');
-			if (left_square_pos != std::wstring::npos) {
-				Element<T>(variable_id) = value;
+			if (variable_id[variable_id.size() - 1] == L']') {
+				auto left_square_pos = variable_id.find_last_of(L'[');
+				if (left_square_pos != std::wstring::npos) {
+					Element<T>(variable_id) = value;
+				}
+				else {
+					throw VariableException(id, VariableException::InvalidId);
+				}
 			}
 			else {
 				auto variable = GetVariable(id, variable_type_id<T>::type);
 				assert(variable != nullptr && "If parameter not found, GetProperty() should throw an PropertyException.");
-				assert(variable->ValueInterface() != nullptr);
-				reinterpret_cast<IValue<T>*>(variable->ValueInterface())->Set(value);
+				auto simple_variable = dynamic_cast<ISimpleVariable<T>*>(variable);
+				assert(simple_variable != nullptr);
+				simple_variable->Set(value);
 			}
 		}
 		
@@ -79,19 +95,19 @@ namespace Yap {
 				return nullptr;
 
 			assert(array->GetType() == variable_type_id<T>::array_type);
-			auto array_interface = reinterpret_cast<IArrayValue<T>*>(array->ValueInterface());
-			assert(array_interface != nullptr);
-			return array_interface->Elements();
+			auto array_variable = dynamic_cast<IArrayVariable<T>*>(array);
+			assert(array_variable != nullptr);
+			return array_variable->Elements();
 		}
 
-		static std::shared_ptr<VariableManager> Load(const wchar_t * path);
+		static std::shared_ptr<VariableSpace> Load(const wchar_t * path);
 
         void Reset();
         bool TypeExists(const wchar_t * type_id) const;
         bool VariableExists(const wchar_t * id) const;
         const IVariable * GetType(const wchar_t * type_id) const;
         bool AddType(const wchar_t * type_id, IVariable *type);
-        bool AddType(const wchar_t * type_id, IContainer<IVariable> * variables);
+        bool AddType(const wchar_t * type_id, IPtrContainer<IVariable> * variables);
 
     protected:
 
@@ -105,21 +121,23 @@ namespace Yap {
 			if (right_square_pos == std::wstring::npos)
 				throw VariableException(id.c_str(), VariableException::VariableNotFound);
 
-			auto array_variable = GetVariable(id.substr(0, left_square_pos).c_str(), variable_type_id<T>::array_type);
-			if (array_variable == nullptr)
+			auto variable = GetVariable(id.substr(0, left_square_pos).c_str(), variable_type_id<T>::array_type);
+			if (variable == nullptr)
 				throw VariableException(id.c_str(), VariableException::VariableNotFound);
 
 			auto index = _wtoi(id.substr(left_square_pos + 1, right_square_pos - left_square_pos - 1).c_str());
-			auto array_interface = reinterpret_cast<IArrayValue<T>*>(array_variable->ValueInterface());
-			assert(array_interface != nullptr);
 
-			if (index < 0 || index >= int(array_interface->GetSize()))
+			auto array_variable = dynamic_cast<IArrayVariable<T>*>(variable);
+			assert(array_variable != nullptr);
+
+			if (index < 0 || index >= int(array_variable->GetSize()))
 				throw VariableException(id.c_str(), VariableException::OutOfRange);
 
-			return array_interface->Elements()[index];
+			return array_variable->Elements()[index];
 		}
 
 		bool InitTypes();
+
         IVariable * GetVariable(const wchar_t * name, int expected_type);
 		IVariable * GetVariable(IVariableContainer * variables, const wchar_t * name, int type);
         SmartPtr<IVariableContainer> _variables;

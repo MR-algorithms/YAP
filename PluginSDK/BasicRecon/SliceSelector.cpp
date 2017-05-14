@@ -1,6 +1,7 @@
 #include "SliceSelector.h"
-#include "interface/Client/DataHelper.h"
-#include "Interface/Implement/DataObject.h"
+#include "Client/DataHelper.h"
+#include "Implement/DataObject.h"
+#include "Implement/LogUserImpl.h"
 
 #include <complex>
 
@@ -10,20 +11,22 @@ using namespace Yap;
 SliceSelector::SliceSelector(void):
 	ProcessorImpl(L"SliceSelector")
 {
+	LOG_TRACE(L"SliceSelector constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
-	_properties->Add(VariableInt, L"SliceIndex", L"The index of the slice you want to get.");
-	_properties->Set<int>(L"SliceIndex", 3);
+	AddProperty<int>(L"SliceIndex", 3, L"The index of the slice you want to get.");
 }
 
 Yap::SliceSelector::SliceSelector(const SliceSelector & rhs)
 	: ProcessorImpl(rhs)
 {
+	LOG_TRACE(L"SliceSelector constructor called.", L"BasicRecon");
 }
 
 SliceSelector::~SliceSelector()
 {
+	LOG_TRACE(L"SliceSelector destructor called.", L"BasicRecon");
 }
 
 bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
@@ -31,7 +34,7 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 	assert((data != nullptr) && Yap::GetDataArray<complex<float>>(data) != nullptr);
 	assert(Inputs()->Find(name) != nullptr);
 
-	int slice_index = _properties->Get<int>(L"SliceIndex");
+	int slice_index = GetProperty<int>(L"SliceIndex");
 
 	DataHelper input_data(data);
 	Dimensions data_dimentions(data->GetDimensions());

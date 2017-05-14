@@ -3,7 +3,7 @@
 #ifndef DataTypeConvertor_h__201609
 #define DataTypeConvertor_h__201609
 
-#include "Interface/Implement/ProcessorImpl.h"
+#include "Implement/ProcessorImpl.h"
 
 namespace Yap
 {
@@ -15,10 +15,10 @@ namespace Yap
 		DataTypeConvertor(void);
 		DataTypeConvertor(const DataTypeConvertor& rhs);
 
-		virtual bool Input(const wchar_t * port, IData * data) override;
-
 	protected:
 		~DataTypeConvertor();
+
+		virtual bool Input(const wchar_t * port, IData * data) override;
 
 		int GetOutputDataType();
 		const wchar_t * GetPortName(int data_type);

@@ -129,7 +129,7 @@ namespace Yap
 	};
 
 	template <typename ELEMENT_TYPE>
-	struct IContainer : public ISharedObject
+	struct IPtrContainer : public ISharedObject
 	{
 		typedef IIterator<ELEMENT_TYPE> iterator;
 
@@ -139,7 +139,7 @@ namespace Yap
 	};
 
 	struct IProcessor;
-	typedef IContainer<IProcessor> IProcessorContainer;
+	typedef IPtrContainer<IProcessor> IProcessorContainer;
 	typedef IProcessorContainer::iterator IProcessorIter;
 
 	// bit flags for PropertyType
@@ -182,45 +182,45 @@ namespace Yap
         virtual void SetId(const wchar_t * id) = 0;
 		virtual const wchar_t * GetDescription() const = 0;
         virtual void SetDescription(const wchar_t * description) = 0;
-		/// Returns pointer to one of the value interfaces.
-		/**
-		\return Returned pointer can be reinterpret_cast to a 'value interface' corresponding 
-		to the type of the variable, such as IDoubleValue, IIntValue, IBoolValue, IStringValue.
-		*/
-		virtual void * ValueInterface() = 0;
 	};
-	typedef IContainer<IVariable> IVariableContainer;
+
+	template <> struct variable_type_id <IVariable*> {
+		static const int type = VariableInvalid;
+		static const int array_type = VariableStructArray;
+	};
+
+	typedef IPtrContainer<IVariable> IVariableContainer;
 	typedef IVariableContainer::iterator IVariableIter;
 
-	template <typename VALUE_TYPE>
-	struct IValue
+	// ================== new variable interfaces ========================
+	template<typename VALUE_TYPE>
+	struct ISimpleVariable : public IVariable
 	{
 		virtual VALUE_TYPE Get() const = 0;
 		virtual void Set(const VALUE_TYPE value) = 0;
 	};
-	typedef IValue<double> IDoubleValue;
-	typedef IValue<int> IIntValue;
-	typedef IValue<bool> IBoolValue;
 
-	struct IStringValue
-	{
-		virtual const wchar_t* Get() const = 0;
-		virtual void Set(const wchar_t* value) = 0;
-	};
-
-    typedef IContainer<IVariable> IStructValue;
-
-	struct IArray
+	struct IArrayBase : public IVariable
 	{
 		virtual size_t GetSize() const = 0;
 		virtual void SetSize(size_t size) = 0;
 	};
 
-	template <typename VALUE_TYPE>
-	struct IArrayValue : public IArray
+	template<typename VALUE_TYPE>
+	struct IArrayVariable : public IArrayBase
 	{
 		virtual VALUE_TYPE * Elements() = 0;
 	};
+
+	typedef struct IArrayVariable<SmartPtr<IVariable>> IStructArray;
+
+	struct IStructVariable : public IVariable
+	{
+		virtual IPtrContainer<IVariable> * Members() = 0;
+	};
+
+    typedef IPtrContainer<IVariable> IStructValue;
+	// ================== end new variable interfaces ====================
 
 	struct IPort : public ISharedObject
 	{
@@ -229,9 +229,14 @@ namespace Yap
 		virtual int GetDataType() const = 0;
 	};
 
-	typedef IContainer<IPort> IPortContainer;
+	typedef IPtrContainer<IPort> IPortContainer;
 	typedef IPortContainer::iterator IPortIter;
 
+	enum PropertyLinkType {
+		PropertyLinkInput		= 0,
+		PropertyLinkOutput		= 1,
+		PropertyLinkInputOutput = 2,
+	};
 
 	struct IProcessor : public ISharedObject
 	{
@@ -249,10 +254,11 @@ namespace Yap
 		virtual IVariableContainer * GetProperties() = 0;
 
 		/// 将指定名称的属性与参数空间的参数相关联。
-		virtual bool LinkProperty(const wchar_t * property_id, const wchar_t * param_id) = 0;
+		virtual bool MapProperty(const wchar_t * property_id, const wchar_t * variable_id,
+			bool input, bool output) = 0;
 
 		/// 接口用户调用这个函数来通知模块利用参数空间中的参数更新属性。
-		virtual bool UpdateProperties(IVariableContainer * params) = 0;
+		virtual bool SetGlobalVariables(IVariableContainer * params) = 0;
 
 		/// 将指定处理模块的输入端口链接到当前模块指定的输出端口上。
 		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) = 0;
@@ -261,7 +267,27 @@ namespace Yap
 		virtual bool Input(const wchar_t * name, IData * data) = 0;
 	};
 
-	typedef IContainer<IProcessor> IProcessorContainer;
+	typedef IPtrContainer<IProcessor> IProcessorContainer;
 	typedef IProcessorContainer::iterator IProcessorIter;
+
+	enum LogLevel
+	{
+		LevelTrace,
+		LevelDebug,
+		LevelInfo,
+		LevelWarn,
+		LevelError,
+		LevelFatal,
+	};
+
+	struct ILog
+	{
+		virtual void Log(const wchar_t * module, const wchar_t * info, LogLevel level, const wchar_t * log_name = L"", bool flush = false) = 0;
+	};
+
+	struct ILogUser
+	{
+		virtual void SetLog(ILog * log) = 0;
+	};
 }
 #endif // IData_h__

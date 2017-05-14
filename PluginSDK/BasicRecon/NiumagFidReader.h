@@ -2,7 +2,7 @@
 #ifndef NiumagFidReader_h__
 #define NiumagFidReader_h__
 
-#include "Interface/Implement/processorImpl.h"
+#include "Implement/processorImpl.h"
 
 namespace Yap
 {
@@ -22,7 +22,7 @@ namespace Yap
 	private:
 		~NiumagFidReader();
 
-		virtual bool Input(const wchar_t * name, IData * data);
+		virtual bool Input(const wchar_t * name, IData * data) override;
 
 		bool ReadNiumagFidData();
 	};

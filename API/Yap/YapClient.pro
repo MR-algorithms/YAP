@@ -23,13 +23,14 @@ SOURCES += ModuleManager.cpp \
     PipelineConstructor.cpp \
     ProcessorAgent.cpp \
     ProcessorManagerAgent.cpp \
-    ../../shared/Interface/Client/DataHelper.cpp \
-    ../../shared/Interface/Client/stdafx.cpp \
-    ../../shared/Interface/Implement/CompositeProcessor.cpp \
-    ../../shared/Interface/Implement/DataObject.cpp \
-    ../../shared/Interface/Implement/ProcessorImpl.cpp \
-    ../../shared/Interface/Implement/SharedObjectImpl.cpp \
-    ../../shared/Interface/Implement/VariableManager.cpp \
+    ../../shared/Client/DataHelper.cpp \
+    ../../shared/Client/stdafx.cpp \
+    ../../shared/Implement/CompositeProcessor.cpp \
+    ../../shared/Implement/DataObject.cpp \
+    ../../shared/Implement/ProcessorImpl.cpp \
+    ../../shared/Implement/VariableSpace.cpp \
+    ../../shared/Implement/LogImpl.cpp \
+    ../../shared/Implement/LogUserImpl.cpp \
     Preprocessor.cpp \
     VdfParser.cpp \
     ScanFileParser.cpp
@@ -39,16 +40,17 @@ HEADERS += ProcessorManagerAgent.h \
     PipelineCompiler.h \
     PipelineConstructor.h \
     ProcessorAgent.h \
-    ../../shared/Interface/Client/DataHelper.h \
-    ../../shared/Interface/Client/stdafx.h \
-    ../../shared/Interface/Client/targetver.h \
-    ../../shared/Interface/Implement/CompositeProcessor.h \
-    ../../shared/Interface/Implement/ContainerImpl.h \
-    ../../shared/Interface/Implement/DataObject.h \
-    ../../shared/Interface/Implement/ProcessorImpl.h \
-    ../../shared/Interface/Implement/SharedObjectImpl.h \
-    ../../shared/Interface/Implement/YapImplement.h \
-    ../../shared/Interface/Implement/VariableManager.h \
+    ../../shared/Client/DataHelper.h \
+    ../../shared/Client/stdafx.h \
+    ../../shared/Client/targetver.h \
+    ../../shared/Implement/CompositeProcessor.h \
+    ../../shared/Implement/ContainerImpl.h \
+    ../../shared/Implement/DataObject.h \
+    ../../shared/Implement/ProcessorImpl.h \
+    ../../shared/Implement/YapImplement.h \
+    ../../shared/Implement/VariableSpace.h \
+    ../../shared/Implement/LogImpl.h \
+    ../../shared/Implement/LogUserImpl.h \
     Preprocessor.h \
     VdfParser.h \
     ScanFileParser.h \
@@ -62,3 +64,10 @@ unix {
 DISTFILES += \
 
     ../../shared/Interface/Implement/README.md
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../ThirdParty/log4cplus-2.0.0-rc1/lib/ -llog4cplus
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../ThirdParty/log4cplus-2.0.0-rc1/lib/ -llog4cplusd
+else:unix: LIBS += -L$$PWD/../../../../ThirdParty/log4cplus-2.0.0-rc1/lib/ -llog4cplus
+
+INCLUDEPATH += $$PWD/../../../../ThirdParty/log4cplus-2.0.0-rc1/include
+DEPENDPATH += $$PWD/../../../../ThirdParty/log4cplus-2.0.0-rc1/include

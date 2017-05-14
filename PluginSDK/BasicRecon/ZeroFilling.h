@@ -3,7 +3,7 @@
 #ifndef ZeroFilling_h__20160814
 #define ZeroFilling_h__20160814
 
-#include "Interface/Implement/ProcessorImpl.h"
+#include "Implement/ProcessorImpl.h"
 
 namespace Yap
 {
@@ -13,10 +13,12 @@ namespace Yap
 		IMPLEMENT_SHARED(ZeroFilling)
 	public:
 		ZeroFilling();
-		virtual bool Input(const wchar_t * port, IData * data) override;
+		ZeroFilling(const ZeroFilling& rhs);
 
 	protected:
 		~ZeroFilling();
+
+		virtual bool Input(const wchar_t * port, IData * data) override;
 	};
 }
 #endif // ZeroFilling_h__

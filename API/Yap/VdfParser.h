@@ -13,7 +13,7 @@
 
 namespace Yap
 {
-	class VariableManager;
+	class VariableSpace;
 
 	/// Variable definition file.
 	class VdfParser
@@ -22,18 +22,18 @@ namespace Yap
 		VdfParser();
 		~VdfParser();
 
-        std::shared_ptr<VariableManager> CompileFile(const wchar_t * path);
-        std::shared_ptr<VariableManager> Compile(const wchar_t * text);
+        std::shared_ptr<VariableSpace> CompileFile(const wchar_t * path);
+        std::shared_ptr<VariableSpace> Compile(const wchar_t * text);
 
 	protected:
-        std::shared_ptr<VariableManager> DoCompile(std::wistream& input);
+        std::shared_ptr<VariableSpace> DoCompile(std::wistream& input);
 		bool Process();
 		bool ProcessSimpleDeclaration(Statement& statement);
 		bool ProcessArrayDeclaration(Statement& statement);
 		bool ProcessStructDeclaration(Statement& statement);
 
 		std::shared_ptr<Preprocessor> _preprocessor;
-		std::shared_ptr<VariableManager> _variables;
+		std::shared_ptr<VariableSpace> _variables;
 	};
 }
 

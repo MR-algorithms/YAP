@@ -5,7 +5,7 @@
 #include <assert.h>
 #include "Interface/Interfaces.h"
 
-#include "VariableManager.h"
+#include "VariableSpace.h"
 
 using namespace std;
 using namespace Yap;
@@ -53,7 +53,7 @@ namespace _details
 	ProcessorImpl::ProcessorImpl(const wchar_t * class_id) :
 		_system_variables(nullptr),
 		_class_id(class_id),
-		_properties(shared_ptr<VariableManager>(new VariableManager)),
+		_properties(shared_ptr<VariableSpace>(new VariableSpace)),
 		_input(YapShared(new ContainerImpl<IPort>)),
 		_output(YapShared(new ContainerImpl<IPort>))
 	{
@@ -63,13 +63,13 @@ namespace _details
 	Yap::ProcessorImpl::ProcessorImpl(const ProcessorImpl& rhs) :
 		_input(YapShared<ContainerImpl<IPort>>(rhs._input->Clone())),
 		_output(YapShared<ContainerImpl<IPort>>(rhs._output->Clone())),
-		_properties(new VariableManager(*(rhs._properties))),
+		_properties(new VariableSpace(*(rhs._properties))),
 		_instance_id(rhs._instance_id),
 		_class_id(rhs._class_id),
 		_system_variables(nullptr)
 	{
 		_links.clear();
-		_property_links.clear();
+		_in_property_mapping.clear();
 	}
 
 	ProcessorImpl::~ProcessorImpl()
@@ -158,52 +158,28 @@ namespace _details
 		_instance_id = instance_id;
 	}
 
-	bool Yap::ProcessorImpl::LinkProperty(const wchar_t * property_id, const wchar_t * param_id)
+	bool Yap::ProcessorImpl::MapProperty(const wchar_t * property_id, const wchar_t * param_id, bool input, bool output)
 	{
 		if (_properties->Variables()->Find(property_id) != nullptr)
 		{
 			return false;
 		}
 
-		_property_links.insert(make_pair(wstring(property_id), wstring(param_id)));
+		_in_property_mapping.insert(make_pair(wstring(property_id), wstring(param_id)));
 
 		return true;
 	}
 
-	bool Yap::ProcessorImpl::UpdateProperties(IVariableContainer * source_params)
+	bool Yap::ProcessorImpl::SetGlobalVariables(IVariableContainer * source_params)
 	{
-		for (auto link : _property_links)
+		if (_system_variables.get() == nullptr || _system_variables->Variables() != source_params)
 		{
-			auto property = _properties->Variables()->Find(link.first.c_str());
-			if (property == nullptr)
-				return false;
-
-			IVariable * source = source_params->Find(link.second.c_str());
-			if (source == nullptr)
-				return false;
-
-			if (property->GetType() != source->GetType())
-				return false;
-
-			switch (property->GetType())
+			try 
 			{
-			case VariableBool:
-				reinterpret_cast<IBoolValue*>(property->ValueInterface())->Set(
-					reinterpret_cast<IBoolValue*>(source->ValueInterface())->Get());
-				break;
-			case VariableInt:
-				reinterpret_cast<IIntValue*>(property->ValueInterface())->Set(
-					reinterpret_cast<IIntValue*>(source->ValueInterface())->Get());
-				break;
-			case VariableFloat:
-				reinterpret_cast<IDoubleValue*>(property->ValueInterface())->Set(
-					reinterpret_cast<IDoubleValue*>(source->ValueInterface())->Get());
-				break;
-			case VariableString:
-				reinterpret_cast<IStringValue*>(property->ValueInterface())->Set(
-					reinterpret_cast<IStringValue*>(source->ValueInterface())->Get());
-				break;
-			default:
+				_system_variables = make_shared<VariableSpace>(source_params);
+			}
+			catch (bad_alloc&)
+			{
 				return false;
 			}
 		}

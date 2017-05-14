@@ -13,7 +13,7 @@
 
 namespace Yap
 {
-	class VariableManager;
+	class VariableSpace;
 
 	class ScanFileParser
 	{
@@ -24,7 +24,7 @@ namespace Yap
 	protected:
 
 		std::shared_ptr<Preprocessor> _preprocessor;
-		std::shared_ptr<VariableManager> _variables;
+		std::shared_ptr<VariableSpace> _variables;
 	};
 }
 #endif //SCAN_DEFINITION_PARSER_H

@@ -3,7 +3,7 @@
 #ifndef SliceSelector_h__20160814
 #define SliceSelector_h__20160814
 
-#include "Interface/Implement/ProcessorImpl.h"
+#include "Implement/ProcessorImpl.h"
 
 namespace Yap
 {
@@ -14,11 +14,11 @@ namespace Yap
 	public:
 		SliceSelector(void);
 		SliceSelector(const SliceSelector& rhs);
-		
-		virtual bool Input(const wchar_t * name, IData * data) override;
 
 	protected:
 		~SliceSelector();
+
+		virtual bool Input(const wchar_t * name, IData * data) override;
 	};
 }
 #endif // SliceSelector_h__

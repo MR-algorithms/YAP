@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "SliceIterator.h"
 
-#include "Interface/Client/DataHelper.h"
+#include "Client/DataHelper.h"
 #include <complex>
-#include "Interface/Implement/DataObject.h"
+#include "Implement/DataObject.h"
+#include "Implement/LogUserImpl.h"
 
 using namespace Yap;
 using namespace std;
@@ -11,6 +12,7 @@ using namespace std;
 SliceIterator::SliceIterator(void) :
 	ProcessorImpl(L"SliceIterator")
 {
+	LOG_TRACE(L"SliceIterator constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat | DataTypeUnsignedShort);
 	AddOutput(L"Output", 2, DataTypeComplexFloat | DataTypeUnsignedShort);
 }
@@ -18,12 +20,14 @@ SliceIterator::SliceIterator(void) :
 SliceIterator::SliceIterator( const SliceIterator& rhs)
 	: ProcessorImpl(rhs)
 {
+	LOG_TRACE(L"SliceIterator constructor called.", L"BasicRecon");
 
 }
 
 
 SliceIterator::~SliceIterator(void)
 {
+	LOG_TRACE(L"SliceIterator destructor called.", L"BasicRecon");
 }
 
 bool SliceIterator::Input(const wchar_t * name, IData * data)

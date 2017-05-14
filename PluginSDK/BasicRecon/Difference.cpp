@@ -1,5 +1,6 @@
 #include "Difference.h"
-#include "Interface/Client/DataHelper.h"
+#include "Client/DataHelper.h"
+#include "Implement/LogUserImpl.h"
 
 using namespace Yap;
 using namespace std;
@@ -22,6 +23,7 @@ void calc_difference(T * input_data,
 
 Difference::Difference() : ProcessorImpl(L"Difference")
 {
+	LOG_TRACE(L"Difference constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
 	AddInput(L"Reference", YAP_ANY_DIMENSION, DataTypeAll);
 
@@ -29,8 +31,16 @@ Difference::Difference() : ProcessorImpl(L"Difference")
 }
 
 
+Difference::Difference(const Difference& rhs)
+	:ProcessorImpl(rhs)
+{
+	LOG_TRACE(L"Difference constructor called.", L"BasicRecon");
+}
+
+
 Difference::~Difference()
 {
+	LOG_TRACE(L"Difference destructor called.", L"BasicRecon");
 }
 
 bool Yap::Difference::Input(const wchar_t * port, IData * data)

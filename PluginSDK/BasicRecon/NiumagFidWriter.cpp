@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "NiumagFidWriter.h"
+#include "Implement/LogUserImpl.h"
 
 #include <fstream>
 #include <iosfwd>
-#include "Interface\Client\DataHelper.h"
+#include "Client\DataHelper.h"
 
 using namespace Yap;
 using namespace std;
@@ -11,17 +12,20 @@ using namespace std;
 NiumagFidWriter::NiumagFidWriter(void) :
 	ProcessorImpl(L"NiumagFidWriter")
 {
+	LOG_TRACE(L"NiumagFidWriter constructor called.", L"BasicRecon");
 	AddInput(L"Input", 4, DataTypeComplexFloat);
-	_properties->Add(VariableString, L"ExportFolder", L"Set folder used to write fid.");
+	AddProperty<const wchar_t *>(L"ExportFolder", L"", L"Set folder used to write FID.");
 }
 
 NiumagFidWriter::NiumagFidWriter(const NiumagFidWriter& rhs) :
 	ProcessorImpl(rhs)
 {
+	LOG_TRACE(L"NiumagFidWriter constructor called.", L"BasicRecon");
 }
 
 NiumagFidWriter::~NiumagFidWriter()
 {
+	LOG_TRACE(L"NiumagFidWriter destructor called.", L"BasicRecon");
 }
 
 bool Yap::NiumagFidWriter::Input(const wchar_t * name, IData * data)
@@ -32,7 +36,7 @@ bool Yap::NiumagFidWriter::Input(const wchar_t * name, IData * data)
 	static unsigned int niumag_img_index = 0;
 	file_name << ++niumag_img_index;
 
-	auto output_folder = _properties->Get<const wchar_t*>(L"ExportFolder");
+	auto output_folder = GetProperty<const wchar_t*>(L"ExportFolder");
 	wstring file_path = output_folder;
 	if (wcslen(output_folder) > 3)
 	{

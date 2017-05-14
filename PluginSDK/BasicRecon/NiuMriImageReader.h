@@ -2,7 +2,7 @@
 #ifndef NiuMriImageReader_h__
 #define NiuMriImageReader_h__
 
-#include "Interface/Implement/processorImpl.h"
+#include "Implement/processorImpl.h"
 
 namespace Yap
 {
@@ -22,7 +22,7 @@ namespace Yap
 	private:
 		~NiuMriImageReader();
 
-		virtual bool Input(const wchar_t * name, IData * data);
+		virtual bool Input(const wchar_t * name, IData * data) override;
 
 		bool ReadNiuMriImageData();
 	};

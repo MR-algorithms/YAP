@@ -1,5 +1,6 @@
 #include "ProcessorManagerAgent.h"
 #include <assert.h>
+#include "Implement\LogImpl.h"
 
 
 using namespace Yap;
@@ -31,6 +32,16 @@ bool Yap::ModuleAgent::Load(const wchar_t * plugin_path)
 	if (_module == 0)
 	{
 		return false;
+	}
+
+	auto log_func = (Yap::ILogUser*(*)()) ::GetProcAddress(_module, "GetLogUser");
+	if (log_func != nullptr)
+	{
+		auto log_user = log_func();
+		if (log_user != nullptr)
+		{
+			log_user->SetLog(&LogImpl::GetInstance());
+		}
 	}
 
 	auto create_func = (Yap::IProcessorContainer*(*)())::GetProcAddress(

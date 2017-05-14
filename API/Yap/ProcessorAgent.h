@@ -7,7 +7,7 @@
 
 namespace Yap
 {
-	class VariableManager;
+	class VariableSpace;
 
 	class ProcessorAgent
 	{
@@ -25,7 +25,7 @@ namespace Yap
 		IPortContainer * Outputs();
 		IVariableContainer * GetProperties();
 
-		bool LinkProperty(const wchar_t * property_id, const wchar_t * param_id);
+		bool LinkProperty(const wchar_t * property_id, const wchar_t * param_id, bool input, bool output);
 		bool UpdateProperties(IVariableContainer * params);
 		bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input);
 		bool Input(const wchar_t * name, IData * data);
@@ -38,7 +38,7 @@ namespace Yap
 		operator bool();
 	protected:
 		SmartPtr<IProcessor> _processor;
-		std::shared_ptr<VariableManager> _variables;
+		std::shared_ptr<VariableSpace> _variables;
 	};
 }
 

@@ -2,7 +2,7 @@
 #ifndef NiumagFidWriter_h__
 #define NiumagFidWriter_h__
 
-#include "Interface/Implement/processorImpl.h"
+#include "Implement/processorImpl.h"
 
 namespace Yap
 {
@@ -13,11 +13,11 @@ namespace Yap
 	public:
 		NiumagFidWriter(void);
 		NiumagFidWriter(const NiumagFidWriter& rhs);
-
-	private:
-		~NiumagFidWriter();
-
-		virtual bool Input(const wchar_t * name, IData * data);
+		
+	private:		
+		~NiumagFidWriter();		
+		
+		virtual bool Input(const wchar_t * name, IData * data) override;
 	};
 }
 

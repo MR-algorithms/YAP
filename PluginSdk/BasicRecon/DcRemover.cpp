@@ -1,7 +1,8 @@
 #include "DcRemover.h"
 
-#include "Interface/Client/DataHelper.h"
-#include "Interface/Implement/DataObject.h"
+#include "Client/DataHelper.h"
+#include "Implement/DataObject.h"
+#include "Implement/LogUserImpl.h"
 
 #include <string>
 
@@ -59,19 +60,24 @@ void RemoveDC(T * input_data,
 DcRemover::DcRemover() :
 	ProcessorImpl(L"DcRemover")
 {
+	LOG_TRACE(L"DcRemover constructor called.", L"BasicRecon");
 	AddInput(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 	
-	_properties->Add(VariableBool, L"Inplace", L"If the processed data will be stored in place.");
-	_properties->Set<bool>(L"Inplace", true);
-	_properties->Add(VariableInt, L"CornerSize", L"Size of the corners used to estimate noise level.");
-	_properties->Set<int>(L"CornerSize", 10);
+	AddProperty<bool>(L"Inplace", true, L"If the processed data will be stored in place.");
+	AddProperty<int>(L"CornerSize", 10, L"Size of the corners used to estimate noise level.");
 
 	AddOutput(L"Output", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 }
 
+Yap::DcRemover::DcRemover(const DcRemover& rhs)
+	:ProcessorImpl(rhs)
+{
+	LOG_TRACE(L"DcRemover constructor called.", L"BasicRecon");
+}
 
 DcRemover::~DcRemover()
 {
+	LOG_TRACE(L"DcRemover destructor called.", L"BasicRecon");
 }
 
 bool DcRemover::Input(const wchar_t * port, IData * data)
@@ -88,8 +94,8 @@ bool DcRemover::Input(const wchar_t * port, IData * data)
 
 	unsigned int width = input_data.GetWidth();
 	unsigned int height = input_data.GetHeight();
-	auto inplace = _properties->Get<bool>(L"Inplace");
-	unsigned int corner_size = _properties->Get<int>(L"CornerSize");
+	auto inplace = GetProperty<bool>(L"Inplace");
+	unsigned int corner_size = GetProperty<int>(L"CornerSize");
 	if (corner_size >= height / 2 || corner_size >= width / 2 || corner_size < 2)
 		return false;
 

@@ -9,7 +9,7 @@
 #include <stack>
 #include <memory>
 
-#include "Interface/Implement/CompositeProcessor.h"
+#include "Implement/CompositeProcessor.h"
 #include "Preprocessor.h"
 
 namespace Yap
@@ -32,7 +32,7 @@ namespace Yap
 		bool ProcessImport(Statement& statement);
 		bool ProcessPortLink(Statement& statement);
 		bool ProcessDeclaration(Statement& statement);
-		bool ProcessPropertyLink(Statement& statement);
+		bool ProcessPropertyMapping(Statement& statement);
 		bool ProcessAssignment(Statement& statement);
 
 		std::shared_ptr<Preprocessor> _preprocessor;

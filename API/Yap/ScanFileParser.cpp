@@ -1,5 +1,5 @@
 #include "ScanFileParser.h"
-#include "Interface/Implement/VariableManager.h"
+#include "Implement/VariableSpace.h"
 #include "Preprocessor.h"
 
 #include <cassert>
@@ -14,7 +14,7 @@ using namespace std;
 
 ScanFileParser::ScanFileParser() :
 	_preprocessor {	make_shared<Preprocessor>(PreprocessScan)},
-	_variables{ make_shared<VariableManager>() }
+	_variables{ make_shared<VariableSpace>() }
 {}
 
 

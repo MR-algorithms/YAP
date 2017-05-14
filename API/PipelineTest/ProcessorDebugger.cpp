@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "ProcessorDebugger.h"
-#include "Interface/Implement/DataObject.h"
+#include "Implement/DataObject.h"
 
 #include <iostream>
 
@@ -62,26 +62,30 @@ bool YapDebugger::DebugProperties(IVariableIter& properties)
 		{
 		case VariableBool:
 		{
-			auto value_interface = reinterpret_cast<IBoolValue*>(property->ValueInterface());
-			wcout << value_interface->Get();
+			auto variable_bool = dynamic_cast<ISimpleVariable<bool>*>(property);
+			assert(variable_bool != nullptr);
+			wcout << variable_bool->Get();
 			break;
 		}
 		case VariableFloat:
 		{
-			auto value_interface = reinterpret_cast<IDoubleValue*>(property->ValueInterface());
-			wcout << value_interface->Get();
+			auto variable_double = dynamic_cast<ISimpleVariable<double>*>(property);
+			assert(variable_double != nullptr);
+			wcout << variable_double->Get();
 			break;
 		}
 		case VariableInt:
 		{
-			auto value_interface = reinterpret_cast<IIntValue*>(property->ValueInterface());
-			wcout << value_interface->Get();
+			auto variable_int = dynamic_cast<ISimpleVariable<int>*>(property);
+			assert(variable_int != nullptr);
+			wcout << variable_int->Get();
 			break;
 		}
 		case VariableString:
 		{
-			auto value_interface = reinterpret_cast<IStringValue*>(property);
-			wcout << value_interface->Get();
+			auto variable_string = dynamic_cast<ISimpleVariable<const wchar_t*>*>(property);
+			assert(variable_string != nullptr);
+			wcout << variable_string->Get();
 			break;
 		}
 		default:
@@ -98,7 +102,7 @@ bool YapDebugger::DebugPlugin(const wchar_t * path)
 	auto module = ::LoadLibrary(path);
 	if (module == NULL)
 	{
-		wcout << L"Failed to load plugin.\n";
+		wcout << L"Failed to load plug-in DLL.\n";
 		return false;
 	}
 

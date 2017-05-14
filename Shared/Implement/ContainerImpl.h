@@ -14,11 +14,11 @@ namespace Yap
 {
 	template <typename TYPE>
 	class ContainerImpl :
-		public IContainer<TYPE>
+		public IPtrContainer<TYPE>
 	{
 		IMPLEMENT_LOCK_RELEASE
 
-		template <typename TYPE>
+		template <typename TYPE>  
 		class Iterator : 
 			public IIterator<TYPE>,
 			public IDynamicObject
@@ -61,7 +61,7 @@ namespace Yap
 	public:
 		ContainerImpl() {}
 
-		IContainer<TYPE> * Clone() const override
+		IPtrContainer<TYPE> * Clone() const override
 		{
 			auto cloned = new (std::nothrow) ContainerImpl;
 			if (cloned == nullptr)

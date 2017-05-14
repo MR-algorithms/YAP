@@ -8,13 +8,13 @@
 #include <string>
 #include <memory>
 #include "Utilities/macros.h"
-#include "interface/Implement/DataObject.h"
-#include "Interface/Implement/ContainerImpl.h"
-#include "variableManager.h"
+#include "Implement/DataObject.h"
+#include "Implement/ContainerImpl.h"
+#include "VariableSpace.h"
 
 namespace Yap
 {
-	class VariableManager;
+	class VariableSpace;
 
 	struct Anchor
 	{
@@ -40,8 +40,8 @@ namespace Yap
 
 		virtual IVariableContainer * GetProperties();
 
-		virtual bool LinkProperty(const wchar_t * property_id, const wchar_t * param_id) override;
-		virtual bool UpdateProperties(IVariableContainer * params) override;
+		virtual bool MapProperty(const wchar_t * property_id, const wchar_t * param_id, bool input, bool output) override;
+		virtual bool SetGlobalVariables(IVariableContainer * params) override;
 
 		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) override;
 
@@ -57,19 +57,77 @@ namespace Yap
 
 		bool Feed(const wchar_t * name, IData * data);
 
+		template <typename T>
+		bool AddProperty(const wchar_t * property_id, T value, const wchar_t * description)
+		{
+			if (_properties->Add(variable_type_id<T>::type, property_id, description))
+			{
+				_properties->Set<T>(property_id, value);
+				return true;
+			}
+
+			return false;
+		}
+
+		template <typename T>
+		T GetProperty(const wchar_t * property_id)
+		{
+			if (!_system_variables)
+			{
+				return _properties->Get<T>(property_id);
+			}
+			else
+			{
+				auto link = _in_property_mapping.find(property_id);
+				if (link == _in_property_mapping.end())
+				{
+					return _properties->Get<T>(property_id);
+				}
+				else
+				{
+					return _system_variables->Get<T>(link->second.c_str());
+				}
+			}
+
+			return _properties->Get<T>(property_id);
+		}
+
+		template <typename T> 
+		void SetProperty(const wchar_t * property_id, T value)
+		{
+			if (!_system_variables)
+			{
+				_properties->Set<T>(property_id, value);
+			}
+			else
+			{
+				auto link = _out_property_links.find(property_id);
+				if (link == _out_property_links.end())
+				{
+					_properties->Set<T>(property_id, value);
+				}
+				else
+				{
+					_system_variables->Set<T>(link->second, value);
+				}
+			}
+		}
+
 		SmartPtr<ContainerImpl<IPort>> _input;
 		SmartPtr<ContainerImpl<IPort>> _output;
 
 		std::multimap<std::wstring, Anchor> _links;
-		std::map<std::wstring, std::wstring> _property_links;
+		std::map<std::wstring, std::wstring> _in_property_mapping;	 // <property_id, variable_id>
+		std::map<std::wstring, std::wstring> _out_property_links; // <property_id, variable_id>
 
 		std::wstring _instance_id;
 		std::wstring _class_id;
 
-		std::shared_ptr<VariableManager> _properties;
-		IVariableContainer * _system_variables;
 
 	private:
+		std::shared_ptr<VariableSpace> _properties;
+		std::shared_ptr<VariableSpace> _system_variables;
+
 		ProcessorImpl(const ProcessorImpl&& rhs);
 		const ProcessorImpl& operator = (ProcessorImpl&& rhs);
 		const ProcessorImpl& operator = (const ProcessorImpl& rhs);
