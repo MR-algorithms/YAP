@@ -76,8 +76,14 @@ void PluginDebugTest()
 
 void PipelineTest()
 {
+	VdfParser parser;
+	auto variable_manager = parser.CompileFile(L"sysParams_yap.txt");
+	variable_manager->Set<int>(L"SliceCount", 5);
+
 	PipelineCompiler compiler;
 	auto pipeline = compiler.CompileFile(L"niumag_recon_yap.pipeline");
+
+	pipeline->SetGlobalVariables(variable_manager->Variables());
 
 	if (pipeline)
 	{
@@ -135,10 +141,6 @@ int main()
 //	ConstructorTest();
 	PipelineTest();
 //	VdfParserTest();
-
-// 	LogImpl::GetInstance().Log(L"test", L"test info debug", LevelDebug, L"sys.log");
-// 	LogImpl::GetInstance().Log(L"test", L"test info error", LevelError, L"sys.log");
-//	LogImpl::GetInstance().Log(L"test", L"test info warn", LevelWarn, L"sys.log");
 
 	time_t end = clock();
 	printf("the running time is : %f\n", float(end - start) / CLOCKS_PER_SEC);
