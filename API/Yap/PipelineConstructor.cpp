@@ -261,16 +261,16 @@ bool PipelineConstructor::MapProperty(const wchar_t * processor_id,
 	auto processor = _pipeline->Find(processor_id);
 	if (!processor)
 	{
-		auto output = wstring(L"failed to find processor:") + processor_id;
-		throw ConstructError(0, ConstructErrorProcessorNotFound, output.c_str());
+		auto output_str = wstring(L"failed to find processor:") + processor_id;
+		throw ConstructError(0, ConstructErrorProcessorNotFound, output_str.c_str());
 	}
 
 	if (!processor->MapProperty(property_id, variable_id, input, output))
 	{
-		wostringstream output;
-		output << L"Fail to link property to system variable. Property: " << property_id
+		wostringstream output_str;
+		output_str << L"Fail to link property to system variable. Property: " << property_id
 			<< L". System variable: " << variable_id;
-		throw ConstructError(0, ConstructErrorPropertyLink, output.str());
+		throw ConstructError(0, ConstructErrorPropertyLink, output_str.str());
 	}
 
 	return true;

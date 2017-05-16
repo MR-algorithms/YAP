@@ -108,7 +108,7 @@ namespace Yap
 				}
 				else
 				{
-					_system_variables->Set<T>(link->second, value);
+					_system_variables->Set<T>(link->second.c_str(), value);
 				}
 			}
 		}

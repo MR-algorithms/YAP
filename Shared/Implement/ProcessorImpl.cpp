@@ -160,13 +160,20 @@ namespace _details
 
 	bool Yap::ProcessorImpl::MapProperty(const wchar_t * property_id, const wchar_t * param_id, bool input, bool output)
 	{
-		if (_properties->Variables()->Find(property_id) != nullptr)
+		if (_properties->Variables()->Find(property_id) == nullptr)
 		{
 			return false;
 		}
 
-		_in_property_mapping.insert(make_pair(wstring(property_id), wstring(param_id)));
+		if (input)
+		{
+			_in_property_mapping.insert(make_pair(wstring(property_id), wstring(param_id)));
+		}
 
+		if (output)
+		{
+			_out_property_links.insert(make_pair(wstring(property_id), wstring(param_id)));
+		}
 		return true;
 	}
 

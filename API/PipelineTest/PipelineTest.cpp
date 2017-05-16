@@ -79,6 +79,7 @@ void PipelineTest()
 	VdfParser parser;
 	auto variable_manager = parser.CompileFile(L"sysParams_yap.txt");
 	variable_manager->Set<int>(L"SliceCount", 5);
+	variable_manager->Set<const wchar_t*>(L"FidDataPath", L"D:\\test_data\\UU.img.fid");
 
 	PipelineCompiler compiler;
 	auto pipeline = compiler.CompileFile(L"niumag_recon_yap.pipeline");
@@ -89,6 +90,8 @@ void PipelineTest()
 	{
 		pipeline->Input(L"Input", nullptr);
 	}
+
+	auto dim1 = variable_manager->Get<int>(L"Dim1Count");
 }
 
 bool VdfParserTest()
