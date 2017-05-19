@@ -60,7 +60,7 @@ bool Yap::ChannelDataCollector::Input(const wchar_t * name, IData * data)
 		}
 
 		CollectorBuffer collector_buffer;
-		collector_buffer.buffer = YapShared(new ComplexFloatData(&collector_dimensions));
+		collector_buffer.buffer = CreateData<complex<float>>(&collector_dimensions);
 
 		auto * data_array = Yap::GetDataArray<complex<float>>(data);
 		memcpy(collector_buffer.buffer->GetData(), data_array, helper.GetBlockSize(DimensionSlice) * sizeof(complex<float>));

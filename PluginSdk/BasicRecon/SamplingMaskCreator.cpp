@@ -77,7 +77,7 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
 			(Dimension4, 0U, 1)
 			(DimensionChannel, 0U, 1);
 
-		auto outdata = YapShared(new FloatData(Mask, dimensions, nullptr, true));
+		auto outdata = CreateData<float>(Mask, dimensions, nullptr, true);
 
 		Feed(L"Output", outdata.get());
 	}
@@ -106,7 +106,7 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
 			(Dimension4, 0U, 1)
 			(DimensionChannel, 0U, 1);
 
-		auto outdata = YapShared(new FloatData(Mask, dimensions, nullptr, true));
+		auto outdata = CreateData<float>(Mask, dimensions, nullptr, true);
 
 		Feed(L"Output", outdata.get());
 	}

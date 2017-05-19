@@ -109,7 +109,7 @@ bool DcRemover::Input(const wchar_t * port, IData * data)
 		}
 		else
 		{
-			auto output_data = YapShared(new ComplexFloatData(data->GetDimensions()));
+			auto output_data = CreateData<complex<float>>(data->GetDimensions());
 
 			RemoveDC(GetDataArray<complex<float>>(data), GetDataArray<complex<float>>(output_data.get()),
 				width, height, inplace, corner_size);
@@ -127,7 +127,7 @@ bool DcRemover::Input(const wchar_t * port, IData * data)
 		}
 		else
 		{
-			auto output_data = YapShared(new ComplexDoubleData(data->GetDimensions()));
+			auto output_data = CreateData<complex<double>>(data->GetDimensions());
 
 			RemoveDC(GetDataArray<complex<double>>(data), GetDataArray<complex<double>>(output_data.get()),
 				width, height, inplace, corner_size);

@@ -112,8 +112,8 @@ bool Yap::NiuMriImageReader::ReadNiuMriImageData()
 		dimensions(DimensionReadout, 0U, dim1)
 			(DimensionPhaseEncoding, 0U, dim2);
 
-		auto data = YapShared(new UnsignedShortData(
-			reinterpret_cast<unsigned short*>(buffer), dimensions, nullptr, true));
+		auto data = CreateData<unsigned short>(
+			reinterpret_cast<unsigned short*>(buffer), dimensions, nullptr, true);
 
 		Feed(L"Output", data.get());
 	}

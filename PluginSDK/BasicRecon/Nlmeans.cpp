@@ -45,7 +45,7 @@ bool Yap::Nlmeans::Input(const wchar_t * name, IData * data)
 
 	float * fpI = GetDataArray<float>(data);
 
-	auto fpO = YapShared(new FloatData(&dims));
+	auto fpO = CreateData<float>(&dims);
 
 //	float Sigma = GetFloat(L"Sigma");
 	float Sigma = GetSigma(fpI, width, height);

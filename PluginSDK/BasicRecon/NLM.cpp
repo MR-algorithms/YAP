@@ -45,39 +45,39 @@ bool Yap::NLM::Input(const wchar_t * name, IData * data)
 		(DimensionPhaseEncoding, 0, height);
 
 	float * input_img = GetDataArray<float>(data);
-	auto output_img = YapShared(new FloatData(&dims));
+	auto output_img = CreateData<float>(&dims);
 
 	float sigma = GetSigma(input_img, width, height);
 
 	unsigned int sw_r, pl_r;
 	float h;
 
-	if (sigma > 0.0f && sigma <= 15.0f) {
+	if (sigma > 0.0f && sigma <= 15.0f) 
+	{
 		pl_r = 1;
 		sw_r = 10;
 		h = 0.4f;
-
 	}
-	else if (sigma > 15.0f && sigma <= 30.0f) {
+	else if (sigma > 15.0f && sigma <= 30.0f) 
+	{
 		pl_r = 2;
 		sw_r = 10;
 		h = 0.4f;
-
 	}
-	else if (sigma > 30.0f && sigma <= 45.0f) {
+	else if (sigma > 30.0f && sigma <= 45.0f) 
+	{
 		pl_r = 3;
 		sw_r = 17;
 		h = 0.35f;
-
 	}
-	else if (sigma > 45.0f && sigma <= 75.0f) {
+	else if (sigma > 45.0f && sigma <= 75.0f) 
+	{
 	    pl_r = 4;
 		sw_r = 17;
 		h = 0.35f;
-
 	}
-	else if (sigma <= 100.0f) {
-
+	else if (sigma <= 100.0f) 
+	{
 		pl_r = 5;
 		sw_r = 17;
 		h = 0.30f;

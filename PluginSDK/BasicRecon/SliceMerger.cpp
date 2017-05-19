@@ -51,7 +51,7 @@ bool SliceMerger::Input(const wchar_t * port, IData * data)
 			(DimensionSlice, 0, slice_count);
 		
 		TODO(让SliceMerger适应不同数据类型);
-		_data = YapShared(new UnsignedShortData(&dims));
+		_data = CreateData<unsigned short>(&dims);
 
 		++slice_num;
 	}

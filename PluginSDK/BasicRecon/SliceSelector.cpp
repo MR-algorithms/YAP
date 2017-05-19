@@ -42,8 +42,9 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 	if (input_data.GetActualDimensionCount() <= 3)
 	{		
 		data_dimentions.SetDimension(DimensionSlice, 1, slice_index);
-		auto output = YapShared(new ComplexFloatData(Yap::GetDataArray<complex<float>>(data)
-			+ slice_index * slice_block_size, data_dimentions));
+		auto output = CreateData<complex<float>>(Yap::GetDataArray<complex<float>>(data)
+			+ slice_index * slice_block_size, data_dimentions);
+
 		Feed(L"Output", output.get());
 	}
 	else
@@ -70,8 +71,7 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 			(DimensionSlice, slice_index, 1)
 			(Dimension4, 0U, input_data.GetDim4())
 			(DimensionChannel, 0U, input_data.GetCoilCount());
-		auto outdata = YapShared(new ComplexFloatData(
-			slice_channel_data, dimensions, nullptr, true));
+		auto outdata = CreateData<complex<float>>(slice_channel_data, dimensions, nullptr, true);
 
 		Feed(L"Output", outdata.get());
 	}

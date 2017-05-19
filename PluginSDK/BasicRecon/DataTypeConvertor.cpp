@@ -35,11 +35,11 @@ inline void ConvertElement(complex<float>& input, complex<double>& output)
 }
 
 template <typename IN_TYPE, typename OUT_TYPE>
-Yap::SmartPtr<IData> GetConvertedData(IData* input_object)
+Yap::SmartPtr<IData> DataTypeConvertor::GetConvertedData(IData* input_object)
 {
 	assert(input_object != nullptr);
 
-	auto output_object = YapShared(new DataObject<OUT_TYPE>(input_object->GetDimensions()));
+	auto output_object = CreateData<OUT_TYPE>(input_object->GetDimensions());
 	auto output = ::GetDataArray<OUT_TYPE>(output_object.get());
 
 	DataHelper helper(input_object);
@@ -56,7 +56,7 @@ Yap::SmartPtr<IData> GetConvertedData(IData* input_object)
 }
 
 template <typename IN_TYPE>
-Yap::SmartPtr<IData> Convert(IData * input, int output_type)
+Yap::SmartPtr<IData> DataTypeConvertor::Convert(IData * input, int output_type)
 {
 	assert(input != nullptr);
 
@@ -80,7 +80,7 @@ Yap::SmartPtr<IData> Convert(IData * input, int output_type)
 }
 
 template <>
-Yap::SmartPtr<IData> Convert<complex<double>>(IData * input, int output_type)
+Yap::SmartPtr<IData> DataTypeConvertor::Convert<complex<double>>(IData * input, int output_type)
 {
 	assert(input != nullptr);
 
@@ -93,7 +93,7 @@ Yap::SmartPtr<IData> Convert<complex<double>>(IData * input, int output_type)
 }
 
 template <>
-Yap::SmartPtr<IData> Convert<complex<float>>(IData * input, int output_type)
+Yap::SmartPtr<IData> DataTypeConvertor::Convert<complex<float>>(IData * input, int output_type)
 {
 	assert(input != nullptr);
 
