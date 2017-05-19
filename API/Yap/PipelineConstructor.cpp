@@ -85,7 +85,6 @@ IProcessor * Yap::PipelineConstructor::CreateProcessor(const wchar_t * class_id,
 	auto processor = _module_manager->CreateProcessor(class_id, instance_id);
 	if (processor == nullptr)
 	{
-
 		throw ConstructError(0, ConstructErrorCreateProcessor, L"Failed to create processor instance.");
 	}
 
@@ -162,13 +161,6 @@ bool Yap::PipelineConstructor::MapOutput(const wchar_t * pipeline_port,
 
 Yap::SmartPtr<Pipeline> Yap::PipelineConstructor::GetPipeline()
 {
-    if (_pipeline->_modules.empty())
-    {
-        for (auto module : _module_manager->_modules)
-        {
-            _pipeline->AddModule(module.second);
-        }
-    }
 	return _pipeline;
 }
 

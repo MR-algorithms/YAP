@@ -42,7 +42,6 @@ namespace Yap
 		unsigned int _line_number;
 	};
 
-    class Pipeline;
 	class ModuleManager;
 	class ProcessorAgent;
 	struct IProcessor;

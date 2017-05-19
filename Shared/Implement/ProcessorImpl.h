@@ -44,6 +44,7 @@ namespace Yap
 		virtual bool SetGlobalVariables(IVariableContainer * params) override;
 
 		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) override;
+		virtual void SetModule(ISharedObject * module) override;
 
 	protected:
 		/// Protect destructor to prevent this object to be created on stack.
@@ -112,6 +113,8 @@ namespace Yap
 				}
 			}
 		}
+
+		SmartPtr<ISharedObject> _module;
 
 		SmartPtr<ContainerImpl<IPort>> _input;
 		SmartPtr<ContainerImpl<IPort>> _output;

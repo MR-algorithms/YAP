@@ -41,22 +41,7 @@ namespace Yap
 
 	};
 
-    class ModuleAgent;
-
-    class Pipeline : public CompositeProcessor
-    {
-		IMPLEMENT_CLONE(Pipeline)
-    public:
-        Pipeline(const wchar_t * class_id);
-        Pipeline(const Pipeline& rhs);
-
-    protected:
-        virtual ~Pipeline();
-        std::set<std::shared_ptr<ModuleAgent>> _modules;
-        void AddModule(std::shared_ptr<ModuleAgent> module);
-
-        friend class PipelineConstructor;
-    };
+	typedef CompositeProcessor Pipeline;
 }
 
 #endif // CompositeProcessor_h__

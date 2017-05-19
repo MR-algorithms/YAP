@@ -118,11 +118,7 @@ namespace Yap
 
 			if (_use_count == 0 || --_use_count == 0)
 			{
-
-				if (_use_count == 0)
-				{
-					delete this;
-				}
+				delete this;
 			}
 		}
 

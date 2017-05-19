@@ -1,6 +1,7 @@
-#include "ProcessorManagerAgent.h"
+#include "ModuleAgent.h"
 #include <assert.h>
 #include "Implement\LogImpl.h"
+#include <WinBase.h>
 
 
 using namespace Yap;

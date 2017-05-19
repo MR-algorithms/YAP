@@ -66,7 +66,8 @@ namespace _details
 		_properties(new VariableSpace(*(rhs._properties))),
 		_instance_id(rhs._instance_id),
 		_class_id(rhs._class_id),
-		_system_variables(nullptr)
+		_system_variables(nullptr),
+		_module{rhs._module}
 	{
 		_links.clear();
 		_in_property_mapping.clear();
@@ -228,6 +229,12 @@ namespace _details
 	{
 		return (_links.find(out_port_name) != _links.end());
 	}
+
+	void Yap::ProcessorImpl::SetModule(ISharedObject * module)
+	{
+		_module = YapShared(module);
+	}
+
 
 };	// namepace Yap
 
