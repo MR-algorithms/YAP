@@ -232,12 +232,6 @@ namespace Yap
 	typedef IPtrContainer<IPort> IPortContainer;
 	typedef IPortContainer::iterator IPortIter;
 
-	enum PropertyLinkType {
-		PropertyLinkInput		= 0,
-		PropertyLinkOutput		= 1,
-		PropertyLinkInputOutput = 2,
-	};
-
 	struct IProcessor : public ISharedObject
 	{
 		virtual IProcessor * Clone() const override = 0;
@@ -265,6 +259,8 @@ namespace Yap
 
 		/// 向当前处理模块馈送数据。
 		virtual bool Input(const wchar_t * name, IData * data) = 0;
+
+		virtual void SetModule(ISharedObject * module) = 0;
 	};
 
 	typedef IPtrContainer<IProcessor> IProcessorContainer;

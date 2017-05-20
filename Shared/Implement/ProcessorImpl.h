@@ -11,6 +11,7 @@
 #include "Implement/DataObject.h"
 #include "Implement/ContainerImpl.h"
 #include "VariableSpace.h"
+#include "Interface/smartptr.h"
 
 namespace Yap
 {
@@ -44,6 +45,66 @@ namespace Yap
 		virtual bool SetGlobalVariables(IVariableContainer * params) override;
 
 		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) override;
+		virtual void SetModule(ISharedObject * module) override;
+
+		template<typename T> 
+		SmartPtr<DataObject<T>> CreateData(T* data, const Dimensions& dimensions, 
+			ISharedObject * parent = nullptr, bool own_data = false)
+		{
+			try
+			{
+				return YapShared(new DataObject<T>(data, dimensions, parent, own_data, _module.get()));
+			}
+			catch (std::bad_alloc&)
+			{
+				return YapShared<DataObject<T>>(nullptr);
+			}
+		}
+
+		template<typename T>
+		SmartPtr<DataObject<T>> CreateData(T* data, IDimensions * dimensions, 
+			ISharedObject * parent = nullptr, bool own_data = false) 
+		{
+			try
+			{
+				return YapShared(new DataObject<T>(data, dimensions, parent, own_data, _module.get()));
+			}
+			catch (std::bad_alloc&)
+			{
+				return YapShared<DataObject<T>>(nullptr);
+			}
+		}
+
+		template<typename T>
+		SmartPtr<DataObject<T>> CreateData(IDimensions * dimensions)
+		{
+			try
+			{
+				return YapShared<DataObject<T>>(new DataObject<T>(dimensions, _module.get()));
+			}
+			catch (std::bad_alloc&)
+			{
+				return YapShared<DataObject<T>>(nullptr);
+			}
+		}
+
+		/// Copy constructor
+		/**
+		\remarks  Deep copy a data object. The new object will own the copied data
+		even if the rhs does not own its data.
+		*/
+		template <typename T>
+		SmartPtr<DataObject<T>> CreateData(const DataObject<T>& rhs)
+		{
+			try
+			{
+				return YapShared(new DataObject<T>(rhs, _module.get()));
+			}
+			catch (std::bad_alloc& )
+			{
+				return YapShared<DataObject<T>>(nullptr);
+			}
+		}
 
 	protected:
 		/// Protect destructor to prevent this object to be created on stack.
@@ -108,10 +169,12 @@ namespace Yap
 				}
 				else
 				{
-					_system_variables->Set<T>(link->second, value);
+					_system_variables->Set<T>(link->second.c_str(), value);
 				}
 			}
 		}
+
+		SmartPtr<ISharedObject> _module;
 
 		SmartPtr<ContainerImpl<IPort>> _input;
 		SmartPtr<ContainerImpl<IPort>> _output;

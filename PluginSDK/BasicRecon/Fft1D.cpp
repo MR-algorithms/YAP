@@ -63,7 +63,7 @@ bool Fft1D::Input(const wchar_t * port, IData * data)
 	{
 		Yap::Dimensions dims;
 		dims(DimensionReadout, 0, size);
-		auto output = YapShared(new ComplexDoubleData(&dims));
+		auto output = CreateData<complex<double>>(&dims);
 		Fft(data_array, GetDataArray<complex<double>>(output.get()), size, GetProperty<bool>(L"Inverse"));
 		Feed(L"Output", output.get());
 	}

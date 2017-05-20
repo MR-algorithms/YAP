@@ -43,23 +43,31 @@ namespace Yap
 		public IDataArray<T>
 	{
 		IMPLEMENT_CLONE(DataObject<T>)
-	public:
-		DataObject(T* data, const Dimensions& dimensions, ISharedObject * parent = nullptr, bool own_data = false) :
+	protected:
+		DataObject(T* data, const Dimensions& dimensions, 
+			ISharedObject * parent = nullptr, bool own_data = false, ISharedObject * module = nullptr) :
 			_data(data), _own_memory(own_data), _use_count(0), 
-			_parent(YapShared(parent))
+			_parent(YapShared(parent)),
+			_module(YapShared(module))
 		{
 			assert(data != nullptr);
 			_dimensions = dimensions;
 		}
 		
-		DataObject(T* data, IDimensions * dimensions, ISharedObject * parent = nullptr, bool own_data = false) : 
+		DataObject(T* data, IDimensions * dimensions, ISharedObject * parent = nullptr, 
+			bool own_data = false, ISharedObject * module = nullptr) : 
 			_data(data), _own_memory(own_data), _dimensions(dimensions), _use_count(0), 
-			_parent(YapShared(parent))
+			_parent(YapShared(parent)),
+			_module(YapShared(module))
 		{
 			assert(data != nullptr);
 		}
 
-		explicit DataObject(IDimensions * dimensions) : _own_memory(true), _dimensions(dimensions), _use_count(0)
+		DataObject(IDimensions * dimensions, ISharedObject * module) :
+			_own_memory(true), 
+			_dimensions(dimensions), 
+			_use_count(0),
+			_module(YapShared(module))
 		{
 			unsigned int total_size = 1;
 
@@ -76,7 +84,9 @@ namespace Yap
 			\remarks  Deep copy a data object. The new object will own the copied data
 			even if the rhs does not own its data.
 		*/
-		DataObject(const DataObject& rhs) : _own_memory{true}, _dimensions{rhs._dimensions}, _use_count(0)
+		DataObject(const DataObject& rhs, ISharedObject * module = nullptr) : 
+			_own_memory{true}, _dimensions{rhs._dimensions}, _use_count(0),
+			_module(YapShared(module))
 		{
 			unsigned int total_size = 1;
 
@@ -89,6 +99,7 @@ namespace Yap
 			memcpy(_data, rhs._data, total_size * sizeof(T));
 		}
 
+	public:
 		virtual IDimensions * GetDimensions() override
 		{
 			return &_dimensions;
@@ -102,27 +113,15 @@ namespace Yap
 		virtual void Lock() override
 		{
 			++_use_count;
-			if (_parent)
-			{
-				_parent->Lock();
-			}
 		}
 
 		virtual void Release() override
 		{
-			if (_parent)
-			{
-				_parent->Release();
-			}
 			assert(_use_count > 0 && "Logic error. Forget to Lock()?");
 
 			if (_use_count == 0 || --_use_count == 0)
 			{
-
-				if (_use_count == 0)
-				{
-					delete this;
-				}
+				delete this;
 			}
 		}
 
@@ -147,6 +146,9 @@ namespace Yap
 		unsigned int _use_count;
 		bool _own_memory;
 		SmartPtr<ISharedObject> _parent;
+		SmartPtr<ISharedObject> _module;
+
+		friend class ProcessorImpl;
 	};
 
 	typedef DataObject<int> IntData;

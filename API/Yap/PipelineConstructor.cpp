@@ -85,7 +85,6 @@ IProcessor * Yap::PipelineConstructor::CreateProcessor(const wchar_t * class_id,
 	auto processor = _module_manager->CreateProcessor(class_id, instance_id);
 	if (processor == nullptr)
 	{
-
 		throw ConstructError(0, ConstructErrorCreateProcessor, L"Failed to create processor instance.");
 	}
 
@@ -162,13 +161,6 @@ bool Yap::PipelineConstructor::MapOutput(const wchar_t * pipeline_port,
 
 Yap::SmartPtr<Pipeline> Yap::PipelineConstructor::GetPipeline()
 {
-    if (_pipeline->_modules.empty())
-    {
-        for (auto module : _module_manager->_modules)
-        {
-            _pipeline->AddModule(module.second);
-        }
-    }
 	return _pipeline;
 }
 
@@ -261,16 +253,16 @@ bool PipelineConstructor::MapProperty(const wchar_t * processor_id,
 	auto processor = _pipeline->Find(processor_id);
 	if (!processor)
 	{
-		auto output = wstring(L"failed to find processor:") + processor_id;
-		throw ConstructError(0, ConstructErrorProcessorNotFound, output.c_str());
+		auto output_str = wstring(L"failed to find processor:") + processor_id;
+		throw ConstructError(0, ConstructErrorProcessorNotFound, output_str.c_str());
 	}
 
 	if (!processor->MapProperty(property_id, variable_id, input, output))
 	{
-		wostringstream output;
-		output << L"Fail to link property to system variable. Property: " << property_id
+		wostringstream output_str;
+		output_str << L"Fail to link property to system variable. Property: " << property_id
 			<< L". System variable: " << variable_id;
-		throw ConstructError(0, ConstructErrorPropertyLink, output.str());
+		throw ConstructError(0, ConstructErrorPropertyLink, output_str.str());
 	}
 
 	return true;

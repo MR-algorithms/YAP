@@ -76,13 +76,22 @@ void PluginDebugTest()
 
 void PipelineTest()
 {
+	VdfParser parser;
+	auto variable_manager = parser.CompileFile(L"sysParams_yap.txt");
+	variable_manager->Set<int>(L"SliceCount", 5);
+	variable_manager->Set<const wchar_t*>(L"FidDataPath", L"D:\\test_data\\UU.img.fid");
+
 	PipelineCompiler compiler;
 	auto pipeline = compiler.CompileFile(L"niumag_recon_yap.pipeline");
+
+	pipeline->SetGlobalVariables(variable_manager->Variables());
 
 	if (pipeline)
 	{
 		pipeline->Input(L"Input", nullptr);
 	}
+
+	auto dim1 = variable_manager->Get<int>(L"Dim1Count");
 }
 
 bool VdfParserTest()
@@ -135,10 +144,6 @@ int main()
 //	ConstructorTest();
 	PipelineTest();
 //	VdfParserTest();
-
-// 	LogImpl::GetInstance().Log(L"test", L"test info debug", LevelDebug, L"sys.log");
-// 	LogImpl::GetInstance().Log(L"test", L"test info error", LevelError, L"sys.log");
-//	LogImpl::GetInstance().Log(L"test", L"test info warn", LevelWarn, L"sys.log");
 
 	time_t end = clock();
 	printf("the running time is : %f\n", float(end - start) / CLOCKS_PER_SEC);

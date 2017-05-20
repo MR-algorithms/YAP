@@ -58,7 +58,7 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 		}
 
 		MergeBuffer merge_buffer;
-		merge_buffer.buffer = YapShared(new FloatData(&merge_dimensions));
+		merge_buffer.buffer = CreateData<float>(&merge_dimensions);
 
 		// merge_buffer.buffer->SetLocalization(CLocalization(*data->GetLocalization()));
 		auto * data_array = Yap::GetDataArray<float>(data);

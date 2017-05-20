@@ -49,7 +49,7 @@ bool Yap::SubSampling::Input(const wchar_t * port, IData * data)
 			(Dimension4, 0U, 1)
 			(DimensionChannel, 0U, 1);
 
-		auto outdata = YapShared(new ComplexFloatData(&dimensions));
+		auto outdata = CreateData<complex<float>>(&dimensions);
 
 		GetSubSampledData(GetDataArray<complex<float>>(data), GetDataArray<float>(_mask.get()),
 			GetDataArray<complex<float>>(outdata.get()), width, height);

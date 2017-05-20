@@ -66,7 +66,8 @@ namespace _details
 		_properties(new VariableSpace(*(rhs._properties))),
 		_instance_id(rhs._instance_id),
 		_class_id(rhs._class_id),
-		_system_variables(nullptr)
+		_system_variables(nullptr),
+		_module{rhs._module}
 	{
 		_links.clear();
 		_in_property_mapping.clear();
@@ -160,13 +161,20 @@ namespace _details
 
 	bool Yap::ProcessorImpl::MapProperty(const wchar_t * property_id, const wchar_t * param_id, bool input, bool output)
 	{
-		if (_properties->Variables()->Find(property_id) != nullptr)
+		if (_properties->Variables()->Find(property_id) == nullptr)
 		{
 			return false;
 		}
 
-		_in_property_mapping.insert(make_pair(wstring(property_id), wstring(param_id)));
+		if (input)
+		{
+			_in_property_mapping.insert(make_pair(wstring(property_id), wstring(param_id)));
+		}
 
+		if (output)
+		{
+			_out_property_links.insert(make_pair(wstring(property_id), wstring(param_id)));
+		}
 		return true;
 	}
 
@@ -221,6 +229,12 @@ namespace _details
 	{
 		return (_links.find(out_port_name) != _links.end());
 	}
+
+	void Yap::ProcessorImpl::SetModule(ISharedObject * module)
+	{
+		_module = YapShared(module);
+	}
+
 
 };	// namepace Yap
 

@@ -48,8 +48,8 @@ bool Yap::ChannelIterator::Input(const wchar_t * name, IData * data)
 		channel_slice_data_dimensions.SetDimension(DimensionSlice, 1, slice_index);
 		channel_slice_data_dimensions.SetDimension(DimensionChannel, 1, i);
 
-		auto output = YapShared(new ComplexFloatData(
-			Yap::GetDataArray<complex<float>>(data) + i * slice_block_size, channel_slice_data_dimensions));
+		auto output = CreateData<complex<float>>(
+			Yap::GetDataArray<complex<float>>(data) + i * slice_block_size, channel_slice_data_dimensions);
 
 		Feed(L"Output", output.get());
 	}

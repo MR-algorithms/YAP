@@ -69,7 +69,7 @@ struct GradMatrix
     float GReadZ;
 };
 GradMatrix Rotation;
-array<GradMatrix> GradMatrixList;
+//array<GradMatrix> GradMatrixList;
 
 struct Preemphasis
 {
@@ -95,3 +95,50 @@ array<float> PHL#<0, 15>;	//PHL0 ~ PHL15
 array<float> PCL#<0, 15>;	//PCL0 ~ PCL15
 array<float> GL#<0, 15>;	//GL0 ~ GL15
 array<int> DBL#<0, 15>;	//DBL0 ~ DBL15
+
+// ----------------- ui_params -------------------
+int Alpha;
+int Beta;
+int Gamma;
+float FovPhase;
+float FovRead; 
+float OffsetRead;
+float OffsetPhase; 
+float OffsetSlice;
+int SliceCount;			// C1 or RP3Count		
+float SliceGap;
+float SliceThickness;
+float ReadX;			// Rotation.GReadX
+float ReadY;			// Rotation.GReadY
+float ReadZ;			// Rotation.GReadZ
+float PhaseX;			// Rotation.GPhaseX
+float PhaseY;			// Rotation.GPhaseY
+float PhaseZ;			// Rotation.GPhaseZ
+float SliceX;			// Rotation.GSliceX
+float SliceY;			// Rotation.GSliceY
+float SliceZ;			// Rotation.GSliceZ
+int Averages;			// int RP1Count
+float FlipAngleDegree;
+int GxOffset;			// GxOffset
+int GyOffset;			// GyOffset
+int GzOffset;			// GzOffset
+float O1D0;
+int PhaseSize;			// RP2Count
+int ReadSize;			// TD
+float RefoceuseFlipAngleDegree;
+float Rfa90;			// RFA1
+float Rfa180;			// RFA2
+float RfaD0;
+float RfaEnd;
+float RfaIncrement;
+float RfaStart;
+float RG;				// RG1
+float ScoutRG;
+float ScoutTR;
+float SfO1;				// SFO1
+float ShimmingD0;
+float TE;
+float TR;
+float TI;
+
+string FidDataPath;

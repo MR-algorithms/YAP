@@ -145,8 +145,8 @@ bool CmrDataReader::ReadRawData(unsigned int channel_index)
 		(Dimension4, 0U, dim4)
 		(DimensionChannel, channel_index, 1);
 
-	auto output_data = YapShared(new ComplexFloatData(
-		reinterpret_cast<complex<float>*>(raw_data_buffer), dimensions, nullptr, true));
+	auto output_data = CreateData<complex<float>>(
+		reinterpret_cast<complex<float>*>(raw_data_buffer), dimensions, nullptr, true);
 
 	Feed(L"Output", output_data.get());
 
