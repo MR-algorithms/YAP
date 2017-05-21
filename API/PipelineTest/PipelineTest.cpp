@@ -69,9 +69,9 @@ void PluginDebugTest()
 {
 	YapDebugger debugger;
 	debugger.DebugPlugin(L"BasicRecon.dll");
-	debugger.DebugPlugin(L"GrappaRecon.dll");
-	debugger.DebugPlugin(L"CompressedSensing.dll");
-	debugger.DebugPlugin(L"BasicRecon_GPU.dll");
+//	debugger.DebugPlugin(L"GrappaRecon.dll");
+//	debugger.DebugPlugin(L"CompressedSensing.dll");
+//	debugger.DebugPlugin(L"BasicRecon_GPU.dll");
 }
 
 void PipelineTest()
@@ -79,19 +79,19 @@ void PipelineTest()
 	VdfParser parser;
 	auto variable_manager = parser.CompileFile(L"sysParams_yap.txt");
 	variable_manager->Set<int>(L"SliceCount", 5);
-	variable_manager->Set<const wchar_t*>(L"FidDataPath", L"D:\\test_data\\UU.img.fid");
 
 	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"niumag_recon_yap.pipeline");
-
+	auto pipeline = compiler.CompileFile(L"Test.pipeline");
+	if (pipeline.get() == nullptr)
+	{
+		return;
+	}
 	pipeline->SetGlobalVariables(variable_manager->Variables());
 
 	if (pipeline)
 	{
 		pipeline->Input(L"Input", nullptr);
 	}
-
-	auto dim1 = variable_manager->Get<int>(L"Dim1Count");
 }
 
 bool VdfParserTest()
