@@ -20,7 +20,9 @@ namespace Yap
 
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
-		int GetOutputDataType();
+		template <typename IN_TYPE> 
+		bool ConvertAndFeed(IData * input_data);
+
 		template <typename IN_TYPE, typename OUT_TYPE>
 		Yap::SmartPtr<IData> GetConvertedData(IData* input_object);
 		template <typename IN_TYPE>
