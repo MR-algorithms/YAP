@@ -48,8 +48,10 @@ IProcessor * ProcessorManager::Find(const wchar_t * name)
 	if (pos == wstring::npos)
 	{
 		auto full_id = s_short_to_full_id.equal_range(name);
+
 		// if one and only one full qualified id has this short form
-		if (full_id.first != full_id.second)
+//		if (full_id.first != full_id.second)
+		if (s_short_to_full_id.count(name) != 1)
 			return nullptr;
 
 		if (full_id.first != s_short_to_full_id.end())
@@ -74,10 +76,11 @@ IProcessorIter * Yap::ProcessorManager::GetIterator()
 	}
 }
 
-bool Yap::ProcessorManager::Add(const wchar_t * /*name*/, IProcessor * /*processor*/)
+bool Yap::ProcessorManager::Add(const wchar_t * name, IProcessor * processor)
 {
-    assert( 0 && "Don't use this function. Use RegisterProcessor() instead.");
-    return false;
+//    assert( 0 && "Don't use this function. Use RegisterProcessor() instead.");
+//    return false;
+	return RegisterProcessor(name, processor);
 }
 
 
@@ -213,7 +216,7 @@ bool Yap::ModuleManager::LoadModule(const wchar_t * module_path)
 	auto iter = _modules.find(module_path);
 	if (iter == _modules.end())
 	{
-		auto result = _modules.emplace(module_path, make_shared<Module>());
+		auto result = _modules.emplace(module_path, YapShared(new Module()));
 		if (!result.second)
 			return false;
 
@@ -241,4 +244,3 @@ ProcessorManager& Yap::ModuleManager::GetProcessorManager()
 	assert(_processor_manager);
 	return *_processor_manager;
 }
-

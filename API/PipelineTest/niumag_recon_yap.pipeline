@@ -1,6 +1,6 @@
 import "BasicRecon.dll";
 
-NiumagFidReader reader(DataPath <=> FidDataPath);
+NiumagFidReader reader(DataPath = "D:\\test_data\\UU.img.fid");
 SliceIterator slice_iterator;
 DcRemover dc_remover;
 ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);
@@ -9,8 +9,6 @@ ModulePhase module_phase;
 DataTypeConvertor convertor;
 SliceMerger slice_merger(SliceCount <=> SliceCount);
 NiuMriImageWriter writer(ExportFolder = "d:\\Output", FileName = "Apple");
-	
-zero_filling.DestWidth ==> Dim1Count;
 	
 reader->slice_iterator;
 slice_iterator->dc_remover;
