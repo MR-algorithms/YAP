@@ -81,7 +81,6 @@ namespace Yap
 
 	protected:
         Yap::SmartPtr<Pipeline> _pipeline;
-		std::shared_ptr<ModuleManager> _module_manager;
 		std::wstring _plugin_folder;
 	};
 

@@ -40,7 +40,7 @@ namespace Yap
 		static bool RegisterProcessor(const wchar_t * name, IProcessor * procesor);
 
 	private:
-
+		~ProcessorManager() {}
 		static std::map <std::wstring, Yap::SmartPtr<IProcessor>> s_processors;
 		static std::multimap<std::wstring, std::wstring> s_short_to_full_id;
 
@@ -73,22 +73,21 @@ namespace Yap
 		bool Load(const wchar_t * plugin_path, IProcessorContainer& containers);
 
 	private:
-		~Module() {}
 		std::wstring GetModuleNameFromPath(const wchar_t * path);
 
 		unsigned int _use_count;
 
 		HINSTANCE _module;
-		std::wstring _module_name;
+// 		std::wstring _module_name;
 	};
 
 	class ModuleManager
 	{
-		typedef std::map<std::wstring, SmartPtr<Module>> ModuleContainer;
+		typedef std::map<std::wstring, std::shared_ptr<Module>> ModuleContainer;
 		typedef ModuleContainer::iterator ModuleIter;
 
 	public:
-		ModuleManager();
+		static ModuleManager& GetInstance();
 		~ModuleManager();
 
 		bool LoadModule(const wchar_t * module_path);
@@ -97,7 +96,11 @@ namespace Yap
 		ProcessorManager& GetProcessorManager();
 	protected:
 		ModuleContainer _modules;
-		std::shared_ptr<ProcessorManager> _processor_manager;
+		SmartPtr<ProcessorManager> _processor_manager;
+
+	private:
+		ModuleManager();
+		static std::shared_ptr<ModuleManager> s_instance;
 	};
 }
 #endif // ModuleManager_h__

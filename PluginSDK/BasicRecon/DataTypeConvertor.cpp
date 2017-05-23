@@ -161,7 +161,7 @@ bool Yap::DataTypeConvertor::ConvertAndFeed(IData * input_data)
 	bool success = true;
 	for (auto link : _links)
 	{
-		auto output = Convert<bool>(input_data, DataTypeFromPortName(link.first.c_str()));
+		auto output = Convert<IN_TYPE>(input_data, DataTypeFromPortName(link.first.c_str()));
 		if (!output || !Feed(link.first.c_str(), output.get()))
 		{
 			success = false;
