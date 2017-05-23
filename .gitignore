@@ -4,6 +4,9 @@
 *.dll
 *.zip
 *.fid
+*.img
+acommand.txt
+
 
 # User-specific files
 *.suo

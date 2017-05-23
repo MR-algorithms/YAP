@@ -43,7 +43,7 @@ namespace Yap
 		public IDataArray<T>
 	{
 		IMPLEMENT_CLONE(DataObject<T>)
-	protected:
+        public:
 		DataObject(T* data, const Dimensions& dimensions, 
 			ISharedObject * parent = nullptr, bool own_data = false, ISharedObject * module = nullptr) :
 			_data(data), _own_memory(own_data), _use_count(0), 
