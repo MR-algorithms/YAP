@@ -32,6 +32,7 @@
 
 #include "Implement/LogUserImpl.h"
 #include "Implement/YapImplement.h"
+#include "FineCF.h"
 
 using namespace Yap;
 
@@ -53,7 +54,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(Difference)
 	ADD_PROCESSOR(Fft1D)
 	ADD_PROCESSOR(Fft2D)
-	//ADD_PROCESSOR(JpegExporter)
+	ADD_PROCESSOR(JpegExporter)
 	ADD_PROCESSOR(ModulePhase)
 	ADD_PROCESSOR(NiumagFidReader)
 	ADD_PROCESSOR(NiumagFidWriter)
@@ -68,6 +69,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(SliceSelector)
 	ADD_PROCESSOR(SubSampling)
 	ADD_PROCESSOR(ZeroFilling)
+	ADD_PROCESSOR(FineCF)
 	ADD(L"HFlipFloat", new Algorithm2DInPlaceWrapper<float>(hflip<float>, L"HFlipFloat"))
 END_DECL_PROCESSORS
 

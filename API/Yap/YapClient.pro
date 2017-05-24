@@ -22,7 +22,6 @@ SOURCES += ModuleManager.cpp \
     PipelineCompiler.cpp \
     PipelineConstructor.cpp \
     ProcessorAgent.cpp \
-    ProcessorManagerAgent.cpp \
     ../../shared/Client/DataHelper.cpp \
     ../../shared/Client/stdafx.cpp \
     ../../shared/Implement/CompositeProcessor.cpp \
@@ -35,8 +34,7 @@ SOURCES += ModuleManager.cpp \
     VdfParser.cpp \
     ScanFileParser.cpp
 
-HEADERS += ProcessorManagerAgent.h \
-    ModuleManager.h \
+HEADERS += ModuleManager.h \
     PipelineCompiler.h \
     PipelineConstructor.h \
     ProcessorAgent.h \
@@ -65,9 +63,9 @@ DISTFILES += \
 
     ../../shared/Interface/Implement/README.md
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../ThirdParty/log4cplus-2.0.0-rc1/lib/ -llog4cplus
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../ThirdParty/log4cplus-2.0.0-rc1/lib/ -llog4cplusd
-else:unix: LIBS += -L$$PWD/../../../../ThirdParty/log4cplus-2.0.0-rc1/lib/ -llog4cplus
+win32:CONFIG(release, debug|release): LIBS += -L/ThirdParty/log4cplus2/lib/ -llog4cplus
+else:win32:CONFIG(debug, debug|release): LIBS += -L/ThirdParty/log4cplus2/lib/ -llog4cplusu
+else:unix: LIBS += -L/ThirdParty/log4cplus2/lib/ -llog4cplus
 
-INCLUDEPATH += $$PWD/../../../../ThirdParty/log4cplus-2.0.0-rc1/include
-DEPENDPATH += $$PWD/../../../../ThirdParty/log4cplus-2.0.0-rc1/include
+INCLUDEPATH += d:/ThirdParty/log4cplus2/include
+DEPENDPATH += d:/ThirdParty/log4cplus2/include

@@ -38,8 +38,6 @@ wstring ConstructError::GetErrorMessage() const
 
 PipelineConstructor::PipelineConstructor()
 {
-	_module_manager = std::shared_ptr<ModuleManager>(new ModuleManager);
-
 }
 
 PipelineConstructor::~PipelineConstructor()
@@ -52,7 +50,7 @@ void PipelineConstructor::Reset(bool reset_modules)
 
 	if (reset_modules)
     {
-		_module_manager->Reset();
+		ModuleManager::GetInstance().Reset();
     }
 }
 
@@ -65,7 +63,7 @@ bool Yap::PipelineConstructor::LoadModule(const wchar_t * module_name)
 	}
 	plugin_path += module_name;
 
-	return _module_manager->LoadModule(plugin_path.c_str());
+	return ModuleManager::GetInstance().LoadModule(plugin_path.c_str());
 }
 
 void Yap::PipelineConstructor::SetPluginFolder(const wchar_t * path)
@@ -82,7 +80,7 @@ IProcessor * Yap::PipelineConstructor::CreateProcessor(const wchar_t * class_id,
 	const wchar_t * instance_id)
 {
 	assert(_pipeline);
-	auto processor = _module_manager->CreateProcessor(class_id, instance_id);
+	auto processor = ModuleManager::GetInstance().CreateProcessor(class_id, instance_id);
 	if (processor == nullptr)
 	{
 		throw ConstructError(0, ConstructErrorCreateProcessor, L"Failed to create processor instance.");

@@ -40,6 +40,7 @@ namespace Yap
 		static bool RegisterProcessor(const wchar_t * name, IProcessor * procesor);
 
 	private:
+		~ProcessorManager() {}
 		static std::map <std::wstring, Yap::SmartPtr<IProcessor>> s_processors;
 		static std::multimap<std::wstring, std::wstring> s_short_to_full_id;
 
@@ -51,7 +52,6 @@ namespace Yap
 		IMPLEMENT_CLONE(Module)
 	public:
 		Module() : _use_count{ 0 }, _module{ 0 } {}
-		~Module() {}
 
 		virtual void Lock() override
 		{
@@ -78,7 +78,7 @@ namespace Yap
 		unsigned int _use_count;
 
 		HINSTANCE _module;
-		std::wstring _module_name;
+// 		std::wstring _module_name;
 	};
 
 	class ModuleManager
@@ -87,7 +87,7 @@ namespace Yap
 		typedef ModuleContainer::iterator ModuleIter;
 
 	public:
-		ModuleManager();
+		static ModuleManager& GetInstance();
 		~ModuleManager();
 
 		bool LoadModule(const wchar_t * module_path);
@@ -96,7 +96,11 @@ namespace Yap
 		ProcessorManager& GetProcessorManager();
 	protected:
 		ModuleContainer _modules;
-		std::shared_ptr<ProcessorManager> _processor_manager;
+		SmartPtr<ProcessorManager> _processor_manager;
+
+	private:
+		ModuleManager();
+		static std::shared_ptr<ModuleManager> s_instance;
 	};
 }
 #endif // ModuleManager_h__

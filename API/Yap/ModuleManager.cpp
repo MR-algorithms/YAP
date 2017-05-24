@@ -26,11 +26,28 @@ std::wstring GetFileNameFromPath(const wchar_t * path)
 	return path_string.substr(start_pos + 1, end_pos - start_pos - 1);
 }
 
-ModuleManager::ModuleManager() :
-	_processor_manager{make_shared<ProcessorManager>()}
+shared_ptr<ModuleManager> ModuleManager::s_instance;
+
+ModuleManager& Yap::ModuleManager::GetInstance()
 {
+	if (!s_instance)
+	{
+		try
+		{
+			s_instance = shared_ptr<ModuleManager>(new ModuleManager);
+		}
+		catch (bad_alloc&)
+		{
+			assert(0 && L"Failed new ModuleManager.");
+		}
+	}
+	return *s_instance;
 }
 
+ModuleManager::ModuleManager() :
+	_processor_manager{YapShared(new ProcessorManager())}
+{
+}
 
 ModuleManager::~ModuleManager()
 {
@@ -47,14 +64,14 @@ IProcessor * ProcessorManager::Find(const wchar_t * name)
 	auto pos = id_string.find(L"::");
 	if (pos == wstring::npos)
 	{
-		auto full_id = s_short_to_full_id.equal_range(name);
 		// if one and only one full qualified id has this short form
-		if (full_id.first != full_id.second)
+        if (s_short_to_full_id.count(name) > 1)
 			return nullptr;
-
-		if (full_id.first != s_short_to_full_id.end())
+		
+		auto full_id = s_short_to_full_id.find(name);
+		if (full_id != s_short_to_full_id.end())
 		{
-			id_string = full_id.first->second;
+			id_string = full_id->second;
 		}
 	}
 
@@ -74,10 +91,11 @@ IProcessorIter * Yap::ProcessorManager::GetIterator()
 	}
 }
 
-bool Yap::ProcessorManager::Add(const wchar_t * /*name*/, IProcessor * /*processor*/)
+bool Yap::ProcessorManager::Add(const wchar_t * name, IProcessor * processor)
 {
-    assert( 0 && "Don't use this function. Use RegisterProcessor() instead.");
-    return false;
+//    assert( 0 && "Don't use this function. Use RegisterProcessor() instead.");
+//    return false;
+	return RegisterProcessor(name, processor);
 }
 
 
@@ -241,4 +259,3 @@ ProcessorManager& Yap::ModuleManager::GetProcessorManager()
 	assert(_processor_manager);
 	return *_processor_manager;
 }
-

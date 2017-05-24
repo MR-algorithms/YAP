@@ -2,6 +2,7 @@
 #include "DataTypeConvertor.h"
 #include "Client\DataHelper.h"
 #include "Implement\LogUserImpl.h"
+#include <algorithm>
 
 using namespace Yap;
 using namespace std;
@@ -154,25 +155,19 @@ static int DataTypeFromPortName(const wchar_t * port_name)
 		iter->second : DataTypeUnknown;
 }
 
-map<int, wchar_t *> DataTypeConvertor::s_data_type_to_port = {
-	{DataTypeBool, L"Bool"},
-	{DataTypeUnsignedChar, L"Char"},
-	{DataTypeShort, L"Short"},
-	{DataTypeUnsignedShort, L"UnsignedShort"},
-	{DataTypeInt, L"Int"},
-	{DataTypeUnsignedInt,L"UnsignedInt"},
-	{DataTypeFloat, L"Float"},
-	{DataTypeDouble, L"Double"},
-	{DataTypeComplexFloat, L"ComplexFloat"},
-	{DataTypeComplexDouble, L"ComplexDouble"},
-};
-
-const wchar_t * DataTypeConvertor::GetPortName(int data_type)
+template <typename IN_TYPE>
+bool Yap::DataTypeConvertor::ConvertAndFeed(IData * input_data)
 {
-
-	auto iter = s_data_type_to_port.find(data_type);
-
-	return (iter != s_data_type_to_port.end()) ? iter->second : nullptr;
+	bool success = true;
+	for (auto link : _links)
+	{
+		auto output = Convert<IN_TYPE>(input_data, DataTypeFromPortName(link.first.c_str()));
+		if (!output || !Feed(link.first.c_str(), output.get()))
+		{
+			success = false;
+		}
+	};
+	return success;
 }
 
 bool Yap::DataTypeConvertor::Input(const wchar_t * port, IData * data)
@@ -180,71 +175,31 @@ bool Yap::DataTypeConvertor::Input(const wchar_t * port, IData * data)
 	if (std::wstring(port) != L"Input")
 		return false;
 
-	int output_data_type = GetOutputDataType();
+	bool success = true;
 	switch (data->GetDataType())
 	{
 	case DataTypeBool:
-	{
-		auto output = Convert<bool>(data, output_data_type);
-		return output ? Feed(GetPortName(output_data_type), output.get()) : false;
-	}
+		return ConvertAndFeed<bool>(data);
 	case DataTypeUnsignedChar:
-	{
-		auto output = Convert<unsigned char>(data, output_data_type);
-		return output ? Feed(GetPortName(output_data_type), output.get()) : false;
-	}
+		return ConvertAndFeed<unsigned char>(data);
 	case DataTypeShort:
-	{
-		auto output = Convert<short>(data, output_data_type);
-		return output ? Feed(GetPortName(output_data_type), output.get()) : false;
-	}
+		return ConvertAndFeed<short>(data);
 	case DataTypeUnsignedShort:
-	{
-		auto output = Convert<unsigned short>(data, output_data_type);
-		return output ? Feed(GetPortName(output_data_type), output.get()) : false;
-	}
+		return ConvertAndFeed<unsigned short>(data);
 	case DataTypeFloat:
-	{
-		auto output = Convert<float>(data, output_data_type);
-		return output ? Feed(GetPortName(output_data_type), output.get()) : false;
-	}
+		return ConvertAndFeed<float>(data);
 	case DataTypeDouble:
-	{
-		auto output = Convert<double>(data, output_data_type);
-		return output ? Feed(GetPortName(output_data_type), output.get()) : false;
-	}
+		return ConvertAndFeed<double>(data);
 	case DataTypeInt:
-	{
-		auto output = Convert<int>(data, output_data_type);
-		return output ? Feed(GetPortName(output_data_type), output.get()) : false;
-	}
+		return ConvertAndFeed<int>(data);
 	case DataTypeUnsignedInt:
-	{
-		auto output = Convert<unsigned int>(data, output_data_type);
-		return output ? Feed(GetPortName(output_data_type), output.get()) : false;
-	}
+		return ConvertAndFeed<unsigned int>(data);
 	case DataTypeComplexFloat:
-	{
-		auto output = Convert<complex<float>>(data, output_data_type);
-		return output ? Feed(GetPortName(output_data_type), output.get()) : false;
-	}
+		return ConvertAndFeed<float>(data);
 	case DataTypeComplexDouble:
-	{
-		auto output = Convert<complex<double>>(data, output_data_type);
-		return output ? Feed(GetPortName(output_data_type), output.get()) : false;
-	}
+		return ConvertAndFeed<complex<double>>(data);
 	default:
 		return false;
 	}
 }
 
-int Yap::DataTypeConvertor::GetOutputDataType()
-{
-	for (auto item : s_data_type_to_port)
-	{
-		if (OutportLinked(item.second))
-			return item.first;
-	}
-
-	return DataTypeUnknown;
-}
