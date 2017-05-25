@@ -40,7 +40,7 @@ namespace Yap
 	template <> struct data_type_id <unsigned int> { static const int type = DataTypeUnsignedInt; };
 	template <> struct data_type_id <int> { static const int type = DataTypeInt; };
 	template <> struct data_type_id <std::complex<float>> { static const int type = DataTypeComplexFloat; };
-	template <> struct data_type_id <std::complex<double>> { static const int type = DataTypeComplexFloat; };
+	template <> struct data_type_id <std::complex<double>> { static const int type = DataTypeComplexDouble; };
 	template <> struct data_type_id <bool> { static const int type = DataTypeBool; };
 
 
