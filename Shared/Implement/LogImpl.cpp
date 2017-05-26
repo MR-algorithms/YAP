@@ -20,6 +20,10 @@ Yap::LogImpl::LogImpl()
 
 Yap::LogImpl::~LogImpl()
 {
+	for (auto user : _users)
+	{
+		user->SetLog(nullptr);
+	}
 }
 
 LogImpl& LogImpl::GetInstance()
@@ -97,4 +101,23 @@ bool Yap::LogImpl::Init()
 	}
 
 	return true;
+}
+
+void Yap::LogImpl::AddUser(ILogUser * user)
+{
+	assert(user != nullptr);
+	_users.push_back(user);
+}
+
+void Yap::LogImpl::RemoveUser(ILogUser * user)
+{
+	assert(user != nullptr);
+	for (auto iter = _users.begin(); iter != _users.end(); ++iter)
+	{
+		if (*iter == user)
+		{
+			_users.erase(iter);
+			return;
+		}
+	}
 }

@@ -276,9 +276,12 @@ namespace Yap
 		LevelFatal,
 	};
 
+	struct ILogUser;
 	struct ILog
 	{
 		virtual void Log(const wchar_t * module, const wchar_t * info, LogLevel level, const wchar_t * log_name = L"", bool flush = false) = 0;
+		virtual void AddUser(ILogUser * user) = 0;
+		virtual void RemoveUser(ILogUser * user) = 0;
 	};
 
 	struct ILogUser

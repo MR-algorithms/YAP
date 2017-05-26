@@ -30,6 +30,7 @@ namespace Yap
 			friend class ProcessorManager;
 		};
 
+		ProcessorManager();
 		virtual IProcessor * Find(const wchar_t * name) override;
 		virtual IProcessorIter * GetIterator() override;
 		virtual bool Add(const wchar_t * name, IProcessor * processor) override;
@@ -41,8 +42,12 @@ namespace Yap
 
 	private:
 		~ProcessorManager() {}
-		static std::map <std::wstring, Yap::SmartPtr<IProcessor>> s_processors;
-		static std::multimap<std::wstring, std::wstring> s_short_to_full_id;
+		std::map <std::wstring, Yap::SmartPtr<IProcessor>> _processors;
+
+		/// Used to store processors added directly from application, instead of DLLs.
+		static std::map <std::wstring, Yap::SmartPtr<IProcessor>> s_registered_processors;
+
+		std::multimap<std::wstring, std::wstring> _short_to_full_id;
 
 		friend class PipelineConstructor;
 	};

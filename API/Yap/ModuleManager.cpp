@@ -10,8 +10,7 @@
 using namespace Yap;
 using namespace std;
 
-std::map <std::wstring, Yap::SmartPtr<IProcessor>> ProcessorManager::s_processors;
-std::multimap<std::wstring, std::wstring> ProcessorManager::s_short_to_full_id;
+std::map <std::wstring, Yap::SmartPtr<IProcessor>> ProcessorManager::s_registered_processors;
 
 std::wstring GetFileNameFromPath(const wchar_t * path)
 {
@@ -54,6 +53,11 @@ ModuleManager::~ModuleManager()
 	_modules.clear();
 }
 
+ProcessorManager::ProcessorManager()
+{
+	Reset();
+}
+
 IProcessor * ProcessorManager::Find(const wchar_t * name)
 {
 	// Processor class id may take one of the following two forms: 
@@ -65,18 +69,18 @@ IProcessor * ProcessorManager::Find(const wchar_t * name)
 	if (pos == wstring::npos)
 	{
 		// if one and only one full qualified id has this short form
-        if (s_short_to_full_id.count(name) > 1)
+        if (_short_to_full_id.count(name) > 1)
 			return nullptr;
 		
-		auto full_id = s_short_to_full_id.find(name);
-		if (full_id != s_short_to_full_id.end())
+		auto full_id = _short_to_full_id.find(name);
+		if (full_id != _short_to_full_id.end())
 		{
 			id_string = full_id->second;
 		}
 	}
 
-	auto iter = s_processors.find(id_string.c_str());
-	return (iter != s_processors.end()) ? iter->second.get() : nullptr;
+	auto iter = _processors.find(id_string.c_str());
+	return (iter != _processors.end()) ? iter->second.get() : nullptr;
 }
 
 IProcessorIter * Yap::ProcessorManager::GetIterator()
@@ -93,9 +97,19 @@ IProcessorIter * Yap::ProcessorManager::GetIterator()
 
 bool Yap::ProcessorManager::Add(const wchar_t * name, IProcessor * processor)
 {
-//    assert( 0 && "Don't use this function. Use RegisterProcessor() instead.");
-//    return false;
-	return RegisterProcessor(name, processor);
+	if (_processors.find(name) != _processors.end())
+		return false;
+
+	wstring id_string(name);
+	_processors.emplace(id_string, YapShared(processor));
+	auto separator_pos = id_string.find(L"::");
+	if (separator_pos != wstring::npos)
+	{
+		auto short_id = id_string.substr(separator_pos + 2);
+		_short_to_full_id.emplace(short_id, id_string);
+	}
+
+	return true;
 }
 
 
@@ -117,48 +131,45 @@ Yap::IProcessor * Yap::ProcessorManager::CreateProcessor(const wchar_t * class_i
 
 void Yap::ProcessorManager::Reset()
 {
-    s_processors.clear();
-	s_short_to_full_id.clear();
+    _processors.clear();
+	_short_to_full_id.clear();
+	for (auto processor : s_registered_processors)
+	{
+		Add(processor.first.c_str(), processor.second.get());
+	}
 }
 
 bool ProcessorManager::RegisterProcessor(const wchar_t *name, IProcessor * processor)
 {
-    if (s_processors.find(name) != s_processors.end())
+    if (s_registered_processors.find(name) != s_registered_processors.end())
         return false;
 
-	wstring id_string(name);
-	s_processors.emplace(id_string, YapShared(processor));
-	auto separator_pos = id_string.find(L"::");
-	if (separator_pos != wstring::npos)
-	{
-		auto short_id = id_string.substr(separator_pos + 2);
-		s_short_to_full_id.emplace(short_id, id_string);
-	}
+	s_registered_processors.emplace(name, YapShared(processor));
 
 	return true;
 }
 
 Yap::ProcessorManager::ProcessorIterator::ProcessorIterator(ProcessorManager & manager) :
-	_manager(manager), _current{manager.s_processors.end()}
+	_manager(manager), _current{manager._processors.end()}
 {
 }
 
 IProcessor * Yap::ProcessorManager::ProcessorIterator::GetFirst()
 {
-	_current = _manager.s_processors.begin();
+	_current = _manager._processors.begin();
 
-	return (_manager.s_processors.empty() ? nullptr : _current->second.get());
+	return (_manager._processors.empty() ? nullptr : _current->second.get());
 }
 
 IProcessor * Yap::ProcessorManager::ProcessorIterator::GetNext()
 {
-	if (_current == _manager.s_processors.end() || ++_current == _manager.s_processors.end())
+	if (_current == _manager._processors.end() || ++_current == _manager._processors.end())
 		return nullptr;
 
 	return _current->second.get();
 }
 
-bool Yap::Module::Load(const wchar_t * plugin_path, IProcessorContainer& containers)
+bool Yap::Module::Load(const wchar_t * plugin_path, IProcessorContainer& processors)
 {
 	if (_module == 0)
 	{
@@ -202,7 +213,7 @@ bool Yap::Module::Load(const wchar_t * plugin_path, IProcessorContainer& contain
 	for (auto processor = source_iter->GetFirst(); processor != nullptr; processor = source_iter->GetNext())
 	{
 		processor->SetModule(this);
-		containers.Add((module_name + L"::" + processor->GetClassId()).c_str(), processor);
+		processors.Add((module_name + L"::" + processor->GetClassId()).c_str(), processor);
 	}
 
 	return true;
