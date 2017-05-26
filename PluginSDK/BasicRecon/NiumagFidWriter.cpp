@@ -2,6 +2,8 @@
 #include "NiumagFidWriter.h"
 #include "Implement/LogUserImpl.h"
 
+#include <time.h>
+#include <stdio.h>
 #include <fstream>
 #include <iosfwd>
 #include "Client\DataHelper.h"
@@ -13,8 +15,10 @@ NiumagFidWriter::NiumagFidWriter(void) :
 	ProcessorImpl(L"NiumagFidWriter")
 {
 	LOG_TRACE(L"NiumagFidWriter constructor called.", L"BasicRecon");
-	AddInput(L"Input", 4, DataTypeComplexFloat);
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddProperty<const wchar_t *>(L"ExportFolder", L"", L"Set folder used to write FID.");
+	AddProperty<const wchar_t *>(L"FileName", L"", L"Set file name.");
+
 }
 
 NiumagFidWriter::NiumagFidWriter(const NiumagFidWriter& rhs) :
@@ -32,34 +36,23 @@ bool Yap::NiumagFidWriter::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && (GetDataArray<complex<float>>(data) != nullptr));
 
-	wostringstream file_name;
-	static unsigned int niumag_img_index = 0;
-	file_name << ++niumag_img_index;
-
 	auto output_folder = GetProperty<const wchar_t*>(L"ExportFolder");
-	wstring file_path = output_folder;
-	if (wcslen(output_folder) > 3)
-	{
-		file_path += L"\\";
-	}
-	file_path += file_name.str();
-	file_path += L".img.fid";
+	auto output_name = GetProperty<const wchar_t*>(L"FileName");
+	auto file_path = GetFilePath(output_folder, output_name);
 
-	//write data
+	// write data
 	int file_version = 1;
 	int section1size = 100;
 	int section2size = 100;
 	int section3size = 100;
 	int section4size = 100;
-	int section5size = 100; //fid
+	int section5size = 100; // fid
 	
 	int section5_offset = 4 * 6 + 400;
 
 	DataHelper data_helper(data);
 
 	auto dimension_count = data_helper.GetDimensionCount();
-	if (dimension_count != 4)
-		return false;
 
 	int dim1 = data_helper.GetWidth();
 	int dim2 = data_helper.GetHeight();
@@ -87,4 +80,31 @@ bool Yap::NiumagFidWriter::Input(const wchar_t * name, IData * data)
 	file.close();
 
 	return true;
+}
+
+std::wstring Yap::NiumagFidWriter::GetFilePath(const wchar_t * output_folder, const wchar_t * output_name)
+{
+	wstring file_path = output_folder;
+	if (wcslen(output_folder) > 3)
+	{
+		file_path += L"\\";
+	}
+
+	if (wcslen(output_name) > 0)
+	{
+		file_path += output_name;
+		file_path += L".";
+	}
+
+	time_t t = time(0);
+	char tmp[64];
+	strftime(tmp, sizeof(tmp), "%Y%m%d-%H%M%S", localtime(&t));
+	string str(tmp);
+	std::wstring wstr;
+	wstr.assign(str.begin(), str.end());
+	file_path += wstr;
+
+	file_path += L".fid";
+
+	return file_path;
 }

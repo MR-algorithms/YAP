@@ -140,5 +140,3 @@ float ShimmingD0;
 float TE;
 float TR;
 float TI;
-
-string FidDataPath;
