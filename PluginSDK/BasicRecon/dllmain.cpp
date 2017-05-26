@@ -3,6 +3,7 @@
 
 #include "Implement/ContainerImpl.h"
 #include "Algorithm2DWrapper.h"
+#include "CalcuArea.h"
 #include "ChannelDataCollector.h"
 #include "ChannelIterator.h"
 #include "ChannelMerger.h"
@@ -44,6 +45,7 @@ extern "C" {
 };
 
 BEGIN_DECL_PROCESSORS
+	ADD_PROCESSOR(CalcuArea)
 	ADD_PROCESSOR(ChannelDataCollector)
 	ADD_PROCESSOR(ChannelIterator)
 	ADD_PROCESSOR(ChannelMerger)

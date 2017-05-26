@@ -174,6 +174,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm2DWrapper.h" />
+    <ClInclude Include="CalcuArea.h" />
     <ClInclude Include="ChannelDataCollector.h" />
     <ClInclude Include="ChannelIterator.h" />
     <ClInclude Include="ChannelMerger.h" />
@@ -211,6 +212,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="CalcuArea.cpp" />
     <ClCompile Include="ChannelDataCollector.cpp" />
     <ClCompile Include="ChannelIterator.cpp" />
     <ClCompile Include="ChannelMerger.cpp">
