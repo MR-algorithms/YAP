@@ -134,7 +134,8 @@ public:
 
 		if (shared_object != nullptr)
 		{
-					shared_object->Release();
+			shared_object->Release();
+			_pointer = nullptr;
 		}
 	}
 
@@ -170,7 +171,7 @@ public:
 			}
 
 			_pointer = source._pointer;
-						source._pointer = nullptr;
+			source._pointer = nullptr;
 		}
 
 		return *this;

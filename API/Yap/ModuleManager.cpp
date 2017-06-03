@@ -10,7 +10,7 @@
 using namespace Yap;
 using namespace std;
 
-std::map <std::wstring, Yap::SmartPtr<IProcessor>> ProcessorManager::s_registered_processors;
+std::map <std::wstring, Yap::SmartPtr<IProcessor>> ImportedProcessorManager::s_registered_processors;
 
 std::wstring GetFileNameFromPath(const wchar_t * path)
 {
@@ -44,22 +44,31 @@ ModuleManager& Yap::ModuleManager::GetInstance()
 }
 
 ModuleManager::ModuleManager() :
-	_processor_manager{YapShared(new ProcessorManager())}
+	_imported_processors{YapShared(new ImportedProcessorManager())}
 {
 }
 
 ModuleManager::~ModuleManager()
 {
-	_processor_manager.reset();
+}
+
+void ModuleManager::Release()
+{
+	_imported_processors.reset();
+	for (auto module : _modules)
+	{
+		module.second->Release();
+	}
+
 	_modules.clear();
 }
 
-ProcessorManager::ProcessorManager()
+ImportedProcessorManager::ImportedProcessorManager()
 {
 	Reset();
 }
 
-IProcessor * ProcessorManager::Find(const wchar_t * name)
+IProcessor * ImportedProcessorManager::Find(const wchar_t * name)
 {
 	// Processor class id may take one of the following two forms: 
 	// 1. BasicRecon::ZeroFilling, where BasicRecon is the module name;
@@ -84,7 +93,7 @@ IProcessor * ProcessorManager::Find(const wchar_t * name)
 	return (iter != _processors.end()) ? iter->second.get() : nullptr;
 }
 
-IProcessorIter * Yap::ProcessorManager::GetIterator()
+IProcessorIter * Yap::ImportedProcessorManager::GetIterator()
 {
 	try
 	{
@@ -96,7 +105,7 @@ IProcessorIter * Yap::ProcessorManager::GetIterator()
 	}
 }
 
-bool Yap::ProcessorManager::Add(const wchar_t * name, IProcessor * processor)
+bool Yap::ImportedProcessorManager::Add(const wchar_t * name, IProcessor * processor)
 {
 	if (_processors.find(name) != _processors.end())
 		return false;
@@ -113,8 +122,37 @@ bool Yap::ProcessorManager::Add(const wchar_t * name, IProcessor * processor)
 	return true;
 }
 
+bool Yap::ImportedProcessorManager::Delete(const wchar_t * name)
+{
+	auto iter = _processors.find(name);
+	if (iter != _processors.end())
+	{
+		_processors.erase(iter);
+		return true;
+	}
 
-Yap::IProcessor * Yap::ProcessorManager::CreateProcessor(const wchar_t * class_id, 
+	wstring id_string(name);
+	auto separator_pos = id_string.find(L"::");
+	if (separator_pos != wstring::npos)
+	{
+		auto short_id = id_string.substr(separator_pos + 2);
+		auto iter2 = _short_to_full_id.find(short_id);
+		if (iter2 != _short_to_full_id.end())
+		{
+			_short_to_full_id.erase(iter2);
+		}
+	}
+
+	return false;
+}
+
+void Yap::ImportedProcessorManager::Clear() 
+{
+	_processors.clear();
+	_short_to_full_id.clear();
+}
+
+Yap::IProcessor * Yap::ImportedProcessorManager::CreateProcessor(const wchar_t * class_id, 
 													  const wchar_t * instance_id)
 {
 	auto processor = Find(class_id);
@@ -130,7 +168,7 @@ Yap::IProcessor * Yap::ProcessorManager::CreateProcessor(const wchar_t * class_i
 	return new_processor;
 }
 
-void Yap::ProcessorManager::Reset()
+void Yap::ImportedProcessorManager::Reset()
 {
     _processors.clear();
 	_short_to_full_id.clear();
@@ -140,7 +178,7 @@ void Yap::ProcessorManager::Reset()
 	}
 }
 
-bool ProcessorManager::RegisterProcessor(const wchar_t *name, IProcessor * processor)
+bool ImportedProcessorManager::RegisterProcessor(const wchar_t *name, IProcessor * processor)
 {
     if (s_registered_processors.find(name) != s_registered_processors.end())
         return false;
@@ -150,19 +188,19 @@ bool ProcessorManager::RegisterProcessor(const wchar_t *name, IProcessor * proce
 	return true;
 }
 
-Yap::ProcessorManager::ProcessorIterator::ProcessorIterator(ProcessorManager & manager) :
+Yap::ImportedProcessorManager::ProcessorIterator::ProcessorIterator(ImportedProcessorManager & manager) :
 	_manager(manager), _current{manager._processors.end()}
 {
 }
 
-IProcessor * Yap::ProcessorManager::ProcessorIterator::GetFirst()
+IProcessor * Yap::ImportedProcessorManager::ProcessorIterator::GetFirst()
 {
 	_current = _manager._processors.begin();
 
 	return (_manager._processors.empty() ? nullptr : _current->second.get());
 }
 
-IProcessor * Yap::ProcessorManager::ProcessorIterator::GetNext()
+IProcessor * Yap::ImportedProcessorManager::ProcessorIterator::GetNext()
 {
 	if (_current == _manager._processors.end() || ++_current == _manager._processors.end())
 		return nullptr;
@@ -170,7 +208,7 @@ IProcessor * Yap::ProcessorManager::ProcessorIterator::GetNext()
 	return _current->second.get();
 }
 
-bool Yap::Module::Load(const wchar_t * plugin_path, IProcessorContainer& processors)
+bool Yap::Module::Load(const wchar_t * plugin_path, IProcessorContainer& imported_processors)
 {
 	if (_module == 0)
 	{
@@ -202,21 +240,25 @@ bool Yap::Module::Load(const wchar_t * plugin_path, IProcessorContainer& process
 		return false;
 	}
 
-	auto dll_processor_manager = YapShared(create_func());
-	if (!dll_processor_manager)
+	auto processor_manager = YapShared(create_func());
+	if (!processor_manager)
 	{
 		::FreeLibrary(_module);
 		_module = 0;
 		return false;
 	}
 
-	auto source_iter = dll_processor_manager->GetIterator();
+	auto source_iter = processor_manager->GetIterator();
 	auto module_name = GetModuleNameFromPath(plugin_path);
 	for (auto processor = source_iter->GetFirst(); processor != nullptr; processor = source_iter->GetNext())
 	{
-		processor->SetModule(this);
-		processors.Add((module_name + L"::" + processor->GetClassId()).c_str(), processor);
+		auto imported_processor = processor->Clone();
+		imported_processor->SetModule(this);
+		imported_processors.Add((module_name + L"::" + imported_processor->GetClassId()).c_str(),
+			imported_processor);
 	}
+
+	Lock();
 
 	return true;
 }
@@ -244,31 +286,34 @@ bool Yap::ModuleManager::LoadModule(const wchar_t * module_path)
 	auto iter = _modules.find(module_path);
 	if (iter == _modules.end())
 	{
-		auto result = _modules.emplace(module_path, make_shared<Module>());
-		if (!result.second)
+		auto module = make_pair(module_path, make_shared<Module>());
+		if (!module.second->Load(module_path, *_imported_processors))
 			return false;
 
-		iter = result.first;
+		_modules.insert(module);
+		return true;
 	}
-
-	return iter->second->Load(module_path, *_processor_manager);
+	else
+	{
+		return iter->second->Load(module_path, *_imported_processors);
+	}
 }
 
 void Yap::ModuleManager::Reset()
 {
-	assert(_processor_manager);
+	assert(_imported_processors);
 
-	_processor_manager->Reset();
+	_imported_processors->Reset();
 }
 
 IProcessor * Yap::ModuleManager::CreateProcessor(const wchar_t * class_id, const wchar_t * instance_id)
 {
-	assert(_processor_manager);
-	return _processor_manager->CreateProcessor(class_id, instance_id);
+	assert(_imported_processors);
+	return _imported_processors->CreateProcessor(class_id, instance_id);
 }
 
-ProcessorManager& Yap::ModuleManager::GetProcessorManager()
+ImportedProcessorManager& Yap::ModuleManager::GetProcessorManager()
 {
-	assert(_processor_manager);
-	return *_processor_manager;
+	assert(_imported_processors);
+	return *_imported_processors;
 }

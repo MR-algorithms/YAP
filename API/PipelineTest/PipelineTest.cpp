@@ -17,6 +17,7 @@
 #include "Implement/LogImpl.h"
 #include "Implement/LogUserImpl.h"
 #include <log4cplus/initializer.h>
+#include "Yap/ModuleManager.h"
 
 using namespace std;
 using namespace Yap;
@@ -76,6 +77,7 @@ void PluginDebugTest()
 
 void PipelineTest()
 {
+	{
 	VdfParser parser;
 	auto variable_manager = parser.CompileFile(L"sysParams_yap.txt");
 
@@ -93,6 +95,8 @@ void PipelineTest()
 	}
 
 	auto sfo1 = variable_manager->Get<double>(L"SFO1");
+}
+	ModuleManager::GetInstance().Release();
 }
 
 bool VdfParserTest()

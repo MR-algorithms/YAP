@@ -99,14 +99,34 @@ namespace Yap
 			if (element == nullptr)
 				return false;
 
-			_elements.insert(std::make_pair(std::wstring(name), YapShared(element)));
+			_elements.emplace(std::wstring(name), YapShared(element));
 
 			return true;
 		}
 
+		virtual bool Delete(const wchar_t * name) override
+		{
+			auto iter = _elements.find(name);
+			if (iter != _elements.end())
+			{
+				_elements.erase(iter);
+				return true;
+			}
+
+			return false;
+		}
+		
+		virtual void Clear() override
+		{
+			_elements.clear();
+		}
+
 	private:
 		// protect the destructor to ensure the object can only be dynamically allocated
-		~ContainerImpl() {}
+		~ContainerImpl() 
+		{
+			_elements.clear();
+		}
 
 		std::map<std::wstring, SmartPtr<TYPE>> _elements;
 	};

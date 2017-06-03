@@ -9,9 +9,9 @@
 
 namespace Yap
 {
-	class ProcessorManager : public IProcessorContainer
+	class ImportedProcessorManager : public IProcessorContainer
 	{
-		IMPLEMENT_SHARED(ProcessorManager)
+		IMPLEMENT_SHARED(ImportedProcessorManager)
 
 	public:
 		typedef std::map <std::wstring, Yap::SmartPtr<IProcessor>> Processors;
@@ -19,21 +19,23 @@ namespace Yap
 
 		class ProcessorIterator : public IProcessorIter
 		{
-			explicit ProcessorIterator(ProcessorManager& manager);
+			explicit ProcessorIterator(ImportedProcessorManager& manager);
 			// Inherited via IIterator
 			virtual IProcessor * GetFirst() override;
 			virtual IProcessor * GetNext() override;
 
-			ProcessorManager& _manager;
+			ImportedProcessorManager& _manager;
 			ProcessorIter _current;
 
-			friend class ProcessorManager;
+			friend class ImportedProcessorManager;
 		};
 
-		ProcessorManager();
+		ImportedProcessorManager();
 		virtual IProcessor * Find(const wchar_t * name) override;
 		virtual IProcessorIter * GetIterator() override;
 		virtual bool Add(const wchar_t * name, IProcessor * processor) override;
+		virtual bool Delete(const wchar_t * name) override;
+		virtual void Clear() override;
 
 		void Reset();
 
@@ -41,7 +43,7 @@ namespace Yap
 		static bool RegisterProcessor(const wchar_t * name, IProcessor * procesor);
 
 	private:
-		~ProcessorManager() {}
+		~ImportedProcessorManager() {}
 		std::map <std::wstring, Yap::SmartPtr<IProcessor>> _processors;
 
 		/// Used to store processors added directly from application, instead of DLLs.
@@ -69,6 +71,12 @@ namespace Yap
 			{
 				if (_module != 0)
 				{
+					auto release_func = (void(*)())::GetProcAddress(
+						_module, "ReleaseProcessorManager");
+					if (release_func != nullptr)
+					{
+						release_func();
+					}
 					::FreeModule(_module);
 				}
 				_module = 0;
@@ -83,7 +91,6 @@ namespace Yap
 		unsigned int _use_count;
 
 		HINSTANCE _module;
-// 		std::wstring _module_name;
 	};
 
 	class ModuleManager
@@ -98,10 +105,12 @@ namespace Yap
 		bool LoadModule(const wchar_t * module_path);
 		void Reset();
 		IProcessor * CreateProcessor(const wchar_t * class_id, const wchar_t * instance_id);
-		ProcessorManager& GetProcessorManager();
+		ImportedProcessorManager& GetProcessorManager();
+
+		void Release();
 	protected:
 		ModuleContainer _modules;
-		SmartPtr<ProcessorManager> _processor_manager;
+		SmartPtr<ImportedProcessorManager> _imported_processors;
 
 	private:
 		ModuleManager();
