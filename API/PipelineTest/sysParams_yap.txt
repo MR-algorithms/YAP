@@ -140,3 +140,10 @@ float ShimmingD0;
 float TE;
 float TR;
 float TI;
+
+float PulseDuration;
+float PhaseEncodingDuration;
+int EchoPosRatio;
+float SEMinTE;
+float GREMinTE;
+float SSInterval;

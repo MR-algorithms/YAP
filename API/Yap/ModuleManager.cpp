@@ -50,6 +50,7 @@ ModuleManager::ModuleManager() :
 
 ModuleManager::~ModuleManager()
 {
+	_processor_manager.reset();
 	_modules.clear();
 }
 
@@ -186,6 +187,7 @@ bool Yap::Module::Load(const wchar_t * plugin_path, IProcessorContainer& process
 			auto log_user = log_func();
 			if (log_user != nullptr)
 			{
+				LogImpl::GetInstance().AddUser(log_user);
 				log_user->SetLog(&LogImpl::GetInstance());
 			}
 		}

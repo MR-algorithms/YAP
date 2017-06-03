@@ -258,7 +258,7 @@ Yap::SmartPtr<CompositeProcessor> PipelineCompiler::DoCompile(std::wistream& inp
 	{
 		_constructor = shared_ptr<PipelineConstructor>(new PipelineConstructor);
 	}
-	_constructor->Reset(true);
+	_constructor->Reset(false);
 
 	try
 	{

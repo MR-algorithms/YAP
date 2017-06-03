@@ -31,10 +31,12 @@ Fft1D::Fft1D() :
 Fft1D::Fft1D(const Fft1D& rhs)
 	:ProcessorImpl(rhs)
 {
+	LOG_TRACE(L"Fft1D constructor called.", L"BasicRecon");
 }
 
 Fft1D::~Fft1D()
 {
+	LOG_TRACE(L"Fft1D destructor called.", L"BasicRecon");
 }
 
 template<typename T> bool Fft1D::DoFft(IData * data, size_t size)

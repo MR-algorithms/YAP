@@ -10,6 +10,7 @@ namespace Yap
 		IMPLEMENT_SHARED(FineCF)
 	public:
 		FineCF();
+		FineCF(const FineCF& rhs);
 
 	protected:
 		~FineCF();

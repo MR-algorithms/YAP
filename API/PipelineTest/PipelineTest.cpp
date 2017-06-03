@@ -78,10 +78,9 @@ void PipelineTest()
 {
 	VdfParser parser;
 	auto variable_manager = parser.CompileFile(L"sysParams_yap.txt");
-	variable_manager->Set<int>(L"SliceCount", 5);
 
 	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"Test.pipeline");
+	auto pipeline = compiler.CompileFile(L"Pipelines\\FineCF.pipeline");
 	if (pipeline.get() == nullptr)
 	{
 		return;
@@ -92,6 +91,8 @@ void PipelineTest()
 	{
 		pipeline->Input(L"Input", nullptr);
 	}
+
+	auto sfo1 = variable_manager->Get<double>(L"SFO1");
 }
 
 bool VdfParserTest()
