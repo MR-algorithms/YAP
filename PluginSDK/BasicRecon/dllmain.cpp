@@ -3,6 +3,7 @@
 
 #include "Implement/ContainerImpl.h"
 #include "Algorithm2DWrapper.h"
+#include "CalcuArea.h"
 #include "ChannelDataCollector.h"
 #include "ChannelIterator.h"
 #include "ChannelMerger.h"
@@ -13,6 +14,7 @@
 #include "Difference.h"
 #include "Fft1D.h"
 #include "Fft2D.h"
+#include "FineCF.h"
 #include "imageProcessing.h"
 #include "JpegExporter.h"
 #include "ModulePhase.h"
@@ -32,7 +34,6 @@
 
 #include "Implement/LogUserImpl.h"
 #include "Implement/YapImplement.h"
-#include "FineCF.h"
 
 using namespace Yap;
 
@@ -44,6 +45,7 @@ extern "C" {
 };
 
 BEGIN_DECL_PROCESSORS
+	ADD_PROCESSOR(CalcuArea)
 	ADD_PROCESSOR(ChannelDataCollector)
 	ADD_PROCESSOR(ChannelIterator)
 	ADD_PROCESSOR(ChannelMerger)
@@ -54,6 +56,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(Difference)
 	ADD_PROCESSOR(Fft1D)
 	ADD_PROCESSOR(Fft2D)
+	ADD_PROCESSOR(FineCF)
 	ADD_PROCESSOR(JpegExporter)
 	ADD_PROCESSOR(ModulePhase)
 	ADD_PROCESSOR(NiumagFidReader)
@@ -69,7 +72,6 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(SliceSelector)
 	ADD_PROCESSOR(SubSampling)
 	ADD_PROCESSOR(ZeroFilling)
-	ADD_PROCESSOR(FineCF)
 	ADD(L"HFlipFloat", new Algorithm2DInPlaceWrapper<float>(hflip<float>, L"HFlipFloat"))
 END_DECL_PROCESSORS
 
@@ -84,7 +86,9 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 
 		break;
 	case DLL_THREAD_ATTACH:
+		break;
 	case DLL_THREAD_DETACH:
+		break;
 	case DLL_PROCESS_DETACH:
 		break;
 	}

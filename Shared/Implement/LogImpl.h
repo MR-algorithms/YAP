@@ -5,6 +5,7 @@
 #include "Interface/Interfaces.h"
 
 #include <map>
+#include <vector>
 
 namespace log4cplus { class Logger; }
 
@@ -17,6 +18,9 @@ namespace Yap
 		~LogImpl();
 
 		virtual void Log(const wchar_t * module, const wchar_t * info, LogLevel level, const wchar_t * log_name = L"", bool flush = true) override;
+		virtual void AddUser(ILogUser * user) override;
+		virtual void RemoveUser(ILogUser * user) override;
+
 		static LogImpl& GetInstance();
 
 	protected:
@@ -25,6 +29,7 @@ namespace Yap
 		static std::shared_ptr<LogImpl> s_instance;
 
 		std::map<std::wstring, log4cplus::Logger> _loggers;
+		std::vector<ILogUser*> _users;
 	};
 }
 

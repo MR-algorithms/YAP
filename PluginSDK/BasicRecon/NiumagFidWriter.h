@@ -18,6 +18,7 @@ namespace Yap
 		~NiumagFidWriter();		
 		
 		virtual bool Input(const wchar_t * name, IData * data) override;
+		std::wstring GetFilePath(const wchar_t * output_folder, const wchar_t * ouput_name);
 	};
 }
 

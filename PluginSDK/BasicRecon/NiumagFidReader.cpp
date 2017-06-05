@@ -88,7 +88,7 @@ bool Yap::NiumagFidReader::ReadNiumagFidData()
 		int dim3 = buf[2];
 		int dim4 = buf[3];
 
-		if (dim1 > 2048 || dim2 > 2048 || dim3 > 2048 || dim4 > 2048)
+		if (dim1 > 8192 || dim2 > 8192 || dim3 > 2048 || dim4 > 2048)
 		{
 			throw std::ifstream::failure("out of range");
 		}

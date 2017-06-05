@@ -195,7 +195,7 @@ bool Yap::DataTypeConvertor::Input(const wchar_t * port, IData * data)
 	case DataTypeUnsignedInt:
 		return ConvertAndFeed<unsigned int>(data);
 	case DataTypeComplexFloat:
-		return ConvertAndFeed<float>(data);
+		return ConvertAndFeed<complex<float>>(data);
 	case DataTypeComplexDouble:
 		return ConvertAndFeed<complex<double>>(data);
 	default:

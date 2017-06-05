@@ -1,14 +1,18 @@
 #include "stdafx.h"
 #include "FineCF.h"
 #include "Client\DataHelper.h"
+#include "Implement\LogUserImpl.h"
 #include <algorithm>
 #include <vector>
 #include <cassert>
+
 using namespace std;
 using namespace Yap;
+
 FineCF::FineCF()
 	: ProcessorImpl(L"FineCF")
 {
+	LOG_TRACE(L"FineCF constructor called.", L"BasicRecon");
 	AddInput(L"Input", 1, DataTypeDouble | DataTypeFloat);
 	AddProperty<double>(L"O1", 0, L"中心频率");
 	AddProperty<double>(L"SW", 0, L"谱宽");
@@ -16,9 +20,16 @@ FineCF::FineCF()
 	AddProperty<double>(L"CF", 0, L"最高峰频率");
 }
 
+Yap::FineCF::FineCF(const FineCF& rhs) :
+	ProcessorImpl(rhs)
+{
+	LOG_TRACE(L"FineCF constructor called.", L"BasicRecon");
+}
+
 
 FineCF::~FineCF()
 {
+	LOG_TRACE(L"FineCF destructor called.", L"BasicRecon");
 }
 
 bool FineCF::Input(const wchar_t * port, IData * data)

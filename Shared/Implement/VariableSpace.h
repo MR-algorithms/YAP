@@ -48,7 +48,7 @@ namespace Yap {
 
 			if (variable_id[variable_id.size() - 1] == L']') {
 				auto left_square_pos = variable_id.find_last_of(L'[');
-				if (left_square_pos != wstring::npos) {
+                if (left_square_pos != std::wstring::npos) {
 					return Element<T>(variable_id);
 				}
 				else {

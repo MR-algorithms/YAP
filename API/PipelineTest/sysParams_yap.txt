@@ -141,4 +141,9 @@ float TE;
 float TR;
 float TI;
 
-string FidDataPath;
+float PulseDuration;
+float PhaseEncodingDuration;
+int EchoPosRatio;
+float SEMinTE;
+float GREMinTE;
+float SSInterval;

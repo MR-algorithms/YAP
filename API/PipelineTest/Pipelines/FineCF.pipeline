@@ -1,0 +1,15 @@
+import "BasicRecon.dll";
+
+NiumagFidReader reader(DataPath = "D:\\Projects\\Data\\FineCF_fid\\lwj.fid");
+Fft1D fft;
+ModulePhase module_phase;
+FineCF fine_cf(O1 = 21290, SW = 100);
+
+fine_cf.CF ==> SFO1;
+
+reader->fft;
+fft->module_phase;
+module_phase.Module->fine_cf;
+
+self.Input->reader.Input;
+

@@ -40,7 +40,7 @@ namespace Yap
 	template <> struct data_type_id <unsigned int> { static const int type = DataTypeUnsignedInt; };
 	template <> struct data_type_id <int> { static const int type = DataTypeInt; };
 	template <> struct data_type_id <std::complex<float>> { static const int type = DataTypeComplexFloat; };
-	template <> struct data_type_id <std::complex<double>> { static const int type = DataTypeComplexFloat; };
+	template <> struct data_type_id <std::complex<double>> { static const int type = DataTypeComplexDouble; };
 	template <> struct data_type_id <bool> { static const int type = DataTypeBool; };
 
 
@@ -136,6 +136,8 @@ namespace Yap
 		virtual ELEMENT_TYPE * Find(const wchar_t * name) = 0;
 		virtual iterator * GetIterator() = 0;
 		virtual bool Add(const wchar_t * name, ELEMENT_TYPE * element) = 0;
+		virtual bool Delete(const wchar_t * name) = 0;
+		virtual void Clear() = 0;
 	};
 
 	struct IProcessor;
@@ -276,9 +278,12 @@ namespace Yap
 		LevelFatal,
 	};
 
+	struct ILogUser;
 	struct ILog
 	{
 		virtual void Log(const wchar_t * module, const wchar_t * info, LogLevel level, const wchar_t * log_name = L"", bool flush = false) = 0;
+		virtual void AddUser(ILogUser * user) = 0;
+		virtual void RemoveUser(ILogUser * user) = 0;
 	};
 
 	struct ILogUser
