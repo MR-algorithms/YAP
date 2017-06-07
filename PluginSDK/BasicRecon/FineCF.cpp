@@ -61,7 +61,8 @@ bool FineCF::Input(const wchar_t * port, IData * data)
 		std::memcpy(temp_data.data(), GetDataArray<float>(data), width * sizeof(float));
 		max_val_pos = std::max_element(temp_data.begin(), temp_data.end()) - temp_data.begin();
 	}
-	double offset = (max_val_pos - width / 2) * sw / width;
+
+	double offset = (max_val_pos - (int)width / 2) * sw / width;
 	SetProperty<double>(L"CF", GetProperty<bool>(L"ReverseAxis") ? o1 - offset : o1 + offset);
 	return true;
 }
