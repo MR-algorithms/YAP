@@ -35,12 +35,19 @@ namespace Yap {
 
 		const VariableSpace& operator = (const VariableSpace& rhs);
 		const VariableSpace& operator = (VariableSpace&& rhs);
+
 		bool Add(int type, const wchar_t * name, const wchar_t * description);
         bool Add(const wchar_t * type, const wchar_t * name, const wchar_t * description);
         bool Add(IVariable* variable);
 
         IVariableContainer * Variables();
         const IVariableContainer * Variables() const;
+
+		/// Enable or disable a variable in variable space.
+		void Enable(const wchar_t * id, bool enable);
+
+		/// Check to see if a variable is enabled.
+		bool IsEnabled(const wchar_t * id) const;
 
 		template <typename T>
 		T Get(const wchar_t * id) {
@@ -100,6 +107,19 @@ namespace Yap {
 			return array_variable->Elements();
 		}
 
+		template<typename T>
+		std::pair<T*, size_t> GetArrayWithSize(const wchar_t * id)
+		{
+			auto array = GetVariable(id, variable_type_id<T>::array_type);
+			if (array == nullptr)
+				return std::make_pair(nullptr, 0);
+
+			assert(array->GetType() == variable_type_id<T>::array_type);
+			auto array_variable = dynamic_cast<IArrayVariable<T>*>(array);
+			assert(array_variable != nullptr);
+			return std::make_pair(array_variable->Elements(), array_variable->GetSize());
+		}
+
 		static std::shared_ptr<VariableSpace> Load(const wchar_t * path);
 
         void Reset();
@@ -109,7 +129,8 @@ namespace Yap {
         bool AddType(const wchar_t * type_id, IVariable *type);
         bool AddType(const wchar_t * type_id, IPtrContainer<IVariable> * variables);
 
-    protected:
+		IVariable * GetVariable(const wchar_t * name, int expected_type = VariableAllTypes);
+	protected:
 
 		template <typename T>
 		T & Element(const std::wstring& id)
@@ -138,8 +159,7 @@ namespace Yap {
 
 		bool InitTypes();
 
-        IVariable * GetVariable(const wchar_t * name, int expected_type);
-		IVariable * GetVariable(IVariableContainer * variables, const wchar_t * name, int type);
+		static IVariable * GetVariable(IVariableContainer * variables, const wchar_t * name, int type = VariableAllTypes);
         SmartPtr<IVariableContainer> _variables;
 
         std::map<std::wstring, SmartPtr<IVariable>> _types;
