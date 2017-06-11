@@ -78,7 +78,6 @@ bool Yap::NiumagImgReader::ReadNiumagImgData()
 		if (!file.read(reinterpret_cast<char*>(&sections), sizeof(details::NiumagImgFileHeaderInfo)))
 			return false;
 
-		//
 		int section6_offset = sizeof(details::NiumagImgFileHeaderInfo) +
 			sections.Section1Size +
 			sections.Section2Size +

@@ -263,7 +263,6 @@ Yap::SmartPtr<CompositeProcessor> PipelineCompiler::DoCompile(std::wistream& inp
 	{
 		_constructor->Reset(true);
 		Process();
-		_constructor->Reset(true);
 
 		return _constructor->GetPipeline();
 	}

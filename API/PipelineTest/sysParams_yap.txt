@@ -1,4 +1,4 @@
-bool ConsoleMode;	//Local, Remote
+bool ConsoleMode;	// Local, Remote
 bool Form;
 bool IsConnected;
 bool IsRunning;
@@ -8,7 +8,7 @@ bool DDSReady;
 bool RECReady;
 bool DACReady;
 
-int ScanMode;		//ScanMode(smRTZG, smZG)
+int ScanMode;		// ScanMode(smRTZG, smZG)
 int C#<0, 31>;
 int TD;
 int GxOffset;
@@ -35,8 +35,8 @@ float SW;
 float P#<0, 31>;
 float D#<0, 31>;
 float RFA#<0, 15>;
-float FQ#<0, 15>;		//FQ0 ~ FQ15
-float GA#<0, 15>;		//GA0 ~ GA31
+float FQ#<0, 15>;		// FQ0 ~ FQ15
+float GA#<0, 15>;		// GA0 ~ GA31
 float RG#<1, 4>;
 float ACQ;
 float DT2;
@@ -44,9 +44,9 @@ float AmpRatio;
 float Freq;
 
 string Sequence;
-string RFSH;		//RFSH0 ~RFSH15
-string GSH;		//GSH0 ~ GSH15
-string NSSign;		//+/-
+string RFSH;		// RFSH0 ~RFSH15
+string GSH;		// GSH0 ~ GSH15
+string NSSign;		// +/-
 string RootDir;
 string ShapeDir;
 string ListDir;
@@ -95,6 +95,23 @@ array<float> PHL#<0, 15>;	//PHL0 ~ PHL15
 array<float> PCL#<0, 15>;	//PCL0 ~ PCL15
 array<float> GL#<0, 15>;	//GL0 ~ GL15
 array<int> DBL#<0, 15>;	//DBL0 ~ DBL15
+
+// ------------- SE ---------------
+float GrMax;
+float GpMax;
+float GsMax;
+float PulseBW;
+
+int PCLCNT0;
+int PCLCNT1;
+int PCLCNT2;
+int FQLCNT1;
+int GLCNT1;
+int DBL2CNT;
+int DBL3CNT;
+float IdealRefocusGAmp_rgtRead;
+float IdealRefocusGAmp_rgtPhase;
+float IdealRefocusGAmp_rgtSlice;
 
 // ----------------- ui_params -------------------
 int Alpha;
@@ -147,3 +164,12 @@ int EchoPosRatio;
 float SEMinTE;
 float GREMinTE;
 float SSInterval;
+
+//--------- const variables ----------------
+float H_GAMMA_KG;
+float MIN_DURATION;
+
+//------------- other variables ---------------
+int selected_sequence;
+float SW_MHz;
+
