@@ -446,15 +446,16 @@ const IVariableContainer* VariableSpace::Variables() const
   then all variables will be enabled or disabled.
   @param enable @a true to enable, @a false to disable.
  */
-void VariableSpace::Enable(const wchar_t * id, bool enable)
+bool VariableSpace::Enable(const wchar_t * id, bool enable)
 {
 	if (id != nullptr)
 	{
 		auto variable = GetVariable(id);
-		if (variable != nullptr)
-		{
-			variable->Enable(enable);
-		}
+
+		if (variable == nullptr)
+			return false;
+
+		variable->Enable(enable);
 	}
 	else
 	{
@@ -464,6 +465,8 @@ void VariableSpace::Enable(const wchar_t * id, bool enable)
 			variable->Enable(enable);
 		}
 	}
+
+	return true;
 }
 
 bool VariableSpace::IsEnabled(const wchar_t * id) const
