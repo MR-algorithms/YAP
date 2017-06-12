@@ -156,6 +156,7 @@ namespace Yap
 	const int VariableFloatArray = 128;
 	const int VariableStringArray = 256;
 	const int VariableStructArray = 512;
+    const int VariableAllTypes = 0xffffffff;
 
 	template<typename T> struct variable_type_id
 	{
@@ -182,8 +183,12 @@ namespace Yap
 		virtual int GetType() const = 0;
 		virtual const wchar_t * GetId() const = 0;
         virtual void SetId(const wchar_t * id) = 0;
+        virtual void SetTitle(const wchar_t * title) = 0;
+        virtual const wchar_t * GetTitle() const = 0;
 		virtual const wchar_t * GetDescription() const = 0;
         virtual void SetDescription(const wchar_t * description) = 0;
+        virtual void Enable(bool enable) = 0;
+        virtual bool IsEnabled() const = 0;
 	};
 
 	template <> struct variable_type_id <IVariable*> {

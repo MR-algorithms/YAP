@@ -10,27 +10,36 @@
 using namespace Yap;
 using namespace std;
 
+#define IMPLEMENT_VARIABLE_NO_ENABLE public: \
+	virtual int GetType() const override { return _type;} \
+	virtual const wchar_t * GetId() const override { return _id.c_str(); }\
+	virtual void SetId(const wchar_t * id) override { _id = id; } \
+	virtual const wchar_t * GetTitle() const override { return _title.c_str();}\
+	virtual void SetTitle(const wchar_t * title) override { _title = title;}\
+	virtual const wchar_t * GetDescription() const override	{ return _description.c_str();	} \
+	virtual void SetDescription(const wchar_t * description) override {	_description = description;	}\
+protected: \
+	std::wstring _id; \
+	std::wstring _description; \
+	std::wstring _title;\
+	int _type;
+
+#define IMPLEMENT_VARIABLE   IMPLEMENT_VARIABLE_NO_ENABLE \
+public: \
+	virtual void Enable(bool enable) { _enabled = enable;} \
+	virtual bool IsEnabled() const override { return _enabled;} \
+protected: \
+	bool _enabled;
+
+
 namespace Yap
 {
 namespace _details
 {
-
-
-
-#define IMPLEMENT_VARIABLE         public: virtual int GetType() const override { return _type;} \
-	virtual const wchar_t * GetId() const override { return _id.c_str(); }\
-	virtual void SetId(const wchar_t * id) override { _id = id; } \
-	virtual const wchar_t * GetDescription() const override	{ return _description.c_str();	} \
-	virtual void SetDescription(const wchar_t * description) override {	_description = description;	}\
-	protected: \
-		std::wstring _id; \
-		std::wstring _description; \
-		int _type;
-
 	template <typename TYPE>
 	class SimpleVariable : public ISimpleVariable<TYPE>
 	{
-        IMPLEMENT_SHARED(SimpleVariable<TYPE>)
+		IMPLEMENT_SHARED(SimpleVariable<TYPE>)
 		IMPLEMENT_VARIABLE
     public:
 		SimpleVariable(
@@ -259,12 +268,13 @@ namespace _details
 	struct StructVariable : public IStructVariable
 	{
 		IMPLEMENT_SHARED(StructVariable)
-		IMPLEMENT_VARIABLE
+		IMPLEMENT_VARIABLE_NO_ENABLE
 	public:
 		StructVariable(const wchar_t * id, const wchar_t * description) :
 			_id{ id }, 
 			_description{ description != nullptr ? description : L"" },
 			_type{ VariableStruct },
+			_enabled{true},
 			_members{ YapShared(new ContainerImpl<IVariable>) } {}
 
 		StructVariable(const StructVariable& rhs) :
@@ -286,13 +296,30 @@ namespace _details
 			_description{ description != nullptr ? description : L"" },
 			_type{ VariableStruct } {
 		}
+
 		virtual IPtrContainer<IVariable> * Members() override {
 			return _members.get();
-                }
+		}
 
+		virtual void Enable(bool enable)
+		{
+			assert(_members);
+			auto iter = _members->GetIterator();
+			for (auto member = iter->GetFirst(); member != nullptr; member = iter->GetNext())
+			{
+				member->Enable(enable);
+			}
+		}
+
+		virtual bool IsEnabled() const override
+		{
+			return _enabled;
+		}
+	private:
 		SmartPtr<ContainerImpl<IVariable>> _members;
+		bool _enabled;
 	};
-}  // end Yap::_details
+};  // end Yap::_details
 
 using namespace _details;
 
@@ -414,6 +441,37 @@ const IVariableContainer* VariableSpace::Variables() const
 	return _variables.get();
 }
 
+/**
+  @param id Specify the id of the variable to be enabled or disabled. If it's null,
+  then all variables will be enabled or disabled.
+  @param enable @a true to enable, @a false to disable.
+ */
+void VariableSpace::Enable(const wchar_t * id, bool enable)
+{
+	if (id != nullptr)
+	{
+		auto variable = GetVariable(id);
+		if (variable != nullptr)
+		{
+			variable->Enable(enable);
+		}
+	}
+	else
+	{
+		auto iter = _variables->GetIterator();
+		for (auto variable = iter->GetFirst(); variable != nullptr; variable = iter->GetNext())
+		{
+			variable->Enable(enable);
+		}
+	}
+}
+
+bool VariableSpace::IsEnabled(const wchar_t * id) const
+{
+	auto variable = GetVariable(const_cast<VariableSpace*>(this)->_variables.get(), id);
+	return (variable != nullptr) ? variable->IsEnabled() : false;
+}
+
 IVariable * VariableSpace::GetVariable(IVariableContainer * variables,
 	const wchar_t * id,
 	int type)
@@ -472,7 +530,7 @@ IVariable * VariableSpace::GetVariable(IVariableContainer * variables,
 		if (variable == nullptr)
 			throw VariableException(id, VariableException::VariableNotFound);
 
-		if ((variable->GetType() | type) != type)
+		if (type != VariableAllTypes && ((variable->GetType() | type) != type))
 			throw VariableException(id, VariableException::TypeNotMatch);
 
 		return variable;
