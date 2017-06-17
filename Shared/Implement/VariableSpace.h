@@ -44,7 +44,7 @@ namespace Yap {
         const IVariableContainer * Variables() const;
 
 		/// Enable or disable a variable in variable space.
-		void Enable(const wchar_t * id, bool enable);
+		bool Enable(const wchar_t * id, bool enable);
 
 		/// Check to see if a variable is enabled.
 		bool IsEnabled(const wchar_t * id) const;
