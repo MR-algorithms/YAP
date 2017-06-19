@@ -78,7 +78,6 @@ bool Yap::NiuMriImageReader::ReadNiuMriImageData()
 		if (!file.read(reinterpret_cast<char*>(&sections), sizeof(details::NiuMriImageFileHeaderInfo)))
 			return false;
 
-		//
 		int section6_offset = sizeof(details::NiuMriImageFileHeaderInfo) +
 			sections.Section1Size +
 			sections.Section2Size +
@@ -88,18 +87,19 @@ bool Yap::NiuMriImageReader::ReadNiuMriImageData()
 
 		file.seekg(section6_offset, ios::beg);
 
-		int buf[2];
-		file.read(reinterpret_cast<char*>(buf), sizeof(int) * 2);
+		int buf[3];
+		file.read(reinterpret_cast<char*>(buf), sizeof(int) * 3);
 		int dim1 = buf[0];
 		int dim2 = buf[1];
+		int dim3 = buf[2];
 
 		assert(sizeof(unsigned short) == 2);
-		if (dim1 > 2048 || dim2 > 2048)
+		if (dim1 > 2048 || dim2 > 2048 || dim3 > 1024	)
 		{
 			throw std::ifstream::failure("out of range");
 		}
 
-		unsigned buffer_size = dim1 * dim2;
+		unsigned buffer_size = dim1 * dim2 * dim3;
 		unsigned short * buffer = new unsigned short[buffer_size];
 
 		if (!file.read(reinterpret_cast<char*>(buffer), buffer_size * sizeof(unsigned short)))
@@ -110,7 +110,8 @@ bool Yap::NiuMriImageReader::ReadNiuMriImageData()
 
 		Dimensions dimensions;
 		dimensions(DimensionReadout, 0U, dim1)
-			(DimensionPhaseEncoding, 0U, dim2);
+			(DimensionPhaseEncoding, 0U, dim2)
+			(DimensionSlice, 0U, dim3);
 
 		auto data = CreateData<unsigned short>(
 			reinterpret_cast<unsigned short*>(buffer), dimensions, nullptr, true);

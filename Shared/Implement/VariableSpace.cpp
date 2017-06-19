@@ -274,7 +274,7 @@ namespace _details
 			_id{ id }, 
 			_description{ description != nullptr ? description : L"" },
 			_type{ VariableStruct },
-			_enabled{true},
+			_enabled{false},
 			_members{ YapShared(new ContainerImpl<IVariable>) } {}
 
 		StructVariable(const StructVariable& rhs) :
@@ -303,6 +303,7 @@ namespace _details
 
 		virtual void Enable(bool enable)
 		{
+			_enabled = enable;
 			assert(_members);
 			auto iter = _members->GetIterator();
 			for (auto member = iter->GetFirst(); member != nullptr; member = iter->GetNext())
@@ -311,7 +312,7 @@ namespace _details
 			}
 		}
 
-		virtual bool IsEnabled() const override
+        virtual bool IsEnabled() const override
 		{
 			return _enabled;
 		}
