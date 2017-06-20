@@ -187,7 +187,7 @@ public:
 		_pointer = nullptr;
 	}
 
-	TYPE * get()
+	TYPE *& get()
 	{
 		return _pointer;
 	}
@@ -302,7 +302,7 @@ SmartPtr<TYPE> YapClone(TYPE * object)
 }; // namespace YAP
 
 #define IMPLEMENT_CLONE(class_name) private:\
-virtual class_name * Clone() const override {\
+virtual ISharedObject * Clone() const override {\
 	return new (std::nothrow) class_name(*this);}
 
 #define IMPLEMENT_LOCK_RELEASE private:\

@@ -160,23 +160,64 @@ namespace Yap
 
 	template<typename T> struct variable_type_id
 	{
-		static const int type;
-		static const int array_type;
+		static const int type_id;
+		static const int array_type_id;
 	};
 
-	template <> struct variable_type_id<bool> { 
-		static const int type = VariableBool; 
-		static const int array_type = VariableBoolArray; };
-	template <> struct variable_type_id<int> { 
-		static const int type = VariableInt; 
-		static const int array_type = VariableIntArray; };
-	template <> struct variable_type_id<double> { 
-		static const int type = VariableFloat;
-		static const int array_type = VariableFloatArray; };
-	template <> struct variable_type_id<const wchar_t *> { 
-		static const int type = VariableString; 
-		static const int array_type = VariableStringArray; };
+	template <> struct variable_type_id<bool>
+	{
+		static const int type_id = VariableBool;
+		static const int array_type_id = VariableBoolArray;
+	};
 
+	template <> struct variable_type_id<int>
+	{
+		static const int type_id = VariableInt;
+		static const int array_type_id = VariableIntArray;
+	};
+
+	template <> struct variable_type_id<double>
+	{
+		static const int type_id = VariableFloat;
+		static const int array_type_id = VariableFloatArray;
+	};
+
+	template <> struct variable_type_id<wchar_t *>
+	{
+		static const int type_id = VariableString;
+		static const int array_type_id = VariableStringArray;
+	};
+
+	template <> struct variable_type_id<wchar_t const *>
+	{
+		static const int type_id = VariableString;
+		static const int array_type_id = VariableStringArray;
+	};
+
+	template<typename T> struct variable_type
+	{
+		typedef const T const_type;
+	};
+
+	template <> struct variable_type<bool> 
+	{ 
+		typedef const bool const_type;
+	};
+
+	template <> struct variable_type<int> 
+	{ 
+		typedef const int const_type;
+	};
+
+	template <> struct variable_type<double> 
+	{ 
+		typedef const double const_type;
+	};
+
+	template <> struct variable_type<wchar_t *> 
+	{ 
+		typedef const wchar_t * const& const_type;
+	};
 
 	struct IVariable : public ISharedObject
 	{
@@ -187,24 +228,58 @@ namespace Yap
         virtual const wchar_t * GetTitle() const = 0;
 		virtual const wchar_t * GetDescription() const = 0;
         virtual void SetDescription(const wchar_t * description) = 0;
+
+		/** @brief Enable a variable. 
+			Normally, a disabled UI variable is disabled or even hidden in the UI, and 
+			a disabled spectrometer variable will not be transfered to the spectrometer.
+		*/
         virtual void Enable(bool enable) = 0;
+
+		/** @brief Check to see if the variable is enabled or not. 
+			See Enable().
+		*/
         virtual bool IsEnabled() const = 0;
+
+		/** @brief Store the value of this variable to a string, using JSON-like style.
+			@remark Examples of stored string:
+			# integer or float numerical literals;
+			# "strings literals";
+			# boolean: true / false
+			# array: [element0, element1, ..., element_n]
+			# struct: {"field_id_1" : value1, "field_id_2", value2, ..., "field_id_n", value_n}
+			
+			If the variable has a nested structure, the stored value string is also nested.
+		*/
+		virtual const wchar_t * ToString() = 0;
+
+		/** @brief Extract variable from the string.
+			@return Number of characters extracted from the string.
+			@remark This function need not consume all characters in the string, 
+			because this function may be called recursively from implement classes. 
+			The caller should check the return value if all characters need to be
+			consumed.			
+		*/
+		virtual size_t FromString(const wchar_t * value_string) = 0;
 	};
 
-	template <> struct variable_type_id <IVariable*> {
-		static const int type = VariableInvalid;
-		static const int array_type = VariableStructArray;
+	template <> struct variable_type <IVariable*> {
+		static const int type_id = VariableInvalid;
+		static const int array_type_id = VariableStructArray;
+		typedef const IVariable * const_type;
 	};
 
 	typedef IPtrContainer<IVariable> IVariableContainer;
 	typedef IVariableContainer::iterator IVariableIter;
 
 	// ================== new variable interfaces ========================
+
 	template<typename VALUE_TYPE>
 	struct ISimpleVariable : public IVariable
 	{
-		virtual VALUE_TYPE Get() const = 0;
-		virtual void Set(const VALUE_TYPE value) = 0;
+		typedef typename variable_type<VALUE_TYPE>::const_type const_type;
+
+		virtual const_type Get() const = 0;
+		virtual void Set(VALUE_TYPE value) = 0;
 	};
 
 	struct IArrayBase : public IVariable
@@ -213,13 +288,25 @@ namespace Yap
 		virtual void SetSize(size_t size) = 0;
 	};
 
-	template<typename VALUE_TYPE>
-	struct IArrayVariable : public IArrayBase
+	template <typename T>
+	struct IValueArrayVariable : public IArrayBase
 	{
-		virtual VALUE_TYPE * Elements() = 0;
+		typedef typename variable_type<T>::const_type const_type;
+		virtual const_type Get(size_t index) const = 0;
+		virtual void Set(size_t index, T value) = 0;
 	};
 
-	typedef struct IArrayVariable<SmartPtr<IVariable>> IStructArray;
+	template <typename T>
+	struct IElementReference
+	{
+		virtual T& Element(size_t index) = 0;
+	};
+
+	template <typename T>
+	struct IRawArray
+	{
+		virtual T * Data() = 0;
+	};
 
 	struct IStructVariable : public IVariable
 	{
@@ -227,6 +314,9 @@ namespace Yap
 	};
 
     typedef IPtrContainer<IVariable> IStructValue;
+
+	typedef IValueArrayVariable<IStructVariable*> IStructArray;
+
 	// ================== end new variable interfaces ====================
 
 	struct IPort : public ISharedObject
@@ -241,7 +331,7 @@ namespace Yap
 
 	struct IProcessor : public ISharedObject
 	{
-		virtual IProcessor * Clone() const override = 0;
+		virtual ISharedObject * Clone() const override = 0;
 		virtual const wchar_t * GetClassId() const = 0;
 		virtual void SetClassId(const wchar_t * id) = 0;
 
@@ -251,22 +341,24 @@ namespace Yap
 		virtual IPortContainer * Inputs() = 0;
 		virtual IPortContainer * Outputs() = 0;
 
-		/// 获得属性访问接口。
+		/// Return all properties of the processor.
 		virtual IVariableContainer * GetProperties() = 0;
 
-		/// 将指定名称的属性与参数空间的参数相关联。
+		/// Map a global variable to a processor property.
 		virtual bool MapProperty(const wchar_t * property_id, const wchar_t * variable_id,
 			bool input, bool output) = 0;
 
-		/// 接口用户调用这个函数来通知模块利用参数空间中的参数更新属性。
+		/// Set the global variable space. 
 		virtual bool SetGlobalVariables(IVariableContainer * params) = 0;
 
-		/// 将指定处理模块的输入端口链接到当前模块指定的输出端口上。
+		/// Line the output port to an input port of another processor.
 		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) = 0;
 
-		/// 向当前处理模块馈送数据。
+		/// Feed data into the processor via the specified port.
 		virtual bool Input(const wchar_t * name, IData * data) = 0;
 
+		/** @brief Specifies the module that hosts this processor. @p
+		The module should be locked till the processor is no longer used. */
 		virtual void SetModule(ISharedObject * module) = 0;
 	};
 

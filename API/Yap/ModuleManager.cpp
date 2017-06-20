@@ -159,7 +159,7 @@ Yap::IProcessor * Yap::ImportedProcessorManager::CreateProcessor(const wchar_t *
 	if (processor == nullptr)
 		return nullptr;
 
-	auto new_processor = processor->Clone();
+	auto new_processor = dynamic_cast<IProcessor*>(processor->Clone());
 	if (new_processor != nullptr)
 	{
 		new_processor->SetInstanceId(instance_id);
@@ -252,7 +252,7 @@ bool Yap::Module::Load(const wchar_t * plugin_path, IProcessorContainer& importe
 	auto module_name = GetModuleNameFromPath(plugin_path);
 	for (auto processor = source_iter->GetFirst(); processor != nullptr; processor = source_iter->GetNext())
 	{
-		auto imported_processor = processor->Clone();
+		auto imported_processor = dynamic_cast<IProcessor*>(processor->Clone());
 		imported_processor->SetModule(this);
 		imported_processors.Add((module_name + L"::" + imported_processor->GetClassId()).c_str(),
 			imported_processor);

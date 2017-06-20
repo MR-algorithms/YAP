@@ -16,8 +16,8 @@ NiumagFidWriter::NiumagFidWriter(void) :
 {
 	LOG_TRACE(L"NiumagFidWriter constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
-	AddProperty<const wchar_t *>(L"ExportFolder", L"", L"Set folder used to write FID.");
-	AddProperty<const wchar_t *>(L"FileName", L"", L"Set file name.");
+	AddProperty<wchar_t *>(L"ExportFolder", L"", L"Set folder used to write FID.");
+	AddProperty<wchar_t *>(L"FileName", L"", L"Set file name.");
 
 }
 

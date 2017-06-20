@@ -39,7 +39,7 @@ NiumagImgReader::NiumagImgReader():
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
 
-	AddProperty<const wchar_t *>(L"DataPath", L"",  L"数据文件夹和文件名。");
+	AddProperty<wchar_t *>(L"DataPath", L"",  L"数据文件夹和文件名。");
 }
 
 Yap::NiumagImgReader::NiumagImgReader(const NiumagImgReader& rhs):

@@ -63,7 +63,7 @@ namespace Yap {
 				}
 			}
 			else {
-				auto variable = GetVariable(id, variable_type_id<T>::type);
+				auto variable = GetVariable(id, variable_type_id<T>::type_id);
 				assert(variable != nullptr && "If parameter not found, GetVariable() should throw an PropertyException.");
 				auto simple_variable = dynamic_cast<ISimpleVariable<T>*>(variable);
 				assert(simple_variable != nullptr);
@@ -85,7 +85,7 @@ namespace Yap {
 				}
 			}
 			else {
-				auto variable = GetVariable(id, variable_type_id<T>::type);
+				auto variable = GetVariable(id, variable_type_id<T>::type_id);
 				assert(variable != nullptr && "If parameter not found, GetProperty() should throw an PropertyException.");
 				auto simple_variable = dynamic_cast<ISimpleVariable<T>*>(variable);
 				assert(simple_variable != nullptr);
@@ -96,28 +96,18 @@ namespace Yap {
 		bool ResizeArray(const wchar_t * id, size_t size);
 
 		template<typename T>
-		T* GetArray(const wchar_t * id) {
-			auto array = GetVariable(id, variable_type_id<T>::array_type);
-			if (array == nullptr)
-				return nullptr;
-
-			assert(array->GetType() == variable_type_id<T>::array_type);
-			auto array_variable = dynamic_cast<IArrayVariable<T>*>(array);
-			assert(array_variable != nullptr);
-			return array_variable->Elements();
-		}
-
-		template<typename T>
 		std::pair<T*, size_t> GetArrayWithSize(const wchar_t * id)
 		{
-			auto array = GetVariable(id, variable_type_id<T>::array_type);
+			auto array = GetVariable(id, variable_type_id<T>::array_type_id);
 			if (array == nullptr)
 				return std::make_pair(nullptr, 0);
 
-			assert(array->GetType() == variable_type_id<T>::array_type);
-			auto array_variable = dynamic_cast<IArrayVariable<T>*>(array);
+			assert(array->GetType() == variable_type<T>::array_type_id);
+			auto array_variable = dynamic_cast<IValueArrayVariable<T>*>(array);
 			assert(array_variable != nullptr);
-			return std::make_pair(array_variable->Elements(), array_variable->GetSize());
+			auto raw_array = dynamic_cast<IRawArray<T>*>(array);
+			assert(raw_array != nullptr);
+			return std::make_pair(raw_array->Data(), array_variable->GetSize());
 		}
 
 		static std::shared_ptr<VariableSpace> Load(const wchar_t * path);
@@ -142,19 +132,22 @@ namespace Yap {
 			if (right_square_pos == std::wstring::npos)
 				throw VariableException(id.c_str(), VariableException::VariableNotFound);
 
-			auto variable = GetVariable(id.substr(0, left_square_pos).c_str(), variable_type_id<T>::array_type);
+			auto variable = GetVariable(id.substr(0, left_square_pos).c_str(), variable_type_id<T>::array_type_id);
 			if (variable == nullptr)
 				throw VariableException(id.c_str(), VariableException::VariableNotFound);
 
 			auto index = _wtoi(id.substr(left_square_pos + 1, right_square_pos - left_square_pos - 1).c_str());
 
-			auto array_variable = dynamic_cast<IArrayVariable<T>*>(variable);
+			auto array_variable = dynamic_cast<IValueArrayVariable<T>*>(variable);
 			assert(array_variable != nullptr);
 
 			if (index < 0 || index >= int(array_variable->GetSize()))
 				throw VariableException(id.c_str(), VariableException::OutOfRange);
 
-			return array_variable->Elements()[index];
+			auto element_reference = dynamic_cast<IElementReference<T>*>(variable);
+			assert(element_reference != nullptr);
+
+			return element_reference->Element(index);
 		}
 
 		bool InitTypes();

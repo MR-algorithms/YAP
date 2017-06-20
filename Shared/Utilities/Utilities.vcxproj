@@ -155,6 +155,7 @@
     <ClInclude Include="Markup.h" />
     <ClInclude Include="scrrun.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StringHelper.h" />
     <ClInclude Include="xml.h" />
   </ItemGroup>
   <ItemGroup>

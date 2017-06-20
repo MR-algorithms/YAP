@@ -16,8 +16,8 @@ NiuMriImageWriter::NiuMriImageWriter(void) :
 {
 	LOG_TRACE(L"NiuMriImageWriter constructor called.", L"BasicRecon");
 	AddInput(L"Input", 3, DataTypeUnsignedShort);
-	AddProperty<const wchar_t *>(L"ExportFolder", L"", L"Set folder used to write images.");
-	AddProperty<const wchar_t *>(L"FileName", L"", L"Set file name.");
+	AddProperty<wchar_t *>(L"ExportFolder", L"", L"Set folder used to write images.");
+	AddProperty<wchar_t *>(L"FileName", L"", L"Set file name.");
 }
 
 NiuMriImageWriter::NiuMriImageWriter(const NiuMriImageWriter& rhs) :

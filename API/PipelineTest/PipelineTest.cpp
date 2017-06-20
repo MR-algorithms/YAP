@@ -123,13 +123,13 @@ bool VdfParserTest()
 	variable_manager->Set<double>(L"VDL1[0]", 1.0);
 	variable_manager->Set<double>(L"VDL1[1]", 2.0);
 	auto v6 = variable_manager->Get<double>(L"VDL1[1]");
-	double * vdl1 = variable_manager->GetArray<double>(L"VDL1");
+	auto vdl1 = variable_manager->GetArrayWithSize<double>(L"VDL1");
 
 	variable_manager->ResizeArray(L"GradMatrixList", 7);
 	variable_manager->Set<double>(L"GradMatrixList[1].GReadX", 1.00);
 	variable_manager->Set<double>(L"GradMatrixList[2].GReadX", 2.00);
 	auto v7 = variable_manager->Get<double>(L"GradMatrixList[1].GReadX");
-	double * gml = variable_manager->GetArray<double>(L"GradMatrixList");
+	auto gml = variable_manager->GetArrayWithSize<double>(L"GradMatrixList");
 
 	// 错误的参数输入测试
 //	variable_manager->Set<int>(L"abc", 4); // 无此变量名

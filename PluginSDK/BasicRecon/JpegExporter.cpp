@@ -135,7 +135,7 @@ JpegExporter::JpegExporter() :
 	LOG_TRACE(L"JepgExporter constructor called.", L"BasicRecon");
 	_impl = shared_ptr<JpegExporterImp>(new JpegExporterImp);
 	AddInput(L"Input", 2, DataTypeFloat | DataTypeUnsignedShort);
-	AddProperty<const wchar_t *>(L"ExportFolder", L"", L"Set folder used to hold exported images.");
+	AddProperty<wchar_t *>(L"ExportFolder", L"", L"Set folder used to hold exported images.");
 }
 
 JpegExporter::JpegExporter(const JpegExporter& rhs)

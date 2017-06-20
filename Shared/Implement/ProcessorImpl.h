@@ -121,7 +121,7 @@ namespace Yap
 		template <typename T>
 		bool AddProperty(const wchar_t * property_id, T value, const wchar_t * description)
 		{
-			if (_properties->Add(variable_type_id<T>::type, property_id, description))
+			if (_properties->Add(variable_type_id<T>::type_id, property_id, description))
 			{
 				_properties->Set<T>(property_id, value);
 				return true;
