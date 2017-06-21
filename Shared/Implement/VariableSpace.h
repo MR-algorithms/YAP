@@ -50,19 +50,17 @@ namespace Yap {
 		bool IsEnabled(const wchar_t * id) const;
 
 		template <typename T>
-		T Get(const wchar_t * id) {
+		T Get(const wchar_t * id) 
+		{
 			std::wstring variable_id{ id };
 
-			if (variable_id[variable_id.size() - 1] == L']') {
-				auto left_square_pos = variable_id.find_last_of(L'[');
-                if (left_square_pos != std::wstring::npos) {
-					return Element<T>(variable_id);
-				}
-				else {
-					throw VariableException(id, VariableException::InvalidId);
-				}
+			if (variable_id[variable_id.size() - 1] == L']')
+			{
+				auto element = Element<T>(variable_id);
+				return element.first->Get(element.second);
 			}
-			else {
+			else
+			{
 				auto variable = GetVariable(id, variable_type_id<T>::type_id);
 				assert(variable != nullptr && "If parameter not found, GetVariable() should throw an PropertyException.");
 				auto simple_variable = dynamic_cast<ISimpleVariable<T>*>(variable);
@@ -72,19 +70,17 @@ namespace Yap {
 		}
 
 		template<typename T>
-		void Set(const wchar_t * id, T value) {
+		void Set(const wchar_t * id, T value) 
+		{
 			std::wstring variable_id{ id };
 
-			if (variable_id[variable_id.size() - 1] == L']') {
-				auto left_square_pos = variable_id.find_last_of(L'[');
-				if (left_square_pos != std::wstring::npos) {
-					Element<T>(variable_id) = value;
-				}
-				else {
-					throw VariableException(id, VariableException::InvalidId);
-				}
+			if (variable_id[variable_id.size() - 1] == L']') 
+			{
+				auto element = Element<T>(variable_id);
+				element.first->Set(element.second, value);
 			}
-			else {
+			else
+			{
 				auto variable = GetVariable(id, variable_type_id<T>::type_id);
 				assert(variable != nullptr && "If parameter not found, GetProperty() should throw an PropertyException.");
 				auto simple_variable = dynamic_cast<ISimpleVariable<T>*>(variable);
@@ -120,10 +116,14 @@ namespace Yap {
         bool AddType(const wchar_t * type_id, IPtrContainer<IVariable> * variables);
 
 		IVariable * GetVariable(const wchar_t * name, int expected_type = VariableAllTypes);
+//		template <typename T> T* GetVariable(const wchar_t * id)
+//		{
+//		}
+
 	protected:
 
 		template <typename T>
-		T & Element(const std::wstring& id)
+		std::pair<IValueArrayVariable<T>*, size_t> Element(const std::wstring& id)
 		{
 			auto left_square_pos = id.find_last_of(L'[');
 			assert(left_square_pos != std::wstring::npos);
@@ -144,10 +144,7 @@ namespace Yap {
 			if (index < 0 || index >= int(array_variable->GetSize()))
 				throw VariableException(id.c_str(), VariableException::OutOfRange);
 
-			auto element_reference = dynamic_cast<IElementReference<T>*>(variable);
-			assert(element_reference != nullptr);
-
-			return element_reference->Element(index);
+			return std::make_pair(array_variable, index);
 		}
 
 		bool InitTypes();

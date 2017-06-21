@@ -17,9 +17,9 @@ NiumagFidWriter::NiumagFidWriter(void) :
 	LOG_TRACE(L"NiumagFidWriter constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
-	AddProperty<wchar_t *>(L"ExportFolder", L"", L"Set folder used to write FID.");
-	AddProperty<wchar_t *>(L"FileName", L"", L"Set file name.");
-	AddProperty<wchar_t *>(L"SavePath", L"", L"Full Path (folder and file name) used to write FID");
+	AddProperty<const wchar_t * const>(L"ExportFolder", L"", L"Set folder used to write FID.");
+	AddProperty<const wchar_t * const>(L"FileName", L"", L"Set file name.");
+	AddProperty<const wchar_t * const>(L"SavePath", L"", L"Full Path (folder and file name) used to write FID");
 }
 
 NiumagFidWriter::NiumagFidWriter(const NiumagFidWriter& rhs) :
@@ -37,11 +37,11 @@ bool Yap::NiumagFidWriter::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && (GetDataArray<complex<float>>(data) != nullptr));
 
-	auto file_path = GetProperty<const wchar_t *>(L"SavePath");
+	auto file_path = GetProperty<const wchar_t * const>(L"SavePath");
 	if (!file_path)
 	{
-		auto output_folder = GetProperty<const wchar_t*>(L"ExportFolder");
-		auto output_name = GetProperty<const wchar_t*>(L"FileName");
+		auto output_folder = GetProperty<const wchar_t * const>(L"ExportFolder");
+		auto output_name = GetProperty<const wchar_t * const>(L"FileName");
 		file_path = GetFilePath(output_folder, output_name).c_str();
 	}
 

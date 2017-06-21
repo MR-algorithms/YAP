@@ -182,6 +182,12 @@ namespace Yap
 		static const int array_type_id = VariableFloatArray;
 	};
 
+	template <> struct variable_type_id<const wchar_t * const>
+	{
+		static const int type_id = VariableString;
+		static const int array_type_id = VariableStringArray;
+	};
+
 	template <> struct variable_type_id<wchar_t *>
 	{
 		static const int type_id = VariableString;
@@ -192,31 +198,6 @@ namespace Yap
 	{
 		static const int type_id = VariableString;
 		static const int array_type_id = VariableStringArray;
-	};
-
-	template<typename T> struct variable_type
-	{
-		typedef const T const_type;
-	};
-
-	template <> struct variable_type<bool> 
-	{ 
-		typedef const bool const_type;
-	};
-
-	template <> struct variable_type<int> 
-	{ 
-		typedef const int const_type;
-	};
-
-	template <> struct variable_type<double> 
-	{ 
-		typedef const double const_type;
-	};
-
-	template <> struct variable_type<wchar_t *> 
-	{ 
-		typedef const wchar_t * const& const_type;
 	};
 
 	struct IVariable : public ISharedObject
@@ -250,7 +231,7 @@ namespace Yap
 			
 			If the variable has a nested structure, the stored value string is also nested.
 		*/
-		virtual const wchar_t * ToString() = 0;
+		virtual const wchar_t * const ToString() = 0;
 
 		/** @brief Extract variable from the string.
 			@return Number of characters extracted from the string.
@@ -262,10 +243,9 @@ namespace Yap
 		virtual size_t FromString(const wchar_t * value_string) = 0;
 	};
 
-	template <> struct variable_type <IVariable*> {
+	template <> struct variable_type_id <IVariable*> {
 		static const int type_id = VariableInvalid;
 		static const int array_type_id = VariableStructArray;
-		typedef const IVariable * const_type;
 	};
 
 	typedef IPtrContainer<IVariable> IVariableContainer;
@@ -276,9 +256,7 @@ namespace Yap
 	template<typename VALUE_TYPE>
 	struct ISimpleVariable : public IVariable
 	{
-		typedef typename variable_type<VALUE_TYPE>::const_type const_type;
-
-		virtual const_type Get() const = 0;
+		virtual VALUE_TYPE Get() const = 0;
 		virtual void Set(VALUE_TYPE value) = 0;
 	};
 
@@ -291,8 +269,7 @@ namespace Yap
 	template <typename T>
 	struct IValueArrayVariable : public IArrayBase
 	{
-		typedef typename variable_type<T>::const_type const_type;
-		virtual const_type Get(size_t index) const = 0;
+		virtual T Get(size_t index) const = 0;
 		virtual void Set(size_t index, T value) = 0;
 	};
 

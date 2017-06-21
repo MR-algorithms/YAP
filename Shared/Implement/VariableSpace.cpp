@@ -49,7 +49,7 @@ namespace _details
 		typedef std::vector<bool> vector_type;
 	};
 
-	template <> struct variable_store_type<wchar_t *> 
+	template <> struct variable_store_type<const wchar_t * const> 
 	{
 		typedef std::wstring type;
 		typedef std::vector<std::wstring> vector_type;
@@ -65,7 +65,6 @@ namespace _details
 	class SimpleVariable : public ISimpleVariable<TYPE>
 	{
 		typedef typename variable_store_type<TYPE>::type type;
-		typedef typename variable_type<TYPE>::const_type const_type;
 
 		IMPLEMENT_SHARED(SimpleVariable<TYPE>)
 		IMPLEMENT_VARIABLE
@@ -95,7 +94,7 @@ namespace _details
 		{
 		}
 
-		virtual const_type Get() const override 
+		virtual TYPE Get() const override 
 		{
 			return _value;
 		}
@@ -113,7 +112,7 @@ namespace _details
 			return static_cast<size_t>(input.tellg() - begin);
 		}
 
-		virtual const wchar_t * ToString() override
+		virtual const wchar_t * const ToString() override
 		{
 			std::wostringstream output;
 			output << _value;
@@ -129,19 +128,19 @@ namespace _details
 
 	// Begin specialization for string type.
  	template <>
-	SimpleVariable<wchar_t*>::const_type SimpleVariable<wchar_t *>::Get() const
+	const wchar_t * const SimpleVariable<const wchar_t * const>::Get() const
 	{
 		return _value.c_str();
 	}
 
 	template <>
-	void SimpleVariable<wchar_t *>::Set(wchar_t * value) 
+	void SimpleVariable<const wchar_t * const>::Set(const wchar_t * const value) 
 	{
 		_value = value;
 	}
 
 	template <>
-	const wchar_t * SimpleVariable<wchar_t*>::ToString() 
+	const wchar_t * const SimpleVariable<const wchar_t * const>::ToString() 
 	{
 		_value_string = L'\"';
 		_value_string += _value + L'\"';
@@ -149,7 +148,7 @@ namespace _details
 	}
 
 	template <>
-	size_t SimpleVariable<wchar_t *>::FromString(const wchar_t * value_string)
+	size_t SimpleVariable<const wchar_t * const>::FromString(const wchar_t * value_string)
 	{
 		assert(value_string != nullptr);
 		_value_string = value_string;
@@ -223,7 +222,7 @@ namespace _details
 			_elements.resize(size);
 		}
 
-		virtual const_type Get(size_t index) const override
+		virtual T Get(size_t index) const override
 		{
 			assert(index < _elements.size());
 			return _elements[index];
@@ -235,7 +234,7 @@ namespace _details
 			_elements[index] = value;
 		}
 
-		virtual const wchar_t * ToString() override
+		virtual const wchar_t * const ToString() override
 		{
 			_value_string = L'[';
 			bool first = true;
@@ -347,25 +346,25 @@ namespace _details
 
 	// Specialization for ValueArrayVariable<wchar_t *>.
 
-	template <>
-	ValueArrayVariable<wchar_t*>::const_type ValueArrayVariable<wchar_t *>::Get(size_t index) const
+	template <> 
+	const wchar_t * const ValueArrayVariable<const wchar_t * const>::Get(size_t index) const
 	{
 		assert(index < _elements.size());
 		return _elements[index].c_str();
 	}
 
 	template <>
-	void ValueArrayVariable<wchar_t *>::Set(size_t index, wchar_t * value)
+	void ValueArrayVariable<const wchar_t * const>::Set(size_t index, const wchar_t * const value)
 	{
 		assert(index < _elements.size());
 		_elements[index] = value;
 	}
 
 	template <>
-	ValueArrayVariable<IVariable*>::const_type ValueArrayVariable<IVariable *>::Get(size_t index) const
+	IVariable * ValueArrayVariable<IVariable *>::Get(size_t index) const
 	{
 		assert(index < _elements.size());
-		return _elements[index].get();
+		return (const_cast<ValueArrayVariable<IVariable*>*>(this))->_elements[index].get();
 	}
 
 	template <>
@@ -531,7 +530,7 @@ namespace _details
 			return _enabled;
 		}
 
-		virtual const wchar_t * ToString()  
+		virtual const wchar_t * const ToString()  
 		{
 			assert(_members);
 			_value_string = L'{';
@@ -685,13 +684,13 @@ bool VariableSpace::InitTypes()
 {
     _types.emplace(L"int", YapShared(new SimpleVariable<int>(L"int", nullptr)));
     _types.emplace(L"float", YapShared(new SimpleVariable<double>(L"float", nullptr)));
-    _types.emplace(L"string", YapShared(new SimpleVariable<wchar_t*>(L"string", nullptr)));
+    _types.emplace(L"string", YapShared(new SimpleVariable<const wchar_t * const>(L"string", nullptr)));
     _types.emplace(L"bool", YapShared(new SimpleVariable<bool>(L"bool", nullptr)));
 	
 	_types.emplace(L"array<int>", YapShared(new RawArrayVariable<int>(1, 0, L"array<int>", nullptr)));
 	_types.emplace(L"array<float>", YapShared(new RawArrayVariable<double>(1, 0.0, L"array<float>", nullptr)));
 	_types.emplace(L"array<bool>", YapShared(new ValueArrayVariable<bool>(1, false, L"array<bool>", nullptr)));
-    _types.emplace(L"array<string>", YapShared(new ValueArrayVariable<wchar_t*>(1, const_cast<wchar_t*>(L""), L"array<string>", nullptr)));
+    _types.emplace(L"array<string>", YapShared(new ValueArrayVariable<const wchar_t * const>(1, L"", L"array<string>", nullptr)));
 
 	return true;
 }

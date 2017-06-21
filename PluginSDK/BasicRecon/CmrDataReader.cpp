@@ -37,7 +37,7 @@ CmrDataReader::CmrDataReader(void) :
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
-	AddProperty<const wchar_t*> (L"DataPath", L"", L"包含原始数据文件的文件夹。");
+	AddProperty<const wchar_t * const> (L"DataPath", L"", L"包含原始数据文件的文件夹。");
 	AddProperty<int>(L"ChannelCount", 4, L"通道数");
 	AddProperty<int>(L"ChannelSwitch", 0xf, L"通道开关指示值"); // 00001111, select all four channels.
 	AddProperty<int>(L"GroupCount", 1, L"分组扫描数");
@@ -80,7 +80,7 @@ bool CmrDataReader::Input(const wchar_t * name, IData * data)
 bool CmrDataReader::ReadRawData(unsigned int channel_index)
 {
 	std::wostringstream output;
-	output << GetProperty<const wchar_t*>(L"DataPath") << L"\\ChannelData"
+	output << GetProperty<const wchar_t * const>(L"DataPath") << L"\\ChannelData"
 		<< setfill(L'0') << setw(2) << channel_index + 1 << L".fid";
 
 	std::vector<float*> channel_data_buffer;
