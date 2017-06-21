@@ -131,6 +131,7 @@ namespace Yap
 			if (_own_memory)
 			{
 				delete []_data;
+				_data = nullptr;
 			}
 		}
 

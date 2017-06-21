@@ -102,7 +102,7 @@ namespace Yap {
 			if (array == nullptr)
 				return std::make_pair(nullptr, 0);
 
-			assert(array->GetType() == variable_type<T>::array_type_id);
+			assert(array->GetType() == variable_type_id<T>::array_type_id);
 			auto array_variable = dynamic_cast<IValueArrayVariable<T>*>(array);
 			assert(array_variable != nullptr);
 			auto raw_array = dynamic_cast<IRawArray<T>*>(array);

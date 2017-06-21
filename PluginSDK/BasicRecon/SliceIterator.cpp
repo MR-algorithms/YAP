@@ -50,14 +50,14 @@ bool SliceIterator::Input(const wchar_t * name, IData * data)
 		if (helper.GetDataType() == DataTypeComplexFloat)
 		{
 			auto output = CreateData<complex<float>>(
-				Yap::GetDataArray<complex<float>>(data) + i * slice_block_size, slice_data_dimensions);
+				Yap::GetDataArray<complex<float>>(data) + i * slice_block_size, slice_data_dimensions, data);
 
 			Feed(L"Output", output.get());
 		}
 		else
 		{
 			auto output = CreateData<unsigned short>(
-				Yap::GetDataArray<unsigned short>(data) + i * slice_block_size, slice_data_dimensions);
+				Yap::GetDataArray<unsigned short>(data) + i * slice_block_size, slice_data_dimensions, data);
 
 			Feed(L"Output", output.get());
 		}

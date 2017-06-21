@@ -184,7 +184,7 @@ namespace _details
 	public:
 		ValueArrayVariable(size_t size, T value, const wchar_t * id, const wchar_t * title = nullptr, const wchar_t * description = nullptr) :
 			_id{ id },
-			_title{ title },
+                _title{ title != nullptr ? description : L"" },
 			_description{ description != nullptr ? description : L"" },
 			_type{ variable_type_id<T>::array_type_id }
 		{
@@ -475,7 +475,7 @@ namespace _details
 	public:
 		StructVariable(const wchar_t * id, const wchar_t * title = nullptr, const wchar_t * description = nullptr) :
 			_id{ id }, 
-			_title{title},
+			_title{title != nullptr ? title : L""},
 			_description{ description != nullptr ? description : L"" },
 			_type{ VariableStruct },
 			_enabled{false},
@@ -504,7 +504,7 @@ namespace _details
 		StructVariable(IPtrContainer<IVariable> * variables, const wchar_t * id, const wchar_t * title = nullptr, const wchar_t * description = nullptr) :
 			_members{ YapShared(variables) },
 			_id{ id },
-			_title{title},
+			_title{ title != nullptr ? title : L"" },
 			_description{ description != nullptr ? description : L"" },
 			_type{ VariableStruct } 
 		{
@@ -691,7 +691,7 @@ bool VariableSpace::InitTypes()
 	_types.emplace(L"array<int>", YapShared(new RawArrayVariable<int>(1, 0, L"array<int>", nullptr)));
 	_types.emplace(L"array<float>", YapShared(new RawArrayVariable<double>(1, 0.0, L"array<float>", nullptr)));
 	_types.emplace(L"array<bool>", YapShared(new ValueArrayVariable<bool>(1, false, L"array<bool>", nullptr)));
-	_types.emplace(L"array<string>", YapShared(new ValueArrayVariable<wchar_t*>(1, L"", L"array<string>", nullptr)));
+    _types.emplace(L"array<string>", YapShared(new ValueArrayVariable<wchar_t*>(1, const_cast<wchar_t*>(L""), L"array<string>", nullptr)));
 
 	return true;
 }
@@ -844,8 +844,8 @@ IVariable * VariableSpace::GetVariable(IVariableContainer * variables,
 	else
 	{
 		auto variable = variables->Find(id);
-		if (variable == nullptr)
-			throw VariableException(id, VariableException::VariableNotFound);
+//		if (variable == nullptr)
+//			throw VariableException(id, VariableException::VariableNotFound);
 
 		if (type != VariableAllTypes && ((variable->GetType() | type) != type))
 			throw VariableException(id, VariableException::TypeNotMatch);
