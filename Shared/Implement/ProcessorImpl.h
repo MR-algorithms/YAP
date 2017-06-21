@@ -53,6 +53,10 @@ namespace Yap
 		{
 			try
 			{
+				if (!own_data)
+				{
+					assert(parent != nullptr);
+				}
 				return YapShared(new DataObject<T>(data, dimensions, parent, own_data, _module.get()));
 			}
 			catch (std::bad_alloc&)
@@ -67,6 +71,10 @@ namespace Yap
 		{
 			try
 			{
+				if (!own_data)
+				{
+					assert(parent != nullptr);
+				}
 				return YapShared(new DataObject<T>(data, dimensions, parent, own_data, _module.get()));
 			}
 			catch (std::bad_alloc&)
