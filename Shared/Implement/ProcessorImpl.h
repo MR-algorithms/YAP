@@ -12,6 +12,7 @@
 #include "Implement/ContainerImpl.h"
 #include "VariableSpace.h"
 #include "Interface/smartptr.h"
+#include <type_traits>
 
 namespace Yap
 {

@@ -9,6 +9,7 @@
 
 #include <complex>
 #include "smartptr.h"
+#include <type_traits>
 
 namespace Yap
 {
@@ -28,7 +29,9 @@ namespace Yap
 
 	template<typename T> struct data_type_id
 	{
-		static const int type;
+		// static const int type;
+		// Don't define the above member so that DataObject can only be instantiated with
+		// the following types:
 	};
 
 	template <> struct data_type_id<double> { static const int type = DataTypeDouble; };
@@ -88,7 +91,7 @@ namespace Yap
 			OUT unsigned int& start_index, OUT unsigned int& length) = 0;
 	};
 
-	struct IGeometry
+	struct IGeometry : public ISharedObject
 	{
 		virtual void GetSpacing(double& x, double& y, double& z) = 0;
 		virtual void GetRowVector(double& x, double& y, double& z) = 0;
@@ -117,6 +120,7 @@ namespace Yap
 
 	template <typename T> struct IDataArray : public IData
 	{
+		static_assert(data_type_id<T>::type != 0, "You have to use standard types.");
 		/// 返回数组的起始地址。
 		virtual T * GetData() = 0;
 	};
@@ -269,6 +273,13 @@ namespace Yap
 	template <typename T>
 	struct IValueArrayVariable : public IArrayBase
 	{
+		static_assert(std::is_same<T, int>::value ||
+			std::is_same<T, double>::value ||
+			std::is_same<T, bool>::value ||
+			std::is_same<T, const wchar_t * const>::value ||
+			std::is_base_of<IVariable, typename std::remove_pointer<T>::type>::value,
+			"You can only use one of the following types: int, double, bool, const wchar_t * const, IVariable*");
+
 		virtual T Get(size_t index) const = 0;
 		virtual void Set(size_t index, T value) = 0;
 	};
@@ -276,12 +287,20 @@ namespace Yap
 	template <typename T>
 	struct IElementReference
 	{
+		static_assert(std::is_same<T, int>::value ||
+			std::is_same<T, double>::value ||
+			std::is_base_of<IVariable, typename std::remove_pointer<T>::type>::value,
+			"You can only use one of the following types: int, double, IVariable*");
+
 		virtual T& Element(size_t index) = 0;
 	};
 
 	template <typename T>
 	struct IRawArray
 	{
+		static_assert(std::is_same<T, int>::value ||
+			std::is_same<T, double>::value,
+			"You can only use one of the following types: int, double");
 		virtual T * Data() = 0;
 	};
 

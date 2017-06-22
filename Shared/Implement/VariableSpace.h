@@ -3,6 +3,7 @@
 #include "interface/smartptr.h"
 #include <string>
 #include <map>
+#include <type_traits>
 
 namespace Yap {
 
@@ -52,6 +53,12 @@ namespace Yap {
 		template <typename T>
 		T Get(const wchar_t * id) 
 		{
+			static_assert(std::is_same<T, int>::value || 
+				std::is_same<T, double>::value || 
+				std::is_same<T, bool>::value || 
+				std::is_same<T, const wchar_t * const>::value,
+				"You can only use one of the following types: int, double, bool, const wchar_t * const");
+
 			std::wstring variable_id{ id };
 
 			if (variable_id[variable_id.size() - 1] == L']')
@@ -72,6 +79,12 @@ namespace Yap {
 		template<typename T>
 		void Set(const wchar_t * id, T value) 
 		{
+			static_assert(std::is_same<T, int>::value ||
+				std::is_same<T, double>::value ||
+				std::is_same<T, bool>::value ||
+				std::is_same<T, const wchar_t * const>::value,
+				"You can only use one of the following types: int, double, bool, const wchar_t * const");
+
 			std::wstring variable_id{ id };
 
 			if (variable_id[variable_id.size() - 1] == L']') 
@@ -125,6 +138,13 @@ namespace Yap {
 		template <typename T>
 		std::pair<IValueArrayVariable<T>*, size_t> Element(const std::wstring& id)
 		{
+			static_assert(std::is_same<T, int>::value ||
+				std::is_same<T, double>::value ||
+				std::is_same<T, bool>::value ||
+				std::is_same<T, const wchar_t * const>::value ||
+				std::is_same<T, IVariable* >::value,
+				"You can only use one of the following types: int, double, bool, const wchar_t * const");
+
 			auto left_square_pos = id.find_last_of(L'[');
 			assert(left_square_pos != std::wstring::npos);
 

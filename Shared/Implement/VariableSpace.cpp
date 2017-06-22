@@ -64,6 +64,12 @@ namespace _details
 	template <typename TYPE>
 	class SimpleVariable : public ISimpleVariable<TYPE>
 	{
+		static_assert(std::is_same<TYPE, int>::value ||
+			std::is_same<TYPE, double>::value ||
+			std::is_same<TYPE, bool>::value ||
+			std::is_same<TYPE, const wchar_t * const>::value,
+			"You can only use one of the following types: int, double, bool, const wchar_t * const");
+
 		typedef typename variable_store_type<TYPE>::type type;
 
 		IMPLEMENT_SHARED(SimpleVariable<TYPE>)
@@ -174,6 +180,13 @@ namespace _details
 	template <typename T>
 	class ValueArrayVariable : public virtual IValueArrayVariable<T>
 	{
+		static_assert(std::is_same<T, int>::value ||
+			std::is_same<T, double>::value ||
+			std::is_same<T, bool>::value ||
+			std::is_same<T, const wchar_t * const>::value ||
+			std::is_same<T, IVariable*>::value,
+			"You can only use one of the following types: int, double, bool, const wchar_t * const");
+
 		typedef typename variable_store_type<T>::vector_type vector_type;
 		typedef typename variable_store_type<T>::type type;
 

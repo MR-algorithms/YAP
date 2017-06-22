@@ -116,8 +116,8 @@ bool VdfParserTest()
 	variable_manager->Set<int>(L"TD", 256);
 	auto v4 = variable_manager->Get<int>(L"TD");
 
-	variable_manager->Set<const wchar_t*>(L"Sequence", L"FID1");
-	auto v5 = variable_manager->Get<const wchar_t*>(L"Sequence");
+	variable_manager->Set<const wchar_t* const>(L"Sequence", L"FID1");
+	auto v5 = variable_manager->Get<const wchar_t * const>(L"Sequence");
 
 	variable_manager->ResizeArray(L"VDL1", 5);
 	variable_manager->Set<double>(L"VDL1[0]", 1.0);
