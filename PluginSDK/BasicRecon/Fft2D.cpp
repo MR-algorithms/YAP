@@ -27,7 +27,12 @@ Fft2D::Fft2D():
 
 
 Fft2D::Fft2D(const Fft2D& rhs)
-	:ProcessorImpl(rhs)
+	:ProcessorImpl(rhs),
+	_plan_data_width(rhs._plan_data_width),
+	_plan_data_height(rhs._plan_data_height),
+	_plan_inverse(rhs._plan_inverse),
+	_plan_in_place(rhs._plan_in_place),
+	_fft_plan(rhs._fft_plan)
 {
 	LOG_TRACE(L"Fft2D constructor called.", L"BasicRecon");
 }
