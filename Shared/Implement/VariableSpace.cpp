@@ -721,14 +721,15 @@ bool VariableSpace::Add(int type, const wchar_t * name, const wchar_t * descript
 		{VariableFloatArray, L"array<float>"},
 		{VariableBoolArray, L"array<bool>"},
 		{VariableStringArray, L"array<string>"},};
+
 	assert(type_to_string.find(type) != type_to_string.end());
 
 	return Add(type_to_string[type].c_str(), name, description);
 }
 
 bool VariableSpace::Add(const wchar_t * type,
-                          const wchar_t * id,
-                          const wchar_t * description)
+                        const wchar_t * id,
+                        const wchar_t * description)
 {
     auto iter = _types.find(type);
     if (iter == _types.end())

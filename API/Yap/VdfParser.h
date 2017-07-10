@@ -14,6 +14,7 @@
 namespace Yap
 {
 	class VariableSpace;
+	class NamespaceManager;
 
 	/// Variable definition file.
 	class VdfParser
@@ -28,12 +29,20 @@ namespace Yap
 	protected:
         std::shared_ptr<VariableSpace> DoCompile(std::wistream& input);
 		bool Process();
-		bool ProcessSimpleDeclaration(Statement& statement);
-		bool ProcessArrayDeclaration(Statement& statement);
-		bool ProcessStructDeclaration(Statement& statement);
+		bool ProcessStatement(Tokens& tokens);
+		bool ProcessSimpleDeclaration(Tokens& tokens);
+		bool ProcessArrayDeclaration(Tokens& tokens);
+		bool ProcessStructDeclaration(Tokens& tokens);
+		bool ProcessNamespace(Tokens& tokens);
+		bool ProcessUsing(Tokens& tokens);
+
+		std::wstring GetFqTypeId(const wchar_t * const type_id, Tokens& tokens);
 
 		std::shared_ptr<Preprocessor> _preprocessor;
 		std::shared_ptr<VariableSpace> _variables;
+
+		std::wstring _current_namespace;
+		std::vector <std::wstring> _namespace_in_use;
 	};
 }
 

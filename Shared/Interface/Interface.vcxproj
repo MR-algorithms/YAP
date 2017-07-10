@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="IData.h" />
     <ClInclude Include="Interfaces.h" />
     <ClInclude Include="smartptr.h" />
   </ItemGroup>
