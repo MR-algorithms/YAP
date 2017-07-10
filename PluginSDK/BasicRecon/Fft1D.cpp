@@ -29,7 +29,10 @@ Fft1D::Fft1D() :
 
 
 Fft1D::Fft1D(const Fft1D& rhs)
-	:ProcessorImpl(rhs)
+	:ProcessorImpl(rhs),
+	_plan_data_size(rhs._plan_data_size),
+	_plan_inverse(rhs._plan_inverse),
+	_plan_in_place(rhs._plan_in_place)
 {
 	LOG_TRACE(L"Fft1D constructor called.", L"BasicRecon");
 }
