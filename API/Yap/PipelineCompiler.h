@@ -29,11 +29,11 @@ namespace Yap
 	protected:
         SmartPtr<CompositeProcessor> DoCompile(std::wistream& input);
 
-		bool ProcessImport(Statement& statement);
-		bool ProcessPortLink(Statement& statement);
-		bool ProcessDeclaration(Statement& statement);
-		bool ProcessPropertyMapping(Statement& statement);
-		bool ProcessAssignment(Statement& statement);
+		bool ProcessImport(Tokens& statement);
+		bool ProcessPortLink(Tokens& statement);
+		bool ProcessDeclaration(Tokens& statement);
+		bool ProcessPropertyMapping(Tokens& statement);
+		bool ProcessAssignment(Tokens& statement);
 
 		std::shared_ptr<Preprocessor> _preprocessor;
 		std::shared_ptr<PipelineConstructor> _constructor;

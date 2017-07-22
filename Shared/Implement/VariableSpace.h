@@ -41,6 +41,8 @@ namespace Yap {
         bool Add(const wchar_t * type, const wchar_t * name, const wchar_t * description);
         bool Add(IVariable* variable);
 
+		bool AddArray(const wchar_t * element_type_id, const wchar_t * id, const wchar_t * description);
+
         IVariableContainer * Variables();
         const IVariableContainer * Variables() const;
 
@@ -129,9 +131,6 @@ namespace Yap {
         bool AddType(const wchar_t * type_id, IPtrContainer<IVariable> * variables);
 
 		IVariable * GetVariable(const wchar_t * name, int expected_type = VariableAllTypes);
-//		template <typename T> T* GetVariable(const wchar_t * id)
-//		{
-//		}
 
 	protected:
 
@@ -173,5 +172,6 @@ namespace Yap {
         SmartPtr<IVariableContainer> _variables;
 
         std::map<std::wstring, SmartPtr<IVariable>> _types;
+		std::map<std::wstring, SmartPtr<IVariable>> _basic_array_types;
     };
 }

@@ -63,11 +63,11 @@ bool ScanFileParser::Process()
 	assert(_preprocessor);
 	assert(_variables);
 
-	auto statement = _preprocessor->GetStatement();
+	auto statement = _preprocessor->GetTokens();
 
 	while (!statement.AtEnd())
 	{
-		Statement::Guard guard(statement);
+		Tokens::Guard guard(statement);
 		auto type = statement.GetCurrentToken().type;
 		auto variable_id = statement.GetCurrentToken().text;
 

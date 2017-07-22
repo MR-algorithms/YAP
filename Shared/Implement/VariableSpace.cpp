@@ -8,6 +8,7 @@
 #include <vector>
 #include "utilities/StringHelper.h"
 #include <sstream>
+#include <boost/lexical_cast.hpp>
 
 using namespace Yap;
 using namespace std;
@@ -120,10 +121,7 @@ namespace _details
 
 		virtual const wchar_t * const ToString() override
 		{
-			std::wostringstream output;
-			output << _value;
-			_value_string = output.str();
-
+			_value_string = boost::lexical_cast<wstring>(_value);
 			return _value_string.c_str();
 		}
 
@@ -700,10 +698,10 @@ bool VariableSpace::InitTypes()
     _types.emplace(L"string", YapShared(new SimpleVariable<const wchar_t * const>(L"string", nullptr)));
     _types.emplace(L"bool", YapShared(new SimpleVariable<bool>(L"bool", nullptr)));
 	
-	_types.emplace(L"array<int>", YapShared(new RawArrayVariable<int>(1, 0, L"array<int>", nullptr)));
-	_types.emplace(L"array<float>", YapShared(new RawArrayVariable<double>(1, 0.0, L"array<float>", nullptr)));
-	_types.emplace(L"array<bool>", YapShared(new ValueArrayVariable<bool>(1, false, L"array<bool>", nullptr)));
-    _types.emplace(L"array<string>", YapShared(new ValueArrayVariable<const wchar_t * const>(1, L"", L"array<string>", nullptr)));
+	_basic_array_types.emplace(L"int", YapShared(new RawArrayVariable<int>(1, 0, L"array<int>", nullptr)));
+	_basic_array_types.emplace(L"float", YapShared(new RawArrayVariable<double>(1, 0.0, L"array<float>", nullptr)));
+	_basic_array_types.emplace(L"bool", YapShared(new ValueArrayVariable<bool>(1, false, L"array<bool>", nullptr)));
+    _basic_array_types.emplace(L"string", YapShared(new ValueArrayVariable<const wchar_t * const>(1, L"", L"array<string>", nullptr)));
 
 	return true;
 }
@@ -716,19 +714,16 @@ bool VariableSpace::Add(int type, const wchar_t * name, const wchar_t * descript
 		{VariableInt, L"int"},
 		{VariableFloat, L"float"},
 		{VariableBool, L"bool"},
-		{VariableString, L"string"},
-		{VariableIntArray, L"array<int>"},
-		{VariableFloatArray, L"array<float>"},
-		{VariableBoolArray, L"array<bool>"},
-		{VariableStringArray, L"array<string>"},};
+		{VariableString, L"string"},};
+
 	assert(type_to_string.find(type) != type_to_string.end());
 
 	return Add(type_to_string[type].c_str(), name, description);
 }
 
 bool VariableSpace::Add(const wchar_t * type,
-                          const wchar_t * id,
-                          const wchar_t * description)
+                        const wchar_t * id,
+                        const wchar_t * description)
 {
     auto iter = _types.find(type);
     if (iter == _types.end())
@@ -743,9 +738,36 @@ bool VariableSpace::Add(const wchar_t * type,
 
     new_variable->SetId(id);
     new_variable->SetDescription(description);
-    _variables->Add(id, new_variable);
+    return _variables->Add(id, new_variable);
+}
 
-    return true;
+bool VariableSpace::AddArray(const wchar_t * element_type_id, 
+	const wchar_t * id, 
+	const wchar_t * description)
+{
+	IVariable * new_variable = nullptr;
+
+	auto basic_array_type = _basic_array_types.find(element_type_id);
+	if (basic_array_type != _basic_array_types.end())
+	{
+		new_variable = dynamic_cast<IVariable*>(basic_array_type->second->Clone());
+		if (new_variable == nullptr)
+			return false;
+
+		new_variable->SetId(id);
+	}
+	else
+	{
+		auto iter = _types.find(element_type_id);
+		if (iter == _types.end() || !iter->second)
+			return false;
+
+		auto template_element = dynamic_cast<IVariable*>(iter->second->Clone());
+		new_variable = new ReferenceArrayVariable<IVariable*>(1, template_element, id);
+	}
+
+	new_variable->SetDescription(description);
+	return _variables->Add(id, new_variable);
 }
 
 bool VariableSpace::Add(IVariable* variable)
@@ -823,7 +845,8 @@ IVariable * VariableSpace::GetVariable(IVariableContainer * variables,
 				throw VariableException(id, VariableException::VariableNotFound);
 
 			auto index = _wtoi(variable_id.substr(left_square_pos + 1, right_square_pos - left_square_pos - 1).c_str());
-			auto array_variable = dynamic_cast<IStructArray*>(variable);
+
+			auto array_variable = dynamic_cast<IValueArrayVariable<IVariable*>*>(variable);
 			assert(array_variable != nullptr);
 
 			if (index < 0 || index >= int(array_variable->GetSize()))

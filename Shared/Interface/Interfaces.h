@@ -1,5 +1,5 @@
-﻿#ifndef IData_h__20160825
-#define IData_h__20160825
+﻿#ifndef Interface_h__20160825
+#define Interface_h__20160825
 
 #pragma once
 #ifndef OUT
@@ -7,124 +7,15 @@
 #define IN
 #endif
 
+#include "idata.h"
+
 #include <complex>
 #include "smartptr.h"
 #include <type_traits>
+#include <string>
 
 namespace Yap
 {
-	const int DataTypeUnknown		= 0x00000000;	///< enum not initialized yet.
-	const int DataTypeChar			= 0x00000001;	///< wchar_t (1)
-	const int DataTypeUnsignedChar	= 0x00000002;	///< unsigned wchar_t (1)
-	const int DataTypeShort			= 0x00000004;	///< short (2)
-	const int DataTypeUnsignedShort	= 0x00000008;	///< unsigned short (2)
-	const int DataTypeFloat			= 0x00000010;	///< float (4)
-	const int DataTypeDouble		= 0x00000020;	///< double (8)
-	const int DataTypeInt			= 0x00000040;	///< int (4)
-	const int DataTypeUnsignedInt	= 0x00000080;	///< unsigned int (4)
-	const int DataTypeComplexFloat	= 0x00000100;	///< complex<float> (8)
-	const int DataTypeComplexDouble	= 0x00000200;	///< complex<double> (16)
-	const int DataTypeBool			= 0x00000400;	///< bool
-	const int DataTypeAll			= 0xFFFFFFFF;	///< 若为此类型，说明此处理器对什么类型都接受。
-
-	template<typename T> struct data_type_id
-	{
-		// static const int type;
-		// Don't define the above member so that DataObject can only be instantiated with
-		// the following types:
-	};
-
-	template <> struct data_type_id<double> { static const int type = DataTypeDouble; };
-	template <> struct data_type_id<char> { static const int type = DataTypeChar; };
-	template <> struct data_type_id<unsigned char> { static const int type = DataTypeUnsignedChar; };
-	template <> struct data_type_id<short> { static const int type = DataTypeShort; };
-	template <> struct data_type_id <unsigned short> { static const int type = DataTypeUnsignedShort; };
-	template <> struct data_type_id <float> { static const int type = DataTypeFloat; };
-	template <> struct data_type_id <unsigned int> { static const int type = DataTypeUnsignedInt; };
-	template <> struct data_type_id <int> { static const int type = DataTypeInt; };
-	template <> struct data_type_id <std::complex<float>> { static const int type = DataTypeComplexFloat; };
-	template <> struct data_type_id <std::complex<double>> { static const int type = DataTypeComplexDouble; };
-	template <> struct data_type_id <bool> { static const int type = DataTypeBool; };
-
-
-	/// 定义了磁共振图像数据中的常用的维度。
-	/**
-	通常在定义多维数据时，Readout, PhaseEncoding, Slice三个方向会优先连续存储。
-	其他维度的次序则不确定。习惯上在描述数据维度信息时，应按照习惯的名称命名。
-	*/
-	enum DimensionType
-	{
-		DimensionReadout,
-		DimensionPhaseEncoding,
-		DimensionSlice,
-		Dimension4,				// 为了兼容性考虑，意义不明确
-		DimensionChannel,
-		DimensionAverage,
-		DimensionSlab,
-		DimensionEcho,
-		DimensionPhase,
-
-		DimensionUser1,
-		DimensionUser2,
-		DimensionUser3,
-		DimensionUser4,
-		DimensionUser5,
-		DimensionUser6,
-		DimensionInvalid = 100,
-	};
-
-	const unsigned int YAP_ANY_DIMENSION = 0xffffffff;
-
-	struct Dimension
-	{
-		DimensionType type;
-		unsigned int start_index;
-		unsigned int length;
-		Dimension();
-		Dimension(DimensionType type, unsigned start_index, unsigned int length);
-	};
-
-	struct IDimensions : public ISharedObject
-	{
-		virtual unsigned int GetDimensionCount() = 0;
-		virtual bool GetDimensionInfo(unsigned int index, OUT DimensionType& dimension_type,
-			OUT unsigned int& start_index, OUT unsigned int& length) = 0;
-	};
-
-	struct IGeometry : public ISharedObject
-	{
-		virtual void GetSpacing(double& x, double& y, double& z) = 0;
-		virtual void GetRowVector(double& x, double& y, double& z) = 0;
-		virtual void GetColumnVector(double& x, double& y, double& z) = 0;
-		virtual void GetSliceVector(double& x, double& y, double& z) = 0;
-		virtual void GetReadoutVector(double& x, double& y, double& z) = 0;
-		virtual void GetPhaseEncodingVector(double& x, double& y, double& z) = 0;
-		virtual void GetCenter(double& x, double& y, double& z) = 0;
-
-		virtual void SetSpacing(double x, double y, double z) = 0;
-		virtual void SetRowVector(double x, double y, double z) = 0;
-		virtual void SetColumnVector(double x, double y, double z) = 0;
-		virtual void SetSliceVector(double x, double y, double z) = 0;
-		virtual void SetReadoutVector(double x, double y, double z) = 0;
-		virtual void SetPhaseEncodingVector(double x, double y, double z) = 0;
-		virtual void SetCenter(double x, double y, double z) = 0;
-
-		virtual bool IsValid() = 0;
-	};
-
-	struct IData : public ISharedObject
-	{
-		virtual int GetDataType() = 0;				///< 返回数据元素的类型
-		virtual IDimensions * GetDimensions() = 0;	///< 获得数据的维度信息。
-	};
-
-	template <typename T> struct IDataArray : public IData
-	{
-		static_assert(data_type_id<T>::type != 0, "You have to use standard types.");
-		/// 返回数组的起始地址。
-		virtual T * GetData() = 0;
-	};
-
 	template <typename ELEMENT_TYPE>
 	struct IIterator
 	{
@@ -148,8 +39,9 @@ namespace Yap
 	typedef IPtrContainer<IProcessor> IProcessorContainer;
 	typedef IProcessorContainer::iterator IProcessorIter;
 
-	// bit flags for PropertyType
-	const int VariableInvalid = 0;
+	/** @defgroup Bit flags for PropertyType
+	@{ */
+	const int VariableInvalid = 0;					
 	const int VariableBool = 1;
 	const int VariableInt = 2;
 	const int VariableFloat = 4;
@@ -161,6 +53,7 @@ namespace Yap
 	const int VariableStringArray = 256;
 	const int VariableStructArray = 512;
     const int VariableAllTypes = 0xffffffff;
+	/** @} */
 
 	template<typename T> struct variable_type_id
 	{
@@ -204,8 +97,17 @@ namespace Yap
 		static const int array_type_id = VariableStringArray;
 	};
 
+	/** 
+	@brief Interface for a variable.
+	Variables are used in YAP to represent properties of processors and system parameters. 
+	Variables are similar to variables in C++, only they are all implemented as objects of
+	classes implementing IVariable and derived interfaces.
+	*/
 	struct IVariable : public ISharedObject
 	{
+		/**
+		@brief Returns the type of the variable.
+		*/
 		virtual int GetType() const = 0;
 		virtual const wchar_t * GetId() const = 0;
         virtual void SetId(const wchar_t * id) = 0;
@@ -310,8 +212,6 @@ namespace Yap
 	};
 
     typedef IPtrContainer<IVariable> IStructValue;
-
-	typedef IValueArrayVariable<IStructVariable*> IStructArray;
 
 	// ================== end new variable interfaces ====================
 

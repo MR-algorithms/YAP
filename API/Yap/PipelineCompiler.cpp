@@ -22,22 +22,21 @@ PipelineCompiler::~PipelineCompiler(void)
 /**
 	Process an "import" statement in the file.
 */
-bool PipelineCompiler::ProcessImport(Statement& statement)
+bool PipelineCompiler::ProcessImport(Tokens& tokens)
 {
-	assert(statement.GetType() == StatementImport);
-	Statement::Guard guard(statement);
+	Tokens::Guard guard(tokens);
 
-	statement.AssertToken(TokenKeywordImport, true);
-	wstring path = statement.GetStringLiteral();
+	tokens.AssertToken(TokenKeywordImport, true);
+	wstring path = tokens.GetStringLiteral();
 
 	if (!_constructor->LoadModule(path.c_str()))
 	{
 		wstring output = wstring(L"Failed to load specified plug-in. "
 								 "Check to see if the file and its dependent files exist.") + path;
-		throw CompileError(statement.GetCurrentToken(), CompileErrorLoadModule, output);
+		throw CompileError(tokens.GetCurrentToken(), CompileErrorLoadModule, output);
 	}
 
-	statement.AssertToken(TokenSemiColon, false); //是不是可以去掉？
+	tokens.AssertToken(TokenSemiColon, false); 
 
 	return true;
 }
@@ -46,10 +45,10 @@ bool PipelineCompiler::ProcessImport(Statement& statement)
 Port link is in the form of: process1.output_port->process2.input_port;
 If the output_port and input_port is not specified, they default to "Output" and "Input" respectively.
 */
-bool PipelineCompiler::ProcessPortLink(Statement& statement)
+bool PipelineCompiler::ProcessPortLink(Tokens& statement)
 {
 	assert(_constructor);
-	Statement::Guard guard(statement);
+	Tokens::Guard guard(statement);
 
 	auto source_processor = statement.GetId();
 
@@ -91,12 +90,11 @@ bool PipelineCompiler::ProcessPortLink(Statement& statement)
 	}
 }
 
-bool PipelineCompiler::ProcessDeclaration(Statement& statement)
+bool PipelineCompiler::ProcessDeclaration(Tokens& statement)
 {
 	assert(_constructor);
-	assert(statement.GetType() == StatementDeclaration);
 
-	Statement::Guard guard(statement);
+	Tokens::Guard guard(statement);
 
 	wstring class_id = statement.GetId();
 	wstring instance_id = statement.GetId();
@@ -165,11 +163,10 @@ bool PipelineCompiler::ProcessDeclaration(Statement& statement)
 	return true;
 }
 
-bool PipelineCompiler::ProcessPropertyMapping(Statement& statement)
+bool PipelineCompiler::ProcessPropertyMapping(Tokens& statement)
 {
 	assert(_constructor);
-	assert(statement.GetType() == StatementPropertyMapping);
-	Statement::Guard guard(statement);
+	Tokens::Guard guard(statement);
 
 	wstring processor_instance_id = statement.GetId();
 	if (!_constructor->InstanceIdExists(processor_instance_id.c_str()))
@@ -205,11 +202,10 @@ bool PipelineCompiler::ProcessPropertyMapping(Statement& statement)
 	return _constructor->MapProperty(processor_instance_id.c_str(), property.c_str(), variable_id.c_str(), input, output);
 }
 
-bool PipelineCompiler::ProcessAssignment(Statement& statement)
+bool PipelineCompiler::ProcessAssignment(Tokens& statement)
 {
 	assert(_constructor);
-	assert(statement.GetType() == StatementAssign);
-	Statement::Guard guard(statement);
+	Tokens::Guard guard(statement);
 
 	wstring processor_instance_id = statement.GetId();
 	if (!_constructor->InstanceIdExists(processor_instance_id.c_str()))
@@ -284,79 +280,46 @@ Yap::SmartPtr<CompositeProcessor> PipelineCompiler::DoCompile(std::wistream& inp
 bool PipelineCompiler::Process()
 {
 	assert(_preprocessor);
-	auto statement = _preprocessor->GetStatement();
+	auto tokens = _preprocessor->GetTokens();
 
-	while (!statement.AtEnd())
+	while (!tokens.AtEnd())
 	{
-		switch (statement.GetCurrentToken().type)
+		switch (tokens.GetCurrentToken().type)
 		{
-			case TokenKeywordImport:
-				if (!statement.IsCurrentStatementEmpty())
-				{
-					statement.SetType(StatementImport);
-					ProcessImport(statement);
-				}
-				else
-				{
-                    throw CompileError(statement.GetCurrentToken(), CompileErrorInvalidImport,
-									   wstring(L"Invalid use of keyword import."));
-				}
-				break;
-			case TokenOperatorAssign:
-				if (statement.GetType() == StatementUnknown)
-				{
-					statement.SetType(StatementAssign);
-					ProcessAssignment(statement);
-				}
-				else
-				{
-					statement.Next();
-				}
-				break;
-			case TokenOperatorInOutMapping:
-			case TokenOperatorInMapping:
-			case TokenOperatorOutMapping:
-				if (statement.GetType() == StatementUnknown)
-				{
-					statement.SetType(StatementPropertyMapping);
-					ProcessPropertyMapping(statement);
-				}
-				else
-				{
-					statement.Next();
-				}
-				break;
-			case TokenOperatorPortLink:
-				statement.SetType(StatementPortLink);
-				ProcessPortLink(statement);
-				break;
-			case TokenId:
-			case TokenKeywordSelf:
-				if (statement.IsFirstTokenInStatement() && statement.IsTokenOfType(TokenId) && 
-					statement.IsNextTokenOfType(TokenId))
-				{
-					statement.SetType(StatementDeclaration);
-					ProcessDeclaration(statement);
-				}
-				else
-				{
-					statement.Next();
-				}
-				break;
-			case TokenSemiColon:
-				if (!statement.IsCurrentStatementEmpty() && statement.GetType() == StatementUnknown)
-				{
-					throw(CompileError(statement.GetLastToken(),
-									   CompileErrorIncompleteStatement, L"Statement not complete."));
-				}
-				else
-				{
-					statement.Next();
-				}
-			case TokenOperatorDot:
-				statement.Next();
-			default:
-				;
+		case TokenKeywordImport:
+			ProcessImport(tokens);
+			break;
+		case TokenOperatorAssign:
+			ProcessAssignment(tokens);
+			break;
+		case TokenOperatorInOutMapping:
+		case TokenOperatorInMapping:
+		case TokenOperatorOutMapping:
+			ProcessPropertyMapping(tokens);
+			break;
+		case TokenOperatorPortLink:
+			ProcessPortLink(tokens);
+			break;
+		case TokenId:
+		case TokenKeywordSelf:
+			if (tokens.IsFirstTokenInStatement() && tokens.IsTokenOfType(TokenId) &&
+				tokens.IsNextTokenOfType(TokenId))
+			{
+				ProcessDeclaration(tokens);
+			}
+			else
+			{
+				tokens.Next();
+			}
+			break;
+		case TokenSemiColon:
+			throw(CompileError(tokens.GetLastToken(),
+				CompileErrorIncompleteStatement, L"Statement not complete."));
+
+		case TokenOperatorDot:
+			tokens.Next();
+		default:
+			;
 		}
 	}
 
