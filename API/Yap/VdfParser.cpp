@@ -140,7 +140,7 @@ bool VdfParser::ProcessStatement(Tokens& tokens)
 bool VdfParser::ProcessNamespace(Tokens& tokens)
 {
 	assert(_variables);
-	Tokens::Guard guard(tokens, false); // namespace declaration ended with right brace, no semi-colon.
+
 	tokens.AssertToken(TokenKeywordNamespace, true);
 	wstring namespace_id = tokens.GetId();
 	_current_namespace = _current_namespace.empty() ? namespace_id :
@@ -157,10 +157,10 @@ bool VdfParser::ProcessNamespace(Tokens& tokens)
 bool VdfParser::ProcessUsing(Tokens& tokens)
 {
 	assert(_variables);
-	Tokens::Guard guard(tokens);
 	tokens.AssertToken(TokenKeywordUsing, true);
 	tokens.AssertToken(TokenKeywordNamespace, true);
 	_namespace_in_use.push_back(tokens.GetNamespaceId());
+	tokens.AssertToken(TokenSemiColon, true);
 
 	return true;
 }
@@ -169,7 +169,6 @@ bool VdfParser::ProcessSimpleDeclaration(Tokens& tokens)
 {
     assert(_variables);
 
-	Tokens::Guard guard(tokens);
 	auto type = tokens.GetCurrentToken().type;
     auto type_id = tokens.GetCurrentToken().text;
 
@@ -202,6 +201,7 @@ bool VdfParser::ProcessSimpleDeclaration(Tokens& tokens)
             _variables->Add(fq_type_id.c_str(), variable_id.c_str(), L"");
 		}
 	}
+	tokens.AssertToken(TokenSemiColon, true);
 
 	return true;
 }
@@ -321,7 +321,6 @@ bool VdfParser::ProcessArrayDeclaration(Tokens& tokens, VariableSpace& variables
 		{TokenId, VariableStructArray},
     };
 
-    Tokens::Guard guard(tokens);
 	tokens.AssertToken(TokenKeywordArray, true);
 	tokens.AssertToken(TokenLessThan, true);
 
@@ -359,13 +358,13 @@ bool VdfParser::ProcessArrayDeclaration(Tokens& tokens, VariableSpace& variables
 			variables.AddArray(fq_type_id.c_str(), variable_id.c_str(), L"");
 		}
 	}
+	tokens.AssertToken(TokenSemiColon, true);
 
-    return true;
+	return true;
 }
 
 bool VdfParser::ProcessStructDeclaration(Tokens& tokens)
 {
-	Tokens::Guard guard(tokens);
     tokens.AssertToken(TokenKeywordStruct, true);
     auto struct_id = GetFqId(tokens.GetId().c_str());
 
@@ -423,6 +422,7 @@ bool VdfParser::ProcessStructDeclaration(Tokens& tokens)
     } while (!tokens.IsTokenOfType(TokenRightBrace, false));
 
 	tokens.Next();
+	tokens.AssertToken(TokenSemiColon, true);
 
     _variables->AddType(struct_id.c_str(), struct_variables.Variables());
 
