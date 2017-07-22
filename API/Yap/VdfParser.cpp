@@ -102,7 +102,7 @@ bool VdfParser::ProcessStatement(Tokens& tokens)
             ProcessSimpleDeclaration(tokens);
             break;
         case TokenKeywordArray:
-            ProcessArrayDeclaration(tokens);
+            ProcessArrayDeclaration(tokens, *_variables);
             break;
         case TokenKeywordStruct:
             ProcessStructDeclaration(tokens);
@@ -140,7 +140,7 @@ bool VdfParser::ProcessStatement(Tokens& tokens)
 bool VdfParser::ProcessNamespace(Tokens& tokens)
 {
 	assert(_variables);
-	Tokens::Guard guard(tokens);
+	Tokens::Guard guard(tokens, false); // namespace declaration ended with right brace, no semi-colon.
 	tokens.AssertToken(TokenKeywordNamespace, true);
 	wstring namespace_id = tokens.GetId();
 	_current_namespace = _current_namespace.empty() ? namespace_id :
@@ -148,8 +148,8 @@ bool VdfParser::ProcessNamespace(Tokens& tokens)
 
 	tokens.AssertToken(TokenLeftBrace, true);
 	ProcessStatement(tokens);
-	tokens.AssertToken(TokenRightBrace, true);
-	tokens.AssertToken(TokenSemiColon, true);
+	tokens.AssertToken(TokenRightBrace, true);	
+	_current_namespace = OuterNamespace(_current_namespace);
 
 	return true;
 }
@@ -159,8 +159,8 @@ bool VdfParser::ProcessUsing(Tokens& tokens)
 	assert(_variables);
 	Tokens::Guard guard(tokens);
 	tokens.AssertToken(TokenKeywordUsing, true);
+	tokens.AssertToken(TokenKeywordNamespace, true);
 	_namespace_in_use.push_back(tokens.GetNamespaceId());
-	tokens.AssertToken(TokenSemiColon, true);
 
 	return true;
 }
@@ -179,11 +179,11 @@ bool VdfParser::ProcessSimpleDeclaration(Tokens& tokens)
 
 	tokens.Next();
 	auto id = tokens.GetId();
-	auto fq_type_id = GetFqTypeId(type_id.c_str(), tokens);
+	auto fq_type_id = ResolveFqId(type_id.c_str(), true, tokens);
 
 	if (!tokens.IsTokenOfType(TokenSharp, true))
 	{
-        _variables->Add(fq_type_id.c_str(), id.c_str(), L"");
+        _variables->Add(fq_type_id.c_str(), GetFqId(id.c_str()).c_str(), L"");
 	}
 	else
 	{
@@ -197,13 +197,18 @@ bool VdfParser::ProcessSimpleDeclaration(Tokens& tokens)
 		{
 			wostringstream output;
 			output << id << i;
-			wstring variable_id = _current_namespace.empty() ? output.str() : _current_namespace + L"::" + output.str();
+			wstring variable_id = GetFqId(output.str().c_str());
 			
             _variables->Add(fq_type_id.c_str(), variable_id.c_str(), L"");
 		}
 	}
 
 	return true;
+}
+
+bool VdfParser::IdExists(const wchar_t * const id, bool is_type_id) const
+{
+	return is_type_id ? _variables->TypeExists(id) : _variables->VariableExists(id);
 }
 
 /**
@@ -235,7 +240,9 @@ bool VdfParser::ProcessSimpleDeclaration(Tokens& tokens)
 	This behavior is consistent with C++.
 */
 
-std::wstring VdfParser::GetFqTypeId(const wchar_t * const type_id, Tokens& tokens)
+std::wstring VdfParser::ResolveFqId(const wchar_t * const id, 
+	bool is_type_id, 
+	Tokens& tokens) const
 {
 	vector<wstring> matching_fq_ids;
 	assert(_variables);
@@ -243,28 +250,28 @@ std::wstring VdfParser::GetFqTypeId(const wchar_t * const type_id, Tokens& token
 
 	for (;;)
 	{
-		wstring fq_id = search_namespace + L"::" + type_id;
-		if (_variables->TypeExists(fq_id.c_str()))
+		wstring fq_id = search_namespace.empty() ? id : (search_namespace + L"::" + id);
+		if (IdExists(fq_id.c_str(), is_type_id))
 		{
 			matching_fq_ids.push_back(fq_id);
 			break;
 		}
+		else if (search_namespace.empty())
+		{
+			break;
+		}
 		else
 		{
-			auto separator_pos = search_namespace.rfind(L"::");
-			if (separator_pos == wstring::npos)
-			{
-				break;
-			}
-
-			search_namespace = search_namespace.substr(0, separator_pos);
+			search_namespace = OuterNamespace(search_namespace);
 		}
 	}
 
 	for (auto name_space : _namespace_in_use)
 	{
-		wstring fq_id = name_space + L"::" + type_id;
-		if (_variables->TypeExists(fq_id.c_str()))
+		assert(!name_space.empty());
+
+		wstring fq_id = name_space + L"::" + id;
+		if (IdExists(fq_id.c_str(), is_type_id))
 		{
 			matching_fq_ids.push_back(fq_id);
 		}
@@ -272,12 +279,12 @@ std::wstring VdfParser::GetFqTypeId(const wchar_t * const type_id, Tokens& token
 
 	if (matching_fq_ids.empty())
 	{
-		throw CompileError(tokens.GetCurrentToken(), CompileErrorTypeNotFound, wstring(L"Type not found: ") + type_id);
+		throw CompileError(tokens.GetCurrentToken(), CompileErrorTypeNotFound, wstring(L"Type not found: ") + id);
 	}
 	else if (matching_fq_ids.size() > 1)
 	{
 		wstring error_message = L"Ambiguous ID: ";
-		error_message += type_id;
+		error_message += id;
 		error_message += L". Could be: \n";
 		for (auto fq_id : matching_fq_ids)
 		{
@@ -290,7 +297,21 @@ std::wstring VdfParser::GetFqTypeId(const wchar_t * const type_id, Tokens& token
 	return matching_fq_ids[0];
 }
 
-bool VdfParser::ProcessArrayDeclaration(Tokens& tokens)
+std::wstring VdfParser::OuterNamespace(const std::wstring& inner_namespace) const
+{
+	assert(!inner_namespace.empty());
+
+	auto separator_pos = inner_namespace.rfind(L"::");
+	return  (separator_pos == wstring::npos) ? L"" :
+		inner_namespace.substr(0, separator_pos);
+}
+
+std::wstring VdfParser::GetFqId(const wchar_t * const id) const
+{
+	return (_current_namespace.empty()) ? id : (_current_namespace + L"::" + id);
+}
+
+bool VdfParser::ProcessArrayDeclaration(Tokens& tokens, VariableSpace& variables)
 {
     static map<TokenType, int> token_to_array_property{
         {TokenKeywordFloat, VariableFloatArray},
@@ -305,16 +326,21 @@ bool VdfParser::ProcessArrayDeclaration(Tokens& tokens)
 	tokens.AssertToken(TokenLessThan, true);
 
 	auto type = tokens.GetCurrentToken().type;
+	auto element_type_id = tokens.GetCurrentToken().text;
+	auto fq_type_id = ResolveFqId(element_type_id.c_str(), true, tokens);
+
 	assert(type == TokenKeywordFloat || type == TokenKeywordInt ||
 		   type == TokenKeywordBool || type == TokenKeywordString ||
 			type == TokenId);
 	tokens.Next();
 	tokens.AssertToken(TokenGreaterThan, true);
 
-	auto id = tokens.GetId();
+	auto id = (&variables == _variables.get()) ?
+		GetFqId(tokens.GetId().c_str()) : tokens.GetId();
+
 	if (!tokens.IsTokenOfType(TokenSharp, true))
 	{
-		_variables->Add(token_to_array_property[type], id.c_str(), L"");
+		variables.AddArray(fq_type_id.c_str(), id.c_str(), L"");
 	}
 	else
 	{
@@ -328,7 +354,9 @@ bool VdfParser::ProcessArrayDeclaration(Tokens& tokens)
 		{
 			wostringstream output;
 			output << id << i;
-			_variables->Add(token_to_array_property[type], output.str().c_str(), L"");
+			auto variable_id = (&variables == _variables.get()) ?
+				GetFqId(output.str().c_str()) : output.str();
+			variables.AddArray(fq_type_id.c_str(), variable_id.c_str(), L"");
 		}
 	}
 
@@ -339,54 +367,62 @@ bool VdfParser::ProcessStructDeclaration(Tokens& tokens)
 {
 	Tokens::Guard guard(tokens);
     tokens.AssertToken(TokenKeywordStruct, true);
-    auto struct_id = tokens.GetId();
+    auto struct_id = GetFqId(tokens.GetId().c_str());
+
     tokens.AssertToken(TokenLeftBrace, true);
 
     VariableSpace struct_variables;
-
+	static std::set<TokenType> s_allowed_types = {
+		TokenKeywordBool, TokenKeywordFloat, TokenKeywordInt, TokenKeywordString,
+		TokenKeywordArray, TokenId };
     do
     {
         auto& type_token = tokens.GetCurrentToken();
-        if (type_token.type != TokenKeywordBool && type_token.type != TokenKeywordFloat &&
-                type_token.type != TokenKeywordInt && type_token.type != TokenKeywordString &&
-                type_token.type != TokenId)
+        if (s_allowed_types.find(type_token.type) == s_allowed_types.end())
         {
             throw(CompileError(type_token, CompileErrorTypeExpected,
-                               L"Expected either one of float, int, string, bool, or a struct name."));
+                               L"Expected either one of float, int, string, bool, array, or a struct name."));
         }
 
-        if (type_token.type == TokenId)
-        {
-            if (!_variables->TypeExists(type_token.text.c_str()))
-                throw CompileError(type_token, CompileErrorTypeNotFound, L"Type not found.");
+		if (type_token.type == TokenKeywordArray)
+		{
+			ProcessArrayDeclaration(tokens, struct_variables);
+		}
+		else
+		{
+			auto type_id = ResolveFqId(type_token.text.c_str(), true, tokens);
+			if (type_token.type == TokenId)
+			{
+				if (!_variables->TypeExists(type_id.c_str()))
+					throw CompileError(type_token, CompileErrorTypeNotFound, L"Type not found.");
 
-            if (type_token.text == struct_id)
-                throw CompileError(type_token, CompileErrorNestStruct, L"Nested struct definition not allowed.");
+				if (type_token.text == struct_id)
+					throw CompileError(type_token, CompileErrorNestStruct, L"Nested struct definition not allowed.");
 
-        }
-        tokens.Next();
-        auto& member_token = tokens.GetCurrentToken();
+			}
 
-        if (struct_variables.VariableExists(member_token.text.c_str()))
-            throw CompileError(type_token, CompileErrorMemeberExists, L"Duplicated struct member ids.");
+			tokens.Next();
+			auto& member_token = tokens.GetCurrentToken();
+
+			if (struct_variables.VariableExists(member_token.text.c_str()))
+				throw CompileError(type_token, CompileErrorMemeberExists, L"Duplicated struct member ids.");
 
 
-        auto prototype = _variables->GetType(type_token.text.c_str());
-        if (prototype == nullptr)
-            throw CompileError(type_token, CompileErrorTypeNotFound, L"Type not found.");
+			auto prototype = _variables->GetType(type_id.c_str());
+			if (prototype == nullptr)
+				throw CompileError(type_token, CompileErrorTypeNotFound, L"Type not found.");
 
-        auto member = dynamic_cast<IVariable*>(prototype->Clone());
-        assert(member != nullptr);
-        member->SetId(member_token.text.c_str());
-        struct_variables.Add(member);
+			auto member = dynamic_cast<IVariable*>(prototype->Clone());
+			assert(member != nullptr);
+			member->SetId(member_token.text.c_str());
+			struct_variables.Add(member);
 
-        tokens.Next();
-        tokens.AssertToken(TokenSemiColon, true);
-
+			tokens.Next();
+			tokens.AssertToken(TokenSemiColon, true);
+		}
     } while (!tokens.IsTokenOfType(TokenRightBrace, false));
 
 	tokens.Next();
-    tokens.AssertToken(TokenSemiColon);
 
     _variables->AddType(struct_id.c_str(), struct_variables.Variables());
 

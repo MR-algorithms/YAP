@@ -47,15 +47,16 @@ map <TokenType, pair<wstring, TokenCategory>> token_info {
 	{ TokenKeywordUsing, {L"using", TokenCategoryKeyword }},
 };
 
-Tokens::Guard::Guard(Tokens& statement) :
-	_statement{statement}
+Tokens::Guard::Guard(Tokens& statement, bool end_with_semicolon) :
+	_statement{statement},
+	_end_with_semicolon{end_with_semicolon}
 {
 	_statement.StartProcessingStatement();
 }
 
 Tokens::Guard::~Guard()
 {
-	_statement.FinishProcessingStatement();
+	_statement.FinishProcessingStatement(_end_with_semicolon);
 }
 
 Tokens::Tokens(vector<Token>& tokens) :
@@ -67,12 +68,15 @@ Tokens::Tokens(vector<Token>& tokens) :
 
 void Tokens::StartProcessingStatement()
 {
-	_iter = _begin;
+	// _iter = _begin;
 }
 
-void Tokens::FinishProcessingStatement()
+void Tokens::FinishProcessingStatement(bool check_semicolon)
 {
-	AssertToken(TokenSemiColon, true);
+	if (check_semicolon)
+	{
+		AssertToken(TokenSemiColon, true);
+	}
 	_begin = _iter;
 	_type = StatementUnknown;
 }
@@ -601,7 +605,7 @@ bool Preprocessor::PreprocessLine(std::wstring& line,
 				break;
 			}
 		}
-		else if (isalpha(line[pos]))
+		else if (isalpha(line[pos]) || line[pos] == L'_')
 		{
 			next_separator = line.find_first_of(L" \t\n\"{}()+-,*/=<>#;[]:.", pos);
 			token.length = int(((next_separator == -1) ? line.length() : next_separator) - token.column);

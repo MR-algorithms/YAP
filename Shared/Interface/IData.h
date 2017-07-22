@@ -127,6 +127,7 @@ namespace Yap
 	{
 		virtual int GetDataType() = 0;				///< 返回数据元素的类型
 		virtual IDimensions * GetDimensions() = 0;	///< 获得数据的维度信息。
+		// virtual IGeometry * GetGeometry() = 0;
 	};
 
 	template <typename T> struct IDataArray : public IData

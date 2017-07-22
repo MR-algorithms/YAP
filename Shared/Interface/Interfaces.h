@@ -12,6 +12,7 @@
 #include <complex>
 #include "smartptr.h"
 #include <type_traits>
+#include <string>
 
 namespace Yap
 {
@@ -211,8 +212,6 @@ namespace Yap
 	};
 
     typedef IPtrContainer<IVariable> IStructValue;
-
-	typedef IValueArrayVariable<IStructVariable*> IStructArray;
 
 	// ================== end new variable interfaces ====================
 

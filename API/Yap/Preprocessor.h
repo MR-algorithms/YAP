@@ -175,17 +175,18 @@ namespace Yap
 		class Guard
 		{
 		public: 
-			Guard(Tokens& statement);
+			explicit Guard(Tokens& statement, bool end_with_semicolon = true);
 			~Guard();
 		private:
 			Tokens& _statement;
+			bool _end_with_semicolon;
 		};
 
 		explicit Tokens(std::vector<Token>& tokens);
 
 		void StartProcessingStatement();
 		/// Clear the tokens in the statement.
-		void FinishProcessingStatement();
+		void FinishProcessingStatement(bool check_semicolon = true);
 
 		/// Check to see if the statement is empty.
 		bool IsEmpty();
@@ -232,6 +233,7 @@ namespace Yap
 		std::wstring GetVariableIdOld();
 		std::wstring GetVariableId();
 		std::wstring GetIdWithIndexing(); 
+
 		/// 试图提取参数id。迭代器移动到提取内容之后。
 		std::wstring GetParamId();
 
@@ -247,6 +249,7 @@ namespace Yap
 		std::vector<Token> _tokens;
 		std::vector<Token>::const_iterator _begin;
 		std::vector<Token>::const_iterator _iter;
+		std::vector<Token>::const_iterator _peek_iter;
 	};
 
 	enum PreprocessType

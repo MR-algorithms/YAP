@@ -87,5 +87,3 @@ BOOST_AUTO_TEST_CASE(preprocessor_test)
 
 	BOOST_CHECK(GetTokens(L"v.a").GetId() == L"v");
 }
-
-

@@ -58,7 +58,7 @@ namespace Yap
 			bool own_data = false, ISharedObject * module = nullptr) : 
 			_data(data), _own_memory(own_data), _dimensions(dimensions), _use_count(0), 
 			_parent(YapShared(parent)),
-			_module(YapShared(module))
+			_module(YapShared(module))http ://www.openculture.com/2017/05/artificial-intelligence-a-free-online-course-from-mit.html
 		{
 			assert(data != nullptr);
 		}
