@@ -22,22 +22,21 @@ PipelineCompiler::~PipelineCompiler(void)
 /**
 	Process an "import" statement in the file.
 */
-bool PipelineCompiler::ProcessImport(Tokens& statement)
+bool PipelineCompiler::ProcessImport(Tokens& tokens)
 {
-	assert(statement.GetType() == StatementImport);
-	Tokens::Guard guard(statement);
+	Tokens::Guard guard(tokens);
 
-	statement.AssertToken(TokenKeywordImport, true);
-	wstring path = statement.GetStringLiteral();
+	tokens.AssertToken(TokenKeywordImport, true);
+	wstring path = tokens.GetStringLiteral();
 
 	if (!_constructor->LoadModule(path.c_str()))
 	{
 		wstring output = wstring(L"Failed to load specified plug-in. "
 								 "Check to see if the file and its dependent files exist.") + path;
-		throw CompileError(statement.GetCurrentToken(), CompileErrorLoadModule, output);
+		throw CompileError(tokens.GetCurrentToken(), CompileErrorLoadModule, output);
 	}
 
-	statement.AssertToken(TokenSemiColon, false); //是不是可以去掉？
+	tokens.AssertToken(TokenSemiColon, false); 
 
 	return true;
 }
@@ -94,7 +93,6 @@ bool PipelineCompiler::ProcessPortLink(Tokens& statement)
 bool PipelineCompiler::ProcessDeclaration(Tokens& statement)
 {
 	assert(_constructor);
-	assert(statement.GetType() == StatementDeclaration);
 
 	Tokens::Guard guard(statement);
 
@@ -168,7 +166,6 @@ bool PipelineCompiler::ProcessDeclaration(Tokens& statement)
 bool PipelineCompiler::ProcessPropertyMapping(Tokens& statement)
 {
 	assert(_constructor);
-	assert(statement.GetType() == StatementPropertyMapping);
 	Tokens::Guard guard(statement);
 
 	wstring processor_instance_id = statement.GetId();
@@ -208,7 +205,6 @@ bool PipelineCompiler::ProcessPropertyMapping(Tokens& statement)
 bool PipelineCompiler::ProcessAssignment(Tokens& statement)
 {
 	assert(_constructor);
-	assert(statement.GetType() == StatementAssign);
 	Tokens::Guard guard(statement);
 
 	wstring processor_instance_id = statement.GetId();
@@ -290,73 +286,40 @@ bool PipelineCompiler::Process()
 	{
 		switch (tokens.GetCurrentToken().type)
 		{
-			case TokenKeywordImport:
-				if (!tokens.IsEmpty())
-				{
-					tokens.SetType(StatementImport);
-					ProcessImport(tokens);
-				}
-				else
-				{
-                    throw CompileError(tokens.GetCurrentToken(), CompileErrorInvalidImport,
-									   wstring(L"Invalid use of keyword import."));
-				}
-				break;
-			case TokenOperatorAssign:
-				if (tokens.GetType() == StatementUnknown)
-				{
-					tokens.SetType(StatementAssign);
-					ProcessAssignment(tokens);
-				}
-				else
-				{
-					tokens.Next();
-				}
-				break;
-			case TokenOperatorInOutMapping:
-			case TokenOperatorInMapping:
-			case TokenOperatorOutMapping:
-				if (tokens.GetType() == StatementUnknown)
-				{
-					tokens.SetType(StatementPropertyMapping);
-					ProcessPropertyMapping(tokens);
-				}
-				else
-				{
-					tokens.Next();
-				}
-				break;
-			case TokenOperatorPortLink:
-				tokens.SetType(StatementPortLink);
-				ProcessPortLink(tokens);
-				break;
-			case TokenId:
-			case TokenKeywordSelf:
-				if (tokens.IsFirstTokenInStatement() && tokens.IsTokenOfType(TokenId) && 
-					tokens.IsNextTokenOfType(TokenId))
-				{
-					tokens.SetType(StatementDeclaration);
-					ProcessDeclaration(tokens);
-				}
-				else
-				{
-					tokens.Next();
-				}
-				break;
-			case TokenSemiColon:
-				if (!tokens.IsEmpty() && tokens.GetType() == StatementUnknown)
-				{
-					throw(CompileError(tokens.GetLastToken(),
-									   CompileErrorIncompleteStatement, L"Statement not complete."));
-				}
-				else
-				{
-					tokens.Next();
-				}
-			case TokenOperatorDot:
+		case TokenKeywordImport:
+			ProcessImport(tokens);
+			break;
+		case TokenOperatorAssign:
+			ProcessAssignment(tokens);
+			break;
+		case TokenOperatorInOutMapping:
+		case TokenOperatorInMapping:
+		case TokenOperatorOutMapping:
+			ProcessPropertyMapping(tokens);
+			break;
+		case TokenOperatorPortLink:
+			ProcessPortLink(tokens);
+			break;
+		case TokenId:
+		case TokenKeywordSelf:
+			if (tokens.IsFirstTokenInStatement() && tokens.IsTokenOfType(TokenId) &&
+				tokens.IsNextTokenOfType(TokenId))
+			{
+				ProcessDeclaration(tokens);
+			}
+			else
+			{
 				tokens.Next();
-			default:
-				;
+			}
+			break;
+		case TokenSemiColon:
+			throw(CompileError(tokens.GetLastToken(),
+				CompileErrorIncompleteStatement, L"Statement not complete."));
+
+		case TokenOperatorDot:
+			tokens.Next();
+		default:
+			;
 		}
 	}
 

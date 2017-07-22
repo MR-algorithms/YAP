@@ -46,7 +46,7 @@ namespace Yap
 		std::shared_ptr<VariableSpace> _variables;
 
 		std::wstring _current_namespace;
-		std::vector <std::wstring> _namespace_in_use;
+		std::set <std::wstring> _namespace_in_use;
 	};
 }
 

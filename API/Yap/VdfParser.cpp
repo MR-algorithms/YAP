@@ -4,11 +4,9 @@
 
 #include <cassert>
 #include <fstream>
-#include <iostream>
 #include <sstream>
 #include <map>
-#include <ctype.h>
-
+#include <boost/lexical_cast.hpp>
 
 using namespace Yap;
 using namespace std;
@@ -159,7 +157,7 @@ bool VdfParser::ProcessUsing(Tokens& tokens)
 	assert(_variables);
 	tokens.AssertToken(TokenKeywordUsing, true);
 	tokens.AssertToken(TokenKeywordNamespace, true);
-	_namespace_in_use.push_back(tokens.GetNamespaceId());
+	_namespace_in_use.insert(tokens.GetNamespaceId());
 	tokens.AssertToken(TokenSemiColon, true);
 
 	return true;
@@ -187,9 +185,10 @@ bool VdfParser::ProcessSimpleDeclaration(Tokens& tokens)
 	else
 	{
 		tokens.AssertToken(TokenLessThan, true);
-		auto start_index = _wtoi(tokens.GetLiteralValue().c_str());
+
+		auto start_index = boost::lexical_cast<int>(tokens.GetLiteralValue());
 		tokens.AssertToken(TokenComma, true);
-		auto end_index = _wtoi(tokens.GetLiteralValue().c_str());
+		auto end_index = boost::lexical_cast<int>(tokens.GetLiteralValue());
 		tokens.AssertToken(TokenGreaterThan, true);
 
 		for (int i = start_index; i <= end_index; ++i)

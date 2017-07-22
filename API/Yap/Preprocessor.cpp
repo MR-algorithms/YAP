@@ -68,7 +68,7 @@ Tokens::Tokens(vector<Token>& tokens) :
 
 void Tokens::StartProcessingStatement()
 {
-	// _iter = _begin;
+	_iter = _begin;
 }
 
 void Tokens::FinishProcessingStatement(bool check_semicolon)
