@@ -73,6 +73,19 @@ bool ScanFileParser::Process()
 
 		assert(type == TokenId);
 		statement.Next();
+
+		// struct
+		if (statement.GetCurrentToken().type == TokenOperatorDot)
+		{
+			statement.Next();
+			auto member_type = statement.GetCurrentToken().type;
+			auto member_id = statement.GetCurrentToken().text;
+			assert(type == TokenId);
+			statement.Next();
+
+			variable_id = variable_id + L"." + member_id;
+		}
+
 		statement.AssertToken(TokenOperatorAssign, true);
 
 		wstring value_string;
