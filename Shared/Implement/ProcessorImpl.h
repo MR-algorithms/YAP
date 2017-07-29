@@ -185,8 +185,8 @@ namespace Yap
 
 		SmartPtr<ISharedObject> _module;
 
-		SmartPtr<ContainerImpl<IPort>> _input;
-		SmartPtr<ContainerImpl<IPort>> _output;
+		SmartPtr<PtrContainerImpl<IPort>> _input;
+		SmartPtr<PtrContainerImpl<IPort>> _output;
 
 		std::multimap<std::wstring, Anchor> _links;
 		std::map<std::wstring, std::wstring> _in_property_mapping;	 // <property_id, variable_id>

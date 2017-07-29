@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <map>
 #include <boost/lexical_cast.hpp>

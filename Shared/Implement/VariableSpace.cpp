@@ -1,12 +1,8 @@
 #include "VariableSpace.h"
-#include "Interface/Interfaces.h"
 #include "ContainerImpl.h"
 #include "../API/Yap/VdfParser.h"
 
-#include <fstream>
-#include <string>
 #include <vector>
-#include "utilities/StringHelper.h"
 #include <sstream>
 #include <boost/lexical_cast.hpp>
 
@@ -489,7 +485,7 @@ namespace _details
 			_description{ description != nullptr ? description : L"" },
 			_type{ VariableStruct },
 			_enabled{false},
-			_members{ YapShared(new ContainerImpl<IVariable>) } 
+			_members{ YapShared(new PtrContainerImpl<IVariable>) } 
 		{
 		}
 
@@ -635,7 +631,7 @@ namespace _details
 		}
 
 	private:
-		SmartPtr<ContainerImpl<IVariable>> _members;
+		SmartPtr<PtrContainerImpl<IVariable>> _members;
 		bool _enabled;
 		wstring _value_string;
 
@@ -645,7 +641,7 @@ namespace _details
 using namespace _details;
 
 VariableSpace::VariableSpace() :
-	_variables(YapShared(new ContainerImpl<IVariable>))
+	_variables(YapShared(new PtrContainerImpl<IVariable>))
 {
     InitTypes();
 }
@@ -903,7 +899,7 @@ shared_ptr<VariableSpace> VariableSpace::Load(const wchar_t * path)
 
 void VariableSpace::Reset()
 {
-	_variables = YapShared(new ContainerImpl<IVariable>);
+	_variables = YapShared(new PtrContainerImpl<IVariable>);
 }
 
 bool VariableSpace::TypeExists(const wchar_t * type) const

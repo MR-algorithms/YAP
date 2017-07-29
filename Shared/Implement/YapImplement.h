@@ -5,7 +5,7 @@
 
 #include "ContainerImpl.h"
 
-#define BEGIN_DECL_PROCESSORS ContainerImpl<IProcessor> * g_processor_manager;\
+#define BEGIN_DECL_PROCESSORS PtrContainerImpl<IProcessor> * g_processor_manager;\
 	extern "C" {\
 	__declspec(dllexport) void ReleaseProcessManager(){\
 		if (g_processor_manager) {\
@@ -18,7 +18,7 @@
 	{\
 		if (g_processor_manager)\
 			return g_processor_manager;\
-		g_processor_manager = new (std::nothrow) ContainerImpl<IProcessor>;\
+		g_processor_manager = new (std::nothrow) PtrContainerImpl<IProcessor>;\
 		if (!g_processor_manager) return nullptr;\
 		((ISharedObject*)  g_processor_manager)->Lock();
 
