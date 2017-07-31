@@ -7,6 +7,7 @@
 #include <sstream>
 #include <map>
 #include <boost/lexical_cast.hpp>
+#include <iostream>
 
 using namespace Yap;
 using namespace std;
