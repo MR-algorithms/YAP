@@ -13,7 +13,7 @@
 namespace Yap
 {
 	template <typename TYPE>
-	class ContainerImpl :
+	class PtrContainerImpl :
 		public IPtrContainer<TYPE>
 	{
 		IMPLEMENT_LOCK_RELEASE
@@ -23,7 +23,7 @@ namespace Yap
 			public IIterator<TYPE>,
 			public IDynamicObject
 		{
-			explicit Iterator(ContainerImpl& container) : _container(container)
+			explicit Iterator(PtrContainerImpl& container) : _container(container)
 			{
 			}
 
@@ -52,18 +52,18 @@ namespace Yap
 				delete this;
 			}
 
-			ContainerImpl& _container;
+			PtrContainerImpl& _container;
 			typename std::map<std::wstring, SmartPtr<TYPE>>::iterator _current;
 
-			friend class ContainerImpl;
+			friend class PtrContainerImpl;
 		};
 
 	public:
-		ContainerImpl() {}
+		PtrContainerImpl() {}
 
 		IPtrContainer<TYPE> * Clone() const override
 		{
-			auto cloned = new (std::nothrow) ContainerImpl;
+			auto cloned = new (std::nothrow) PtrContainerImpl;
 			if (cloned == nullptr)
 				return nullptr;
 
@@ -123,7 +123,7 @@ namespace Yap
 
 	private:
 		// protect the destructor to ensure the object can only be dynamically allocated
-		~ContainerImpl() 
+		~PtrContainerImpl() 
 		{
 			_elements.clear();
 		}

@@ -157,8 +157,6 @@ namespace Yap
 	typedef IPtrContainer<IVariable> IVariableContainer;
 	typedef IVariableContainer::iterator IVariableIter;
 
-	// ================== new variable interfaces ========================
-
 	template<typename VALUE_TYPE>
 	struct ISimpleVariable : public IVariable
 	{
@@ -212,8 +210,6 @@ namespace Yap
 	};
 
     typedef IPtrContainer<IVariable> IStructValue;
-
-	// ================== end new variable interfaces ====================
 
 	struct IPort : public ISharedObject
 	{
