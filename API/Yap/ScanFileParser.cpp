@@ -89,6 +89,17 @@ bool ScanFileParser::Process()
             statement.Next();
             variable_id = variable_id + wstring(L"::") + statement.GetCurrentToken().text;
             statement.Next();
+
+			if (statement.GetCurrentToken().type == TokenOperatorDot)
+			{
+				statement.Next();
+				auto member_type = statement.GetCurrentToken().type;
+				auto member_id = statement.GetCurrentToken().text;
+				assert(member_type == TokenId);
+				statement.Next();
+
+				variable_id = variable_id + L"." + member_id;
+			}
         }
 
 		statement.AssertToken(TokenOperatorAssign, true);
