@@ -52,9 +52,7 @@ template<typename T> bool Fft1D::DoFft(IData * data, size_t size)
 	}
 	else
 	{
-		Yap::Dimensions dims;
-		dims(DimensionReadout, 0, size);
-		auto output = CreateData<complex<T>>(&dims);
+		auto output = CreateData<complex<T>>(data);
 		Fft<T>(data_array, GetDataArray<complex<T>>(output.get()), size, GetProperty<bool>(L"Inverse"));
 		return Feed(L"Output", output.get());
 	}

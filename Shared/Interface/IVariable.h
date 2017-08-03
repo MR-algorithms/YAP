@@ -177,10 +177,8 @@ namespace Yap
 		virtual IPtrContainer<IVariable> * Members() = 0;
 	};
 
-	typedef IPtrContainer<IVariable> IStructValue;
-
 	typedef IPtrContainer<IVariable> IVariableContainer;
-	typedef IVariableContainer::iterator IVariableIter;
+	typedef IVariableContainer::Iterator IVariableIter;
 
 }
 

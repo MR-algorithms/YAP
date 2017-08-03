@@ -208,6 +208,11 @@ IProcessor * Yap::ImportedProcessorManager::ProcessorIterator::GetNext()
 	return _current->second.get();
 }
 
+void Yap::ImportedProcessorManager::ProcessorIterator::DeleteThis()
+{
+	delete this;
+}
+
 bool Yap::Module::Load(const wchar_t * plugin_path, IProcessorContainer& imported_processors)
 {
 	if (_module == 0)

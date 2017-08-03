@@ -4,6 +4,8 @@
 #define IDATA_H_20170626
 
 #include "smartPtr.h"
+#include "IVariable.h"
+
 #include <complex>
 
 #ifndef OUT
@@ -125,15 +127,24 @@ namespace Yap
 
 	struct IData : public ISharedObject
 	{
-		virtual int GetDataType() = 0;				///< 返回数据元素的类型
-		virtual IDimensions * GetDimensions() = 0;	///< 获得数据的维度信息。
-		// virtual IGeometry * GetGeometry() = 0;
+		/// Get the type of the data element.
+		virtual int GetDataType() = 0;
+
+		/// Get the dimension information of the data.
+		virtual IDimensions * GetDimensions() = 0;	
+	
+		/// Get spatial location of the image.
+		virtual IGeometry * GetGeometry() = 0;
+
+		/// Get the variable space associated with the data.
+		virtual IVariableContainer * GetVariables() = 0;
 	};
 
 	template <typename T> struct IDataArray : public IData
 	{
 		static_assert(data_type_id<T>::type != 0, "You have to use standard types.");
-		/// 返回数组的起始地址。
+
+		/// Get the pointer to the raw array.
 		virtual T * GetData() = 0;
 	};
 

@@ -36,8 +36,8 @@ bool ComplexSplitter::Input(const wchar_t * port, IData * data)
 	auto data_array = GetDataArray<complex<double>>(data);
 	if (want_real && want_imaginary)
 	{
-		auto real_data = CreateData<double>(data->GetDimensions()) ;
-		auto imaginary_data = CreateData<double>(data->GetDimensions());
+		auto real_data = CreateData<double>(data) ;
+		auto imaginary_data = CreateData<double>(data);
 
 		Split(data_array, GetDataArray<double>(real_data.get()), GetDataArray<double>(imaginary_data.get()), size);
 
@@ -46,13 +46,13 @@ bool ComplexSplitter::Input(const wchar_t * port, IData * data)
 	}
 	else if (want_real)
 	{
-		auto real_data = CreateData<double>(data->GetDimensions());
+		auto real_data = CreateData<double>(data);
 		ExtractReal(data_array, GetDataArray<double>(real_data.get()), size);
 		Feed(L"Real", real_data.get());
 	}
 	else if (want_imaginary)
 	{
-		auto imaginary_data = CreateData<double>(data->GetDimensions());
+		auto imaginary_data = CreateData<double>(data);
 		ExtractImaginary(data_array, GetDataArray<double>(imaginary_data.get()), size);
 		Feed(L"Imaginary", imaginary_data.get());
 	}

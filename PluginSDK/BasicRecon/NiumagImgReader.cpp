@@ -113,7 +113,7 @@ bool Yap::NiumagImgReader::ReadNiumagImgData()
 			(DimensionPhaseEncoding, 0U, dim2)
 			(DimensionSlice, 0U, dim3);
 
-		auto data = CreateData<unsigned short>(
+		auto data = CreateData<unsigned short>(nullptr,
 			reinterpret_cast<unsigned short*>(buffer), dimensions, nullptr, true);
 
 		Feed(L"Output", data.get());

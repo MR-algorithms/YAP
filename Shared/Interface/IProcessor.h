@@ -17,7 +17,7 @@ namespace Yap
 	};
 
 	typedef IPtrContainer<IPort> IPortContainer;
-	typedef IPortContainer::iterator IPortIter;
+	typedef IPortContainer::Iterator IPortIter;
 
 	struct IProcessor : public ISharedObject
 	{
@@ -53,7 +53,7 @@ namespace Yap
 	};
 
 	typedef IPtrContainer<IProcessor> IProcessorContainer;
-	typedef IProcessorContainer::iterator IProcessorIter;
+	typedef IProcessorContainer::Iterator IProcessorIter;
 }
 
 #endif // IProcessor_h__

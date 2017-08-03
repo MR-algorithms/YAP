@@ -20,9 +20,9 @@ namespace Yap
 
 		template <typename TYPE>  
 		class Iterator : 
-			public IIterator<TYPE>,
-			public IDynamicObject
+			public IIterator<TYPE>
 		{
+
 			explicit Iterator(PtrContainerImpl& container) : _container(container)
 			{
 			}

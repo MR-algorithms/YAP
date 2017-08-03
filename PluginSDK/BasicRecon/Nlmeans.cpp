@@ -39,13 +39,9 @@ bool Yap::Nlmeans::Input(const wchar_t * name, IData * data)
 	unsigned int width = input_data.GetWidth();
 	unsigned int height = input_data.GetHeight();
 
-	Dimensions dims;
-	dims(DimensionReadout, 0, width)
-		(DimensionPhaseEncoding, 0, height);
-
 	float * fpI = GetDataArray<float>(data);
 
-	auto fpO = CreateData<float>(&dims);
+	auto fpO = CreateData<float>(data);
 
 //	float Sigma = GetFloat(L"Sigma");
 	float Sigma = GetSigma(fpI, width, height);

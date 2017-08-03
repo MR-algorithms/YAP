@@ -23,6 +23,7 @@ namespace Yap
 			// Inherited via IIterator
 			virtual IProcessor * GetFirst() override;
 			virtual IProcessor * GetNext() override;
+			virtual void DeleteThis() override;
 
 			ImportedProcessorManager& _manager;
 			ProcessorIter _current;

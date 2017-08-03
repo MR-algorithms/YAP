@@ -5,7 +5,7 @@
 namespace Yap
 {
 	template <typename ELEMENT_TYPE>
-	struct IIterator
+	struct IIterator : public IDynamicObject
 	{
 		virtual ELEMENT_TYPE * GetFirst() = 0;
 		virtual ELEMENT_TYPE * GetNext() = 0;
@@ -14,10 +14,10 @@ namespace Yap
 	template <typename ELEMENT_TYPE>
 	struct IPtrContainer : public ISharedObject
 	{
-		typedef IIterator<ELEMENT_TYPE> iterator;
+		typedef IIterator<ELEMENT_TYPE> Iterator;
 
 		virtual ELEMENT_TYPE * Find(const wchar_t * name) = 0;
-		virtual iterator * GetIterator() = 0;
+		virtual Iterator * GetIterator() = 0;
 		virtual bool Add(const wchar_t * name, ELEMENT_TYPE * element) = 0;
 		virtual bool Delete(const wchar_t * name) = 0;
 		virtual void Clear() = 0;

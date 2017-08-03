@@ -69,7 +69,7 @@ namespace Yap
 	public:
 		Localization();
 		Localization(const Localization& source);
-		explicit Localization(IGeometry * source);
+		Localization(IGeometry * source);
 
 		~Localization();
 
@@ -109,33 +109,35 @@ namespace Yap
 	{
 		IMPLEMENT_CLONE(DataObject<T>)
         public:
-		DataObject(T* data, const Dimensions& dimensions, 
+		DataObject(IData * reference, T* data, const Dimensions& dimensions, 
 			ISharedObject * parent = nullptr, bool own_data = false, ISharedObject * module = nullptr) :
 			_data(data), _own_memory(own_data), _use_count(0), 
 			_parent(YapShared(parent)),
 			_module(YapShared(module)),
-			_geometry(YapShared<Localization>(nullptr))
+			_geometry{ YapShared(reference != nullptr ? new Localization(reference->GetGeometry()) : nullptr)},
+			_variables{ YapShared(reference != nullptr ? reference->GetVariables() : nullptr) }
 		{
 			assert(data != nullptr);
 			_dimensions = dimensions;
 		}
 		
-		DataObject(T* data, IDimensions * dimensions, ISharedObject * parent = nullptr, 
-			bool own_data = false, ISharedObject * module = nullptr) : 
-			_data(data), _own_memory(own_data), _dimensions(dimensions), _use_count(0), 
-			_parent(YapShared(parent)),
-			_module(YapShared(module)),
-			_geometry(YapShared<Localization>(nullptr))
-		{
-			assert(data != nullptr);
-		}
+// 		DataObject(T* data, IDimensions * dimensions, ISharedObject * parent = nullptr, 
+// 			bool own_data = false, ISharedObject * module = nullptr) : 
+// 			_data(data), _own_memory(own_data), _dimensions(dimensions), _use_count(0), 
+// 			_parent(YapShared(parent)),
+// 			_module(YapShared(module)),
+// 			_geometry(YapShared<Localization>(nullptr))
+// 		{
+// 			assert(data != nullptr);
+// 		}
 
-		DataObject(IDimensions * dimensions, ISharedObject * module) :
+		DataObject(IData * reference, IDimensions * dimensions, ISharedObject * module) :
 			_own_memory(true), 
 			_dimensions(dimensions), 
 			_use_count(0),
 			_module(YapShared(module)),
-			_geometry(YapShared<Localization>(nullptr))
+			_geometry{ YapShared(reference != nullptr ? new Localization(reference->GetGeometry()) : nullptr) },
+			_variables{ YapShared(reference != nullptr ? reference->GetVariables() : nullptr) }
 		{
 			unsigned int total_size = 1;
 
@@ -153,8 +155,12 @@ namespace Yap
 			even if the rhs does not own its data.
 		*/
 		DataObject(const DataObject& rhs, ISharedObject * module = nullptr) : 
-			_own_memory{true}, _dimensions{rhs._dimensions}, _use_count(0),
-			_module(YapShared(module)), _geometry(rhs._geometry)
+			_own_memory{true}, 
+			_dimensions{rhs._dimensions}, 
+			_use_count(0),
+			_module(YapShared(module)), 
+			_geometry(rhs._geometry),
+			_variables(rhs._variables)
 		{
 			unsigned int total_size = 1;
 
@@ -202,11 +208,15 @@ namespace Yap
 			return true;
 		}
 
-		IGeometry * GetGeometry()
+		IGeometry * GetGeometry() override
 		{
 			return _geometry.get();
 		}
 
+		IVariableContainer * GetVariables() override
+		{
+			return nullptr;
+		}
 	private:
 		~DataObject()
 		{
@@ -224,7 +234,6 @@ namespace Yap
 
 		T * _data;
 		Dimensions _dimensions;
-//		CLocalization _localization;
 
 		unsigned int _use_count;
 		bool _own_memory;
@@ -232,6 +241,7 @@ namespace Yap
 		SmartPtr<ISharedObject> _module;
 
 		SmartPtr<Localization> _geometry;
+		SmartPtr<IVariableContainer> _variables;
 
 		friend class ProcessorImpl;
 	};

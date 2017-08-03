@@ -77,7 +77,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 	{
 		if (data->GetDataType() == DataTypeComplexDouble)
 		{
-			auto module = CreateData<double>(data->GetDimensions());
+			auto module = CreateData<double>(data);
 
 			GetModule(GetDataArray<complex<double>>(data),
 				GetDataArray<double>(module.get()),
@@ -88,7 +88,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 		
 		else
 		{
-			auto module = CreateData<float>(data->GetDimensions());
+			auto module = CreateData<float>(data);
 
 			GetModule(GetDataArray<complex<float>>(data),
 				GetDataArray<float>(module.get()),
@@ -102,7 +102,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 	{
 		if (data->GetDataType() == DataTypeComplexDouble)
 		{
-			auto phase = CreateData<double>(data->GetDimensions());
+			auto phase = CreateData<double>(data);
 
 			GetPhase(GetDataArray<complex<double>>(data), GetDataArray<double>(phase.get()),
 				input_data.GetDataSize());
@@ -111,7 +111,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 		}
 		else
 		{
-			auto phase = CreateData<float>(data->GetDimensions());
+			auto phase = CreateData<float>(data);
 
 			GetPhase(GetDataArray<complex<float>>(data), GetDataArray<float>(phase.get()),
 				input_data.GetDataSize());

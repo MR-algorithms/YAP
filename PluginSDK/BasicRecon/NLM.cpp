@@ -40,12 +40,9 @@ bool Yap::NLM::Input(const wchar_t * name, IData * data)
 	DataHelper input_data(data);
 	unsigned int width = input_data.GetWidth();
 	unsigned int height = input_data.GetHeight();
-	Dimensions dims;
-	dims(DimensionReadout, 0, width)
-		(DimensionPhaseEncoding, 0, height);
 
 	float * input_img = GetDataArray<float>(data);
-	auto output_img = CreateData<float>(&dims);
+	auto output_img = CreateData<float>(data);
 
 	float sigma = GetSigma(input_img, width, height);
 
