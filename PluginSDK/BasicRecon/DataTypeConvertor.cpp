@@ -36,15 +36,15 @@ inline void ConvertElement(complex<float>& input, complex<double>& output)
 }
 
 template <typename IN_TYPE, typename OUT_TYPE>
-Yap::SmartPtr<IData> DataTypeConvertor::GetConvertedData(IData* input_object)
+Yap::SmartPtr<IData> DataTypeConvertor::GetConvertedData(IData* data)
 {
-	assert(input_object != nullptr);
+	assert(data != nullptr);
 
-	auto output_object = CreateData<OUT_TYPE>(input_object->GetDimensions());
+	auto output_object = CreateData<OUT_TYPE>(data);
 	auto output = ::GetDataArray<OUT_TYPE>(output_object.get());
 
-	DataHelper helper(input_object);
-	auto input = ::GetDataArray<IN_TYPE>(input_object);
+	DataHelper helper(data);
+	auto input = ::GetDataArray<IN_TYPE>(data);
 
 	auto input_end = input + helper.GetDataSize();
 

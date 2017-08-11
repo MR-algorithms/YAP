@@ -16,8 +16,8 @@ NiuMriImageWriter::NiuMriImageWriter(void) :
 {
 	LOG_TRACE(L"NiuMriImageWriter constructor called.", L"BasicRecon");
 	AddInput(L"Input", 3, DataTypeUnsignedShort);
-	AddProperty<const wchar_t *>(L"ExportFolder", L"", L"Set folder used to write images.");
-	AddProperty<const wchar_t *>(L"FileName", L"", L"Set file name.");
+	AddProperty<const wchar_t * const>(L"ExportFolder", L"", L"Set folder used to write images.");
+	AddProperty<const wchar_t * const>(L"FileName", L"", L"Set file name.");
 }
 
 NiuMriImageWriter::NiuMriImageWriter(const NiuMriImageWriter& rhs) :
@@ -35,8 +35,8 @@ bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && (GetDataArray<unsigned short>(data) != nullptr));
 
-	auto output_folder = GetProperty<const wchar_t*>(L"ExportFolder");
-	auto output_name = GetProperty<const wchar_t*>(L"FileName");
+	auto output_folder = GetProperty<const wchar_t * const>(L"ExportFolder");
+	auto output_name = GetProperty<const wchar_t * const>(L"FileName");
 	auto file_path = GetFilePath(output_folder, output_name);
 
 	//write data

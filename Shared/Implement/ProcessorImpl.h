@@ -12,6 +12,7 @@
 #include "Implement/ContainerImpl.h"
 #include "VariableSpace.h"
 #include "Interface/smartptr.h"
+#include <type_traits>
 
 namespace Yap
 {
@@ -48,12 +49,16 @@ namespace Yap
 		virtual void SetModule(ISharedObject * module) override;
 
 		template<typename T> 
-		SmartPtr<DataObject<T>> CreateData(T* data, const Dimensions& dimensions, 
+		SmartPtr<DataObject<T>> CreateData(IData * reference, T* data, const Dimensions& dimensions, 
 			ISharedObject * parent = nullptr, bool own_data = false)
 		{
 			try
 			{
-				return YapShared(new DataObject<T>(data, dimensions, parent, own_data, _module.get()));
+				if (!own_data)
+				{
+					assert(parent != nullptr);
+				}
+				return YapShared(new DataObject<T>(reference, data, dimensions, parent, own_data, _module.get()));
 			}
 			catch (std::bad_alloc&)
 			{
@@ -61,26 +66,32 @@ namespace Yap
 			}
 		}
 
-		template<typename T>
-		SmartPtr<DataObject<T>> CreateData(T* data, IDimensions * dimensions, 
-			ISharedObject * parent = nullptr, bool own_data = false) 
-		{
-			try
-			{
-				return YapShared(new DataObject<T>(data, dimensions, parent, own_data, _module.get()));
-			}
-			catch (std::bad_alloc&)
-			{
-				return YapShared<DataObject<T>>(nullptr);
-			}
-		}
+// 		template<typename T>
+// 		SmartPtr<DataObject<T>> CreateData(IData * reference, T* data, IDimensions * dimensions, 
+// 			ISharedObject * parent = nullptr, bool own_data = false) 
+// 		{
+// 			try
+// 			{
+// 				if (!own_data)
+// 				{
+// 					assert(parent != nullptr);
+// 				}
+// 				return YapShared(new DataObject<T>(data, dimensions, parent, own_data, _module.get()));
+// 			}
+// 			catch (std::bad_alloc&)
+// 			{
+// 				return YapShared<DataObject<T>>(nullptr);
+// 			}
+// 		}
 
 		template<typename T>
-		SmartPtr<DataObject<T>> CreateData(IDimensions * dimensions)
+		SmartPtr<DataObject<T>> CreateData(IData * reference, IDimensions * dimensions = nullptr)
 		{
 			try
 			{
-				return YapShared<DataObject<T>>(new DataObject<T>(dimensions, _module.get()));
+				return YapShared<DataObject<T>>(new DataObject<T>(reference, 
+					(dimensions != nullptr) ? dimensions : ((reference != nullptr) ? reference->GetDimensions() : nullptr),
+					_module.get()));
 			}
 			catch (std::bad_alloc&)
 			{
@@ -121,7 +132,7 @@ namespace Yap
 		template <typename T>
 		bool AddProperty(const wchar_t * property_id, T value, const wchar_t * description)
 		{
-			if (_properties->Add(variable_type_id<T>::type, property_id, description))
+			if (_properties->Add(variable_type_id<T>::type_id, property_id, description))
 			{
 				_properties->Set<T>(property_id, value);
 				return true;
@@ -176,8 +187,8 @@ namespace Yap
 
 		SmartPtr<ISharedObject> _module;
 
-		SmartPtr<ContainerImpl<IPort>> _input;
-		SmartPtr<ContainerImpl<IPort>> _output;
+		SmartPtr<PtrContainerImpl<IPort>> _input;
+		SmartPtr<PtrContainerImpl<IPort>> _output;
 
 		std::multimap<std::wstring, Anchor> _links;
 		std::map<std::wstring, std::wstring> _in_property_mapping;	 // <property_id, variable_id>

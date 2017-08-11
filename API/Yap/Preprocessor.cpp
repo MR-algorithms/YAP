@@ -4,74 +4,84 @@
 #include <iostream>
 #include <map>
 #include <ctype.h>
+#include <utility>
 
 using namespace Yap;
 using namespace std;
 
-map<TokenType, wstring> token_map = {
-	{TokenOperatorPortLink, L"->"},
-	{TokenOperatorInOutMapping, L"<=>"},
-	{TokenOperatorInMapping, L"<=="},
-	{TokenOperatorOutMapping, L"==>"},
-	{TokenOperatorDot, L"."},
-	{TokenOperatorAssign, L"="},
-	{TokenLessThen, L"<"},
-	{TokenGreaterThen, L">"},
-	{TokenSharp, L"#"},
-	{TokenComma, L","},
-	{TokenSemiColon, L";"},
-	{TokenLeftBrace, L"{"},
-	{TokenRightBrace, L"}"},
-	{TokenLeftParenthesis, L"("},
-	{TokenRightParenthesis, L"), "},
-	{TokenOperatorMinus, L"-"},
-	{TokenId, L"identifier"},
-	{TokenStringLiteral, L"string literal"},
-	{TokenNumericLiteral, L"numeric literal"},
-	{TokenKeywordBool,    L"bool"},
-	{TokenKeywordFloat,	  L"float"},
-	{TokenKeywordInt,	  L"int"},
-	{TokenKeywordString,  L"string"},
-	{TokenKeywordArray,	  L"array"},
-	{TokenKeywordStruct,  L"struct"},
-	{TokenKeywordImport,  L"import"},
-	{TokenKeywordInclude, L"include"},
-	{TokenKeywordSelf, L"self"},
-	{TokenKeywordTrue, L"true"},
-	{TokenKeywordFalse, L"false"},
+map <TokenType, pair<wstring, TokenCategory>> token_info {
+	{ TokenOperatorPortLink, {L"->", TokenCategoryOperator }},
+	{ TokenOperatorInOutMapping, {L"<=>", TokenCategoryOperator}},
+	{ TokenOperatorInMapping, {L"<==", TokenCategoryOperator}},
+	{ TokenOperatorOutMapping, {L"==>", TokenCategoryOperator }},
+	{ TokenOperatorDot, {L".", TokenCategoryOperator }},
+	{ TokenOperatorAssign, {L"=", TokenCategoryOperator }},
+	{ TokenLessThan, {L"<", TokenCategoryOperator}},
+	{ TokenGreaterThan, {L">", TokenCategoryOperator }},
+	{ TokenSharp, {L"#", TokenCategorySpecial}},
+	{ TokenComma, {L",", TokenCategorySeparator}},
+	{ TokenSemiColon, {L";", TokenCategorySeparator}},
+	{ TokenDoubleColon, {L"::", TokenCategoryOperator}},
+	{ TokenLeftBrace, {L"{", TokenCategorySeparator}},
+	{ TokenRightBrace, {L"}", TokenCategorySeparator}},
+	{ TokenLeftParenthesis, {L"(", TokenCategorySeparator}},
+	{ TokenRightParenthesis, {L"), ", TokenCategorySeparator}},
+	{ TokenLeftSquareBracket, {L"[", TokenCategorySeparator}},
+	{ TokenRightSquareBracket, {L"]", TokenCategorySeparator}},
+	{ TokenOperatorMinus, {L"-", TokenCategoryOperator}},
+	{ TokenId, {L"identifier", TokenCategoryId}},
+	{ TokenStringLiteral, {L"string literal", TokenCategoryStringLiteral}},
+	{ TokenNumericLiteral, {L"numeric literal", TokenCategoryNumericalLiteral}},
+	{ TokenKeywordBool,    {L"bool", TokenCategoryKeyword}},
+	{ TokenKeywordFloat,	  {L"float", TokenCategoryKeyword }},
+	{ TokenKeywordInt,	  {L"int", TokenCategoryKeyword }},
+	{ TokenKeywordString,  {L"string", TokenCategoryKeyword }},
+	{ TokenKeywordArray,	  {L"array", TokenCategoryKeyword }},
+	{ TokenKeywordStruct,  {L"struct", TokenCategoryKeyword }},
+	{ TokenKeywordImport,  {L"import", TokenCategoryKeyword }},
+	{ TokenKeywordInclude, {L"include", TokenCategoryKeyword }},
+	{ TokenKeywordSelf, {L"self", TokenCategoryKeyword }},
+	{ TokenKeywordTrue, {L"true", TokenCategoryKeyword }},
+	{ TokenKeywordFalse, {L"false", TokenCategoryKeyword }},
+	{ TokenKeywordNamespace, {L"namespace", TokenCategoryKeyword }},
+	{ TokenKeywordUsing, {L"using", TokenCategoryKeyword }},
 };
 
-Statement::Guard::Guard(Statement& statement) :
-	_statement{statement}
+Tokens::Guard::Guard(Tokens& statement, bool end_with_semicolon) :
+	_statement{statement},
+	_end_with_semicolon{end_with_semicolon}
 {
 	_statement.StartProcessingStatement();
 }
 
-Statement::Guard::~Guard()
+Tokens::Guard::~Guard()
 {
-	_statement.FinishProcessingStatement();
+	_statement.FinishProcessingStatement(_end_with_semicolon);
 }
 
-Statement::Statement(const vector<Token>& tokens) :
+Tokens::Tokens(vector<Token>& tokens) :
 	_tokens{tokens},
 	_type{StatementUnknown}
 {
-	_begin = _iter = tokens.cbegin();
+	_begin = _iter = _tokens.cbegin();
 }
 
-void Statement::StartProcessingStatement()
+void Tokens::StartProcessingStatement()
 {
 	_iter = _begin;
 }
 
-void Statement::FinishProcessingStatement()
+void Tokens::FinishProcessingStatement(bool check_semicolon)
 {
-	AssertToken(TokenSemiColon, true);
+	if (check_semicolon)
+	{
+		AssertToken(TokenSemiColon, true);
+	}
 	_begin = _iter;
 	_type = StatementUnknown;
 }
 
-void Statement::Next()
+void Tokens::Next()
 {
 	++_iter;
 
@@ -81,14 +91,14 @@ void Statement::Next()
 	}
 }
 
-/// Check to see whether next token in the statement is of specified type. 
 /**
+	\brief Check to see whether next token in the statement is of specified type. 
 	\remarks This function check to see whether next token in the statement is if specified type.
 	If not, a compiler error exception will be thrown.
 	\param type
 	\param move_next, if \true, extract the next token.
 */
-void Statement::AssertToken(TokenType type, bool move_next)
+void Tokens::AssertToken(TokenType type, bool move_next)
 {
 	if (_iter == _tokens.end())
 	{
@@ -115,7 +125,7 @@ This function will not move the pointer.
 \param type
 
 */
-bool Statement::IsNextTokenOfType(TokenType type)
+bool Tokens::IsNextTokenOfType(TokenType type)
 {
 	if (_iter == _tokens.end())
 	{
@@ -127,8 +137,11 @@ bool Statement::IsNextTokenOfType(TokenType type)
 }
 
 /// Check to see whether the current token is of the given type.
-bool Statement::IsTokenOfType(TokenType type, bool move_next)
+bool Tokens::IsTokenOfType(TokenType type, bool move_next)
 {
+	if (AtEnd())
+		return false;
+
 	auto result = (_iter->type == type);
 	if (move_next && result)
 	{
@@ -138,24 +151,24 @@ bool Statement::IsTokenOfType(TokenType type, bool move_next)
 	return result;
 }
 
-bool Statement::IsFirstTokenInStatement() const
+bool Tokens::IsFirstTokenInStatement() const
 {
 	return _iter == _begin;
 }
 
-/// Extract an Id from the statement.
 /**
+	\brief Extract an Id from the statement.
 	\remarks Id may be a class id, variable id, processor id, etc. Current token will be consumed.
 	\return The Id extracted from the statement. 
 */
-std::wstring Statement::GetId()
+std::wstring Tokens::GetId()
 {
 	AssertToken(TokenId, false);
 
 	return (_iter++)->text;
 }
 
-wstring Statement::GetStringLiteral()
+wstring Tokens::GetStringLiteral()
 {
 	const Token& token = GetCurrentToken();
 	if (AtEnd() || token.type != TokenStringLiteral)
@@ -165,7 +178,7 @@ wstring Statement::GetStringLiteral()
 	return (_iter++)->text;
 }
 
-std::wstring Statement::GetLiteralValue()
+std::wstring Tokens::GetLiteralValue()
 {
 	if (AtEnd() ||
 		(_iter->type != TokenStringLiteral && _iter->type != TokenNumericLiteral &&
@@ -177,7 +190,7 @@ std::wstring Statement::GetLiteralValue()
 	return (_iter++)->text;
 }
 
-std::pair<std::wstring, std::wstring> Statement::GetProcessorMember(bool empty_member_allowed)
+std::pair<std::wstring, std::wstring> Tokens::GetProcessorMember(bool empty_member_allowed)
 {
 	pair<wstring, wstring> result;
 	result.first = GetId();
@@ -198,8 +211,14 @@ std::pair<std::wstring, std::wstring> Statement::GetProcessorMember(bool empty_m
 	return result;
 }
 
-/// 锟斤拷图锟斤拷取锟斤拷锟斤拷id锟斤拷锟斤拷锟斤拷锟斤拷锟狡讹拷锟斤拷锟斤拷取锟斤拷锟斤拷之锟斤拷锟斤拷
-std::wstring Statement::GetParamId()
+/**
+	\brief Get a variable id from the statement.
+
+	A variable may be in the form "id|.id|0..n", or "namespace::id|.id|0..n" if namespace is supported;
+
+	An id may include array indexing: "id[index];
+*/
+std::wstring Tokens::GetParamId()
 {
 	wstring param_id;
 	bool id_expected = true;
@@ -207,7 +226,7 @@ std::wstring Statement::GetParamId()
 	{
 		if (!((id_expected && _iter->type == TokenId) || (!id_expected && _iter->type == TokenOperatorDot)))
 		{
-			throw CompileError(*_iter, CompileErrorParamIdInvalid, L"锟斤拷锟斤拷Id锟斤拷锟斤拷式锟斤拷锟较凤拷锟斤拷");
+			throw CompileError(*_iter, CompileErrorParamIdInvalid, L"Invalid form of variable id.");
 		}
 		param_id += (_iter++)->text;
 		id_expected = !id_expected;
@@ -216,43 +235,72 @@ std::wstring Statement::GetParamId()
 	return param_id;
 }
 
-bool Yap::Statement::IsCurrentStatementEmpty()
+/** Try to extract namespace qualifier from the statement and move to next token.
+    The final double colon is extracted from the statement but not included in the 
+	return value.
+*/
+std::wstring Yap::Tokens::GetNamespaceQualifier()
+{
+	wstring result;
+	while (_iter != _tokens.end())
+	{
+		if (_iter->type != TokenId)
+		{
+			throw CompileError(*_iter, CompileErrorParamIdInvalid, L"Invalid form of variable id.");
+		}
+
+		if (_iter + 1 != _tokens.end() && (_iter + 1)->type == TokenDoubleColon)
+		{
+			// if the id is not followed by ::, the id will not be extracted to the result.
+			result += _iter->text;
+			_iter += 2;
+		}
+		else
+		{
+			return result;
+		}
+	}
+
+	return result;
+}
+
+bool Yap::Tokens::IsEmpty()
 {
 	return _tokens.empty();
 }
 
-void Yap::Statement::SetType(StatementType type)
+void Yap::Tokens::SetType(StatementType type)
 {
 	_type = type;
 }
 
-Yap::StatementType Yap::Statement::GetType() const
+Yap::StatementType Yap::Tokens::GetType() const
 {
 	return _type;
 }
 
-const Yap::Token& Yap::Statement::GetToken(unsigned int index)
+const Yap::Token& Yap::Tokens::GetToken(unsigned int index)
 {
 	assert(_begin + index < _tokens.end());
 	return *(_begin + index);
 }
 
-const Yap::Token& Yap::Statement::GetCurrentToken()
+const Yap::Token& Yap::Tokens::GetCurrentToken()
 {
 	return *_iter;
 }
 
-const Yap::Token& Yap::Statement::GetLastToken() const
+const Yap::Token& Yap::Tokens::GetLastToken() const
 {
 	return *(_tokens.end() - 1);
 }
 
-bool Yap::Statement::AtEnd() const
+bool Yap::Tokens::AtEnd() const
 {
 	return _iter == _tokens.end();
 }
 
-std::wstring Yap::Statement::GetVariableId()
+std::wstring Yap::Tokens::GetVariableIdOld()
 {
 	wstring variable_id;
 	bool id_expected = true;
@@ -275,7 +323,76 @@ std::wstring Yap::Statement::GetVariableId()
 	return variable_id;
 }
 
-void Yap::Statement::DebugOutput(wostream& output)
+std::wstring Yap::Tokens::GetIdWithIndexing()
+{
+	wstring result;
+	if (_iter == _tokens.end() || _iter->type != TokenId)
+	{
+		throw CompileError(*_iter, CompileErrorParamIdInvalid, L"Invalid format for system variable id.");
+	}
+	result += (_iter++)->text;
+
+	while (!AtEnd() && IsTokenOfType(TokenLeftSquareBracket))
+	{
+		result += L"[";
+		++_iter;
+		result += GetLiteralValue();
+		AssertToken(TokenRightSquareBracket, true);
+		result += L"]";
+	}
+
+	return result;
+}
+
+std::wstring Yap::Tokens::GetVariableId()
+{
+	wstring variable_id = GetNamespaceQualifier();
+	if (!variable_id.empty())
+	{
+		variable_id += L"::";
+	}
+
+	while(!AtEnd())
+	{
+		variable_id += GetIdWithIndexing();
+		if (IsTokenOfType(TokenOperatorDot, true))
+		{
+			variable_id += L'.';
+		}
+		else
+		{
+			return variable_id;
+		}
+	}
+
+	return variable_id;
+}
+
+/**
+	\brief Extract a qualified namespace id from tokens.
+
+	outer:: ... ::inner 
+*/
+std::wstring Yap::Tokens::GetNamespaceId()
+{
+	wstring namespace_id;
+	while (!AtEnd())
+	{
+		namespace_id += GetId();
+		if (IsTokenOfType(TokenDoubleColon, true))
+		{
+			namespace_id += L"::";
+		}
+		else
+		{
+			return namespace_id;
+		}
+	} 
+
+	throw CompileError(*_iter, CompileErrorIdExpected, L"Namespace id expected after \"::\"");
+}
+
+void Yap::Tokens::DebugOutput(wostream& output)
 {
 	static map<StatementType, wstring> statment_label = {
 		{StatementImport, L"Import"},
@@ -309,9 +426,12 @@ Preprocessor::Preprocessor(PreprocessType type)
 				TokenOperatorDot,
 				TokenOperatorAssign,
 				TokenSemiColon,
+				TokenDoubleColon,
 				TokenComma,
 				TokenLeftParenthesis,
 				TokenRightParenthesis,
+				TokenLeftSquareBracket,
+				TokenRightSquareBracket,
 
 				TokenStringLiteral,
 				TokenNumericLiteral,
@@ -338,8 +458,8 @@ Preprocessor::Preprocessor(PreprocessType type)
 				TokenComma,
 				TokenLeftBrace,
 				TokenRightBrace,
-				TokenGreaterThen,
-				TokenLessThen,
+				TokenGreaterThan,
+				TokenLessThan,
 				TokenSharp, // #
 
 				TokenStringLiteral,
@@ -354,6 +474,8 @@ Preprocessor::Preprocessor(PreprocessType type)
 				TokenKeywordInclude,
 				TokenKeywordTrue,
 				TokenKeywordFalse,
+				TokenKeywordNamespace,
+				TokenKeywordUsing,
 			};
 			break;
 		case PreprocessScan:
@@ -363,11 +485,14 @@ Preprocessor::Preprocessor(PreprocessType type)
 				TokenOperatorDot,
 				TokenOperatorAssign,
 				TokenSemiColon,
+				TokenDoubleColon,
 				TokenStringLiteral,
 				TokenNumericLiteral,
 
 				TokenKeywordTrue,
 				TokenKeywordFalse,
+				TokenKeywordUsing,
+				TokenKeywordNamespace,
 			};
 		default:
 			assert(0 && "Unknown type.");
@@ -384,7 +509,9 @@ Preprocessor::Preprocessor(PreprocessType type)
 		{L"include", TokenKeywordInclude},
 		{L"self", TokenKeywordSelf},
 		{L"true", TokenKeywordTrue},
-		{L"false", TokenKeywordFalse}
+		{L"false", TokenKeywordFalse},
+		{L"namespace", TokenKeywordNamespace},
+		{L"using", TokenKeywordUsing},
 	};
 
 	_operators = {
@@ -395,21 +522,32 @@ Preprocessor::Preprocessor(PreprocessType type)
 		{L".", TokenOperatorDot},
 		{L"=", TokenOperatorAssign},
 		{L";", TokenSemiColon},
+		{L"::", TokenDoubleColon},
 		{L",", TokenComma},
 		{L"-", TokenOperatorMinus},
 		{L"{", TokenLeftBrace},
 		{L"}", TokenRightBrace},
 		{L"(", TokenLeftParenthesis},
 		{L")", TokenRightParenthesis},
-		{L">", TokenGreaterThen},
-		{L"<", TokenLessThen},
+		{L"[", TokenLeftSquareBracket},
+		{L"]", TokenRightSquareBracket},
+		{L">", TokenGreaterThan},
+		{L"<", TokenLessThan},
 		{L"#", TokenSharp},
 	};
 }
 
-Statement Preprocessor::GetStatement()
+Tokens Preprocessor::GetTokens()
 {
-	return Statement(_tokens);
+	return Tokens(_tokens);
+}
+
+bool Preprocessor::Preprocess(const wchar_t * const text)
+{
+	wistringstream input;
+	input.str(text);
+
+	return Preprocess(input);
 }
 
 bool Preprocessor::Preprocess(wistream& script_file)
@@ -429,8 +567,6 @@ bool Preprocessor::Preprocess(wistream& script_file)
 		++line_number;
 	}
 
-	DebugOutputTokens(wcout);
-
 	return true;
 }
 
@@ -438,7 +574,7 @@ bool Preprocessor::PreprocessLine(std::wstring& line,
 	int line_number)
 {
 	int pos = 0;
-	static set<wchar_t> braces = {L'(', L')', L'{', L'}'};
+	static set<wchar_t> braces = {L'(', L')', L'{', L'}', L'[', L']'};
 
 	while ((pos = int(line.find_first_not_of(L" \t\n", pos))) != wstring::npos)
 	{
@@ -455,8 +591,9 @@ bool Preprocessor::PreprocessLine(std::wstring& line,
 
 		if (isdigit(line[pos]))
 		{
+			// YG: should be replaced with reg_ex
 			token.type = TokenNumericLiteral;
-			next_separator = line.find_first_of(L" \t\n\"{}()+-,*/=<>#;", pos);
+			next_separator = line.find_first_of(L" \t\n\"{}()+-,*/=<>#;[]:", pos);
 			token.length = int(((next_separator == -1) ? line.length() : next_separator) - token.column);
 			token.text = line.substr(token.column, token.length);
 
@@ -468,9 +605,9 @@ bool Preprocessor::PreprocessLine(std::wstring& line,
 				break;
 			}
 		}
-		else if (isalpha(line[pos]))
+		else if (isalpha(line[pos]) || line[pos] == L'_')
 		{
-			next_separator = line.find_first_of(L" \t\n\"{}()+-.,*/=<>#;", pos);
+			next_separator = line.find_first_of(L" \t\n\"{}()+-,*/=<>#;[]:.", pos);
 			token.length = int(((next_separator == -1) ? line.length() : next_separator) - token.column);
 
 			token.text = line.substr(token.column, token.length);
@@ -540,47 +677,42 @@ bool Preprocessor::PreprocessLine(std::wstring& line,
 
 int Yap::Preprocessor::CheckBraceMatching(wchar_t c, int line_number, int pos)
 {
+	static map<wchar_t, TokenType> token_type_from_char {
+		{L'(', TokenLeftParenthesis},
+		{L')', TokenRightParenthesis},
+		{L'[', TokenLeftSquareBracket},
+		{L']', TokenRightSquareBracket},
+		{L'{', TokenLeftBrace},
+		{L'}', TokenRightBrace} };
+
+	static map<wchar_t, wchar_t> bracket_matching  {
+		{L'(', L')' }, {L'[', L']' }, {L'{', L'}' }, 
+		{L')', L'(' }, {L']', L'[' }, {L'}', L'{' },
+	};
+
 	switch (c)
 	{
 		case '(':
-			_tokens.push_back(MakeToken(line_number, pos, 1, TokenLeftParenthesis));
-			_matching_check.push(MakeToken(line_number, pos, 1, TokenLeftParenthesis));
+		case '[':
+		case '{':
+			_tokens.push_back(MakeToken(line_number, pos, 1, token_type_from_char[c]));
+			_matching_check.push(c);
 			pos += 1;
 			break;
 		case ')':
-		{
-			Token token(line_number, pos, 1, TokenRightParenthesis);
-			if (_matching_check.empty())
-			{
-				throw CompileError(token, CompileErrorNoMatchingLeftParenthesis, L"No matching left parenthesis found.");
-			}
-			else if (_matching_check.top().type == TokenLeftBrace)
-			{
-				throw CompileError(token, CompileErrorRightBraceExpected, L"Right brace expected.");
-			}
-			else
-			{
-				_matching_check.pop();
-				pos += 1;
-				_tokens.push_back(token);
-			}
-		}
-		break;
-		case '{':
-			_tokens.push_back(MakeToken(line_number, pos, 1, TokenLeftBrace));
-			pos += 1;
-			_matching_check.push(MakeToken(line_number, pos, 1, TokenLeftBrace));
-			break;
+		case ']':
 		case '}':
 		{
-			Token token = MakeToken(line_number, pos, 1, TokenRightBrace);
+			Token token(line_number, pos, 1, token_type_from_char[c]);
 			if (_matching_check.empty())
 			{
-				throw CompileError(token, CompileErrorNoMatchingLeftBrace, L"No matching left brace found.");
+				throw CompileError(token, CompileErrorNoMatchingLeftBracket, 
+					L"No matching left bracket found: " + bracket_matching[c]);
 			}
-			else if (_matching_check.top().type == TokenLeftParenthesis)
+			else if (_matching_check.top() != bracket_matching[c])
 			{
-				throw CompileError(token, CompileErrorRightParenthesisExpected, L"Right parenthesis expected.");
+				throw CompileError(token, CompileErrorRightBracketExpected, 
+					L"Right bracket expected: " + bracket_matching[_matching_check.top()]);
 			}
 			else
 			{
@@ -588,10 +720,12 @@ int Yap::Preprocessor::CheckBraceMatching(wchar_t c, int line_number, int pos)
 				pos += 1;
 				_tokens.push_back(token);
 			}
+			break;
 		}
-		break;
-
+		default:
+			assert(0);
 	}
+
 	return pos;
 }
 
@@ -605,13 +739,23 @@ Token Preprocessor::MakeToken(unsigned int token_line, unsigned token_column, un
 
 void Preprocessor::DebugOutputTokens(std::wostream& output)
 {
+	static map<TokenCategory, wstring> category = {
+		{TokenCategoryOperator, L"Operator"},
+		{TokenCategoryKeyword, L"Keyword"},
+		{TokenCategoryStringLiteral, L"String Literal"},
+		{TokenCategoryNumericalLiteral, L"Numerical Literal"},
+		{TokenCategoryId, L"Id"},
+		{TokenCategorySeparator, L"Separator"},
+		{TokenCategorySpecial, L"Special"},
+	};
+
 	for (auto iter = _tokens.begin(); iter != _tokens.end(); ++iter)
 	{
 		auto token = _script_lines[iter->line].substr(iter->column, iter->length);
-		auto token_item = token_map.find(iter->type);
-		if (token_item != token_map.end())
+		auto token_item = token_info.find(iter->type);
+		if (token_item != token_info.end())
 		{
-			output << token_item->second.c_str() << "\t: " << token.c_str() << "\n";
+			output << category[token_item->second.second].c_str() << "\t: " << token.c_str() << "\n";
 		}
 		else
 		{
@@ -620,39 +764,8 @@ void Preprocessor::DebugOutputTokens(std::wostream& output)
 	}
 }
 
-void Preprocessor::TestTokens()
-{
-	for (auto iter = _tokens.begin(); iter != _tokens.end(); ++iter)
-	{
-		auto token = _script_lines[iter->line].substr(iter->column, iter->length);
-		auto token_item = token_map.find(iter->type);
-		if (token_item != token_map.end())
-		{
-			assert(token_item->second == token);
-		}
-		else
-		{
-			switch (iter->type)
-			{
-			case TokenId:
-				assert(isalpha(token[0]));
-				break;
-			case TokenStringLiteral:
-				assert(_script_lines[iter->line][iter->column - 1] == L'\"' &&
-					_script_lines[iter->line][iter->column + iter->length] == L'\"');
-				break;
-			case TokenNumericLiteral:
-				assert(isdigit(token[0]));
-				break;
-			default:
-				assert(0);
-			}
-		}
-	}
-}
-
 Yap::CompileErrorTokenType::CompileErrorTokenType(const Token& token, TokenType expected_token) :
 	CompileError{token, ErrorCodeTokenType, std::wstring()}
 {
-	_error_message = token_map[expected_token] + (L" expected.");
+	_error_message = token_info[expected_token].first + (L" expected.");
 }

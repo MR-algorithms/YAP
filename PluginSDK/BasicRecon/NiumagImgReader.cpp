@@ -39,7 +39,7 @@ NiumagImgReader::NiumagImgReader():
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
 
-	AddProperty<const wchar_t *>(L"DataPath", L"",  L"数据文件夹和文件名。");
+	AddProperty<const wchar_t * const>(L"DataPath", L"",  L"数据文件夹和文件名。");
 }
 
 Yap::NiumagImgReader::NiumagImgReader(const NiumagImgReader& rhs):
@@ -66,7 +66,7 @@ bool Yap::NiumagImgReader::Input(const wchar_t * name, IData * data)
 
 bool Yap::NiumagImgReader::ReadNiumagImgData()
 {
-	std::wostringstream output(GetProperty<const wchar_t*>(L"DataPath"));
+	std::wostringstream output(GetProperty<const wchar_t * const>(L"DataPath"));
 	wstring data_path = output.str();
 
 	try
@@ -113,7 +113,7 @@ bool Yap::NiumagImgReader::ReadNiumagImgData()
 			(DimensionPhaseEncoding, 0U, dim2)
 			(DimensionSlice, 0U, dim3);
 
-		auto data = CreateData<unsigned short>(
+		auto data = CreateData<unsigned short>(nullptr,
 			reinterpret_cast<unsigned short*>(buffer), dimensions, nullptr, true);
 
 		Feed(L"Output", data.get());

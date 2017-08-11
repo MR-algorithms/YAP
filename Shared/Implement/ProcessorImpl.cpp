@@ -54,15 +54,15 @@ namespace _details
 		_system_variables(nullptr),
 		_class_id(class_id),
 		_properties(shared_ptr<VariableSpace>(new VariableSpace)),
-		_input(YapShared(new ContainerImpl<IPort>)),
-		_output(YapShared(new ContainerImpl<IPort>))
+		_input(YapShared(new PtrContainerImpl<IPort>)),
+		_output(YapShared(new PtrContainerImpl<IPort>))
 	{
 		
 	}
 
 	Yap::ProcessorImpl::ProcessorImpl(const ProcessorImpl& rhs) :
-		_input(YapShared<ContainerImpl<IPort>>(rhs._input->Clone())),
-		_output(YapShared<ContainerImpl<IPort>>(rhs._output->Clone())),
+		_input(YapShared<PtrContainerImpl<IPort>>(rhs._input->Clone())),
+		_output(YapShared<PtrContainerImpl<IPort>>(rhs._output->Clone())),
 		_properties(new VariableSpace(*(rhs._properties))),
 		_instance_id(rhs._instance_id),
 		_class_id(rhs._class_id),

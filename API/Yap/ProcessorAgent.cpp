@@ -104,10 +104,10 @@ bool Yap::ProcessorAgent::SetFloat(const wchar_t * property_name, double value)
 }
 
 bool Yap::ProcessorAgent::SetString(const wchar_t* property_name, 
-	const wchar_t* value)
+	const wchar_t * value)
 {
 	assert(_variables);
-	HANDLE_EXCEPTION(_variables->Set<const wchar_t*>(property_name, value));
+	HANDLE_EXCEPTION(_variables->Set<const wchar_t * const>(property_name, value));
 }
 
 Yap::ProcessorAgent::operator bool()

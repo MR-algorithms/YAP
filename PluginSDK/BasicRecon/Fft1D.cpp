@@ -29,7 +29,10 @@ Fft1D::Fft1D() :
 
 
 Fft1D::Fft1D(const Fft1D& rhs)
-	:ProcessorImpl(rhs)
+	:ProcessorImpl(rhs),
+	_plan_data_size(rhs._plan_data_size),
+	_plan_inverse(rhs._plan_inverse),
+	_plan_in_place(rhs._plan_in_place)
 {
 	LOG_TRACE(L"Fft1D constructor called.", L"BasicRecon");
 }
@@ -49,9 +52,7 @@ template<typename T> bool Fft1D::DoFft(IData * data, size_t size)
 	}
 	else
 	{
-		Yap::Dimensions dims;
-		dims(DimensionReadout, 0, size);
-		auto output = CreateData<complex<T>>(&dims);
+		auto output = CreateData<complex<T>>(data);
 		Fft<T>(data_array, GetDataArray<complex<T>>(output.get()), size, GetProperty<bool>(L"Inverse"));
 		return Feed(L"Output", output.get());
 	}

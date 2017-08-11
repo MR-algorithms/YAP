@@ -81,7 +81,7 @@ bool Yap::Difference::Input(const wchar_t * port, IData * data)
 		//more data type?
 		if (data->GetDataType() == DataTypeFloat)
 		{
-			auto output_data = CreateData<float>(data->GetDimensions());
+			auto output_data = CreateData<float>(data);
 
 			calc_difference(GetDataArray<float>(data), GetDataArray<float>(_reference_data.get()),
 				GetDataArray<float>(output_data.get()), input_data.GetDataSize());
@@ -89,7 +89,7 @@ bool Yap::Difference::Input(const wchar_t * port, IData * data)
 		}
 		else
 		{
-			auto output_data = CreateData<double>(data->GetDimensions());
+			auto output_data = CreateData<double>(data);
 
 			calc_difference(GetDataArray<double>(data), GetDataArray<double>(_reference_data.get()),
 				GetDataArray<double>(output_data.get()), input_data.GetDataSize());

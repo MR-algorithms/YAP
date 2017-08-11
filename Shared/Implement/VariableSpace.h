@@ -3,6 +3,7 @@
 #include "interface/smartptr.h"
 #include <string>
 #include <map>
+#include <type_traits>
 
 namespace Yap {
 
@@ -40,6 +41,8 @@ namespace Yap {
         bool Add(const wchar_t * type, const wchar_t * name, const wchar_t * description);
         bool Add(IVariable* variable);
 
+		bool AddArray(const wchar_t * element_type_id, const wchar_t * id, const wchar_t * description);
+
         IVariableContainer * Variables();
         const IVariableContainer * Variables() const;
 
@@ -50,20 +53,24 @@ namespace Yap {
 		bool IsEnabled(const wchar_t * id) const;
 
 		template <typename T>
-		T Get(const wchar_t * id) {
+		T Get(const wchar_t * id) 
+		{
+			static_assert(std::is_same<T, int>::value || 
+				std::is_same<T, double>::value || 
+				std::is_same<T, bool>::value || 
+				std::is_same<T, const wchar_t * const>::value,
+				"You can only use one of the following types: int, double, bool, const wchar_t * const");
+
 			std::wstring variable_id{ id };
 
-			if (variable_id[variable_id.size() - 1] == L']') {
-				auto left_square_pos = variable_id.find_last_of(L'[');
-                if (left_square_pos != std::wstring::npos) {
-					return Element<T>(variable_id);
-				}
-				else {
-					throw VariableException(id, VariableException::InvalidId);
-				}
+			if (variable_id[variable_id.size() - 1] == L']')
+			{
+				auto element = Element<T>(variable_id);
+				return element.first->Get(element.second);
 			}
-			else {
-				auto variable = GetVariable(id, variable_type_id<T>::type);
+			else
+			{
+				auto variable = GetVariable(id, variable_type_id<T>::type_id);
 				assert(variable != nullptr && "If parameter not found, GetVariable() should throw an PropertyException.");
 				auto simple_variable = dynamic_cast<ISimpleVariable<T>*>(variable);
 				assert(simple_variable != nullptr);
@@ -72,20 +79,24 @@ namespace Yap {
 		}
 
 		template<typename T>
-		void Set(const wchar_t * id, T value) {
+		void Set(const wchar_t * id, T value) 
+		{
+			static_assert(std::is_same<T, int>::value ||
+				std::is_same<T, double>::value ||
+				std::is_same<T, bool>::value ||
+				std::is_same<T, const wchar_t * const>::value,
+				"You can only use one of the following types: int, double, bool, const wchar_t * const");
+
 			std::wstring variable_id{ id };
 
-			if (variable_id[variable_id.size() - 1] == L']') {
-				auto left_square_pos = variable_id.find_last_of(L'[');
-				if (left_square_pos != std::wstring::npos) {
-					Element<T>(variable_id) = value;
-				}
-				else {
-					throw VariableException(id, VariableException::InvalidId);
-				}
+			if (variable_id[variable_id.size() - 1] == L']') 
+			{
+				auto element = Element<T>(variable_id);
+				element.first->Set(element.second, value);
 			}
-			else {
-				auto variable = GetVariable(id, variable_type_id<T>::type);
+			else
+			{
+				auto variable = GetVariable(id, variable_type_id<T>::type_id);
 				assert(variable != nullptr && "If parameter not found, GetProperty() should throw an PropertyException.");
 				auto simple_variable = dynamic_cast<ISimpleVariable<T>*>(variable);
 				assert(simple_variable != nullptr);
@@ -96,28 +107,18 @@ namespace Yap {
 		bool ResizeArray(const wchar_t * id, size_t size);
 
 		template<typename T>
-		T* GetArray(const wchar_t * id) {
-			auto array = GetVariable(id, variable_type_id<T>::array_type);
-			if (array == nullptr)
-				return nullptr;
-
-			assert(array->GetType() == variable_type_id<T>::array_type);
-			auto array_variable = dynamic_cast<IArrayVariable<T>*>(array);
-			assert(array_variable != nullptr);
-			return array_variable->Elements();
-		}
-
-		template<typename T>
 		std::pair<T*, size_t> GetArrayWithSize(const wchar_t * id)
 		{
-			auto array = GetVariable(id, variable_type_id<T>::array_type);
+			auto array = GetVariable(id, variable_type_id<T>::array_type_id);
 			if (array == nullptr)
 				return std::make_pair(nullptr, 0);
 
-			assert(array->GetType() == variable_type_id<T>::array_type);
-			auto array_variable = dynamic_cast<IArrayVariable<T>*>(array);
+			assert(array->GetType() == variable_type_id<T>::array_type_id);
+			auto array_variable = dynamic_cast<IValueArrayVariable<T>*>(array);
 			assert(array_variable != nullptr);
-			return std::make_pair(array_variable->Elements(), array_variable->GetSize());
+			auto raw_array = dynamic_cast<IRawArray<T>*>(array);
+			assert(raw_array != nullptr);
+			return std::make_pair(raw_array->Data(), array_variable->GetSize());
 		}
 
 		static std::shared_ptr<VariableSpace> Load(const wchar_t * path);
@@ -130,11 +131,19 @@ namespace Yap {
         bool AddType(const wchar_t * type_id, IPtrContainer<IVariable> * variables);
 
 		IVariable * GetVariable(const wchar_t * name, int expected_type = VariableAllTypes);
+
 	protected:
 
 		template <typename T>
-		T & Element(const std::wstring& id)
+		std::pair<IValueArrayVariable<T>*, size_t> Element(const std::wstring& id)
 		{
+			static_assert(std::is_same<T, int>::value ||
+				std::is_same<T, double>::value ||
+				std::is_same<T, bool>::value ||
+				std::is_same<T, const wchar_t * const>::value ||
+				std::is_same<T, IVariable* >::value,
+				"You can only use one of the following types: int, double, bool, const wchar_t * const");
+
 			auto left_square_pos = id.find_last_of(L'[');
 			assert(left_square_pos != std::wstring::npos);
 
@@ -142,19 +151,19 @@ namespace Yap {
 			if (right_square_pos == std::wstring::npos)
 				throw VariableException(id.c_str(), VariableException::VariableNotFound);
 
-			auto variable = GetVariable(id.substr(0, left_square_pos).c_str(), variable_type_id<T>::array_type);
+			auto variable = GetVariable(id.substr(0, left_square_pos).c_str(), variable_type_id<T>::array_type_id);
 			if (variable == nullptr)
 				throw VariableException(id.c_str(), VariableException::VariableNotFound);
 
 			auto index = _wtoi(id.substr(left_square_pos + 1, right_square_pos - left_square_pos - 1).c_str());
 
-			auto array_variable = dynamic_cast<IArrayVariable<T>*>(variable);
+			auto array_variable = dynamic_cast<IValueArrayVariable<T>*>(variable);
 			assert(array_variable != nullptr);
 
 			if (index < 0 || index >= int(array_variable->GetSize()))
 				throw VariableException(id.c_str(), VariableException::OutOfRange);
 
-			return array_variable->Elements()[index];
+			return std::make_pair(array_variable, index);
 		}
 
 		bool InitTypes();
@@ -163,5 +172,6 @@ namespace Yap {
         SmartPtr<IVariableContainer> _variables;
 
         std::map<std::wstring, SmartPtr<IVariable>> _types;
+		std::map<std::wstring, SmartPtr<IVariable>> _basic_array_types;
     };
 }

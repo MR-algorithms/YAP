@@ -59,16 +59,16 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
 		double radius = GetProperty<double>(L"radius");
 
 		auto mask = GenerateRandomMask(width, height, pow, sample_percent, radius);
-		float * Mask = nullptr;
+		float * mask_buffer = nullptr;
 		try
 		{
-			Mask = new float[width * height];
+			mask_buffer = new float[width * height];
 		}
 		catch(bad_alloc&)
 		{
 			return false;
 		}
-		memcpy(Mask, mask.data(), width * height * sizeof(float));
+		memcpy(mask_buffer, mask.data(), width * height * sizeof(float));
 
 		Dimensions dimensions;
 		dimensions(DimensionReadout, 0U, width)
@@ -77,7 +77,7 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
 			(Dimension4, 0U, 1)
 			(DimensionChannel, 0U, 1);
 
-		auto outdata = CreateData<float>(Mask, dimensions, nullptr, true);
+		auto outdata = CreateData<float>(data, mask_buffer, dimensions, nullptr, true);
 
 		Feed(L"Output", outdata.get());
 	}
@@ -88,16 +88,16 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
 		auto height = input_data.GetHeight();
 		auto width = input_data.GetWidth();
 		auto mask = GenerateEqualMask(width, height, acs, r);
-		float * Mask = nullptr;
+		float * mask_buffer = nullptr;
 		try
 		{
-			Mask = new float[width * height];
+			mask_buffer = new float[width * height];
 		}
 		catch (bad_alloc&)
 		{
 			return false;
 		}
-		memcpy(Mask, mask.data(), width * height * sizeof(float));
+		memcpy(mask_buffer, mask.data(), width * height * sizeof(float));
 
 		Dimensions dimensions;
 		dimensions(DimensionReadout, 0U, width)
@@ -106,7 +106,7 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
 			(Dimension4, 0U, 1)
 			(DimensionChannel, 0U, 1);
 
-		auto outdata = CreateData<float>(Mask, dimensions, nullptr, true);
+		auto outdata = CreateData<float>(data, mask_buffer, dimensions, nullptr, true);
 
 		Feed(L"Output", outdata.get());
 	}

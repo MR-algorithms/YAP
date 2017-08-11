@@ -143,7 +143,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="IContainer.h" />
+    <ClInclude Include="IData.h" />
+    <ClInclude Include="ILog.h" />
     <ClInclude Include="Interfaces.h" />
+    <ClInclude Include="IProcessor.h" />
+    <ClInclude Include="IVariable.h" />
     <ClInclude Include="smartptr.h" />
   </ItemGroup>
   <ItemGroup>

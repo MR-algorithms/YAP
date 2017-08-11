@@ -13,18 +13,30 @@
 
 namespace Yap
 {
+	enum TokenCategory
+	{
+		TokenCategoryOperator,
+		TokenCategoryKeyword,
+		TokenCategoryStringLiteral,
+		TokenCategoryNumericalLiteral,
+		TokenCategoryId,
+		TokenCategorySeparator,
+		TokenCategorySpecial,
+	};
+
 	enum TokenType
 	{
 		TokenUnknown,
 		TokenId,
-		TokenOperatorPortLink,			// ->
-		TokenOperatorInOutMapping,		// <=> 
-		TokenOperatorInMapping,			// <==
-		TokenOperatorOutMapping,		// ==>
+		TokenOperatorPortLink,			///< ->
+		TokenOperatorInOutMapping,		///< <=> 
+		TokenOperatorInMapping,			///< <==
+		TokenOperatorOutMapping,		///< ==>
 		TokenOperatorDot,
 		TokenOperatorAssign,
 		TokenSemiColon,
 		TokenComma,
+		TokenDoubleColon,				///< ::
 		TokenOperatorMinus,
 
 		TokenLeftBrace,
@@ -33,8 +45,11 @@ namespace Yap
 		TokenLeftParenthesis,
 		TokenRightParenthesis,
 
-		TokenGreaterThen,		// >
-		TokenLessThen,			// <
+		TokenLeftSquareBracket,
+		TokenRightSquareBracket,
+
+		TokenGreaterThan,		// >
+		TokenLessThan,			// <
 		TokenSharp,				// #
 
 		TokenStringLiteral,
@@ -44,6 +59,7 @@ namespace Yap
 		// import, include
 		// self
 		// true, false
+		// namespace, using
 		TokenKeywordBool,
 		TokenKeywordFloat,
 		TokenKeywordInt,
@@ -55,6 +71,8 @@ namespace Yap
 		TokenKeywordSelf,
 		TokenKeywordTrue,
 		TokenKeywordFalse,
+		TokenKeywordNamespace,
+		TokenKeywordUsing,
 	};
 
 	struct Token
@@ -83,8 +101,8 @@ namespace Yap
 	const int CompileErrorLinkNotEnoughArguments	= 1008;
 	const int CompileErrorLoadModule				= 1009;
 	const int CompileErrorNoMatchingQuote			= 1010;
-	const int CompileErrorNoMatchingLeftBrace		= 1011;
-	const int CompileErrorNoMatchingLeftParenthesis = 1012;
+	const int CompileErrorNoMatchingLeftBracket		= 1011;
+
 	const int CompileErrorPortExpected				= 1013;
 	const int CompileErrorProcessorExpected			= 1014;
 	const int CompileErrorProcessorNotFound			= 1015;
@@ -93,8 +111,7 @@ namespace Yap
 	const int CompileErrorPropertyOperatorExpected	= 1018;
 	const int CompileErrorPropertyValueNotString	= 1019;
 	const int CompileErrorPropertySet				= 1020;
-	const int CompileErrorRightBraceExpected		= 1021;
-	const int CompileErrorRightParenthesisExpected	= 1022;
+	const int CompileErrorRightBracketExpected		= 1021;
 	const int CompileErrorSelfLink					= 1023;
 	const int CompileErrorSemicolonExpected			= 1024;
 	const int CompileErrorStringExpected			= 1025;
@@ -113,6 +130,7 @@ namespace Yap
     const int CompileErrorTypeNotFound = 1037;
     const int CompileErrorNestStruct = 1038;
     const int CompileErrorMemeberExists = 1039;
+	const int CompileErrorAmbiguousId = 1040;
 
 	class CompileError
 	{
@@ -151,26 +169,27 @@ namespace Yap
 
 	};
 
-	class Statement
+	class Tokens
 	{
 	public:
 		class Guard
 		{
 		public: 
-			Guard(Statement& statement);
+			explicit Guard(Tokens& statement, bool end_with_semicolon = true);
 			~Guard();
 		private:
-			Statement& _statement;
+			Tokens& _statement;
+			bool _end_with_semicolon;
 		};
 
-		explicit Statement(const std::vector<Token>& tokens);
+		explicit Tokens(std::vector<Token>& tokens);
 
 		void StartProcessingStatement();
 		/// Clear the tokens in the statement.
-		void FinishProcessingStatement();
+		void FinishProcessingStatement(bool check_semicolon = true);
 
 		/// Check to see if the statement is empty.
-		bool IsCurrentStatementEmpty();
+		bool IsEmpty();
 
 		/// Set the type of the statement.
 		void SetType(StatementType type);
@@ -206,22 +225,31 @@ namespace Yap
 		std::wstring GetLiteralValue();
 		std::wstring GetStringLiteral();
 
-		/// Try to extract a variable id from the statement and move to next token.
-		std::wstring GetVariableId();
 
 		/// 试图提取处理器/成员（属性或者端口）对，迭代器移动到提取内容之后。
 		std::pair<std::wstring, std::wstring> GetProcessorMember(bool empty_member_allowed = false);
 
+		/// Try to extract a variable id from the statement and move to next token.
+		std::wstring GetVariableIdOld();
+		std::wstring GetVariableId();
+		std::wstring GetIdWithIndexing(); 
+
 		/// 试图提取参数id。迭代器移动到提取内容之后。
 		std::wstring GetParamId();
 
+		std::wstring GetNamespaceId();
+
+		/// Try to extract namespace qualifier from the statement and move to next token.
+		std::wstring GetNamespaceQualifier();
+	
 		bool IsFirstTokenInStatement() const;
 	protected:
 		StatementType _type;
 
-		const std::vector<Token>& _tokens;
+		std::vector<Token> _tokens;
 		std::vector<Token>::const_iterator _begin;
 		std::vector<Token>::const_iterator _iter;
+		std::vector<Token>::const_iterator _peek_iter;
 	};
 
 	enum PreprocessType
@@ -236,7 +264,9 @@ namespace Yap
 	public:
 		explicit Preprocessor(PreprocessType type);
 		bool Preprocess(std::wistream& input_stream);
-		Statement GetStatement();
+		bool Preprocess(const wchar_t * const input);
+
+		Tokens GetTokens();
 	protected:
 		Token MakeToken(unsigned int token_line, unsigned token_column, unsigned token_length, TokenType token_type);
 
@@ -251,15 +281,16 @@ namespace Yap
 		/** Used for matching braces/brackets. When the left ones are encountered, push then into the 
 		stack and pop one out when the right ones are encountered. 
 		If the types of braces/brackets are not matching, or if the stack is not empty at the end of 
-		file, then there must be a matching error.*/
-		std::stack<Token> _matching_check;
+		file, then there must be a matching error.
+		Possible values in the stack: (, {, [.
+		*/
+		std::stack<wchar_t> _matching_check;
 
 		bool PreprocessLine(std::wstring& line, int line_number);
 
 		int CheckBraceMatching(wchar_t c, int line_number, int pos);
 
 		void DebugOutputTokens(std::wostream& output);
-		void TestTokens();
 	};
 }
 

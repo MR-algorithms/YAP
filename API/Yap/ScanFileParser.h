@@ -21,7 +21,12 @@ namespace Yap
 		ScanFileParser();
 		~ScanFileParser();
 
+		void SetVariableSpace(std::shared_ptr<VariableSpace> variables);
+		std::shared_ptr<VariableSpace> GetVariableSpace();
+
+		bool Load(const wchar_t * scan_file_path);
 	protected:
+		bool Process();
 
 		std::shared_ptr<Preprocessor> _preprocessor;
 		std::shared_ptr<VariableSpace> _variables;

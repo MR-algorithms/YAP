@@ -62,7 +62,6 @@ Yap::Dimensions::Dimensions(const Dimensions& source)
 Yap::Dimensions::Dimensions(IDimensions * source)
 {
 	DimensionType type = DimensionInvalid;
-	Dimension dim;
 	unsigned int index = 0, length = 0;
 
 	for (unsigned int i = 0; i < source->GetDimensionCount(); ++i)
@@ -128,4 +127,159 @@ Yap::Dimension::Dimension() :
 	length(0),
 	type(DimensionInvalid)
 {
+}
+
+void Yap::Localization::GetSpacing(double& x, double& y, double& z)
+{
+	x = _spacing_x;
+	y = _spacing_y;
+	z = _spacing_z;
+}
+
+void Yap::Localization::GetRowVector(double& x, double& y, double& z)
+{
+	x = _row.x;
+	y = _row.y;
+	z = _row.z;
+}
+
+void Yap::Localization::GetColumnVector(double& x, double& y, double& z)
+{
+	x = _column.x;
+	y = _column.y;
+	z = _column.z;
+}
+
+void Yap::Localization::GetSliceVector(double& x, double& y, double& z)
+{
+	x = _slice.x;
+	y = _slice.y;
+	z = _slice.z;
+}
+
+void Yap::Localization::GetReadoutVector(double& x, double& y, double& z)
+{
+	x = _readout.x;
+	y = _readout.y;
+	z = _readout.z;
+}
+
+void Yap::Localization::GetPhaseEncodingVector(double& x, double& y, double& z)
+{
+	x = _phase_encoding.x;
+	y = _phase_encoding.y;
+	z = _phase_encoding.z;
+}
+
+void Yap::Localization::GetCenter(double& x, double& y, double& z)
+{
+	x = _center.x;
+	y = _center.y;
+	z = _center.z;
+}
+
+void Yap::Localization::SetSpacing(double x, double y, double z)
+{
+	_spacing_x = x;
+	_spacing_y = y;
+	_spacing_z = z;
+}
+
+void Yap::Localization::SetRowVector(double x, double y, double z)
+{
+	_row.x = x;
+	_row.y = y;
+	_row.z = z;
+}
+
+void Yap::Localization::SetColumnVector(double x, double y, double z)
+{
+	_column.x = x;
+	_column.y = y;
+	_column.z = z;
+}
+
+void Yap::Localization::SetSliceVector(double x, double y, double z)
+{
+	_slice.x = x;
+	_slice.y = y;
+	_slice.z = z;
+}
+
+void Yap::Localization::SetReadoutVector(double x, double y, double z)
+{
+	_readout.x = x;
+	_readout.y = y;
+	_readout.z = z;
+}
+
+void Yap::Localization::SetPhaseEncodingVector(double x, double y, double z)
+{
+	_phase_encoding.x = x;
+	_phase_encoding.y = y;
+	_phase_encoding.z = z;
+}
+
+void Yap::Localization::SetCenter(double x, double y, double z)
+{
+	_center.x = x;
+	_center.y = y;
+	_center.z = z;
+}
+
+bool Yap::Localization::IsValid()
+{
+	throw std::logic_error("The method or operation is not implemented.");
+}
+
+Yap::Localization::Localization() :
+	_spacing_x{ 0 },
+	_spacing_y{ 0 },
+	_spacing_z{ 0 },
+	_row{ Vector() },
+	_column{ Vector() },
+	_slice{ Vector() },
+	_readout{ Vector() },
+	_phase_encoding{ Vector() },
+	_center{ Point() }
+{
+}
+	
+
+Yap::Localization::Localization(const Localization& source) :
+	_spacing_x{ source._spacing_x },
+	_spacing_y{ source._spacing_y },
+	_spacing_z{ source._spacing_z },
+	_row{ source._row },
+	_column{ source._column },
+	_slice{ source._slice },
+	_readout{ source._readout },
+	_phase_encoding{ source._phase_encoding },
+	_center{ source._center }
+{
+
+}
+
+Yap::Localization::Localization(IGeometry * source)
+{
+	double x, y, z;
+
+	source->GetSpacing(_spacing_x, _spacing_y, _spacing_z);
+	source->GetRowVector(x, y, z);
+	_row = Vector(x, y, z);
+	source->GetColumnVector(x, y, z);
+	_column = Vector(x, y, z);
+	source->GetSliceVector(x, y, z);
+	_slice = Vector(x, y, z);
+	source->GetReadoutVector(x, y, z);
+	_readout = Vector(x, y, z);
+	source->GetPhaseEncodingVector(x, y, z);
+	_phase_encoding = Vector(x, y, z);
+	source->GetCenter(x, y, z);
+	_center = Point(x, y, z);
+}
+
+Yap::Localization::~Localization()
+{
+
 }
