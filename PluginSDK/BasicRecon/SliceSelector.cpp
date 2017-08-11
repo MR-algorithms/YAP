@@ -44,7 +44,7 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 		data_dimentions.SetDimension(DimensionSlice, 1, slice_index);
 		auto output = CreateData<complex<float>>(data, 
 			Yap::GetDataArray<complex<float>>(data)
-			+ slice_index * slice_block_size, data_dimentions);
+			+ slice_index * slice_block_size, data_dimentions, data, false);
 
 		Feed(L"Output", output.get());
 	}

@@ -263,20 +263,22 @@ Yap::Localization::Localization(const Localization& source) :
 Yap::Localization::Localization(IGeometry * source)
 {
 	double x, y, z;
-
-	source->GetSpacing(_spacing_x, _spacing_y, _spacing_z);
-	source->GetRowVector(x, y, z);
-	_row = Vector(x, y, z);
-	source->GetColumnVector(x, y, z);
-	_column = Vector(x, y, z);
-	source->GetSliceVector(x, y, z);
-	_slice = Vector(x, y, z);
-	source->GetReadoutVector(x, y, z);
-	_readout = Vector(x, y, z);
-	source->GetPhaseEncodingVector(x, y, z);
-	_phase_encoding = Vector(x, y, z);
-	source->GetCenter(x, y, z);
-	_center = Point(x, y, z);
+	if (source != nullptr)
+	{
+		source->GetSpacing(_spacing_x, _spacing_y, _spacing_z);
+		source->GetRowVector(x, y, z);
+		_row = Vector(x, y, z);
+		source->GetColumnVector(x, y, z);
+		_column = Vector(x, y, z);
+		source->GetSliceVector(x, y, z);
+		_slice = Vector(x, y, z);
+		source->GetReadoutVector(x, y, z);
+		_readout = Vector(x, y, z);
+		source->GetPhaseEncodingVector(x, y, z);
+		_phase_encoding = Vector(x, y, z);
+		source->GetCenter(x, y, z);
+		_center = Point(x, y, z);
+	}
 }
 
 Yap::Localization::~Localization()
