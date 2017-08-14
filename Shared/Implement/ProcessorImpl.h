@@ -66,23 +66,23 @@ namespace Yap
 			}
 		}
 
-// 		template<typename T>
-// 		SmartPtr<DataObject<T>> CreateData(IData * reference, T* data, IDimensions * dimensions, 
-// 			ISharedObject * parent = nullptr, bool own_data = false) 
-// 		{
-// 			try
-// 			{
-// 				if (!own_data)
-// 				{
-// 					assert(parent != nullptr);
-// 				}
-// 				return YapShared(new DataObject<T>(data, dimensions, parent, own_data, _module.get()));
-// 			}
-// 			catch (std::bad_alloc&)
-// 			{
-// 				return YapShared<DataObject<T>>(nullptr);
-// 			}
-// 		}
+		template<typename T>
+		SmartPtr<DataObject<T>> CreateData(IData * reference, T* data, IDimensions * dimensions, 
+			ISharedObject * parent = nullptr, bool own_data = false) 
+		{
+			try
+			{
+				if (!own_data)
+				{
+					assert(parent != nullptr);
+				}
+				return YapShared(new DataObject<T>(reference, data, dimensions, parent, own_data, _module.get()));
+			}
+			catch (std::bad_alloc&)
+			{
+				return YapShared<DataObject<T>>(nullptr);
+			}
+		}
 
 		template<typename T>
 		SmartPtr<DataObject<T>> CreateData(IData * reference, IDimensions * dimensions = nullptr)

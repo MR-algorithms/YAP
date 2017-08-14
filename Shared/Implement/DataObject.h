@@ -121,15 +121,16 @@ namespace Yap
 			_dimensions = dimensions;
 		}
 		
-// 		DataObject(T* data, IDimensions * dimensions, ISharedObject * parent = nullptr, 
-// 			bool own_data = false, ISharedObject * module = nullptr) : 
-// 			_data(data), _own_memory(own_data), _dimensions(dimensions), _use_count(0), 
-// 			_parent(YapShared(parent)),
-// 			_module(YapShared(module)),
-// 			_geometry(YapShared<Localization>(nullptr))
-// 		{
-// 			assert(data != nullptr);
-// 		}
+		DataObject(IData * reference, T* data, IDimensions * dimensions, ISharedObject * parent = nullptr, 
+			bool own_data = false, ISharedObject * module = nullptr) : 
+			_data(data), _own_memory(own_data), _dimensions(dimensions), _use_count(0), 
+			_parent(YapShared(parent)),
+			_module(YapShared(module)),
+			_geometry{ YapShared(reference != nullptr ? new Localization(reference->GetGeometry()) : nullptr) },
+			_variables{ YapShared(reference != nullptr ? reference->GetVariables() : nullptr) }
+		{
+			assert(data != nullptr);
+		}
 
 		DataObject(IData * reference, IDimensions * dimensions, ISharedObject * module) :
 			_own_memory(true), 
@@ -213,9 +214,18 @@ namespace Yap
 			return _geometry.get();
 		}
 
+		bool SetVariables(IVariableContainer * variables)
+		{
+			if (!variables)
+				return false;
+
+			_variables = YapShared(variables);
+			return true;
+		}
+
 		IVariableContainer * GetVariables() override
 		{
-			return nullptr;
+			return _variables.get();
 		}
 	private:
 		~DataObject()
