@@ -110,8 +110,11 @@ namespace Yap
 		IMPLEMENT_CLONE(DataObject<T>)
         public:
 		DataObject(IData * reference, T* data, const Dimensions& dimensions, 
-			ISharedObject * parent = nullptr, bool own_data = false, ISharedObject * module = nullptr) :
-			_data(data), _own_memory(own_data), _use_count(0), 
+			ISharedObject * parent = nullptr, bool own_data = false, 
+			ISharedObject * module = nullptr) :
+			_data(data), 
+			_own_memory(own_data), 
+			_use_count(0), 
 			_parent(YapShared(parent)),
 			_module(YapShared(module)),
 			_geometry{ YapShared(reference != nullptr ? new Localization(reference->GetGeometry()) : nullptr)},
@@ -119,17 +122,29 @@ namespace Yap
 		{
 			assert(data != nullptr);
 			_dimensions = dimensions;
+			if (!own_data)
+			{
+				assert(parent != nullptr);
+			}
 		}
 		
-		DataObject(IData * reference, T* data, IDimensions * dimensions, ISharedObject * parent = nullptr, 
-			bool own_data = false, ISharedObject * module = nullptr) : 
-			_data(data), _own_memory(own_data), _dimensions(dimensions), _use_count(0), 
+		DataObject(IData * reference, T* data, IDimensions * dimensions, 
+			ISharedObject * parent = nullptr, bool own_data = false, 
+			ISharedObject * module = nullptr) : 
+			_data(data), 
+			_own_memory(own_data), 
+			_dimensions(dimensions), 
+			_use_count(0), 
 			_parent(YapShared(parent)),
 			_module(YapShared(module)),
 			_geometry{ YapShared(reference != nullptr ? new Localization(reference->GetGeometry()) : nullptr) },
 			_variables{ YapShared(reference != nullptr ? reference->GetVariables() : nullptr) }
 		{
 			assert(data != nullptr);
+			if (!own_data)
+			{
+				assert(parent != nullptr);
+			}
 		}
 
 		DataObject(IData * reference, IDimensions * dimensions, ISharedObject * module) :
