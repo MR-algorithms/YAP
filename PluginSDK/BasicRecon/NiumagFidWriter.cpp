@@ -16,6 +16,7 @@ NiumagFidWriter::NiumagFidWriter(void) :
 {
 	LOG_TRACE(L"NiumagFidWriter constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
+	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
 	AddProperty<const wchar_t * const>(L"ExportFolder", L"", L"Set folder used to write FID.");
 	AddProperty<const wchar_t * const>(L"FileName", L"", L"Set file name.");
@@ -84,7 +85,12 @@ bool Yap::NiumagFidWriter::Input(const wchar_t * name, IData * data)
 	file.write(reinterpret_cast<char*>(fid_data), buffer_size * sizeof(complex<float>));
 	file.close();
 
-	return true;
+	if (OutportLinked(L"Output"))
+	{
+		return Feed(L"Output", data);
+	}
+		
+	return true;	
 }
 
 std::wstring Yap::NiumagFidWriter::GetFilePath(const wchar_t * output_folder, const wchar_t * output_name)

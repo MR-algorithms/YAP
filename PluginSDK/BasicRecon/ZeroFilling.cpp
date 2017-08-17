@@ -85,7 +85,7 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 		zero_filling(Yap::GetDataArray<complex<double>>(output.get()), dest_width, dest_height,
 			Yap::GetDataArray<complex<double>>(data), input_data.GetWidth(), input_data.GetHeight());
 
-		Feed(L"Output", output.get());
+		return Feed(L"Output", output.get());
 	}
 	else
 	{
@@ -93,10 +93,8 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 		zero_filling(Yap::GetDataArray<complex<float>>(output.get()), dest_width, dest_height,
 					Yap::GetDataArray<complex<float>>(data), input_data.GetWidth(), input_data.GetHeight());
 
-		Feed(L"Output", output.get());
-	}
-	
-	return true;
+		return Feed(L"Output", output.get());
+	}	
 }
 
 

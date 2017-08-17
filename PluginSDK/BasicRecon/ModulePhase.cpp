@@ -83,7 +83,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 				GetDataArray<double>(module.get()),
 				input_data.GetDataSize());
 
-			Feed(L"Module", module.get());
+			return Feed(L"Module", module.get());
 		}
 		
 		else
@@ -94,7 +94,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 				GetDataArray<float>(module.get()),
 				input_data.GetDataSize());
 
-			Feed(L"Module", module.get());
+			return Feed(L"Module", module.get());
 		}
 	}
 
@@ -107,7 +107,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 			GetPhase(GetDataArray<complex<double>>(data), GetDataArray<double>(phase.get()),
 				input_data.GetDataSize());
 
-			Feed(L"Phase", phase.get());
+			return Feed(L"Phase", phase.get());
 		}
 		else
 		{
@@ -116,7 +116,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 			GetPhase(GetDataArray<complex<float>>(data), GetDataArray<float>(phase.get()),
 				input_data.GetDataSize());
 
-			Feed(L"Phase", phase.get());
+			return Feed(L"Phase", phase.get());
 		}
 	}
 

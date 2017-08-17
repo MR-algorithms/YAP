@@ -172,7 +172,7 @@ bool PipelineConstructor::SetProperty(const wchar_t * processor_id,
 
 	if (!processor)
 	{
-        auto output = wstring(L"Processor not found��") + processor_id;
+        auto output = wstring(L"Processor not found!") + processor_id;
 		throw ConstructError(0, ConstructErrorProcessorNotFound, output.c_str());
 	}
 
