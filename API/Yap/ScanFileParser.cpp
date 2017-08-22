@@ -103,8 +103,8 @@ bool ScanFileParser::Process()
         }
 
 		statement.AssertToken(TokenOperatorAssign, true);
-
 		wstring value_string;
+
 		while (statement.GetCurrentToken().type != TokenSemiColon)
 		{
 			value_string += statement.GetCurrentToken().text;

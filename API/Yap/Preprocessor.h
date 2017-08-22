@@ -32,25 +32,25 @@ namespace Yap
 		TokenOperatorInOutMapping,		///< <=> 
 		TokenOperatorInMapping,			///< <==
 		TokenOperatorOutMapping,		///< ==>
-		TokenOperatorDot,
-		TokenOperatorAssign,
-		TokenSemiColon,
-		TokenComma,
+        TokenOperatorDot,               ///< .
+        TokenOperatorAssign,            ///< =
+        TokenSemiColon,                 ///< ;
+        TokenComma,                     ///< ,
 		TokenDoubleColon,				///< ::
-		TokenOperatorMinus,
+        TokenOperatorMinus,             ///< -
 
-		TokenLeftBrace,
-		TokenRightBrace,
+        TokenLeftBrace,                 ///< {
+        TokenRightBrace,                ///< }
 
-		TokenLeftParenthesis,
-		TokenRightParenthesis,
+        TokenLeftParenthesis,           ///< (
+        TokenRightParenthesis,          ///< )
 
-		TokenLeftSquareBracket,
-		TokenRightSquareBracket,
+        TokenLeftSquareBracket,         ///< [
+        TokenRightSquareBracket,        ///< ]
 
-		TokenGreaterThan,		// >
-		TokenLessThan,			// <
-		TokenSharp,				// #
+        TokenGreaterThan,               ///< >
+        TokenLessThan,                  ///< <
+        TokenSharp,                     ///< #
 
 		TokenStringLiteral,
 		TokenNumericLiteral,

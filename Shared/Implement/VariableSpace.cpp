@@ -77,7 +77,8 @@ namespace _details
 			const wchar_t * description) :
 			_id{ id },
 			_description{ description != nullptr ? description : L"" },
-			_type{ variable_type_id<TYPE>::type_id } 
+			_type{ variable_type_id<TYPE>::type_id },
+			_value{TYPE(0)}
 		{
 		}
 
@@ -127,48 +128,127 @@ namespace _details
 	};
 
 	// Begin specialization for string type.
- 	template <>
-	const wchar_t * const SimpleVariable<const wchar_t * const>::Get() const
-	{
-		return _value.c_str();
-	}
-
 	template <>
-	void SimpleVariable<const wchar_t * const>::Set(const wchar_t * const value) 
+	class SimpleVariable<const wchar_t* const> : public ISimpleVariable<const wchar_t* const>
 	{
-		_value = value;
-	}
+		IMPLEMENT_SHARED(SimpleVariable<const wchar_t* const>)
+		IMPLEMENT_VARIABLE
+	public:
+		SimpleVariable(
+			const wchar_t * id,
+			const wchar_t * description) :
+			_id{ id },
+			_description{ description != nullptr ? description : L"" },
+			_type{ VariableString },
+			_value{ L"" }
+		{
+		}
 
-	template <>
-	const wchar_t * const SimpleVariable<const wchar_t * const>::ToString() 
-	{
-		_value_string = L'\"';
-		_value_string += _value + L'\"';
-		return _value.c_str();
-	}
+		SimpleVariable(const SimpleVariable<const wchar_t* const>& rhs) :
+			_id{ rhs._id },
+			_description{ rhs._description },
+			_type{ rhs._type },
+			_value{ rhs._value }
+		{
+		}
 
-	template <>
-	size_t SimpleVariable<const wchar_t * const>::FromString(const wchar_t * value_string)
-	{
-		assert(value_string != nullptr);
-		_value_string = value_string;
-		assert(!_value_string.empty());
+		SimpleVariable(ISimpleVariable<const wchar_t* const> & rhs) :
+			_id{ rhs.GetId() },
+			_description{ rhs.GetDescription() },
+			_type{ rhs.GetType() },
+			_value{ rhs.Get() }
+		{
+		}
 
-		auto first_quote_pos = _value_string.find_first_not_of(L" \t\n\r");
-		if (first_quote_pos == wstring::npos)
-			return 0;
+		virtual const wchar_t * const Get() const override
+		{
+			return _value.c_str();
+		}
 
-		if (_value_string[first_quote_pos] != L'\"')
-			return 0;
+		void Set(const wchar_t * const value)
+		{
+			_value = value;
+		}
 
-		auto second_quote_pos = _value_string.find(L'\"', first_quote_pos + 1);
-		if (second_quote_pos == wstring::npos)
-			return 0;
+		const wchar_t * const ToString()
+		{
+			_value_string = L'\"';
+			_value_string += _value + L'\"';
+			return _value.c_str();
+		}
 
-		_value = _value_string.substr(first_quote_pos + 1, second_quote_pos - first_quote_pos - 1);
-		return second_quote_pos + 1;
-	}
-	 // End specialization for SimpleVariable<wchar_t *>.
+		size_t FromString(const wchar_t * value_string)
+		{
+			assert(value_string != nullptr);
+			_value_string = value_string;
+			assert(!_value_string.empty());
+
+			auto first_quote_pos = _value_string.find_first_not_of(L" \t\n\r");
+			if (first_quote_pos == wstring::npos)
+				return 0;
+
+			if (_value_string[first_quote_pos] != L'\"')
+				return 0;
+
+			auto second_quote_pos = _value_string.find(L'\"', first_quote_pos + 1);
+			if (second_quote_pos == wstring::npos)
+				return 0;
+
+			_value = _value_string.substr(first_quote_pos + 1, second_quote_pos - first_quote_pos - 1);
+			return second_quote_pos + 1;
+		}
+
+	private:
+		std::wstring _value;
+		std::wstring _value_string;
+	};
+
+
+//  	template <>
+// 	const wchar_t * const SimpleVariable<const wchar_t * const>::Get() const
+// 	{
+// 		return _value.c_str();
+// 	}
+// 
+// 	template <>
+// 	void SimpleVariable<const wchar_t * const>::Set(const wchar_t * const value) 
+// 	{
+// 		_value = value;
+// 	}
+// 
+// 	template <>
+// 	const wchar_t * const SimpleVariable<const wchar_t * const>::ToString() 
+// 	{
+// 		_value_string = L'\"';
+// 		_value_string += _value + L'\"';
+// 		return _value.c_str();
+// 	}
+// 
+// 	template <>
+// 	size_t SimpleVariable<const wchar_t * const>::FromString(const wchar_t * value_string)
+// 	{
+// 		assert(value_string != nullptr);
+// 		_value_string = value_string;
+// 		assert(!_value_string.empty());
+//         _value = _value_string;
+// 		return _value_string.size();
+// 
+// // 		auto first_quote_pos = _value_string.find_first_not_of(L" \t\n\r");
+// // 		if (first_quote_pos == wstring::npos)
+// // 			return 0;
+// // 
+// // 		if (_value_string[first_quote_pos] != L'\"')
+// // 			return 0;
+// // 
+// // 		auto second_quote_pos = _value_string.find(L'\"', first_quote_pos + 1);
+// // 		if (second_quote_pos == wstring::npos)
+// // 			return 0;
+// // 
+// // 		_value = _value_string.substr(first_quote_pos + 1, second_quote_pos - first_quote_pos - 1);
+// // 		return second_quote_pos + 1;
+// 	}
+
+ 	 // End specialization for SimpleVariable<wchar_t *>.
 
 
 	template <typename T>
@@ -190,7 +270,7 @@ namespace _details
 	public:
 		ValueArrayVariable(size_t size, T value, const wchar_t * id, const wchar_t * title = nullptr, const wchar_t * description = nullptr) :
 			_id{ id },
-                _title{ title != nullptr ? description : L"" },
+            _title{ title != nullptr ? description : L"" },
 			_description{ description != nullptr ? description : L"" },
 			_type{ variable_type_id<T>::array_type_id }
 		{
@@ -494,6 +574,7 @@ namespace _details
 			_title{rhs._title},
 			_description{ rhs._description },
 			_type{ rhs._type },
+			_enabled{rhs._enabled},
 			_members{ YapShared( rhs._members->Clone()) } 
 		{
 		}
@@ -503,6 +584,7 @@ namespace _details
 			_title {rhs.GetTitle()},
 			_description{ rhs.GetDescription() },
 			_type{ VariableStruct },
+			_enabled{ rhs.IsEnabled() },
 			_members{ YapShared(rhs.Members()->Clone()) } 
 		{
 		}
@@ -512,6 +594,7 @@ namespace _details
 			_id{ id },
 			_title{ title != nullptr ? title : L"" },
 			_description{ description != nullptr ? description : L"" },
+			_enabled{false},
 			_type{ VariableStruct } 
 		{
 		}
@@ -557,7 +640,7 @@ namespace _details
 
 				_value_string += L'\"';
 				_value_string += member->GetId();
-				_value_string += L"\":";
+				_value_string += L"\"=";
 				_value_string += member->ToString();
 			}
 
@@ -600,7 +683,7 @@ namespace _details
 					return 0;
 
 				pos = _value_string.find_first_not_of(L" \t\n\r", pos + 1);
-				if (_value_string[pos] != L':')
+				if (_value_string[pos] != L'=')
 					return 0;
 
 				auto member = _members->Find(member_id.c_str());
@@ -615,8 +698,7 @@ namespace _details
 
 				if (_value_string[pos] == L',')
 				{
-					pos = pos + 1;
-					if (pos >= _value_string.size())
+					if (pos + 1 >= _value_string.size())
 						return 0;
 				}
 				else if (_value_string[pos] == L'}')
