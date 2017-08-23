@@ -635,7 +635,7 @@ bool Preprocessor::PreprocessLine(std::wstring& line,
 								   L"No matching quote found on the same line. String literals must be defined on one line.");
 			}
 
-			_tokens.push_back(MakeToken(line_number, pos/* + 1*/, /*i - 1*/i + 1, TokenStringLiteral));
+			_tokens.push_back(MakeToken(line_number, pos + 1, i - 1, TokenStringLiteral));
 			pos += i + 1;
 		}
 		else if (line[pos] == L'/')

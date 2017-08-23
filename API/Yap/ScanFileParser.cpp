@@ -107,7 +107,16 @@ bool ScanFileParser::Process()
 
 		while (statement.GetCurrentToken().type != TokenSemiColon)
 		{
-			value_string += statement.GetCurrentToken().text;
+			if (statement.GetCurrentToken().type == TokenStringLiteral)
+			{
+				value_string += L'\"';
+				value_string += statement.GetCurrentToken().text;
+				value_string += L'\"';
+			}
+			else
+			{
+				value_string += statement.GetCurrentToken().text;
+			}
 			statement.Next();
 		}
 
