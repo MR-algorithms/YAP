@@ -31,7 +31,7 @@ namespace Yap
 }
 
 CmrDataReader::CmrDataReader(void) :
-	ProcessorImpl(L"CmrRawDataReader")
+	ProcessorImpl(L"CmrDataReader")
 {
 	LOG_TRACE(L"CmrDataReader constructor called.", L"BasicRecon");
 	AddInput(L"Input", 0, DataTypeUnknown);

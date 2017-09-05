@@ -174,7 +174,7 @@ namespace _details
 		{
 			_value_string = L'\"';
 			_value_string += _value + L'\"';
-			return _value.c_str();
+			return _value_string.c_str();
 		}
 
 		size_t FromString(const wchar_t * value_string)
@@ -221,7 +221,7 @@ namespace _details
 // 	{
 // 		_value_string = L'\"';
 // 		_value_string += _value + L'\"';
-// 		return _value.c_str();
+// 		return _value_string.c_str();
 // 	}
 // 
 // 	template <>
