@@ -20,12 +20,12 @@ SamplingMaskCreator::SamplingMaskCreator():
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeFloat);
 
-	AddProperty<double>(L"pow", 3.0, L"");
-	AddProperty<double>(L"sample_percent", 0.4, L"");
-	AddProperty<double>(L"radius", 0.2, L"");
+	AddProperty<double>(L"Pow", 3.0, L"");
+	AddProperty<double>(L"SamplePercent", 0.4, L"");
+	AddProperty<double>(L"Radius", 0.2, L"");
 
-	AddProperty<bool>(L"equal_subsampling", true, L"");
-	AddProperty<bool>(L"random_subsampling", false, L"");
+	AddProperty<bool>(L"EqualSubsampling", true, L"");
+	AddProperty<bool>(L"RandomSubsampling", false, L"");
 	
 	AddProperty<int>(L"Rate", 2, L"");
 	AddProperty<int>(L"AcsCount", 16, L"");
