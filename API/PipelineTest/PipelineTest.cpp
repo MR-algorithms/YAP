@@ -155,8 +155,8 @@ int main()
 
 
 
-	ConstructorTest();
- //   PipelineTest();
+	//ConstructorTest();
+    PipelineTest();
 //	VdfParserTest();
 
 	time_t end = clock();
