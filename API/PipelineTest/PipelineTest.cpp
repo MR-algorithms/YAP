@@ -88,7 +88,7 @@ void PipelineTest()
 	auto variable_manager = parser.CompileFile(L"sysParams_yap.txt");
 
 	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"Pipelines\\test.pipeline");
+	auto pipeline = compiler.CompileFile(L"Pipelines\\ImgPythonShow.pipeline");
 	if (pipeline.get() == nullptr)
 	{
 		return;
