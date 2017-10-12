@@ -82,14 +82,14 @@ void PipelineTest()
 	auto variable_manager = parser.CompileFile(L"sysParams_yap.txt");
 
 	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"Pipelines\\FineCF.pipeline");
+	auto pipeline = compiler.CompileFile(L"Pipelines\\ImgPythonShow.pipeline");
 	if (pipeline.get() == nullptr)
 	{
 		return;
 	}
 	pipeline->SetGlobalVariables(variable_manager->Variables());
 
-	if (pipeline)
+	if (pipeline) 
 	{
 		pipeline->Input(L"Input", nullptr);
 	}
@@ -151,6 +151,7 @@ int main()
 //	VdfParserTest();
 
 	time_t end = clock();
+	printf("\n");
 	printf("the running time is : %f\n", float(end - start) / CLOCKS_PER_SEC);
 	system("pause");
 

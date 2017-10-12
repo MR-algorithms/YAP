@@ -44,6 +44,10 @@ extern "C" {
 	}
 };
 
+
+typedef Python2DWrapper<unsigned short, unsigned short> Python2DWrapperUShortUShort;
+typedef Python2DWrapper<float, float> Python2DWrapperFloatFloat;
+
 BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(CalcuArea)
 	ADD_PROCESSOR(ChannelDataCollector)
@@ -73,6 +77,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(SubSampling)
 	ADD_PROCESSOR(ZeroFilling)
 	ADD(L"HFlipFloat", new Algorithm2DInPlaceWrapper<float>(hflip<float>, L"HFlipFloat"))
+	ADD(L"PythonUSimShow", new Python2DWrapperUShortUShort(L"Py2C", L"ShowImage", L"PythonUSimShow"))
 END_DECL_PROCESSORS
 
 BOOL APIENTRY DllMain( HMODULE hModule,
