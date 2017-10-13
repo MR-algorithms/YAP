@@ -11,7 +11,7 @@ namespace Yap {
 	/**
 	@remark In YAP framework, objects are often created in one module and used in another. Since different
 	modules can be developed by different developers and built with different compilers (or different
-	versions of compiler), objects can only be passed from on module to another in form of interface
+	versions of compiler), objects can only be passed from one module to another in form of interface
 	pointers.
 
 	There are three typical scenarios:

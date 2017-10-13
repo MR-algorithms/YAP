@@ -1,0 +1,10 @@
+import "BasicRecon.dll";
+
+NiumagImgReader reader(DataPath = "D:\\Output\\1.img");
+PythonUSimShow pyUSimshow;
+SliceIterator slice_iterator;
+
+reader->slice_iterator;
+slice_iterator->pyUSimshow;
+
+self.Input->reader.Input;
