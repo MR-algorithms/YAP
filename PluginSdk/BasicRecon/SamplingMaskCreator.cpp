@@ -50,13 +50,13 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
 		return false;
 
 	DataHelper input_data(data);
-	if (GetProperty<bool>(L"random_subsampling"))
+	if (GetProperty<bool>(L"RandomSubsampling"))
 	{
 		auto height = input_data.GetHeight();
 		auto width = input_data.GetWidth();
-		double pow = GetProperty<double>(L"pow");
-		double sample_percent = GetProperty<double>(L"sample_percent");
-		double radius = GetProperty<double>(L"radius");
+		double pow = GetProperty<double>(L"Pow");
+		double sample_percent = GetProperty<double>(L"SamplePercent");
+		double radius = GetProperty<double>(L"Radius");
 
 		auto mask = GenerateRandomMask(width, height, pow, sample_percent, radius);
 		float * mask_buffer = nullptr;
