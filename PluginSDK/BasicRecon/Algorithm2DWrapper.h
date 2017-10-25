@@ -9,24 +9,28 @@
 #include <map>
 #include <comdef.h>
 #include <stdio.h>
+#include "Implement/PythonImpl.h"
+#include "Implement/PythonUserImpl.h"
+#include <assert.h>
 
 namespace Yap
 {
-	//dynamic python arguments type convert define.
-	template<typename T> struct pydata_type_id{ const char * type = "";};
-	// as below is implement struct pydata_type_id.
-	template<> struct pydata_type_id<double> { const char * type = "d"; };
-	template<> struct pydata_type_id<char> { const char * type = "s"; };
-	template<> struct pydata_type_id<unsigned char> { const char* type = "b"; };
-	template<> struct pydata_type_id<short> { const char * type = "h"; };
-	template<> struct pydata_type_id<unsigned short> { const char * type = "h"; };
-	template<> struct pydata_type_id<float> { const char * type = "f"; };
-	template<> struct pydata_type_id<unsigned int> { const char * type = "i"; };
-	template<> struct pydata_type_id<int> { const char * type = "i"; };
-	template<> struct pydata_type_id<std::complex<float>> { const char * type = "O&"; };// convert to Python object. if error, return NULL.
-	template<> struct pydata_type_id<std::complex<double>> { const char * type = "O&"; };
-	template<> struct pydata_type_id<bool> { const char * type = "i"; };
-	
+	namespace PyDataType{
+		//dynamic python arguments type convert define.
+		template<typename T> struct pydata_type_id{ const char * type = "";};
+		// as below is implement struct pydata_type_id.
+		template<> struct pydata_type_id<double> { const char * type = "d"; };
+		template<> struct pydata_type_id<char> { const char * type = "s"; };
+		template<> struct pydata_type_id<unsigned char> { const char* type = "b"; };
+		template<> struct pydata_type_id<short> { const char * type = "h"; };
+		template<> struct pydata_type_id<unsigned short> { const char * type = "h"; };
+		template<> struct pydata_type_id<float> { const char * type = "f"; };
+		template<> struct pydata_type_id<unsigned int> { const char * type = "i"; };
+		template<> struct pydata_type_id<int> { const char * type = "i"; };
+		template<> struct pydata_type_id<std::complex<float>> { const char * type = "O&"; };// convert to Python object. if error, return NULL.
+		template<> struct pydata_type_id<std::complex<double>> { const char * type = "O&"; };
+		template<> struct pydata_type_id<bool> { const char * type = "i"; };
+	};
 
 	template<typename INPUT_TYPE, typename OUTPUT_TYPE>
 	class Algorithm2DWrapper :
@@ -141,46 +145,47 @@ namespace Yap
 
 		explicit Python2DWrapper(const wchar_t * module_file_name, const wchar_t * method_name, const wchar_t * processor_name):
 			ProcessorImpl(processor_name)
-		{	// _pyobjects(null), 
-			if (Py_IsInitialized())
-			{
-				Py_Finalize();
-			}
-			// initialize Python interpreter.
-			Py_Initialize();
-			if (!Py_IsInitialized())
-				throw PyErr_Occurred;
+		{
+			autro python = dynamic_cast<PythonImpl*>(PythonUserImpl::GetInstance().GetPython());
+			python->InitPython();
+			
+			assert(python->CheckScriptInfo(module_file_name, null, method_name) && l"no find python script!");
+			
 
-			PyObject * pModule = PyImport_ImportModule(_bstr_t(module_file_name));
-			if (!pModule)
-				throw PyErr_SetImportError;
+			/*
+				PyObject * pmodule = PyImport_ImportModule(_bstr_t(module_file_name));
+				if (!pmodule)
+					throw PyErr_SetImportError;
 
-			PyObject * pFunc = PyObject_GetAttrString(pModule, _bstr_t(method_name));
+				PyObject * pfunc = PyObject_GetAttrString(pmodule, _bstr_t(method_name));
 
-			if (!pFunc || !PyCallable_Check(pFunc))
-				throw PyErr_GetExcInfo;
+				if (!pfunc || !PyCallable_Check(pfunc))
+					throw PyErr_GetExcInfo;
 
-			if (!_pyobjects.empty())
-			{
-				for (auto iter : _pyobjects)
+
+				if (!_pyobjects.empty())
 				{
-					if(iter.second)
-						Py_DECREF(iter.second);
+					for (auto iter : _pyobjects)
+					{
+						if (iter.second)
+							Py_DECREF(iter.second);
+					}
+					_pyobjects.clear();
 				}
-				_pyobjects.clear();
-			}
-			_pyobjects.insert(std::make_pair(L"Module", pModule));
-			_pyobjects.insert(std::make_pair(L"Func", pFunc));
-
+				_pyobjects.insert(std::make_pair(l"module", pmodule));
+				_pyobjects.insert(std::make_pair(l"func", pfunc));
+			*/
+			
 			AddInput(L"Input", 2, data_type_id<INPUT_TYPE>::type);
 			AddOutput(L"Output", 2, data_type_id<OUTPUT_TYPE>::type);
 		}
 
 
 		Python2DWrapper(const Python2DWrapper<INPUT_TYPE, OUTPUT_TYPE>& rhs) :
-			_pyobjects(rhs._pyobjects),ProcessorImpl(rhs)
+			ProcessorImpl(rhs)
 		{
-		}
+			// _pyobjects(rhs._pyobjects),
+		};
 
 		/*
 		@note convert C data to python-form data, and handle the function
@@ -203,18 +208,25 @@ namespace Yap
 			size_t height = static_cast<size_t>(input_data.GetHeight());
 			auto py_data = GetDataArray<INPUT_TYPE>(data);
 
-			// add DataConvert c2py
+			auto python = dynamic_cast<PythonImpl*>(PythonUserImpl::GetInstance().GetPython());
+			assert(python);
+			python->Python1DListInit(plist, py_data, width*height);
+
+			//	add DataConvert c2py
 			PyObject * plist = PyList_New(width*height);
-			if (!PyList_Check(plist))
+			if (!python->CPyList_Check(plist))
 				throw PyErr_NewException;
 
-			pydata_type_id<INPUT_TYPE> in_wchar;
-			//add input_data to plist
-			for (size_t w = 0; w < width * height; ++w)
-			{
-				PyObject *pl = Py_BuildValue(in_wchar.type, *(py_data + w));
-				PyList_SetItem(plist, w, pl);
-			}
+			//PyDataType::pydata_type_id<INPUT_TYPE> in_wchar;
+			////add input_data to plist
+			//for (size_t w = 0; w < width * height; ++w)
+			//{
+			//	PyObject *pl = Py_BuildValue(in_wchar.type, *(py_data + w));
+			//	PyList_SetItem(plist, w, pl);
+			//}
+			python->PyTupleSetItem(pArgs, Py_ssize_t(0), plist);
+			python->PyTupleSetItem(pArgs, Py_ssize_t(1), Py_BuildValue("i", width));
+			python->PyTupleSetItem(pArgs, Py_ssize_t(1), Py_BuildValue("i", height));
 
 			PyObject * pArgs = PyTuple_New(3);
 			PyTuple_SetItem(pArgs, Py_ssize_t(0), plist);
@@ -275,8 +287,7 @@ namespace Yap
 			_pyobjects.clear();
 			Py_Finalize();*/
 		}
-
-		std::map <const wchar_t*, PyObject*> _pyobjects;
+		//std::map <const wchar_t*, PyObject*> _pyobjects;
 	};
 
 }

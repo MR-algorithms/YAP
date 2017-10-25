@@ -1,5 +1,6 @@
 #ifndef LOGUSERIMPL_H_20170426
 #define LOGUSERIMPL_H_20170426
+
 #pragma once
 
 #include "Interface/Interfaces.h"

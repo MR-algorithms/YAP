@@ -34,8 +34,16 @@
 
 #include "Implement/LogUserImpl.h"
 #include "Implement/YapImplement.h"
+#include "Implement/PythonUserImpl.h"
 
 using namespace Yap;
+
+extern "C" { 
+	_declspec(dllexport) IPythonUser * GetPythonUser()
+	{
+		return (IPythonUser*)&PythonUserImpl::GetInstance();
+	}
+};
 
 extern "C" {
 	__declspec(dllexport) ILogUser* GetLogUser() 

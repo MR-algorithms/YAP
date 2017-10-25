@@ -2,6 +2,8 @@
 #include <assert.h>
 #include "Implement\LogImpl.h"
 #include <WinBase.h>
+#include "Interface\IPython.h"
+#include "Implement\PythonImpl.h"
 
 
 using namespace Yap;
@@ -33,6 +35,16 @@ bool Yap::ModuleAgent::Load(const wchar_t * plugin_path)
 	if (_module == 0)
 	{
 		return false;
+	}
+
+	auto python_func = (Yap::IPythonUser*(*)()) ::GetProcAddress(_module, "GetPythonUser");
+	if (python_func != nullptr)
+	{
+		auto python_user = python_func();
+		if (python_user != nullptr)
+		{
+			python_user->SetPython(dynamic_cast<IPython*>(&PythonImpl::GetInstance()));
+		}
 	}
 
 	auto log_func = (Yap::ILogUser*(*)()) ::GetProcAddress(_module, "GetLogUser");
