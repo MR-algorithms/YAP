@@ -1,7 +1,7 @@
 import "BasicRecon.dll";
 
-NiumagFidReader reader(DataPath = "D:\\TestData\\UU.img.fid");
-ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512, DestDepth = 7, Front = 1);
+NiumagFidReader reader(DataPath = "D:\\TestData\\3DSE\\3DSE.fid");
+ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512, DestDepth = 20, Front = 1);
 SliceIterator slice_iterator;
 DcRemover dc_remover;
 Fft2D fft;

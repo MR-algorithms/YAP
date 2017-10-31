@@ -107,7 +107,7 @@ void PipelineTest()
 bool FFT3DTest()
 {
 	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"Pipelines\\niumag_recon_yap.pipeline");
+	auto pipeline = compiler.CompileFile(L"Pipelines\\FFT3DTest.pipeline");
 	if (pipeline.get() == nullptr)
 	{
 		return false;

@@ -1,0 +1,16 @@
+import "BasicRecon.dll";
+
+NiumagFidReader reader(DataPath = "D:\\TestData\\3d.fid");
+ZeroFilling zero_filling(DestWidth = 256, DestHeight = 256, DestDepth = 254, Front = 118);
+SliceIterator slice_iterator;
+Fft3D fft;
+ModulePhase module_phase;
+JpegExporter jpeg_exporter(ExportFolder = "D:\\Output");
+	
+reader->zero_filling;
+zero_filling->fft;
+fft->slice_iterator;
+slice_iterator->module_phase;
+module_phase.Module->jpeg_exporter;
+
+self.Input->reader.Input;
