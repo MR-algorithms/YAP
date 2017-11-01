@@ -51,7 +51,7 @@ bool Yap::LinesSelector::Input(const wchar_t * name, IData * data)
 	Yap::Dimensions dims;
 	dims(DimensionReadout, 0, input_data.GetWidth())
 		(DimensionPhaseEncoding, 0, lines_count);
-	auto output = CreateData<std::complex<float>>(data, &dims);
+	auto output = CreateData<complex<float>>(data, &dims);
 
 	memset(Yap::GetDataArray<complex<float>>(output.get()), 0,
 		input_data.GetWidth() * lines_count * sizeof(complex<float>));

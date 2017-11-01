@@ -27,6 +27,7 @@
 #include "NiuMriImageWriter.h"
 #include "NLM.h"
 #include "Nlmeans.h"
+#include "PhaseCorrector.h"
 #include "SamplingMaskCreator.h"
 #include "SliceIterator.h"
 #include "SliceMerger.h"
@@ -70,6 +71,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(NiuMriImageWriter)
 	ADD_PROCESSOR(NLM)
 	ADD_PROCESSOR(Nlmeans)
+	ADD_PROCESSOR(PhaseCorrector)
 	ADD_PROCESSOR(SamplingMaskCreator)
 	ADD_PROCESSOR(SliceIterator)
 	ADD_PROCESSOR(SliceMerger)

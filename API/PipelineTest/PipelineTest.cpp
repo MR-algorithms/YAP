@@ -137,6 +137,7 @@ bool PartialFFTTest()
 
 	return false;
 }
+
 bool VdfParserTest()
 {
 	VdfParser parser;
