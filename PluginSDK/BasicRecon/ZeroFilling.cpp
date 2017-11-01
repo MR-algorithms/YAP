@@ -1,7 +1,6 @@
 #include "ZeroFilling.h"
 
 #include "Client/DataHelper.h"
-#include "Implement/DataObject.h"
 #include "Implement/LogUserImpl.h"
 
 #include <string>
@@ -21,7 +20,6 @@ bool zero_filling(T* dest,
 	assert(dest != nullptr && source != nullptr);
 	assert(dest_width >= source_width && dest_height >= source_height);
 
-//	memset(dest, 0, dest_width * dest_height * sizeof(T));
 	for (int row = 0; row < source_height; ++row)
 	{
 		memcpy(dest + ((dest_height - source_height) / 2 + row) * dest_width + (dest_width - source_width) / 2,
@@ -69,12 +67,28 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 	if (input_data.GetDataType() != DataTypeComplexDouble && input_data.GetDataType() != DataTypeComplexFloat)
 		return false;
 
-	if (input_data.GetActualDimensionCount() > 3)
-		return false;
+	int input_width{ 1 }, input_height{ 1 }, input_depth{ 1 };
+	if (input_data.GetDimensionCount() >= 1)
+	{
+		if (dest_width < input_data.GetWidth())
+			return false;
 
-	if (dest_width < input_data.GetWidth() || 
-		dest_height < input_data.GetHeight() ||
-		dest_depth < input_data.GetSliceCount())
+		if (input_data.GetDimensionCount() >= 2)
+		{
+			if (dest_height < input_data.GetHeight())
+				return false;
+
+			if (input_data.GetDimensionCount() >= 3)
+			{
+				if (dest_depth < input_data.GetSliceCount())
+					return false;
+				input_depth = input_data.GetSliceCount();
+			}
+			input_height = input_data.GetHeight();
+		}
+		input_width = input_data.GetWidth();
+	}
+	else
 		return false;
 
 	Yap::Dimensions dims;
@@ -85,7 +99,7 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 		(DimensionChannel, 0, 1);
 
 	auto dest_size = dest_height * dest_width;
-	auto source_size = input_data.GetWidth() * input_data.GetHeight();
+	auto source_size = input_width * input_height;
 	int front = GetProperty<int>(L"Front");
 	if (data->GetDataType() == DataTypeComplexDouble)
 	{
@@ -93,12 +107,12 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 		memset(Yap::GetDataArray<complex<double>>(output.get()), 0, 
 			dest_width * dest_height * dest_depth * sizeof(complex<double>));
 
-		for (unsigned int slice = 0; slice < input_data.GetSliceCount(); ++slice)
+		for (unsigned int slice = 0; slice < input_depth; ++slice)
 		{
 			zero_filling(Yap::GetDataArray<complex<double>>(output.get()) + dest_size * (slice + front), 
 				dest_width, dest_height,
 				Yap::GetDataArray<complex<double>>(data) + source_size * slice, 
-				input_data.GetWidth(), input_data.GetHeight());
+				input_width, input_height);
 		}
 
 		return Feed(L"Output", output.get());
@@ -109,12 +123,12 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 		memset(Yap::GetDataArray<complex<float>>(output.get()), 0,
 			dest_width * dest_height * dest_depth * sizeof(complex<float>));
 
-		for (unsigned int slice = 0; slice < input_data.GetSliceCount(); ++slice)
+		for (unsigned int slice = 0; slice < input_depth; ++slice)
 		{
 			zero_filling(Yap::GetDataArray<complex<float>>(output.get()) + dest_size * (slice + front),
 				dest_width, dest_height,
 				Yap::GetDataArray<complex<float>>(data) + source_size * slice,
-				input_data.GetWidth(), input_data.GetHeight());
+				input_width, input_height);
 		}
 		return Feed(L"Output", output.get());
 	}	

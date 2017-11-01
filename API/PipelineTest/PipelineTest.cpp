@@ -121,6 +121,22 @@ bool FFT3DTest()
 	return false;
 }
 
+bool PartialFFTTest()
+{
+	PipelineCompiler compiler;
+	auto pipeline = compiler.CompileFile(L"Pipelines\\PartialFFT.pipeline");
+	if (pipeline.get() == nullptr)
+	{
+		return false;
+	}
+
+	if (pipeline)
+	{
+		return pipeline->Input(L"Input", nullptr);
+	}
+
+	return false;
+}
 bool VdfParserTest()
 {
 	VdfParser parser;
@@ -172,7 +188,8 @@ int main()
 //	ConstructorTest();
 //  PipelineTest();
 //	VdfParserTest();
-	FFT3DTest();
+//	FFT3DTest();
+	PartialFFTTest();
 
 	time_t end = clock();
 	printf("the running time is : %f\n", float(end - start) / CLOCKS_PER_SEC);

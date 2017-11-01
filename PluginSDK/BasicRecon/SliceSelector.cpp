@@ -1,6 +1,5 @@
 #include "SliceSelector.h"
 #include "Client/DataHelper.h"
-#include "Implement/DataObject.h"
 #include "Implement/LogUserImpl.h"
 
 #include <complex>

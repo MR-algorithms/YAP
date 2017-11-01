@@ -18,6 +18,7 @@
 #include "FineCF.h"
 #include "imageProcessing.h"
 #include "JpegExporter.h"
+#include "LinesSelector.h"
 #include "ModulePhase.h"
 #include "NiumagFidReader.h"
 #include "NiumagFidWriter.h"
@@ -60,6 +61,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(Fft3D)
 	ADD_PROCESSOR(FineCF)
 	ADD_PROCESSOR(JpegExporter)
+	ADD_PROCESSOR(LinesSelector)
 	ADD_PROCESSOR(ModulePhase)
 	ADD_PROCESSOR(NiumagFidReader)
 	ADD_PROCESSOR(NiumagFidWriter)

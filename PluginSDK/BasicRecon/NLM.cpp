@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "NLM.h"
 #include "Client/DataHelper.h"
-#include "Implement/DataObject.h"
 #include "Implement/LogUserImpl.h"
 
 using namespace std;
