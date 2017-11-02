@@ -9,9 +9,13 @@ ZeroFilling zero_filling2(DestWidth = 256, DestHeight = 256);
 Fft2D fft2d_1;
 Fft2D fft2d_2;
 Fft2D fft2d_3(Inverse = true);
+Fft2D fft2d_4;
+Fft2D fft2d_5(Inverse = true);
+Fft2D fft2d_6;
 ModulePhase module_phase1;
 ModulePhase module_phase2;
 PhaseCorrector phase_corrector;
+Conjugator conjugator;
 JpegExporter jpeg_exporter(ExportFolder = "D:\\Output");
 	
 reader->slice_iterator;
@@ -27,7 +31,8 @@ module_phase1.Phase->phase_corrector.Phase;
 zero_filling1->fft2d_2;
 fft2d_2->phase_corrector;
 phase_corrector->fft2d_3;
-fft2d_3->module_phase2;
+fft2d_3->conjugator;
+conjugator->module_phase2;
 module_phase2.Module->jpeg_exporter;
 
 self.Input->reader.Input;

@@ -125,6 +125,7 @@ bool PartialFFTTest()
 {
 	PipelineCompiler compiler;
 	auto pipeline = compiler.CompileFile(L"Pipelines\\PartialFFT.pipeline");
+	//auto pipeline = compiler.CompileFile(L"Pipelines\\niumag_recon_yap.pipeline");
 	if (pipeline.get() == nullptr)
 	{
 		return false;

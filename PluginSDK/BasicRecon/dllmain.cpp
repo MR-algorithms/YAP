@@ -9,6 +9,7 @@
 #include "ChannelMerger.h"
 #include "CmrDataReader.h"
 #include "ComplexSplitter.h"
+#include "Conjugator.h"
 #include "DataTypeConvertor.h"
 #include "DcRemover.h"
 #include "Difference.h"
@@ -54,6 +55,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(ChannelMerger)
 	ADD_PROCESSOR(CmrDataReader)
 	ADD_PROCESSOR(ComplexSplitter)
+	ADD_PROCESSOR(Conjugator)
 	ADD_PROCESSOR(DataTypeConvertor)
 	ADD_PROCESSOR(DcRemover)
 	ADD_PROCESSOR(Difference)

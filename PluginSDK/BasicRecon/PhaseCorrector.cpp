@@ -9,9 +9,9 @@ using namespace Yap;
 using namespace std;
 
 void PhaseCorrect(complex<float> * input,
-	float * phase,
-	complex<float> * output,
-	size_t size)
+					float * phase,
+					complex<float> * output,
+					size_t size)
 {
 	assert(input != nullptr && phase != nullptr && output != nullptr);
 
