@@ -190,8 +190,8 @@ int main()
 //	ConstructorTest();
 //  PipelineTest();
 //	VdfParserTest();
-//	FFT3DTest();
-	PartialFFTTest();
+	FFT3DTest();
+//	PartialFFTTest();
 
 	time_t end = clock();
 	printf("the running time is : %f\n", float(end - start) / CLOCKS_PER_SEC);

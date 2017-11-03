@@ -17,6 +17,7 @@
 #include "Fft2D.h"
 #include "Fft3D.h"
 #include "FineCF.h"
+#include "GrayScaleUnifier.h"
 #include "imageProcessing.h"
 #include "JpegExporter.h"
 #include "LinesSelector.h"
@@ -63,6 +64,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(Fft2D)
 	ADD_PROCESSOR(Fft3D)
 	ADD_PROCESSOR(FineCF)
+	ADD_PROCESSOR(GrayScaleUnifier)
 	ADD_PROCESSOR(JpegExporter)
 	ADD_PROCESSOR(LinesSelector)
 	ADD_PROCESSOR(ModulePhase)
