@@ -108,7 +108,7 @@ void Fft3D::Plan(size_t width, size_t height, size_t depth, bool inverse, bool i
 
 	if (in_place)
 	{
-		_fft_plan = fftwf_plan_dft_3d(int(width), int(height), int(depth),
+		_fft_plan = fftwf_plan_dft_3d(int(depth), int(height), int(width), 
 			(fftwf_complex*)data.data(),
 			(fftwf_complex*)data.data(),
 			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
@@ -117,7 +117,7 @@ void Fft3D::Plan(size_t width, size_t height, size_t depth, bool inverse, bool i
 	else
 	{
 		vector<fftwf_complex> result(width * height * depth);
-		_fft_plan = fftwf_plan_dft_3d(int(width), int(height), int(depth),
+		_fft_plan = fftwf_plan_dft_3d(int(depth), int(height), int(width),  
 			(fftwf_complex*)data.data(),
 			(fftwf_complex*)result.data(),
 			inverse ? FFTW_BACKWARD : FFTW_FORWARD,

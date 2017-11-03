@@ -125,7 +125,7 @@ void Fft2D::Plan(size_t width, size_t height, bool inverse, bool in_place)
 
 	if (in_place)
 	{
-		_fft_plan = fftwf_plan_dft_2d(int(width), int(height), (fftwf_complex*)data.data(),
+		_fft_plan = fftwf_plan_dft_2d(int(height), int(width), (fftwf_complex*)data.data(),
 			(fftwf_complex*)data.data(),
 			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
 			FFTW_MEASURE);
@@ -133,7 +133,7 @@ void Fft2D::Plan(size_t width, size_t height, bool inverse, bool in_place)
 	else
 	{
 		vector<fftwf_complex> result(width * height);
-		_fft_plan = fftwf_plan_dft_2d(int(width), int(height),  (fftwf_complex*)data.data(),
+		_fft_plan = fftwf_plan_dft_2d(int(height), int(width),  (fftwf_complex*)data.data(),
 			(fftwf_complex*)result.data(),
 			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
 			FFTW_MEASURE);
