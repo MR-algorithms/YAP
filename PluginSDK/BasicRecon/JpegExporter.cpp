@@ -72,7 +72,7 @@ namespace Yap { namespace details
 		}
 
 		template<typename T>
-		void ExportImage(T* image, int width, int height, const wchar_t * output_folder)
+		void ExportImage(T* image, int width, int height, const wchar_t * output_folder, bool stretch_pixel_data)
 		{
 			boost::shared_array<unsigned char> buffer(new unsigned char[width * height * 4]);
 			T* data_cursor = image;
@@ -83,7 +83,15 @@ namespace Yap { namespace details
 
 			for (unsigned char* buffer_cursor = buffer.get(); buffer_cursor < buffer.get() + width * height * 4; buffer_cursor += 4)
 			{
-				auto temp = StretchPixelData(data_cursor, min_data, max_data);
+				unsigned short temp;
+				if (stretch_pixel_data)
+				{
+					temp = StretchPixelData(data_cursor, min_data, max_data);
+				}
+				else
+				{
+					temp = static_cast<unsigned short>(*data_cursor);
+				}
 				if (data_cursor == NULL)
 				{
 					break;
@@ -136,6 +144,7 @@ JpegExporter::JpegExporter() :
 	_impl = shared_ptr<JpegExporterImp>(new JpegExporterImp);
 	AddInput(L"Input", 2, DataTypeFloat | DataTypeUnsignedShort);
 	AddProperty<const wchar_t * const>(L"ExportFolder", L"", L"Set folder used to hold exported images.");
+	AddProperty<bool>(L"StretchPixelData", true, L"Stretch pixel value from 0 to 255");
 }
 
 JpegExporter::JpegExporter(const JpegExporter& rhs)
@@ -155,21 +164,22 @@ bool JpegExporter::Input( const wchar_t * name, IData * data)
 	assert((data != nullptr) && ((GetDataArray<float>(data) != nullptr) || (GetDataArray<unsigned short>(data) != nullptr)));
 	assert(_impl);
 
-	TODO(What if the data is not of float type ? );
-
 	DataHelper data_helper(data);
 
+	auto stretch_pixel_data = GetProperty<bool>(L"StretchPixelData");
 	if (data->GetDataType() == DataTypeFloat)
 	{
 		_impl->ExportImage(GetDataArray<float>(data),
 			data_helper.GetWidth(), data_helper.GetHeight(),
-			GetProperty<const wchar_t * const>(L"ExportFolder"));
+			GetProperty<const wchar_t * const>(L"ExportFolder"),
+			stretch_pixel_data);
 	}
 	else if (data->GetDataType() == DataTypeUnsignedShort)
 	{
 		_impl->ExportImage(GetDataArray<unsigned short>(data),
 			data_helper.GetWidth(), data_helper.GetHeight(),
-			GetProperty<const wchar_t* const>(L"ExportFolder"));
+			GetProperty<const wchar_t* const>(L"ExportFolder"),
+			stretch_pixel_data);
 	}
 
 	return true;

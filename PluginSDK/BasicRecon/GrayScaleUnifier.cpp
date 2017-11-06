@@ -41,15 +41,17 @@ bool Yap::GrayScaleUnifier::Input(const wchar_t * name, IData * data)
 	vector<float> temp_data(size, 0);
 	memcpy(temp_data.data(), GetDataArray<float>(data), size * sizeof(float));
 	auto max_val = *max_element(temp_data.begin(), temp_data.end());
+	auto min_val = *min_element(temp_data.begin(), temp_data.end());
 
 	auto output = CreateData<float>(data);
 	auto input_data = GetDataArray<float>(data);
 	auto output_data = GetDataArray<float>(output.get());
 	auto input_end = input_data + size;
 
+	auto rate = 255 / double(max_val - min_val);
 	while (input_data != input_end)
 	{
-		*(output_data++) = *(input_data++) / max_val * 65535;
+		*(output_data++) = (*(input_data++) - min_val) * rate;
 	}
 
 	return Feed(L"Output", output.get());

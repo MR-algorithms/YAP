@@ -7,7 +7,7 @@ Fft3D fft;
 ModulePhase module_phase;
 GrayScaleUnifier gray_scale_unifier;
 DataTypeConvertor data_type_convertor;
-JpegExporter jpeg_exporter(ExportFolder = "D:\\Output\\3DRecon");
+JpegExporter jpeg_exporter(ExportFolder = "D:\\Output\\3DRecon", StretchPixelData = false);
 	
 reader->zero_filling;
 zero_filling->fft;
