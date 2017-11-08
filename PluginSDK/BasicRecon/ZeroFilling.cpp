@@ -59,15 +59,16 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 	if (std::wstring(port) != L"Input")
 		return false;
 
-	unsigned int dest_width(GetProperty<int>(L"DestWidth"));
-	unsigned int dest_height(GetProperty<int>(L"DestHeight"));
-	unsigned int dest_depth(GetProperty<int>(L"DestDepth"));
-
 	DataHelper input_data(data);
 	if (input_data.GetDataType() != DataTypeComplexDouble && input_data.GetDataType() != DataTypeComplexFloat)
 		return false;
 
-	int input_width{ 1 }, input_height{ 1 }, input_depth{ 1 };
+	unsigned int dest_width(GetProperty<int>(L"DestWidth"));
+	unsigned int dest_height(GetProperty<int>(L"DestHeight"));
+	unsigned int dest_depth(GetProperty<int>(L"DestDepth"));
+	unsigned int front = GetProperty<int>(L"Front");
+
+	unsigned int input_width{ 1 }, input_height{ 1 }, input_depth{ 1 };
 	if (input_data.GetDimensionCount() >= 1)
 	{
 		if (dest_width < input_data.GetWidth())
@@ -80,7 +81,7 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 
 			if (input_data.GetDimensionCount() >= 3)
 			{
-				if (dest_depth < input_data.GetSliceCount())
+				if (dest_depth < input_data.GetSliceCount() + front || front < 0)
 					return false;
 				input_depth = input_data.GetSliceCount();
 			}
@@ -100,7 +101,6 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 
 	auto dest_size = dest_height * dest_width;
 	auto source_size = input_width * input_height;
-	int front = GetProperty<int>(L"Front");
 	if (data->GetDataType() == DataTypeComplexDouble)
 	{
 		auto output = CreateData<std::complex<double>>(data, &dims);

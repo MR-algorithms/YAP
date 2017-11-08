@@ -60,7 +60,7 @@ bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)
 	DataHelper data_helper(data);
 	
 	auto dimension_count = data_helper.GetDimensionCount();
-	if (dimension_count != 3)
+	if (dimension_count < 3)
 		return false;
 
 	int dim1 = data_helper.GetWidth();

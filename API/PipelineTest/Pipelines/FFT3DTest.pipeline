@@ -1,6 +1,6 @@
 import "BasicRecon.dll";
 
-NiumagFidReader reader(DataPath = "D:\\TestData\\3d.fid");
+NiumagFidReader reader(DataPath = "D:\\TestData\\3DSE\\rat.fid");
 ZeroFilling zero_filling(DestWidth = 256, DestHeight = 256, DestDepth = 20);
 SliceIterator slice_iterator;
 Fft3D fft;
@@ -8,6 +8,7 @@ ModulePhase module_phase;
 GrayScaleUnifier gray_scale_unifier;
 DataTypeConvertor data_type_convertor;
 JpegExporter jpeg_exporter(ExportFolder = "D:\\Output\\3DRecon", StretchPixelData = false);
+//NiuMriImageWriter img_writer(ExportFolder = "d:\\Output");
 	
 reader->zero_filling;
 zero_filling->fft;
@@ -17,5 +18,6 @@ gray_scale_unifier->data_type_convertor;
 //module_phase.Module->data_type_convertor;
 data_type_convertor.UnsignedShort->slice_iterator;
 slice_iterator->jpeg_exporter;
+//data_type_convertor.UnsignedShort->img_writer;
 
 self.Input->reader.Input;

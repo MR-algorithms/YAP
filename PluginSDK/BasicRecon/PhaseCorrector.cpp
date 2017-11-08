@@ -90,6 +90,7 @@ bool Yap::PhaseCorrector::Input(const wchar_t * name, IData * data)
 					 GetDataArray<float>(_phase.get()),
 					 GetDataArray<complex<float>>(output.get()), 
 					 input_data.GetDataSize());
+		_phase.reset();
 		return Feed(L"Output", output.get());
 	}
 }

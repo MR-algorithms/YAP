@@ -125,7 +125,6 @@ bool PartialFFTTest()
 {
 	PipelineCompiler compiler;
 	auto pipeline = compiler.CompileFile(L"Pipelines\\PartialFFT.pipeline");
-	//auto pipeline = compiler.CompileFile(L"Pipelines\\niumag_recon_yap.pipeline");
 	if (pipeline.get() == nullptr)
 	{
 		return false;
@@ -190,8 +189,8 @@ int main()
 //	ConstructorTest();
 //  PipelineTest();
 //	VdfParserTest();
-	FFT3DTest();
-//	PartialFFTTest();
+//	FFT3DTest();
+	PartialFFTTest();
 
 	time_t end = clock();
 	printf("the running time is : %f\n", float(end - start) / CLOCKS_PER_SEC);

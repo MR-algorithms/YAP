@@ -2,8 +2,8 @@ import "BasicRecon.dll";
 
 NiumagFidReader reader(DataPath = "D:\\TestData\\PartialFft.fid");
 SliceIterator slice_iterator;
-LinesSelector lines_selector1(FirstLineIndex = 0, LinesCount = 108);
-LinesSelector lines_selector2(FirstLineIndex = 88, LinesCount = 20);
+LinesSelector lines_selector1(FirstLineIndex = 0, LinesCount = 118);
+LinesSelector lines_selector2(FirstLineIndex = 145, LinesCount = 40);
 ZeroFilling zero_filling1(DestWidth = 256, DestHeight = 256);
 ZeroFilling zero_filling2(DestWidth = 256, DestHeight = 256);
 Fft2D fft2d_1;
@@ -16,7 +16,7 @@ ModulePhase module_phase1;
 ModulePhase module_phase2;
 PhaseCorrector phase_corrector;
 Conjugator conjugator;
-JpegExporter jpeg_exporter(ExportFolder = "D:\\Output");
+JpegExporter jpeg_exporter(ExportFolder = "D:\\Output\\PartialFFT");
 	
 reader->slice_iterator;
 slice_iterator->lines_selector1;
@@ -32,7 +32,10 @@ zero_filling1->fft2d_2;
 fft2d_2->phase_corrector;
 phase_corrector->fft2d_3;
 fft2d_3->conjugator;
-conjugator->module_phase2;
+conjugator->fft2d_4;
+fft2d_4->fft2d_5;
+fft2d_5->fft2d_6;
+fft2d_6->module_phase2;
 module_phase2.Module->jpeg_exporter;
 
 self.Input->reader.Input;
