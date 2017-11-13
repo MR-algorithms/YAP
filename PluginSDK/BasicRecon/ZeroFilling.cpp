@@ -21,7 +21,7 @@ bool zero_filling(T* dest,
 	assert(dest != nullptr && source != nullptr);
 	assert(dest_width >= source_width && dest_height >= source_height);
 
-	memset(dest, 0, dest_width * dest_height * sizeof(T));
+//	memset(dest, 0, dest_width * dest_height * sizeof(T));
 	for (int row = 0; row < source_height; ++row)
 	{
 		memcpy(dest + ((dest_height - source_height) / 2 + row) * dest_width + (dest_width - source_width) / 2,
@@ -39,8 +39,10 @@ ZeroFilling::ZeroFilling() : ProcessorImpl(L"ZeroFilling")
 
 	AddProperty<int>(L"DestWidth", 256, L"Destination width.");
 	AddProperty<int>(L"DestHeight", 256, L"Destination height.");
+	AddProperty<int>(L"DestDepth", 1, L"Destination depth.");
 	AddProperty<int>(L"Left", 0, L"X coordinate of top left corner of source data in destination data.");
 	AddProperty<int>(L"Top", 0, L"Y coordinate of top left corner of source data in destination data.");
+	AddProperty<int>(L"Front", 0, L"Z coordinate of front top left corner of source data in destination data.");
 }
 
 ZeroFilling::ZeroFilling(const ZeroFilling& rhs)
@@ -61,41 +63,59 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 
 	unsigned int dest_width(GetProperty<int>(L"DestWidth"));
 	unsigned int dest_height(GetProperty<int>(L"DestHeight"));
+	unsigned int dest_depth(GetProperty<int>(L"DestDepth"));
 
 	DataHelper input_data(data);
 	if (input_data.GetDataType() != DataTypeComplexDouble && input_data.GetDataType() != DataTypeComplexFloat)
 		return false;
 
-	if (input_data.GetActualDimensionCount() != 2)
+	if (input_data.GetActualDimensionCount() > 3)
 		return false;
 
-	if (dest_width < input_data.GetWidth() || dest_height < input_data.GetHeight())
+	if (dest_width < input_data.GetWidth() || 
+		dest_height < input_data.GetHeight() ||
+		dest_depth < input_data.GetSliceCount())
 		return false;
 
 	Yap::Dimensions dims;
 	dims(DimensionReadout, 0, dest_width)
 		(DimensionPhaseEncoding, 0, dest_height)
-		(DimensionSlice, 0, 1)
+		(DimensionSlice, 0, dest_depth)
 		(Dimension4, 0, 1)
 		(DimensionChannel, 0, 1);
 
+	auto dest_size = dest_height * dest_width;
+	auto source_size = input_data.GetWidth() * input_data.GetHeight();
+	int front = GetProperty<int>(L"Front");
 	if (data->GetDataType() == DataTypeComplexDouble)
 	{
 		auto output = CreateData<std::complex<double>>(data, &dims);
-		zero_filling(Yap::GetDataArray<complex<double>>(output.get()), dest_width, dest_height,
-			Yap::GetDataArray<complex<double>>(data), input_data.GetWidth(), input_data.GetHeight());
+		memset(Yap::GetDataArray<complex<double>>(output.get()), 0, 
+			dest_width * dest_height * dest_depth * sizeof(complex<double>));
+
+		for (unsigned int slice = 0; slice < input_data.GetSliceCount(); ++slice)
+		{
+			zero_filling(Yap::GetDataArray<complex<double>>(output.get()) + dest_size * (slice + front), 
+				dest_width, dest_height,
+				Yap::GetDataArray<complex<double>>(data) + source_size * slice, 
+				input_data.GetWidth(), input_data.GetHeight());
+		}
 
 		return Feed(L"Output", output.get());
 	}
 	else
 	{
 		auto output = CreateData<std::complex<float>>(data, &dims);
-		zero_filling(Yap::GetDataArray<complex<float>>(output.get()), dest_width, dest_height,
-					Yap::GetDataArray<complex<float>>(data), input_data.GetWidth(), input_data.GetHeight());
+		memset(Yap::GetDataArray<complex<float>>(output.get()), 0,
+			dest_width * dest_height * dest_depth * sizeof(complex<float>));
 
+		for (unsigned int slice = 0; slice < input_data.GetSliceCount(); ++slice)
+		{
+			zero_filling(Yap::GetDataArray<complex<float>>(output.get()) + dest_size * (slice + front),
+				dest_width, dest_height,
+				Yap::GetDataArray<complex<float>>(data) + source_size * slice,
+				input_data.GetWidth(), input_data.GetHeight());
+		}
 		return Feed(L"Output", output.get());
 	}	
 }
-
-
-
