@@ -95,9 +95,7 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 	Yap::Dimensions dims;
 	dims(DimensionReadout, 0, dest_width)
 		(DimensionPhaseEncoding, 0, dest_height)
-		(DimensionSlice, 0, dest_depth)
-		(Dimension4, 0, 1)
-		(DimensionChannel, 0, 1);
+		(DimensionSlice, 0, dest_depth);
 
 	auto dest_size = dest_height * dest_width;
 	auto source_size = input_width * input_height;

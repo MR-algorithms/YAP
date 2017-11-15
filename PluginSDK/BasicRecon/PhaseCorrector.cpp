@@ -59,7 +59,7 @@ bool Yap::PhaseCorrector::Input(const wchar_t * name, IData * data)
 		DataHelper input_data(data);
 		DataHelper phase(_phase.get());
 
-		if (input_data.GetDimensionCount() != phase.GetDimensionCount())
+		if (input_data.GetActualDimensionCount() != phase.GetActualDimensionCount())
 			return false;
 
 		if (input_data.GetDataType() != DataTypeComplexFloat ||
