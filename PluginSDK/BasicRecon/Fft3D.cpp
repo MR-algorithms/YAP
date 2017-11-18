@@ -143,7 +143,7 @@ void Fft3D::FftShift(std::complex<float>* data, size_t  width, size_t height, si
 	}
 
 	int half_depth = int(depth / 2);
-	std:vector<std::complex<float>> slice_swap_buffer;
+	vector<std::complex<float>> slice_swap_buffer;
 	slice_swap_buffer.resize(size * half_depth);
 	auto cursor2 = data + size * (depth - int(depth / 2));
 	memcpy(slice_swap_buffer.data(), data, size * half_depth * sizeof(std::complex<float>));

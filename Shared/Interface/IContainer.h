@@ -23,6 +23,13 @@ namespace Yap
 		virtual void Clear() = 0;
 	};
 
+	template <typename ELEMENT_TYPE>
+	struct IPtrArray : public ISharedObject
+	{
+		virtual unsigned int GetSize() const = 0;
+		virtual ELEMENT_TYPE *& Element(unsigned int index) = 0;
+	};
+
 }
 
 #endif // IContainer_h__

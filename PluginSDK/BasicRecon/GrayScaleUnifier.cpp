@@ -48,10 +48,10 @@ bool Yap::GrayScaleUnifier::Input(const wchar_t * name, IData * data)
 	auto output_data = GetDataArray<float>(output.get());
 	auto input_end = input_data + size;
 
-	auto rate = 255 / double(max_val - min_val);
+	auto rate = 255.0 / (max_val - min_val);
 	while (input_data != input_end)
 	{
-		*(output_data++) = (*(input_data++) - min_val) * rate;
+		*(output_data++) = static_cast<float>((*(input_data++) - min_val) * rate);
 	}
 
 	return Feed(L"Output", output.get());

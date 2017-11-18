@@ -56,7 +56,7 @@ bool Yap::Conjugator::Input(const wchar_t * name, IData * data)
 	if (input_data == nullptr || output_data == nullptr)
 		return false;
 
-	for (unsigned int i = 0; i < data_size; ++i)
+	for (int i = 0; i < data_size; ++i)
 	{
 		if (i >= first_point_index && i < first_point_index + size)
 		{
