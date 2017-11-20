@@ -248,3 +248,4 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+**/**/__pycache__/*.pyc
