@@ -6,6 +6,7 @@
 #include "Implement\LogImpl.h"
 #include "Interface\Interfaces.h"
 #include "Interface/SmartPtr.h"
+#include "Implement\PythonImpl.h"
 
 using namespace Yap;
 using namespace std;
@@ -230,8 +231,18 @@ bool Yap::Module::Load(const wchar_t * plugin_path, IProcessorContainer& importe
 			auto log_user = log_func();
 			if (log_user != nullptr)
 			{
-				LogImpl::GetInstance().AddUser(log_user);
 				log_user->SetLog(&LogImpl::GetInstance());
+				LogImpl::GetInstance().AddUser(log_user);
+			}
+		}
+
+		auto python_func = (Yap::IPythonUser*(*)()) ::GetProcAddress(_module, "GetPythonUser");
+		if (python_func != nullptr)
+		{
+			auto python_user = python_func();
+			if (python_user != nullptr)
+			{
+				python_user->SetPython(&PythonImpl::GetInstance());
 			}
 		}
 	}

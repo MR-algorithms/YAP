@@ -170,9 +170,9 @@ int main()
 	time_t start = clock();
 
 //	ConstructorTest();
-//  PipelineTest();
+	PipelineTest();
 //	VdfParserTest();
-	FFT3DTest();
+//	FFT3DTest();
 
 	time_t end = clock();
 	printf("\n");

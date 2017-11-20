@@ -12,26 +12,11 @@
 #include "Implement/PythonImpl.h"
 #include "Implement/PythonUserImpl.h"
 #include <assert.h>
+#include <iostream>
+#include "Implement/LogUserImpl.h"
 
 namespace Yap
 {
-	namespace PyDataType{
-		//dynamic python arguments type convert define.
-		template<typename T> struct pydata_type_id{ const char * type = "";};
-		// as below is implement struct pydata_type_id.
-		template<> struct pydata_type_id<double> { const char * type = "d"; };
-		template<> struct pydata_type_id<char> { const char * type = "s"; };
-		template<> struct pydata_type_id<unsigned char> { const char* type = "b"; };
-		template<> struct pydata_type_id<short> { const char * type = "h"; };
-		template<> struct pydata_type_id<unsigned short> { const char * type = "h"; };
-		template<> struct pydata_type_id<float> { const char * type = "f"; };
-		template<> struct pydata_type_id<unsigned int> { const char * type = "i"; };
-		template<> struct pydata_type_id<int> { const char * type = "i"; };
-		template<> struct pydata_type_id<std::complex<float>> { const char * type = "O&"; };// convert to Python object. if error, return NULL.
-		template<> struct pydata_type_id<std::complex<double>> { const char * type = "O&"; };
-		template<> struct pydata_type_id<bool> { const char * type = "i"; };
-	};
-
 	template<typename INPUT_TYPE, typename OUTPUT_TYPE>
 	class Algorithm2DWrapper :
 		public ProcessorImpl
@@ -129,7 +114,9 @@ namespace Yap
 		}
 
 	protected:
-		~Algorithm2DInPlaceWrapper() {}
+		~Algorithm2DInPlaceWrapper() {
+			LOG_TRACE(L"",)
+		}
 
 		ProcessingFunc _func;
 	};
@@ -143,15 +130,11 @@ namespace Yap
 		IMPLEMENT_SHARED(MyClass)
 	public:
 
-		explicit Python2DWrapper(const wchar_t * module_file_name, const wchar_t * method_name, const wchar_t * processor_name):
-			ProcessorImpl(processor_name)
+		explicit Python2DWrapper(const wchar_t * processor_name)
+			: _python(nullptr), ProcessorImpl(processor_name) 
 		{
-			autro python = dynamic_cast<PythonImpl*>(PythonUserImpl::GetInstance().GetPython());
-			python->InitPython();
-			
-			assert(python->CheckScriptInfo(module_file_name, null, method_name) && l"no find python script!");
-			
-
+			LOG_TRACE(L"Python2DWrapper constructor called.", L"BasicRecon");
+			_python = PythonUserImpl::GetInstance().GetPython();
 			/*
 				PyObject * pmodule = PyImport_ImportModule(_bstr_t(module_file_name));
 				if (!pmodule)
@@ -175,16 +158,16 @@ namespace Yap
 				_pyobjects.insert(std::make_pair(l"module", pmodule));
 				_pyobjects.insert(std::make_pair(l"func", pfunc));
 			*/
-			
 			AddInput(L"Input", 2, data_type_id<INPUT_TYPE>::type);
 			AddOutput(L"Output", 2, data_type_id<OUTPUT_TYPE>::type);
+			AddProperty<const wchar_t * const>(L"ScriptPath", L"", L"包含Python脚本文件的文件夹。");
+			AddProperty<const wchar_t * const>(L"MethodName", L"", L"脚本文件中需要使用的方法名");
 		}
 
 
 		Python2DWrapper(const Python2DWrapper<INPUT_TYPE, OUTPUT_TYPE>& rhs) :
-			ProcessorImpl(rhs)
+			_python(rhs._python), ProcessorImpl(rhs) 
 		{
-			// _pyobjects(rhs._pyobjects),
 		};
 
 		/*
@@ -200,58 +183,28 @@ namespace Yap
 			if (data->GetDataType() != data_type_id<INPUT_TYPE>::type)
 				return false;
 
-			DataHelper input_data(data);
-			if (input_data.GetActualDimensionCount() != 2)
+			DataHelper help_data(data);
+			if (help_data.GetActualDimensionCount() != 2)
 				return false;
+			size_t width = static_cast<size_t>(help_data.GetWidth());
+			size_t height = static_cast<size_t>(help_data.GetHeight());
+			size_t out_width = 0, out_height = 0;
 
-			size_t width = static_cast<size_t>(input_data.GetWidth());
-			size_t height = static_cast<size_t>(input_data.GetHeight());
-			auto py_data = GetDataArray<INPUT_TYPE>(data);
+			auto input_data = GetDataArray<INPUT_TYPE>(data);
+			//Get Properties
+			const wchar_t* module_name = GetProperty<const wchar_t * const>(L"ScriptPath");
+			const wchar_t* method_name = GetProperty<const wchar_t * const>(L"MethodName");
 
-			auto python = dynamic_cast<PythonImpl*>(PythonUserImpl::GetInstance().GetPython());
-			assert(python);
-			python->Python1DListInit(plist, py_data, width*height);
+			OUTPUT_TYPE* out_data= reinterpret_cast<OUTPUT_TYPE*>(_python->Process2D(module_name, method_name,
+				data_type_id<INPUT_TYPE>::type, input_data, width, height, out_width, out_height));
+			
+			// create output data
+			Dimensions dimensions;
+			dimensions(DimensionReadout, 0U, out_width)
+				(DimensionPhaseEncoding, 0U, out_height);
 
-			//	add DataConvert c2py
-			PyObject * plist = PyList_New(width*height);
-			if (!python->CPyList_Check(plist))
-				throw PyErr_NewException;
-
-			//PyDataType::pydata_type_id<INPUT_TYPE> in_wchar;
-			////add input_data to plist
-			//for (size_t w = 0; w < width * height; ++w)
-			//{
-			//	PyObject *pl = Py_BuildValue(in_wchar.type, *(py_data + w));
-			//	PyList_SetItem(plist, w, pl);
-			//}
-			python->PyTupleSetItem(pArgs, Py_ssize_t(0), plist);
-			python->PyTupleSetItem(pArgs, Py_ssize_t(1), Py_BuildValue("i", width));
-			python->PyTupleSetItem(pArgs, Py_ssize_t(1), Py_BuildValue("i", height));
-
-			PyObject * pArgs = PyTuple_New(3);
-			PyTuple_SetItem(pArgs, Py_ssize_t(0), plist);
-			PyTuple_SetItem(pArgs, Py_ssize_t(1), Py_BuildValue("i",width));
-			PyTuple_SetItem(pArgs, Py_ssize_t(2), Py_BuildValue("i",height));
-
-			if (_pyobjects.find(L"Args") == _pyobjects.end())
-			{
-				_pyobjects.insert(std::make_pair(L"Args", pArgs));
-			}
-			else
-			{
-				_pyobjects[L"Args"] = pArgs;
-			}
-			auto func = _pyobjects.at(L"Func");
-			// add handle method
-			PyObject * pRet = PyEval_CallObject(func, pArgs);
-
-			// add DataConvert py2c
-
-			showResult(pRet);
-
-			//Yap::IData * out_data = NULL;
-			// CDataImp<OUTPUT_TYPE> * output_data = NULL;
-			//Feed(L"Output", out_data); //output_data.get()
+			auto output_data = CreateData<OUTPUT_TYPE>(nullptr, out_data, dimensions, nullptr, true);
+			Feed(L"Output", output_data.get());
 			return true;
 		}
 
@@ -277,17 +230,11 @@ namespace Yap
 
 
 	protected:
-		~Python2DWrapper()
-		{
-			// release Python resource
-			/*for (auto iter : _pyobjects)
-			{
-				Py_DECREF(iter.second);
-			}
-			_pyobjects.clear();
-			Py_Finalize();*/
-		}
-		//std::map <const wchar_t*, PyObject*> _pyobjects;
+		~Python2DWrapper(){
+			LOG_TRACE(L"Python2DWrapper destructor", L"BasicRecon");
+		};
+
+		IPython* _python;
 	};
 
 }

@@ -6,5 +6,6 @@
 #include "smartptr.h"
 #include "IProcessor.h"
 #include "ILog.h"
+#include "IPythonUser.h"
 
 #endif // Interface_h__20160825

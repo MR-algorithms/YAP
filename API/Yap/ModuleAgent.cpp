@@ -4,6 +4,7 @@
 #include <WinBase.h>
 #include "Interface\IPython.h"
 #include "Implement\PythonImpl.h"
+#include "Interface\IPythonUser.h"
 
 
 using namespace Yap;
@@ -37,13 +38,13 @@ bool Yap::ModuleAgent::Load(const wchar_t * plugin_path)
 		return false;
 	}
 
-	auto python_func = (Yap::IPythonUser*(*)()) ::GetProcAddress(_module, "GetPythonUser");
+	auto python_func = (Yap::IPythonUser*(*)())::GetProcAddress(_module, "GetPythonUser");
 	if (python_func != nullptr)
 	{
 		auto python_user = python_func();
 		if (python_user != nullptr)
 		{
-			python_user->SetPython(dynamic_cast<IPython*>(&PythonImpl::GetInstance()));
+			python_user->SetPython(&PythonImpl::GetInstance());
 		}
 	}
 

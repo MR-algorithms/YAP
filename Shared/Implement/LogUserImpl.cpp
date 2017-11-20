@@ -7,7 +7,7 @@ using namespace std;
 
 shared_ptr<LogUserImpl> LogUserImpl::s_instance;
 
-LogUserImpl::LogUserImpl()
+LogUserImpl::LogUserImpl():_log(nullptr)
 {
 	_log_name = L"sys.log";
 	_module = L"";
@@ -26,7 +26,7 @@ LogUserImpl& LogUserImpl::GetInstance()
 {
 	if (!s_instance)
 	{
-		s_instance = shared_ptr<LogUserImpl>(new LogUserImpl);
+		s_instance = shared_ptr<LogUserImpl>(new LogUserImpl());
 	}
 	return *s_instance;
 }

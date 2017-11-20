@@ -1,5 +1,7 @@
 #include "PythonUserImpl.h"
 #include "Utilities\macros.h"
+#include "LogUserImpl.h"
+#include <iostream>
 
 using namespace Yap;
 
@@ -7,7 +9,8 @@ std::shared_ptr<PythonUserImpl> PythonUserImpl::s_instance;
 
 Yap::PythonUserImpl::~PythonUserImpl()
 {
-	TODO("~PythonUserImpl func")
+	LOG_TRACE(L"PythonUserImpl Deconstructor", L"PythonUserImpl");
+	std::cout << L"PythonUserImpl destructor" << std::endl;
 }
 
 Yap::PythonUserImpl& Yap::PythonUserImpl::GetInstance()
@@ -26,10 +29,10 @@ void Yap::PythonUserImpl::SetPython(IPython* python)
 
 IPython* Yap::PythonUserImpl::GetPython()
 {
-	return (!_python) ? nullptr : _python;
+	return _python;
 }
 
-Yap::PythonUserImpl::PythonUserImpl()
+Yap::PythonUserImpl::PythonUserImpl() : _python(nullptr)
 {
-	TODO("PythonUserImpl constructor")
+	LOG_TRACE(L"PythonUserImpl constructor", L"PythonUserImpl");
 }
