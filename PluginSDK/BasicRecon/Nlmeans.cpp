@@ -113,8 +113,8 @@ void Yap::Nlmeans::nlmeans_ipol(unsigned int iDWin, unsigned int iDBloc, float S
 		for (unsigned int x = 0; x < iWidth; x++)
 		{
 			int iDWin0 = MIN(iDWin, MIN(iWidth - 1 - x, MIN(iHeight - 1 - y, MIN(x, y))));
-			int imin = MAX(x - iDBloc, iDWin0);
-			int jmin = MAX(y - iDBloc, iDWin0);
+			int imin = MAX(int(x - iDBloc), iDWin0);
+			int jmin = MAX(int(y - iDBloc), iDWin0);
 
 			int imax = MIN(x + iDBloc, iWidth - 1 - iDWin0);
 			int jmax = MIN(y + iDBloc, iHeight - 1 - iDWin0);
@@ -190,7 +190,7 @@ void Yap::Nlmeans::nlmeans_ipol(unsigned int iDWin, unsigned int iDBloc, float S
 		}
 	}
 
-	for (int ii = 0; ii < iwxh; ii++)
+	for (unsigned int ii = 0; ii < iwxh; ii++)
 	{
 		if (fpCount[ii] > 0.0)
 		{
@@ -232,7 +232,7 @@ void Yap::Nlmeans::wxFillExpLut(float *lut, unsigned int size)
 {
 	for (unsigned int i = 0; i < size; i++)
 	{
-		lut[i] = expf(-(float)i / LUTPRECISION);
+		lut[i] = expf(-(float)i / (float)LUTPRECISION);
 	}
 }
 

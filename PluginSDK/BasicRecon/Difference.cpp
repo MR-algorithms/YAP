@@ -47,6 +47,7 @@ bool Yap::Difference::Input(const wchar_t * port, IData * data)
 	if (wstring(port) == L"Reference")
 	{
 		_reference_data = YapShared(data);
+		return true;
 	}
 	else if (wstring(port) == L"Input")
 	{

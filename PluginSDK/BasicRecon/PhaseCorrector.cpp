@@ -93,4 +93,5 @@ bool Yap::PhaseCorrector::Input(const wchar_t * name, IData * data)
 		_phase.reset();
 		return Feed(L"Output", output.get());
 	}
+	return false;
 }

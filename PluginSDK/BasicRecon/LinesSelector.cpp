@@ -43,7 +43,7 @@ bool Yap::LinesSelector::Input(const wchar_t * name, IData * data)
 	int first_line_index = GetProperty<int>(L"FirstLineIndex");
 	int lines_count = GetProperty<int>(L"LinesCount");
 
-	if (first_line_index + lines_count > input_data.GetHeight() ||
+	if (unsigned int(first_line_index + lines_count) > input_data.GetHeight() ||
 		first_line_index < 0 || 
 		lines_count <= 0)
 		return false;
