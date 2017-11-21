@@ -62,7 +62,7 @@ bool Fft2D::Input(const wchar_t * port, IData * data)
 	if (GetProperty<bool>(L"InPlace"))
 	{
 		Fft(data_array, data_array, width, height, GetProperty<bool>(L"Inverse"));
-		Feed(L"Output", data);
+		return Feed(L"Output", data);
 	}
 	else
 	{
@@ -70,9 +70,8 @@ bool Fft2D::Input(const wchar_t * port, IData * data)
 
 		Fft(data_array, GetDataArray<complex<float>>(output.get()),
 			width, height, GetProperty<bool>(L"Inverse"));
-		Feed(L"Output", output.get());
+		return Feed(L"Output", output.get());
 	}
-	return true;
 }
 
 void Fft2D::FftShift(std::complex<float>* data, size_t  width, size_t height)

@@ -9,7 +9,6 @@
 #include "ChannelMerger.h"
 #include "CmrDataReader.h"
 #include "ComplexSplitter.h"
-#include "Conjugator.h"
 #include "DataTypeConvertor.h"
 #include "DcRemover.h"
 #include "Difference.h"
@@ -25,6 +24,7 @@
 #include "NiumagFidReader.h"
 #include "NiumagFidWriter.h"
 #include "NiumagImgReader.h"
+#include "NiumagPFFTConjugator.h"
 #include "NiuMriImageReader.h"
 #include "NiuMriImageWriter.h"
 #include "NLM.h"
@@ -56,7 +56,6 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(ChannelMerger)
 	ADD_PROCESSOR(CmrDataReader)
 	ADD_PROCESSOR(ComplexSplitter)
-	ADD_PROCESSOR(Conjugator)
 	ADD_PROCESSOR(DataTypeConvertor)
 	ADD_PROCESSOR(DcRemover)
 	ADD_PROCESSOR(Difference)
@@ -71,6 +70,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(NiumagFidReader)
 	ADD_PROCESSOR(NiumagFidWriter)
 	ADD_PROCESSOR(NiumagImgReader)
+	ADD_PROCESSOR(NiumagPFFTConjugator)
 	ADD_PROCESSOR(NiuMriImageReader)
 	ADD_PROCESSOR(NiuMriImageWriter)
 	ADD_PROCESSOR(NLM)

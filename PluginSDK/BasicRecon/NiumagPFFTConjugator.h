@@ -7,16 +7,16 @@
 
 namespace Yap
 {
-	class Conjugator :
+	class NiumagPFFTConjugator :
 		public ProcessorImpl
 	{
-		IMPLEMENT_SHARED(Conjugator)
+		IMPLEMENT_SHARED(NiumagPFFTConjugator)
 	public:
-		Conjugator();
-		Conjugator(const Conjugator& rhs);
+		NiumagPFFTConjugator();
+		NiumagPFFTConjugator(const NiumagPFFTConjugator& rhs);
 
 	protected:
-		~Conjugator();
+		~NiumagPFFTConjugator();
 		virtual bool Input(const wchar_t * name, IData * data) override;
 	};
 }

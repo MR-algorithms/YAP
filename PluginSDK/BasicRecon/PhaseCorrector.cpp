@@ -50,6 +50,7 @@ bool Yap::PhaseCorrector::Input(const wchar_t * name, IData * data)
 	if (wstring(name) == L"Phase")
 	{
 		_phase = YapShared(data);
+		return true;
 	}
 	else if (wstring(name) == L"Input")
 	{
@@ -93,5 +94,4 @@ bool Yap::PhaseCorrector::Input(const wchar_t * name, IData * data)
 		_phase.reset();
 		return Feed(L"Output", output.get());
 	}
-	return false;
 }
