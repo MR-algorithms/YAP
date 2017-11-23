@@ -60,7 +60,7 @@ bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)
 	DataHelper data_helper(data);
 	
 	auto dimension_count = data_helper.GetDimensionCount();
-	if (dimension_count != 3)
+	if (dimension_count < 3)
 		return false;
 
 	int dim1 = data_helper.GetWidth();
@@ -106,13 +106,17 @@ std::wstring Yap::NiuMriImageWriter::GetFilePath(const wchar_t * output_folder, 
 		file_path += L".";
 	}
 
-	time_t t = time(0);
-	char tmp[64];
-	strftime(tmp, sizeof(tmp), "%Y%m%d", localtime(&t));
-	string str(tmp);
-	std::wstring wstr;
-	wstr.assign(str.begin(), str.end());
-	file_path += wstr;
+	struct tm t;
+	time_t now;
+	localtime_s(&t, &now);
+	wstring time{ to_wstring(t.tm_year + 1900) };
+	time += to_wstring(t.tm_mon + 1);
+	time += to_wstring(t.tm_mday);
+	time += L"-";
+	time += to_wstring(t.tm_hour);
+	time += to_wstring(t.tm_min);
+	time += to_wstring(t.tm_sec);
+	file_path += time;
 
 	file_path += L".niuimg";
 

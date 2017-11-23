@@ -83,7 +83,6 @@ void PluginDebugTest()
 
 void PipelineTest()
 {
-	{
 	VdfParser parser;
 	auto variable_manager = parser.CompileFile(L"sysParams_yap.txt");
 
@@ -103,8 +102,42 @@ void PipelineTest()
 	}
 
 	auto sfo1 = variable_manager->Get<double>(L"SFO1");
-}
+
 	ModuleManager::GetInstance().Release();
+}
+
+bool FFT3DTest()
+{
+	PipelineCompiler compiler;
+	auto pipeline = compiler.CompileFile(L"Pipelines\\FFT3DTest.pipeline");
+	if (pipeline.get() == nullptr)
+	{
+		return false;
+	}
+
+	if (pipeline)
+	{
+		return pipeline->Input(L"Input", nullptr);
+	}
+
+	return false;
+}
+
+bool PartialFFTTest()
+{
+	PipelineCompiler compiler;
+	auto pipeline = compiler.CompileFile(L"Pipelines\\PartialFFT.pipeline");
+	if (pipeline.get() == nullptr)
+	{
+		return false;
+	}
+
+	if (pipeline)
+	{
+		return pipeline->Input(L"Input", nullptr);
+	}
+
+	return false;
 }
 
 bool VdfParserTest()
@@ -171,11 +204,11 @@ int main()
 
 	time_t start = clock();
 
-
-
-	//ConstructorTest();
-    PipelineTest();
+//	ConstructorTest();
+//  PipelineTest();
 //	VdfParserTest();
+//	FFT3DTest();
+	PartialFFTTest();
 
 	time_t end = clock();
 	printf("the running time is : %f\n", float(end - start) / CLOCKS_PER_SEC);

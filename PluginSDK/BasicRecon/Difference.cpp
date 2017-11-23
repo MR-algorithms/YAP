@@ -30,13 +30,12 @@ Difference::Difference() : ProcessorImpl(L"Difference")
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeAll);
 }
 
-
 Difference::Difference(const Difference& rhs)
-	:ProcessorImpl(rhs)
+	:ProcessorImpl(rhs),
+	_reference_data{rhs._reference_data}
 {
 	LOG_TRACE(L"Difference constructor called.", L"BasicRecon");
 }
-
 
 Difference::~Difference()
 {
@@ -48,6 +47,7 @@ bool Yap::Difference::Input(const wchar_t * port, IData * data)
 	if (wstring(port) == L"Reference")
 	{
 		_reference_data = YapShared(data);
+		return true;
 	}
 	else if (wstring(port) == L"Input")
 	{
@@ -63,7 +63,7 @@ bool Yap::Difference::Input(const wchar_t * port, IData * data)
 		if (input_data.GetDataType() != reference_data.GetDataType())
 			return false;
 
-		//check every dimension size
+		//check every dimension
 		auto ref_dim = _reference_data->GetDimensions();
 		auto input_dim = data->GetDimensions();
 		DimensionType ref_dim_type, input_dim_type;
@@ -76,16 +76,19 @@ bool Yap::Difference::Input(const wchar_t * port, IData * data)
 
 			if (ref_length != input_length)
 				return false;
+			if (ref_start != input_start)
+				return false;
+			if (ref_dim_type != input_dim_type)
+				return false;
 		}
 
-		//more data type?
 		if (data->GetDataType() == DataTypeFloat)
 		{
 			auto output_data = CreateData<float>(data);
 
 			calc_difference(GetDataArray<float>(data), GetDataArray<float>(_reference_data.get()),
 				GetDataArray<float>(output_data.get()), input_data.GetDataSize());
-			Feed(L"Output", output_data.get());
+			return Feed(L"Output", output_data.get());
 		}
 		else
 		{
@@ -93,13 +96,11 @@ bool Yap::Difference::Input(const wchar_t * port, IData * data)
 
 			calc_difference(GetDataArray<double>(data), GetDataArray<double>(_reference_data.get()),
 				GetDataArray<double>(output_data.get()), input_data.GetDataSize());
-			Feed(L"Output", output_data.get());
+			return Feed(L"Output", output_data.get());
 		}
 	}
 	else
 	{
 		return false;
 	}
-
-	return true;
 }

@@ -1,6 +1,5 @@
 ﻿#include "SamplingMaskCreator.h"
 #include "Client/DataHelper.h"
-#include "Implement/DataObject.h"
 #include "Implement/LogUserImpl.h"
 
 #include <math.h>
@@ -58,7 +57,7 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
 		double sample_percent = GetProperty<double>(L"SamplePercent");
 		double radius = GetProperty<double>(L"Radius");
 
-		auto mask = GenerateRandomMask(width, height, pow, sample_percent, radius);
+		auto mask = GenerateRandomMask(width, height, (float)pow, (float)sample_percent, (float)radius);
 		float * mask_buffer = nullptr;
 		try
 		{

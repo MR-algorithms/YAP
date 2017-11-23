@@ -409,6 +409,7 @@ namespace _details
 	{
 		IMPLEMENT_SHARED(ReferenceArrayVariable<T>)
 	public:
+		/// delegate constructors to base class ValueArrayVariable<T>.
 		using ValueArrayVariable<T>::ValueArrayVariable;
 
 		virtual T& Element(size_t index) override
@@ -493,7 +494,10 @@ namespace _details
 
 	template <>
 	ValueArrayVariable<IVariable*>::ValueArrayVariable(size_t size, 
-		IVariable* value, const wchar_t * id, const wchar_t * title, const wchar_t * description) 
+		IVariable* value, const wchar_t * id, const wchar_t * title, const wchar_t * description) :
+		_id{id == nullptr ? L"" : id}, 
+		_title{title == nullptr ? L"" : title},
+		_description {description == nullptr ? L"" : _description}
 	{
 		assert(size >= 1 && "There should be at least one element in the array.");
 		assert(value != nullptr && "The template could not be null.");

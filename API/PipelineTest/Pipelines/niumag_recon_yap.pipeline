@@ -1,22 +1,19 @@
 import "BasicRecon.dll";
 
-NiumagFidReader reader(DataPath = "D:\\test_data\\UU.img.fid");
+NiumagFidReader reader(DataPath = "D:\\TestData\\1slice.fid");
+ZeroFilling zero_filling(DestWidth = 256, DestHeight = 256);
 SliceIterator slice_iterator;
-DcRemover dc_remover;
-ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);
 Fft2D fft;
 ModulePhase module_phase;
-DataTypeConvertor convertor;
-SliceMerger slice_merger(SliceCount <=> SliceCount);
-NiuMriImageWriter writer(ExportFolder = "d:\\Output", FileName = "Apple");
+JpegExporter jpeg_exporter(ExportFolder = "D:\\Output");
+//LinesSelector lines_selector(FirstLineIndex = 0, LinesCount = 108);
 	
 reader->slice_iterator;
-slice_iterator->dc_remover;
-dc_remover->zero_filling;
-zero_filling->fft;
+//slice_iterator->lines_selector;
+//lines_selector->zero_filling;
+//zero_filling->fft;
+slice_iterator->fft;
 fft->module_phase;
-module_phase.Module->convertor;
-convertor.UnsignedShort->slice_merger;
-slice_merger->writer;
+module_phase.Module->jpeg_exporter;
 
 self.Input->reader.Input;

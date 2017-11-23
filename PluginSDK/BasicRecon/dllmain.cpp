@@ -14,17 +14,22 @@
 #include "Difference.h"
 #include "Fft1D.h"
 #include "Fft2D.h"
+#include "Fft3D.h"
 #include "FineCF.h"
+#include "GrayScaleUnifier.h"
 #include "imageProcessing.h"
 #include "JpegExporter.h"
+#include "LinesSelector.h"
 #include "ModulePhase.h"
 #include "NiumagFidReader.h"
 #include "NiumagFidWriter.h"
 #include "NiumagImgReader.h"
+#include "NiumagPFFTConjugator.h"
 #include "NiuMriImageReader.h"
 #include "NiuMriImageWriter.h"
 #include "NLM.h"
 #include "Nlmeans.h"
+#include "PhaseCorrector.h"
 #include "SamplingMaskCreator.h"
 #include "SliceIterator.h"
 #include "SliceMerger.h"
@@ -56,16 +61,21 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(Difference)
 	ADD_PROCESSOR(Fft1D)
 	ADD_PROCESSOR(Fft2D)
+	ADD_PROCESSOR(Fft3D)
 	ADD_PROCESSOR(FineCF)
+	ADD_PROCESSOR(GrayScaleUnifier)
 	ADD_PROCESSOR(JpegExporter)
+	ADD_PROCESSOR(LinesSelector)
 	ADD_PROCESSOR(ModulePhase)
 	ADD_PROCESSOR(NiumagFidReader)
 	ADD_PROCESSOR(NiumagFidWriter)
 	ADD_PROCESSOR(NiumagImgReader)
+	ADD_PROCESSOR(NiumagPFFTConjugator)
 	ADD_PROCESSOR(NiuMriImageReader)
 	ADD_PROCESSOR(NiuMriImageWriter)
 	ADD_PROCESSOR(NLM)
 	ADD_PROCESSOR(Nlmeans)
+	ADD_PROCESSOR(PhaseCorrector)
 	ADD_PROCESSOR(SamplingMaskCreator)
 	ADD_PROCESSOR(SliceIterator)
 	ADD_PROCESSOR(SliceMerger)

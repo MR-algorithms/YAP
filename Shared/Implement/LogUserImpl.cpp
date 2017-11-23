@@ -44,7 +44,7 @@ void LogUserImpl::SetLog(ILog* log)
 	_log = log;
 }
 
-void Yap::LogUserImpl::Trace(const wchar_t * info, const wchar_t * module, const wchar_t * log_name)
+void Yap::LogUserImpl ::Trace(const wchar_t * info, const wchar_t * module, const wchar_t * log_name)
 {
 	if (_log != nullptr)
 	{

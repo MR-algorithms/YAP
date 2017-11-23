@@ -3,7 +3,6 @@
 
 #include <complex.h>
 #include "Client/DataHelper.h"
-#include "Implement/DataObject.h"
 #include "Implement/LogUserImpl.h"
 
 using namespace Yap;

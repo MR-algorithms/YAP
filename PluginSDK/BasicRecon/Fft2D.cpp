@@ -1,7 +1,6 @@
 #include "Fft2D.h"
 
 #include "Client/DataHelper.h"
-#include "Implement/DataObject.h"
 #include "Implement/LogUserImpl.h"
 
 #include <string>
@@ -63,7 +62,7 @@ bool Fft2D::Input(const wchar_t * port, IData * data)
 	if (GetProperty<bool>(L"InPlace"))
 	{
 		Fft(data_array, data_array, width, height, GetProperty<bool>(L"Inverse"));
-		Feed(L"Output", data);
+		return Feed(L"Output", data);
 	}
 	else
 	{
@@ -71,9 +70,8 @@ bool Fft2D::Input(const wchar_t * port, IData * data)
 
 		Fft(data_array, GetDataArray<complex<float>>(output.get()),
 			width, height, GetProperty<bool>(L"Inverse"));
-		Feed(L"Output", output.get());
+		return Feed(L"Output", output.get());
 	}
-	return true;
 }
 
 void Fft2D::FftShift(std::complex<float>* data, size_t  width, size_t height)
@@ -126,7 +124,7 @@ void Fft2D::Plan(size_t width, size_t height, bool inverse, bool in_place)
 
 	if (in_place)
 	{
-		_fft_plan = fftwf_plan_dft_2d(int(width), int(height), (fftwf_complex*)data.data(),
+		_fft_plan = fftwf_plan_dft_2d(int(height), int(width), (fftwf_complex*)data.data(),
 			(fftwf_complex*)data.data(),
 			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
 			FFTW_MEASURE);
@@ -134,7 +132,7 @@ void Fft2D::Plan(size_t width, size_t height, bool inverse, bool in_place)
 	else
 	{
 		vector<fftwf_complex> result(width * height);
-		_fft_plan = fftwf_plan_dft_2d(int(width), int(height),  (fftwf_complex*)data.data(),
+		_fft_plan = fftwf_plan_dft_2d(int(height), int(width),  (fftwf_complex*)data.data(),
 			(fftwf_complex*)result.data(),
 			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
 			FFTW_MEASURE);

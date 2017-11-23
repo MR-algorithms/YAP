@@ -3,6 +3,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include "Yap/VdfParser.h"
+#include <string>
 
 using namespace Yap;
 
@@ -201,6 +202,14 @@ BOOST_AUTO_TEST_CASE(vdf_test_array_of_struct)
 		L"int size;};"
 		L"array<my_struct> arr;");
 	BOOST_CHECK(variables->GetVariable(L"arr[0].size") != nullptr);
+	variables->Set<int>(L"arr[0].size", 1);
+	BOOST_CHECK(variables->Get<int>(L"arr[0].size") == 1);
+	BOOST_CHECK(variables->Variables() != nullptr);
+	BOOST_CHECK(variables->Variables()->GetIterator() != nullptr);
+	auto iter = variables->Variables()->GetIterator();
+	BOOST_CHECK(iter->GetFirst() != nullptr);
+	auto first = iter->GetFirst();
+	BOOST_CHECK(std::wstring(first->GetId()) == std::wstring(L"arr"));
 
 	variables = Compile(
 		L"namespace n{"
@@ -210,4 +219,3 @@ BOOST_AUTO_TEST_CASE(vdf_test_array_of_struct)
 		L"}");
 	BOOST_CHECK(variables->GetVariable(L"n::arr[0].size") != nullptr);
 }
-
