@@ -25,7 +25,7 @@ void ReconClientSocket::slotDataReceived()
         QByteArray data = this->readAll();
         IntAndFloatArray test;
 
-        ConvertToMystruct(data, test);
+        test.Unpack(data);
         emit signalDataReceived(data,length);
 
 

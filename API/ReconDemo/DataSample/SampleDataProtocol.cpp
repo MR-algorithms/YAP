@@ -23,21 +23,21 @@ SampleDataStart::SampleDataStart()
 	, channel_mask(0)
 {}
 
-bool SampleDataStart::Pack( QByteArray &bytearray )
+bool SampleDataStart::Pack( QByteArray &byteArray )
 {
-    bytearray = QByteArray::fromRawData((char*)this, sizeof(SampleDataStart));
+    byteArray = QByteArray::fromRawData((char*)this, sizeof(SampleDataStart));
 	return true;
 }
 
-bool SampleDataStart::Unpack( QByteArray &bytearray )
+bool SampleDataStart::Unpack( QByteArray &byteArray )
 {
-    if(bytearray.length() != sizeof(SampleDataStart))
+    if(byteArray.length() != sizeof(SampleDataStart))
     {
         return false;
     }
     else
     {
-        memcpy(this, bytearray.data(), bytearray.length());
+        memcpy(this, byteArray.data(), byteArray.length());
     }
 
 	return true;
@@ -51,21 +51,21 @@ SampleDataData::SampleDataData()
 	, coeff(1)
 {}
 
-bool SampleDataData::Pack( QByteArray &bytearray )
+bool SampleDataData::Pack( QByteArray &byteArray )
 {
-    bytearray = QByteArray::fromRawData((char*)this, sizeof(SampleDataData));
+    byteArray = QByteArray::fromRawData((char*)this, sizeof(SampleDataData));
     return true;
 }
 
-bool SampleDataData::Unpack( QByteArray &bytearray )
+bool SampleDataData::Unpack( QByteArray &byteArray )
 {
-    if(bytearray.length() != sizeof(SampleDataData))
+    if(byteArray.length() != sizeof(SampleDataData))
     {
         return false;
     }
     else
     {
-        memcpy(this, bytearray.data(), bytearray.length());
+        memcpy(this, byteArray.data(), byteArray.length());
     }
 
     return true;
@@ -75,44 +75,75 @@ SampleDataEnd::SampleDataEnd( uint32_t code )
 	: cmd_id(SAMPLE_DATA_END)
 	, error_code(code)
 {}
-bool SampleDataEnd::Pack( QByteArray &bytearray )
+bool SampleDataEnd::Pack( QByteArray &byteArray )
 {
-    bytearray = QByteArray::fromRawData((char*)this, sizeof(SampleDataEnd));
+    byteArray = QByteArray::fromRawData((char*)this, sizeof(SampleDataEnd));
     return true;
 }
 
-bool SampleDataEnd::Unpack( QByteArray &bytearray )
+bool SampleDataEnd::Unpack( QByteArray &byteArray )
 {
-    if(bytearray.length() != sizeof(SampleDataEnd))
+    if(byteArray.length() != sizeof(SampleDataEnd))
     {
         return false;
     }
     else
     {
-        memcpy(this, bytearray.data(), bytearray.length());
+        memcpy(this, byteArray.data(), byteArray.length());
     }
 
     return true;
 }
 
 
-void ConvertToMystruct(QByteArray &dataArray, IntAndFloatArray &mystruct)
+
+
+bool IntAndFloatArray::Pack(QByteArray &byteArray)
 {
-    IntAndFloatArray *test4;
-    test4 = (IntAndFloatArray*)dataArray.data();
+
+    QByteArray data1 = QByteArray::fromRawData((char*)(&flag), sizeof(int));
+
+    QByteArray data2 = QByteArray::fromRawData((char*)(data.data()),sizeof(float)* data.size());
+    byteArray = data1 + data2;
+    return true;
+
+}
+
+bool IntAndFloatArray::Unpack(QByteArray &byteArray)
+{
     //
-    char *chmsg = dataArray.data();
+    int byteIndex = 0;
 
-    int x = dataArray.length();
-    int y = sizeof(IntAndFloatArray);
+    int len = byteArray.length();
+    this->flag = *(int*)(byteArray.data() + byteIndex);
+    byteIndex += sizeof(this->flag);
 
-    if(dataArray.length() != sizeof(IntAndFloatArray))
+    int count = (len - byteIndex)/ sizeof(float);
+
+    this->data.resize(count);
+
+    if( (len - byteIndex) % sizeof(float) != 0)
     {
-        return ;
+        return false;
     }
     else
     {
-        memcpy(&mystruct, dataArray.data(), dataArray.length());
+        memcpy(this->data.data(), (char*)byteArray.data() + byteIndex, byteArray.length());
+        return true;
     }
+
+
+}
+
+
+void IntAndFloatArray::CreateDemoStruct()
+{
+
+    data.resize(98);
+    for(unsigned int i = 0; i < data.size(); i ++)
+    {
+        data[i] = float(i)* 1.0;
+    }
+
 
 }

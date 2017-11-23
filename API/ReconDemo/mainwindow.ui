@@ -16,9 +16,9 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,8">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,5">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout" stretch="1,3">
+       <layout class="QVBoxLayout" name="verticalLayout" stretch="2,2,3">
         <item>
          <layout class="QGridLayout" name="gridLayout">
           <item row="0" column="2">
@@ -41,10 +41,13 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="3">
-           <widget class="QLineEdit" name="editListeningPort">
+          <item row="1" column="3">
+           <widget class="QLineEdit" name="editPipeline"/>
+          </item>
+          <item row="1" column="4">
+           <widget class="QPushButton" name="buttonBrowsePipeline">
             <property name="text">
-             <string>10</string>
+             <string>Browse...</string>
             </property>
            </widget>
           </item>
@@ -58,22 +61,15 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="3">
-           <widget class="QLineEdit" name="editPipeline"/>
-          </item>
-          <item row="4" column="3">
-           <widget class="QPushButton" name="buttonStart">
+          <item row="0" column="3">
+           <widget class="QLineEdit" name="editListeningPort">
             <property name="text">
-             <string>Start</string>
+             <string>10</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="4">
-           <widget class="QPushButton" name="buttonBrowsePipeline">
-            <property name="text">
-             <string>Browse...</string>
-            </property>
-           </widget>
+          <item row="2" column="3">
+           <widget class="QLineEdit" name="editOutput"/>
           </item>
           <item row="2" column="2">
            <widget class="QLabel" name="label_3">
@@ -85,9 +81,6 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="3">
-           <widget class="QLineEdit" name="editOutput"/>
-          </item>
           <item row="3" column="3">
            <widget class="QPlainTextEdit" name="editInfo"/>
           </item>
@@ -98,10 +91,30 @@
             </property>
            </widget>
           </item>
+          <item row="4" column="3">
+           <widget class="QPushButton" name="buttonStart">
+            <property name="text">
+             <string>Start</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item>
-         <widget class="QWidget" name="widget" native="true"/>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>108</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Plot1D" name="plot1d_widget" native="true"/>
         </item>
        </layout>
       </item>
@@ -174,6 +187,12 @@
    <class>ImageLayoutWidget</class>
    <extends>QWidget</extends>
    <header location="global">imagelayoutwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Plot1D</class>
+   <extends>QWidget</extends>
+   <header location="global">plot1d.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -24,8 +24,8 @@ struct SampleDataStart
 	uint32_t dim6_size;
 	uint32_t channel_mask;
 	SampleDataStart();
-    bool Pack(QByteArray &bytearray);
-    bool Unpack(QByteArray &bytearray);
+    bool Pack(QByteArray &byteArray);
+    bool Unpack(QByteArray &byteArray);
 };
 
 struct SampleDataData
@@ -38,8 +38,8 @@ struct SampleDataData
 	std::vector<std::complex<float>> data;
 
 	SampleDataData();
-    bool Pack(QByteArray &bytearray);
-    bool Unpack(QByteArray &bytearray);
+    bool Pack(QByteArray &byteArray);
+    bool Unpack(QByteArray &byteArray);
 };
 /*
 struct SampleDataDataRef
@@ -63,15 +63,22 @@ struct SampleDataEnd
 	uint32_t cmd_id;
 	uint32_t error_code;
 	SampleDataEnd(uint32_t error_code);
-    bool Pack(QByteArray &bytearray);
-    bool Unpack(QByteArray &bytearray);
+    bool Pack(QByteArray &byteArray);
+    bool Unpack(QByteArray &byteArray);
 };
 
 struct IntAndFloatArray
 {
-    unsigned int count;//count of float in data.
-    float data[12];
-    IntAndFloatArray():count(12){}
+    int flag;
+    std::vector<float> data;
+    IntAndFloatArray():flag(-1){data.resize(12);}
+
+    bool Pack(QByteArray &byteArray);
+    bool Unpack(QByteArray &byteArray);
+
+    void CreateDemoStruct();
+
+
 };
 
-void ConvertToMystruct(QByteArray &data, IntAndFloatArray &mystruct);
+

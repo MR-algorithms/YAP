@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QtNetwork/QTcpSocket>
 #include <memory>
+#include "SampleDataProtocol.h"
 
 namespace Ui {
 class MainWindow;
@@ -33,7 +34,7 @@ private:
     std::shared_ptr<QHostAddress> reconHost;
     bool connected;
 
-    void CreateDemoData(QByteArray &data);
+    void CreateDemoStruct(IntAndFloatArray &mystruct);
 };
 
 #endif // MAINWINDOW_H
