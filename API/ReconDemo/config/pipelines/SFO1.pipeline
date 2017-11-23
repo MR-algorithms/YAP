@@ -1,0 +1,16 @@
+import "BasicRecon.dll";
+
+Fft1D fft;
+ModulePhase module_phase;
+FineCF fine_cf(O1 <== SFO1, SW <== SW_MHz);
+NiuMriDisplay1D display1d;
+NiumagFidWriter writer(SavePath = "config\\TempResults\\temp_o1.sf");
+
+fine_cf.CF ==> SFO1;
+
+fft->module_phase;
+module_phase.Module->fine_cf;
+fft->display1d;
+fft->writer;
+
+self.Input->fft.Input;

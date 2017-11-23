@@ -1,0 +1,8 @@
+import "BasicRecon.dll";
+
+NiumagFidReader reader(DataPath = "config\\TempResults\\temp_o1.sf");
+NiuMriDisplay1D display1d;
+
+reader->display1d;
+
+self.Input->reader.Input;

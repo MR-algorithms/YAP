@@ -32,6 +32,8 @@ private:
     std::shared_ptr<QTcpSocket> tcpSocket;
     std::shared_ptr<QHostAddress> reconHost;
     bool connected;
+
+    void CreateDemoData(QByteArray &data);
 };
 
 #endif // MAINWINDOW_H

@@ -1,4 +1,5 @@
 #include "reconclientsocket.h"
+#include "SampleDataProtocol.h"
 
 ReconClientSocket::ReconClientSocket(QObject *parent) : QTcpSocket(parent)
 {
@@ -8,13 +9,26 @@ ReconClientSocket::ReconClientSocket(QObject *parent) : QTcpSocket(parent)
 
 void ReconClientSocket::slotDataReceived()
 {
+
     while (bytesAvailable() > 0)
     {
-        int length = bytesAvailable();
+        /*int length = bytesAvailable();
         char buf[1024];
         read(buf, length);
         QString msg = buf;
+        int msglen = msg.length();
+
         emit signalDataReceived(msg, length);
+        */
+
+        int length = bytesAvailable();
+        QByteArray data = this->readAll();
+        IntAndFloatArray test;
+
+        ConvertToMystruct(data, test);
+        emit signalDataReceived(data,length);
+
+
     }
 }
 

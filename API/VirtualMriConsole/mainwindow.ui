@@ -20,7 +20,7 @@
       <x>10</x>
       <y>20</y>
       <width>381</width>
-      <height>231</height>
+      <height>243</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
@@ -78,7 +78,11 @@
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QLineEdit" name="editReconHost"/>
+      <widget class="QLineEdit" name="editReconHost">
+       <property name="text">
+        <string>127.0.0.1</string>
+       </property>
+      </widget>
      </item>
      <item row="3" column="0">
       <widget class="QLabel" name="label_4">
@@ -101,7 +105,11 @@
       </widget>
      </item>
      <item row="3" column="1">
-      <widget class="QLineEdit" name="editReconPort"/>
+      <widget class="QLineEdit" name="editReconPort">
+       <property name="text">
+        <string>10</string>
+       </property>
+      </widget>
      </item>
      <item row="5" column="1">
       <widget class="QPlainTextEdit" name="editInfo"/>

@@ -8,9 +8,9 @@ ReconServer::ReconServer(QObject * parent, int port) :
     listen(QHostAddress::Any, port);
 }
 
-void ReconServer::slotDataReceived(QString message, int length)
+void ReconServer::slotDataReceived(QByteArray dataArray, int length)
 {
-    emit signalDataReceived(message, length);
+    emit signalDataReceived(dataArray, length);
 }
 
 void ReconServer::slotDisconnected(int socketDescriptor)

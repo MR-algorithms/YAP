@@ -13,8 +13,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    SampleDataProtocol.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    SampleDataProtocol.h
 
 FORMS    += mainwindow.ui

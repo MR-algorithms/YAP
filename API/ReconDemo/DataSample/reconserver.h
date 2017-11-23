@@ -12,9 +12,9 @@ public:
     ReconServer(QObject * parent = nullptr, int port = 0);
 
 signals:
-    void signalDataReceived(QString, int);
+    void signalDataReceived(QByteArray, int);
 public slots:
-    void slotDataReceived(QString, int);    // message, length
+    void slotDataReceived(QByteArray, int);    // message, length
     void slotDisconnected(int); // socket descriptor
 protected:
     virtual void incomingConnection(qintptr socketDescriptor) override;

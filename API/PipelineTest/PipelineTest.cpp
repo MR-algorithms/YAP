@@ -88,7 +88,9 @@ void PipelineTest()
 	auto variable_manager = parser.CompileFile(L"sysParams_yap.txt");
 
 	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"Pipelines\\test.pipeline");
+	auto pipeline = compiler.CompileFile(L"Pipelines\\test1.pipeline"); 
+	//test_niumag_recon.pipeline");
+	//test1.pipeline");
 	if (pipeline.get() == nullptr)
 	{
 		return;
@@ -149,6 +151,22 @@ bool VdfParserTest()
 
 int main()
 {
+
+	auto complex_slices = std::shared_ptr<std::complex<float>>(new std::complex<float>[10]);
+
+	complex_slices.get()[0].imag(1.2);
+	complex_slices.get()[0].real(1.7);
+	
+	complex_slices.get()[2].imag(5.2);
+	complex_slices.get()[2].real(5.7);
+	auto test = complex_slices.get();
+	std::complex<float> test2[10];
+
+	memcpy(test2, test, sizeof(std::complex<float>) *10);
+	
+
+
+
 	log4cplus::Initializer initializer;
 
 	time_t start = clock();
