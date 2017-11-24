@@ -77,6 +77,7 @@ struct IntAndFloatArray
     bool Unpack(QByteArray &byteArray);
 
     void CreateDemoStruct();
+    void CreateDemoSinStruct(double pha0, double freq, double dw, double dataCount);
 
 
 };

@@ -128,7 +128,7 @@ bool IntAndFloatArray::Unpack(QByteArray &byteArray)
     }
     else
     {
-        memcpy(this->data.data(), (char*)byteArray.data() + byteIndex, byteArray.length());
+        memcpy(this->data.data(), (char*)byteArray.data() + byteIndex, byteArray.length()-byteIndex);
         return true;
     }
 
@@ -146,4 +146,42 @@ void IntAndFloatArray::CreateDemoStruct()
     }
 
 
+}
+
+void IntAndFloatArray::CreateDemoSinStruct(double pha0, double freq, double dw, double dataCount)
+//pha0
+//dw in unit of s.
+{
+
+    const double PI = 3.1415926;
+
+    double ACQ = dw * dataCount;
+
+    data.resize(dataCount);
+
+    for(unsigned int i = 0; i < data.size(); i ++)
+    {
+
+        double temp = data.size() + 10 - i;
+
+        double pha = 2* PI * freq * dw * i;
+        data[i] = temp* sin(pha0 + pha);
+
+
+    }
+
+    /*
+    std::vector<std::complex<float>> data_vector2(314);
+
+    for(unsigned int i = 0; i < data_vector2.size(); i ++)
+    {
+
+        double temp = data_vector2.size() + 10 - i;
+        data_vector2[i].real( temp* 10* sin(i * dw + 30 * PI/ 180) );
+        data_vector2[i].imag( temp* 10* cos(i * dw + 30 * PI/ 180) );
+
+
+    }
+
+    */
 }
