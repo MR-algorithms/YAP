@@ -15,6 +15,7 @@ void ReconServer::slotDataReceived(QByteArray dataArray, int length)
 
 void ReconServer::slotDisconnected(int socketDescriptor)
 {
+    clientSocket->close();
     delete clientSocket;
     clientSocket = nullptr;
 }

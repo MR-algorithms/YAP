@@ -40,6 +40,7 @@ struct SampleDataData
 	SampleDataData();
     bool Pack(QByteArray &byteArray);
     bool Unpack(QByteArray &byteArray);
+    void CreatDemoData(double phi0, double freq, double dw, unsigned int dataCount);
 };
 /*
 struct SampleDataDataRef
@@ -67,17 +68,17 @@ struct SampleDataEnd
     bool Unpack(QByteArray &byteArray);
 };
 
-struct IntAndFloatArray
+struct FloatArray
 {
     int flag;
     std::vector<float> data;
-    IntAndFloatArray():flag(-1){data.resize(12);}
+    FloatArray():flag(-1){data.resize(12);}
 
     bool Pack(QByteArray &byteArray);
     bool Unpack(QByteArray &byteArray);
 
     void CreateDemoStruct();
-    void CreateDemoSinStruct(double pha0, double freq, double dw, double dataCount);
+    void CreateDemoSinStruct(double phi0, double freq, double dw, unsigned int dataCount);
 
 
 };

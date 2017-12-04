@@ -3,6 +3,7 @@
 
 #include <QtNetwork/QTcpSocket>
 #include <QObject>
+#include "SampleDataProtocol.h"
 
 class ReconClientSocket : public QTcpSocket
 {
@@ -18,6 +19,14 @@ public slots:
 protected slots:
     void slotDataReceived();
     void slotDisconnected();
+private:
+    QByteArray Read(uint32_t &cmd_id);
+    SampleDataStart _startStruct;
+    SampleDataData  _dataStruct;
+    SampleDataEnd   _endStruct;
+
+
+
 };
 
 #endif // RECONCLINETSOCKET_H

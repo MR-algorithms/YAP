@@ -25,9 +25,13 @@ public slots:
     void slotDataReceived();
 
 private slots:
-    void on_buttonStart_clicked();
+    void on_connectButton_clicked();
 
+    void on_scanButton_clicked();
 
+    void on_stopButton_clicked();
+
+    void on_testButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -38,12 +42,16 @@ private:
     int _timeId1;
     int _index1;
 
-    void CreateDemoStruct(IntAndFloatArray &mystruct);
 
-    void StartSendData();
-    void TimerDestroyed();
+    void StartTimer();
+    void SendDemoStruct(int index);
+    void SendTestSample(int index, bool &finished);
+    //void TestSampleStruct();
+
 
     void timerEvent(QTimerEvent *e);
+    void ScanFinished();
+    void Reset();
 
 };
 
