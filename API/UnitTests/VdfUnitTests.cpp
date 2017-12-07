@@ -158,6 +158,13 @@ BOOST_AUTO_TEST_CASE(vdf_test_struct)
 	BOOST_CHECK(variables->GetVariable(L"ms.f") != nullptr);
 	BOOST_CHECK(variables->GetVariable(L"ms.s") != nullptr);
 	BOOST_CHECK(variables->GetVariable(L"ms.b") != nullptr);
+
+	struct my_struct {
+		int i;
+		float f;
+		bool b;
+	};
+	auto a = variables->GetVariable(L"ms");
 }
 
 BOOST_AUTO_TEST_CASE(vdf_array_in_struct)
@@ -211,6 +218,8 @@ BOOST_AUTO_TEST_CASE(vdf_test_array_of_struct)
 	auto first = iter->GetFirst();
 	BOOST_CHECK(std::wstring(first->GetId()) == std::wstring(L"arr"));
 
+	BOOST_CHECK(variables->GetArrayWithSize<IVariable*>(L"arr").first != nullptr);
+
 	variables = Compile(
 		L"namespace n{"
 		L"struct my_struct{"
@@ -218,4 +227,5 @@ BOOST_AUTO_TEST_CASE(vdf_test_array_of_struct)
 		L"array<my_struct> arr;"
 		L"}");
 	BOOST_CHECK(variables->GetVariable(L"n::arr[0].size") != nullptr);
+
 }
