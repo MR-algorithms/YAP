@@ -165,8 +165,8 @@ namespace Yap
 			}
 			else
 			{
-				auto link = _out_property_links.find(property_id);
-				if (link == _out_property_links.end())
+				auto link = _out_property_mapping.find(property_id);
+				if (link == _out_property_mapping.end())
 				{
 					_properties->Set<T>(property_id, value);
 				}
@@ -184,7 +184,7 @@ namespace Yap
 
 		std::multimap<std::wstring, Anchor> _links;
 		std::map<std::wstring, std::wstring> _in_property_mapping;	 // <property_id, variable_id>
-		std::map<std::wstring, std::wstring> _out_property_links; // <property_id, variable_id>
+		std::map<std::wstring, std::wstring> _out_property_mapping; // <property_id, variable_id>
 
 		std::wstring _instance_id;
 		std::wstring _class_id;

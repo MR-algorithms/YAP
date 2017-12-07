@@ -105,6 +105,8 @@ namespace Yap {
 		}
 		
 		bool ResizeArray(const wchar_t * id, size_t size);
+		
+		size_t GetArraySize(const wchar_t * id);
 
 		template<typename T>
 		std::pair<T*, size_t> GetArrayWithSize(const wchar_t * id)

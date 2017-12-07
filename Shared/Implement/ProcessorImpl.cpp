@@ -173,7 +173,7 @@ namespace _details
 
 		if (output)
 		{
-			_out_property_links.insert(make_pair(wstring(property_id), wstring(param_id)));
+			_out_property_mapping.insert(make_pair(wstring(property_id), wstring(param_id)));
 		}
 		return true;
 	}

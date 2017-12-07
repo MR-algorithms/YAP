@@ -1051,4 +1051,17 @@ bool VariableSpace::ResizeArray(const wchar_t * id, size_t size)
 	return true;
 }
 
+size_t VariableSpace::GetArraySize(const wchar_t * id)
+{
+	auto variable = GetVariable(id);
+	if (variable == nullptr)
+		return -1;
+
+	auto array = dynamic_cast<IArrayBase*>(variable);
+	if (array == nullptr)
+		return -1;
+
+	return array->GetSize();
+}
+
 }	// end Yap

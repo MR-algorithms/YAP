@@ -206,19 +206,22 @@ BOOST_AUTO_TEST_CASE(vdf_test_array_of_struct)
 {
 	auto variables = Compile(
 		L"struct my_struct{"
-		L"int size;};"
+		L"int value;};"
 		L"array<my_struct> arr;");
-	BOOST_CHECK(variables->GetVariable(L"arr[0].size") != nullptr);
-	variables->Set<int>(L"arr[0].size", 1);
-	BOOST_CHECK(variables->Get<int>(L"arr[0].size") == 1);
+	BOOST_CHECK(variables->GetVariable(L"arr[0].value") != nullptr);
+	variables->Set<int>(L"arr[0].value", 1);
+	BOOST_CHECK(variables->Get<int>(L"arr[0].value") == 1);
+
 	BOOST_CHECK(variables->Variables() != nullptr);
 	BOOST_CHECK(variables->Variables()->GetIterator() != nullptr);
 	auto iter = variables->Variables()->GetIterator();
-	BOOST_CHECK(iter->GetFirst() != nullptr);
+
 	auto first = iter->GetFirst();
+	BOOST_CHECK(first != nullptr);
 	BOOST_CHECK(std::wstring(first->GetId()) == std::wstring(L"arr"));
 
-	BOOST_CHECK(variables->GetArrayWithSize<IVariable*>(L"arr").first != nullptr);
+	variables->ResizeArray(L"arr", 5);
+	BOOST_CHECK(variables->GetArraySize(L"arr") == 5);
 
 	variables = Compile(
 		L"namespace n{"
