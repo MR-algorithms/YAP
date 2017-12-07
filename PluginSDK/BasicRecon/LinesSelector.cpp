@@ -30,23 +30,39 @@ Yap::LinesSelector::~LinesSelector()
 
 bool Yap::LinesSelector::Input(const wchar_t * name, IData * data)
 {
-	if (wstring(name) != L"Input")
+	// Do some check.
+	if (data == nullptr)
+	{
+		LOG_ERROR(L"<LineSelector> Invalid input data!", L"BasicRecon");
 		return false;
+	}
+	if (_wcsicmp(name, L"Input") != 0)
+	{
+		LOG_ERROR(L"<LineSelector> Error input port name!", L"BasicRecon");
+		return false;
+	}
 
 	DataHelper input_data(data);
-	if (input_data.GetDataType() != DataTypeComplexFloat)
-		return false;
-
 	if (input_data.GetActualDimensionCount() != 2)
+	{
+		LOG_ERROR(L"<LineSelector> Error input data dimention!(2D data is available)!", L"BasicRecon");
 		return false;
+	}
+	if (input_data.GetDataType() != DataTypeComplexFloat)
+	{
+		LOG_ERROR(L"<LineSelector> Error input data type!(DataTypeComplexFloat are available)!", L"BasicRecon");
+		return false;
+	}
 
 	int first_line_index = GetProperty<int>(L"FirstLineIndex");
 	int lines_count = GetProperty<int>(L"LinesCount");
 
 	if (unsigned int(first_line_index + lines_count) > input_data.GetHeight() ||
-		first_line_index < 0 || 
-		lines_count <= 0)
+		first_line_index < 0 || lines_count <= 0)
+	{
+		LOG_ERROR(L"<LineSelector> Improper properties(FirstLineIndex, LineCount) value.", L"BasicRecon");
 		return false;
+	}
 
 	Yap::Dimensions dims;
 	dims(DimensionReadout, 0, input_data.GetWidth())
