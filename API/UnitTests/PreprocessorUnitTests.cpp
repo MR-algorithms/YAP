@@ -87,3 +87,15 @@ BOOST_AUTO_TEST_CASE(preprocessor_test)
 
 	BOOST_CHECK(GetTokens(L"v.a").GetId() == L"v");
 }
+
+Yap::Tokens GetPipelineTokens(const wchar_t * const script)
+{
+	Preprocessor preprocessor(PreprocessPipeline);
+
+	preprocessor.Preprocess(script);
+	return preprocessor.GetTokens();
+}
+BOOST_AUTO_TEST_CASE(pipiline_preprocessor_test)
+{
+	BOOST_CHECK(GetPipelineTokens(L"TestProcessor processor(property = -1.0);").GetLiteralValue() == L"-1");
+}

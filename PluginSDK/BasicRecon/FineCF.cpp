@@ -34,15 +34,28 @@ FineCF::~FineCF()
 
 bool FineCF::Input(const wchar_t * port, IData * data)
 {
-	if (data == nullptr && _wcsicmp(port, L"Input") != 0)
+	if (data == nullptr)
+	{
+		LOG_ERROR(L"<FineCF> Invalid input data!", L"BasicRecon");
 		return false;
-
+	}
+	if (_wcsicmp(port, L"Input") != 0)
+	{
+		LOG_ERROR(L"<FineCF> Error input port name!", L"BasicRecon");
+		return false;
+	}
 	if (data->GetDataType() != DataTypeDouble && data->GetDataType() != DataTypeFloat)
+	{
+		LOG_ERROR(L"<FineCF> Error input data type!(DataTypeDouble and DataTypeFloat are available)!", L"BasicRecon");
 		return false;
+	}
 
 	DataHelper input_data(data);
 	if (input_data.GetActualDimensionCount() != 1)
+	{
+		LOG_ERROR(L"<FineCF> Error input data dimention!(1D data is available)!", L"BasicRecon");
 		return false;
+	}
 
 	unsigned int width = input_data.GetWidth();
 	auto o1 = GetProperty<double>(L"O1");
@@ -50,6 +63,7 @@ bool FineCF::Input(const wchar_t * port, IData * data)
 	int max_val_pos = 0;
 	if (data->GetDataType() == DataTypeDouble)
 	{
+		assert(data->GetDataType() == DataTypeDouble);
 		std::vector<double> temp_data(width, 0);
 		std::memcpy(temp_data.data(), GetDataArray<double>(data), width * sizeof(double));
 		max_val_pos = std::max_element(temp_data.begin(), temp_data.end()) - temp_data.begin();

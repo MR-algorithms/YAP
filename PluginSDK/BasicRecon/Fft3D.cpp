@@ -46,15 +46,29 @@ Fft3D::~Fft3D()
 
 bool Fft3D::Input(const wchar_t * port, IData * data)
 {
-	if (wstring(port) != L"Input")
+	// Do some check.
+	if (data == nullptr)
+	{
+		LOG_ERROR(L"<Fft3D> Invalid input data!", L"BasicRecon");
 		return false;
+	}
+	if (_wcsicmp(port, L"Input") != 0)
+	{
+		LOG_ERROR(L"<Fft3D> Error input port name!", L"BasicRecon");
+		return false;
+	}
 
 	DataHelper input_data(data);
-	if (input_data.GetDataType() != DataTypeComplexFloat)
-		return false;
-
 	if (input_data.GetActualDimensionCount() > 3)
+	{
+		LOG_ERROR(L"<Fft3D> Error input data dimention!(3D data is available)!", L"BasicRecon");
 		return false;
+	}
+	if (input_data.GetDataType() != DataTypeComplexFloat)
+	{
+		LOG_ERROR(L"<Fft3D> Error input data type!(DataTypeComplexFloat is available)!", L"BasicRecon");
+		return false;
+	}
 
 	auto width = input_data.GetWidth();
 	auto height = input_data.GetHeight();

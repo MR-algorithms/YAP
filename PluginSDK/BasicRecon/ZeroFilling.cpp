@@ -19,7 +19,7 @@ bool zero_filling(T* dest,
 				 int left,
 				 int top)
 {
-	assert(dest != nullptr && source != nullptr && left >= 0, top >= 0);
+	assert(dest != nullptr && source != nullptr && left >= 0 && top >= 0);
 	assert(dest_width >= source_width + left && dest_height >= source_height + top);
 
 	for (int row = 0; row < source_height; ++row)
@@ -109,7 +109,7 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 			left = (dest_width - input_data.GetWidth()) / 2;
 		}
 
-		if (dest_width < input_data.GetWidth() + left || left < 0)
+		if (dest_width < (int)input_data.GetWidth() + left || left < 0)
 		{
 			LOG_ERROR(L"<ZeroFilling> Improper property DestWidth!(DestWidth should larger than sum of source width and property Left)", L"BasicRecon");
 			return false;
@@ -186,7 +186,7 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 		memset(Yap::GetDataArray<complex<double>>(output.get()), 0, 
 			dest_width * dest_height * dest_depth * sizeof(complex<double>));
 
-		for (unsigned int slice = 0; slice < input_depth; ++slice)
+		for (int slice = 0; slice < input_depth; ++slice)
 		{
 			zero_filling(Yap::GetDataArray<complex<double>>(output.get()) + dest_size * (slice + front), 
 				dest_width, dest_height,
@@ -202,7 +202,7 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 		memset(Yap::GetDataArray<complex<float>>(output.get()), 0,
 			dest_width * dest_height * dest_depth * sizeof(complex<float>));
 
-		for (unsigned int slice = 0; slice < input_depth; ++slice)
+		for (int slice = 0; slice < input_depth; ++slice)
 		{
 			zero_filling(Yap::GetDataArray<complex<float>>(output.get()) + dest_size * (slice + front),
 				dest_width, dest_height,
