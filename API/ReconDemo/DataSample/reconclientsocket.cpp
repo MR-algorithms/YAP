@@ -11,8 +11,18 @@ ReconClientSocket::ReconClientSocket(QObject *parent) : QTcpSocket(parent), _end
 
 void ReconClientSocket::slotDataReceived()
 {
+    int x =10;
+    int lengthx = bytesAvailable();
+    int y = x+ 1;
+
+
+    qDebug()<< "Enter client::slotRecieved():  "<< lengthx<<" bytes";
+
    // bool TestDemo = false;
 
+    //这段代码以后需要考虑一次不能完整读到一个结构体的数据；
+    //大约这样考虑：
+    //每次读取一个完整结构体的数据，如果没有读取完整，break；
     while (bytesAvailable() > 0)
     {
         /*int length = bytesAvailable();

@@ -6,7 +6,8 @@
 #include "SampleDataProtocol.h"
 #include <QDebug>
 #include <vector>
-
+#include "Windows.h"
+#include "databin.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -17,21 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _connected(false)
 {
 
-    std::vector<int> a;
 
-    a.reserve(100);
-    a.resize(50);
-    qDebug()<<a.size()<<"  "<<a.capacity()<<endl;
-    a.resize(150);
-    qDebug()<<a.size()<<"  "<<a.capacity()<<endl;
-    a.reserve(50);
-    qDebug()<<a.size()<<"  "<<a.capacity()<<endl;
-    a.resize(50);
-    qDebug()<<a.size()<<"  "<<a.capacity()<<endl;
-
-    //QString str("127.0.11.1");
-    //ui->editReconHost->setText(str);
-    //ui->editReconPort->setText("10");
     ui->setupUi(this);
 
     Reset();
@@ -195,6 +182,9 @@ void MainWindow::SendDemoStruct(int index)
 
 void MainWindow::SendTestSample(int index, bool &finished)
 {
+    //on_testButton_clicked();
+    //return ;
+
     //初始化三种数据结构
     SampleDataStart sampleStart;
     sampleStart.dim1_size = 128;
@@ -364,11 +354,24 @@ void MainWindow::ScanFinished()
 
 void MainWindow::on_testButton_clicked()
 {
+    Databin databin;
+    databin.Load(L"D:\\test_data\\RawData_256");
+
+
+    /*
 
     uint16_t temp = 0x3424;
-    QByteArray tempArray = QByteArray::fromRawData((char*)(&temp), sizeof(uint16_t));
+    QByteArray tempArray = QByteArray::fromRawData((char*)(&temp), sizeof(uint16_t)*5);
 
-    _tcpSocket->write(tempArray);
+    for(int i = 0; i < 10000000; i ++)
+    {
+
+        _tcpSocket->write(tempArray);
+        QApplication::processEvents();
+        //Sleep(1000);
+
+    }
 
     qDebug()<< "send another "<< tempArray.length()<<" bytes";
+    */
 }

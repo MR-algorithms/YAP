@@ -205,10 +205,10 @@ int main()
 	time_t start = clock();
 
 //	ConstructorTest();
-//  PipelineTest();
+  PipelineTest();
 //	VdfParserTest();
 //	FFT3DTest();
-	PartialFFTTest();
+//	PartialFFTTest();
 
 	time_t end = clock();
 	printf("the running time is : %f\n", float(end - start) / CLOCKS_PER_SEC);

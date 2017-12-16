@@ -10,6 +10,13 @@
 
 #define SAMPLE_DATA_PROTOCOL_VERSION 1
 
+struct HeadItem
+{
+    uint16_t primary_type;
+    uint16_t second_type;
+    uint32_t size;
+};
+
 struct SampleDataStart
 {
     uint32_t cmd_id;
@@ -83,4 +90,5 @@ struct FloatArray
 
 };
 
+static bool SampleData_TestDemo = false;
 
