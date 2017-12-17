@@ -249,5 +249,6 @@ BOOST_AUTO_TEST_CASE(vdf_test_array_of_struct)
 	BOOST_CHECK(arr != nullptr);
 	BOOST_CHECK(arr->GetType() == VariableStructArray);
 	BOOST_CHECK(std::wstring(arr->GetId()) == std::wstring(L"arr"));
+
 	arr->FromString(L"[{\"a\"=0.1, \"b\"=0.2}]");
 }

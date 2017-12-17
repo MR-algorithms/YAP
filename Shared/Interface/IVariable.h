@@ -12,18 +12,18 @@ namespace Yap
 {
 	/** @defgroup Bit flags for PropertyType
 	@{ */
-	const int VariableInvalid = 0;
-	const int VariableBool = 1;
-	const int VariableInt = 2;
-	const int VariableFloat = 4;
-	const int VariableString = 8;
-	const int VariableStruct = 16;
-	const int VariableBoolArray = 32;
-	const int VariableIntArray = 64;
-	const int VariableFloatArray = 128;
-	const int VariableStringArray = 256;
-	const int VariableStructArray = 512;
-	const int VariableAllTypes = 0xffffffff;
+	const int VariableInvalid       = 0x0000;
+	const int VariableBool          = 0x0001;
+	const int VariableInt           = 0x0002;
+	const int VariableFloat         = 0x0004;
+	const int VariableString        = 0x0008;
+	const int VariableStruct        = 0x0010;
+	const int VariableBoolArray		= 0x0200;
+	const int VariableIntArray		= 0x0400;
+	const int VariableFloatArray	= 0x0800;
+	const int VariableStringArray	= 0x1000;
+	const int VariableStructArray	= 0x2000;
+	const int VariableAllTypes      = 0xffffffff;
 	/** @} */
 
 	template<typename T> struct variable_type_id
@@ -132,6 +132,28 @@ namespace Yap
 		virtual void Set(VALUE_TYPE value) = 0;
 	};
 
+	struct IEnumItem
+	{
+		virtual int32_t GetValue() const = 0;
+		virtual const wchar_t * const GetItemString() const = 0;
+		virtual const wchar_t * const GetDescription() const = 0;
+	};
+
+	struct IEnumType
+	{
+		virtual const wchar_t * const GetTypeId() const = 0;
+		virtual const wchar_t * const GetDescription() const = 0;
+		virtual uint32_t GetEnumValueCount() const = 0;
+		virtual const IEnumItem * GetEnumItem(uint32_t index) const = 0;
+	};
+
+	struct IEnumVariable : public IVariable
+	{
+		virtual int Get() const = 0;
+		virtual bool Set(int value) = 0;
+		virtual const IEnumType * GetEnumType() = 0;
+	};
+
 	struct IArrayBase : public IVariable
 	{
 		virtual size_t GetSize() const = 0;
@@ -145,11 +167,13 @@ namespace Yap
 			std::is_same<T, double>::value ||
 			std::is_same<T, bool>::value ||
 			std::is_same<T, const wchar_t * const>::value ||
+			std::is_same<T, typename SmartPtr<IVariable>>::value ||
 			std::is_base_of<IVariable, typename std::remove_pointer<T>::type>::value,
 			"You can only use one of the following types: int, double, bool, const wchar_t * const, IVariable*");
 
 		virtual T Get(size_t index) const = 0;
 		virtual void Set(size_t index, T value) = 0;
+		virtual T GetElementTemplate() const = 0;
 	};
 
 	template <typename T>
@@ -157,7 +181,8 @@ namespace Yap
 	{
 		static_assert(std::is_same<T, int>::value ||
 			std::is_same<T, double>::value ||
-			std::is_base_of<IVariable, typename std::remove_pointer<T>::type>::value,
+			std::is_base_of<IVariable, typename std::remove_pointer<T>::type>::value ||
+			std::is_same<T, typename SmartPtr<IVariable>>::value, 
 			"You can only use one of the following types: int, double, IVariable*");
 
 		virtual T& Element(size_t index) = 0;

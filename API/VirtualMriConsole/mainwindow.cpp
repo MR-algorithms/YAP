@@ -143,9 +143,6 @@ void MainWindow::timerEvent(QTimerEvent *e)
         }
         //
         qDebug()<<"time1"<<_index1;
-
-
-
     }
     else
     {
@@ -176,7 +173,6 @@ void MainWindow::SendDemoStruct(int index)
 
     if(_connected)
         _tcpSocket->write(sendArray);
-
 }
 
 

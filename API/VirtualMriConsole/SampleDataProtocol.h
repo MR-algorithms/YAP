@@ -49,6 +49,7 @@ struct SampleDataData
     bool Unpack(QByteArray &byteArray);
     void CreatDemoData(double phi0, double freq, double dw, unsigned int dataCount);
 };
+
 /*
 struct SampleDataDataRef
 {
@@ -86,8 +87,6 @@ struct FloatArray
 
     void CreateDemoStruct();
     void CreateDemoSinStruct(double phi0, double freq, double dw, unsigned int dataCount);
-
-
 };
 
 static bool SampleData_TestDemo = false;
