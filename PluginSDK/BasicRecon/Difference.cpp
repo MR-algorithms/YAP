@@ -39,7 +39,6 @@ Difference::Difference(const Difference& rhs)
 
 Difference::~Difference()
 {
-	LOG_TRACE(L"Difference destructor called.", L"BasicRecon");
 }
 
 bool Yap::Difference::Input(const wchar_t * port, IData * data)

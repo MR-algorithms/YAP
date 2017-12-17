@@ -26,7 +26,6 @@ SliceMerger::SliceMerger(const SliceMerger& rhs)
 
 SliceMerger::~SliceMerger()
 {
-	LOG_TRACE(L"SliceMerger destructor called.", L"BasicRecon");
 }
 
 bool SliceMerger::Input(const wchar_t * port, IData * data)

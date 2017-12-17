@@ -42,7 +42,6 @@ Yap::PhaseCorrector::PhaseCorrector(const PhaseCorrector& rhs):
 
 Yap::PhaseCorrector::~PhaseCorrector()
 {
-	LOG_TRACE(L"PhaseCorrector destructor called.", L"BasicRecon");
 }
 
 bool Yap::PhaseCorrector::Input(const wchar_t * name, IData * data)
@@ -111,4 +110,8 @@ bool Yap::PhaseCorrector::Input(const wchar_t * name, IData * data)
 		_phase.reset();
 		return Feed(L"Output", output.get());
 	}
+
+	assert(0 && "Only Input & Phase ports can accept data.");
+
+	return false;
 }

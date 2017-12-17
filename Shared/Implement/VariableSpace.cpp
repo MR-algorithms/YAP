@@ -630,7 +630,7 @@ namespace _details
 
 				_value_string += L'\"';
 				_value_string += member->GetId();
-				_value_string += L"\"=";
+				_value_string += L"\" : ";
 				_value_string += member->ToString();
 			}
 
@@ -673,7 +673,7 @@ namespace _details
 					return 0;
 
 				pos = _value_string.find_first_not_of(L" \t\n\r", pos + 1);
-				if (_value_string[pos] != L'=')
+				if (_value_string[pos] != L':')
 					return 0;
 
 				auto member = _members->Find(member_id.c_str());

@@ -23,7 +23,6 @@ NLM::NLM(const NLM& rhs)
 
 NLM::~NLM()
 {
-	LOG_TRACE(L"NLM destructor called.", L"BasicRecon");
 }
 
 bool Yap::NLM::Input(const wchar_t * name, IData * data)

@@ -28,7 +28,6 @@ NiuMriImageWriter::NiuMriImageWriter(const NiuMriImageWriter& rhs) :
 
 NiuMriImageWriter::~NiuMriImageWriter()
 {
-	LOG_TRACE(L"NiuMriImageWriter destructor called.", L"BasicRecon");
 }
 
 bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)

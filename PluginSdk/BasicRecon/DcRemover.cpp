@@ -76,7 +76,6 @@ Yap::DcRemover::DcRemover(const DcRemover& rhs)
 
 DcRemover::~DcRemover()
 {
-	LOG_TRACE(L"DcRemover destructor called.", L"BasicRecon");
 }
 
 bool DcRemover::Input(const wchar_t * port, IData * data)

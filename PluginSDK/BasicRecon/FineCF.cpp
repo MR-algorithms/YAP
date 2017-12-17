@@ -29,7 +29,6 @@ Yap::FineCF::FineCF(const FineCF& rhs) :
 
 FineCF::~FineCF()
 {
-	LOG_TRACE(L"FineCF destructor called.", L"BasicRecon");
 }
 
 bool FineCF::Input(const wchar_t * port, IData * data)

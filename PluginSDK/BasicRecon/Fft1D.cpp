@@ -38,7 +38,6 @@ Fft1D::Fft1D(const Fft1D& rhs)
 
 Fft1D::~Fft1D()
 {
-	LOG_TRACE(L"Fft1D destructor called.", L"BasicRecon");
 }
 
 template<typename T> bool Fft1D::DoFft(IData * data, size_t size)

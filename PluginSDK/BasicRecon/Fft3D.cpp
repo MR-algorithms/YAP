@@ -41,7 +41,6 @@ Fft3D::Fft3D(const Fft3D& rhs)
 
 Fft3D::~Fft3D()
 {
-	LOG_TRACE(L"Fft3D destructor called.", L"BasicRecon");
 }
 
 bool Fft3D::Input(const wchar_t * port, IData * data)

@@ -39,7 +39,6 @@ Fft2D::Fft2D(const Fft2D& rhs)
 
 Fft2D::~Fft2D()
 {
-	LOG_TRACE(L"Fft2D destructor called.", L"BasicRecon");
 }
 
 bool Fft2D::Input(const wchar_t * port, IData * data)

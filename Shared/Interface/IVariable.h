@@ -104,7 +104,7 @@ namespace Yap
 		# "strings literals";
 		# boolean: true / false
 		# array: [element0, element1, ..., element_n]
-		# struct: {"field_id_1" : value1, "field_id_2", value2, ..., "field_id_n", value_n}
+		# struct: {"field_id_1" : value1, "field_id_2" : value2, ..., "field_id_n" : value_n}
 
 		If the variable has a nested structure, the stored value string is also nested.
 		*/

@@ -25,7 +25,6 @@ ChannelIterator::ChannelIterator(const ChannelIterator& rhs)
 
 ChannelIterator::~ChannelIterator()
 {
-	LOG_TRACE(L"ChannelIterator destructor called.", L"BasicRecon");
 }
 
 bool Yap::ChannelIterator::Input(const wchar_t * name, IData * data)

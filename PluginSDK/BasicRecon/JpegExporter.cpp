@@ -156,7 +156,6 @@ JpegExporter::JpegExporter(const JpegExporter& rhs)
 
 JpegExporter::~JpegExporter()
 {
-	LOG_TRACE(L"JepgExporter destructor called.", L"BasicRecon");
 }
 
 bool JpegExporter::Input( const wchar_t * name, IData * data)

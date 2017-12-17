@@ -15,7 +15,6 @@ ComplexSplitter::ComplexSplitter() :
 
 ComplexSplitter::~ComplexSplitter()
 {
-	LOG_TRACE(L"ComplexSplitter destructor called.", L"BasicRecon");
 }
 
 bool ComplexSplitter::Input(const wchar_t * port, IData * data)

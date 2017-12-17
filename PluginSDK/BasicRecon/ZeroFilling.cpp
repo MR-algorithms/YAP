@@ -52,7 +52,6 @@ ZeroFilling::ZeroFilling(const ZeroFilling& rhs)
 
 ZeroFilling::~ZeroFilling()
 {
-	LOG_TRACE(L"ZeroFilling destructor called.", L"BasicRecon");
 }
 
 bool ZeroFilling::Input(const wchar_t * port, IData * data)

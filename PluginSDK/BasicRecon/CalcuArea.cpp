@@ -23,7 +23,6 @@ CalcuArea::CalcuArea(const CalcuArea& rhs) :
 
 CalcuArea::~CalcuArea()
 {
-	LOG_TRACE(L"CalcuArea destructor called.", L"BasicRecon");
 }
 
 bool Yap::CalcuArea::Input(const wchar_t * name, IData * data)

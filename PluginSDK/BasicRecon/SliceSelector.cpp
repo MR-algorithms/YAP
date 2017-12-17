@@ -25,7 +25,6 @@ Yap::SliceSelector::SliceSelector(const SliceSelector & rhs)
 
 SliceSelector::~SliceSelector()
 {
-	LOG_TRACE(L"SliceSelector destructor called.", L"BasicRecon");
 }
 
 bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)

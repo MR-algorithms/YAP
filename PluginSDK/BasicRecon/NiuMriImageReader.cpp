@@ -50,7 +50,6 @@ Yap::NiuMriImageReader::NiuMriImageReader(const NiuMriImageReader& rhs) :
 
 Yap::NiuMriImageReader::~NiuMriImageReader()
 {
-	LOG_TRACE(L"NiuMriImageReader destructor called.", L"BasicRecon");
 }
 
 bool Yap::NiuMriImageReader::Input(const wchar_t * name, IData * data)

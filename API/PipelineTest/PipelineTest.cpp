@@ -187,11 +187,11 @@ int main()
 
 	auto complex_slices = std::shared_ptr<std::complex<float>>(new std::complex<float>[10]);
 
-	complex_slices.get()[0].imag(1.2);
-	complex_slices.get()[0].real(1.7);
+	complex_slices.get()[0].imag(1.2f);
+	complex_slices.get()[0].real(1.7f);
 	
-	complex_slices.get()[2].imag(5.2);
-	complex_slices.get()[2].real(5.7);
+	complex_slices.get()[2].imag(5.2f);
+	complex_slices.get()[2].real(5.7f);
 	auto test = complex_slices.get();
 	std::complex<float> test2[10];
 

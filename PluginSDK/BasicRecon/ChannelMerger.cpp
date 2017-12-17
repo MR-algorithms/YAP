@@ -27,7 +27,6 @@ ChannelMerger::ChannelMerger( const ChannelMerger& rhs )
 
 ChannelMerger::~ChannelMerger(void)
 {
-	LOG_TRACE(L"ChannelMerger destructor called.", L"BasicRecon");
 }
 
 bool ChannelMerger::Input(const wchar_t * name, IData * data)

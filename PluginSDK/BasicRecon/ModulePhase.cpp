@@ -57,7 +57,6 @@ Yap::ModulePhase::ModulePhase(const ModulePhase& rhs):
 
 ModulePhase::~ModulePhase()
 {
-	LOG_TRACE(L"ModulePhase destructor called.", L"BasicRecon");
 }
 
 bool ModulePhase::Input(const wchar_t * port, IData * data)
