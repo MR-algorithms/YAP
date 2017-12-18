@@ -36,6 +36,7 @@ namespace Yap
         TokenOperatorAssign,            ///< =
         TokenSemiColon,                 ///< ;
         TokenComma,                     ///< ,
+		TokenColon,						///< :
 		TokenDoubleColon,				///< ::
         TokenOperatorMinus,             ///< -
 		TokenOperatorPlus,				///< +

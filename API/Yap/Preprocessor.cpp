@@ -9,7 +9,7 @@
 using namespace Yap;
 using namespace std;
 
-map <TokenType, pair<wstring, TokenCategory>> token_info {
+map <TokenType, pair<wstring, TokenCategory>> token_info{
 	{ TokenOperatorPortLink, {L"->", TokenCategoryOperator }},
 	{ TokenOperatorInOutMapping, {L"<=>", TokenCategoryOperator}},
 	{ TokenOperatorInMapping, {L"<==", TokenCategoryOperator}},
@@ -22,6 +22,7 @@ map <TokenType, pair<wstring, TokenCategory>> token_info {
 	{ TokenComma, {L",", TokenCategorySeparator}},
 	{ TokenSemiColon, {L";", TokenCategorySeparator}},
 	{ TokenDoubleColon, {L"::", TokenCategoryOperator}},
+	{ TokenColon, {L":", TokenCategoryOperator}},
 	{ TokenLeftBrace, {L"{", TokenCategorySeparator}},
 	{ TokenRightBrace, {L"}", TokenCategorySeparator}},
 	{ TokenLeftParenthesis, {L"(", TokenCategorySeparator}},
@@ -494,6 +495,7 @@ Preprocessor::Preprocessor(PreprocessType type)
 				TokenOperatorDot,
 				TokenOperatorAssign,
 				TokenSemiColon,
+				TokenColon,
 				TokenDoubleColon,
 				TokenStringLiteral,
 				TokenNumericLiteral,
@@ -534,6 +536,7 @@ Preprocessor::Preprocessor(PreprocessType type)
 		{L".", TokenOperatorDot},
 		{L"=", TokenOperatorAssign},
 		{L";", TokenSemiColon},
+		{L":", TokenColon},
 		{L"::", TokenDoubleColon},
 		{L",", TokenComma},
 		{L"-", TokenOperatorMinus},
