@@ -148,15 +148,12 @@ void MainWindow::timerEvent(QTimerEvent *e)
     {
         qApp->quit();
     }
-
-
 }
 
 void MainWindow::SendDemoStruct(int index)
 {
     const double PI = 3.1415926;
 
-    //
     FloatArray sendStruct;
 
     int dataCount = 100;
@@ -181,7 +178,6 @@ void MainWindow::SendTestSample(int index, bool &finished)
     //on_testButton_clicked();
     //return ;
 
-    //初始化三种数据结构
     SampleDataStart sampleStart;
     sampleStart.dim1_size = 128;
     sampleStart.dim2_size = 1;
@@ -257,17 +253,9 @@ void MainWindow::SendTestSample(int index, bool &finished)
 
     }
 
-
-    if(index < 50)
-    {
-        finished = false;
-    }
-    else
-    {
-        finished = true;
-    }
-
+    finished = (index >= 50);
 }
+
 /*
 void MainWindow::TestSampleStruct()
 {
@@ -352,7 +340,6 @@ void MainWindow::on_testButton_clicked()
 {
     Databin databin;
     databin.Load(L"D:\\test_data\\RawData_256");
-
 
     /*
 
