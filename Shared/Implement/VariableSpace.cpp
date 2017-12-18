@@ -491,6 +491,12 @@ namespace _details
 	}
 
 	template <>
+	std::wstring ValueArrayVariable<SmartPtr<IVariable>>::ElementToString(SmartPtr<IVariable> element)
+	{
+		return element->ToString();
+	}
+
+	template <>
 	size_t ValueArrayVariable<SmartPtr<IVariable>>::ElementFromString(type& element, const wchar_t * value_string)
 	{
 		assert(_element_template);
