@@ -1,6 +1,7 @@
 #ifndef CMASK_H
 #define CMASK_H
 #include <vector>
+#include <memory>
 
 enum ScanMode
 {
@@ -9,20 +10,19 @@ enum ScanMode
     smCustom
 };
 
-class Mask
+struct Mask
 {
-private:
-    std::vector<int> _data;
-    unsigned int _currentIndex;
+    std::vector<int> data;
+    unsigned int currentIndex;
 
-    float _sampleRate;
-
+    float sampleRate;
+};
+class MaskGenerator
+{
 public:
-    Mask();
-    bool Initialize(int phaseCount, ScanMode mode, float sampleRate);
-    unsigned int GetIndex(){ return _currentIndex;}
-    void SetIndex(unsigned int currentIndex){ _currentIndex = currentIndex;}
-    unsigned int GetPhaseIndex(){return _data[_currentIndex];}
+    MaskGenerator();
+    std::shared_ptr<Mask> Create(unsigned int phaseCount, ScanMode mode, float sampleRate);
+
 
 };
 

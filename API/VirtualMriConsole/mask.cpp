@@ -1,20 +1,18 @@
 #include "mask.h"
 #include <cassert>
+#include <memory>
 
-Mask::Mask()
+std::shared_ptr<Mask> MaskGenerator::Create(unsigned int phaseCount, ScanMode mode, float sampleRate)
 {
-}
-
-bool Mask::Initialize(int phaseCount, ScanMode mode, float sampleRate)
-{
+    std::shared_ptr<Mask> mask(new Mask);
     switch(mode)
     {
     case smFullSampling:
     {
-        _data.resize(phaseCount);
+        mask.get()->data.resize(phaseCount);
         for(unsigned i = 0; i < phaseCount; i ++)
         {
-            _data[i] = i;
+            mask.get()->data[i] = i;
         }
     }
         break;
@@ -26,16 +24,16 @@ bool Mask::Initialize(int phaseCount, ScanMode mode, float sampleRate)
             int index = i % sampleStep; //每一组第几个；
             if( index == 0)
             {
-                _data.push_back(i);
+                mask.get()->data.push_back(i);
             }
         }
 
-        assert(_data.size()*sampleStep <= phaseCount);
+        assert(mask.get()->data.size()*sampleStep <= phaseCount);
 
     }
         break;
     default:
         break;
     }
-    return true;
+    return mask;
 }
