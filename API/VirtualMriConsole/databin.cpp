@@ -4,7 +4,8 @@
 #include "EcnuRawDataReader.h"
 #include <boost/shared_array.hpp>
 #include <fstream>
-#include<iomanip>
+#include <iomanip>
+#include <cassert>
 
 using namespace std;
 
@@ -50,6 +51,7 @@ struct DstRawDataName
     int group_index;
 };
 
+
 Databin::Databin()
 {
 
@@ -58,7 +60,7 @@ Databin::Databin()
 
 void Databin::Load(std::wstring dataPath)
 {
-
+    std::shared_ptr<RawDataInfo> data_info = _dataInfo;
     std::wstring raw_data_folder = dataPath;
     int group_count = 1;
     int group_index = 0;
@@ -80,8 +82,6 @@ void Databin::Load(std::wstring dataPath)
 
     }
 
-    std::shared_ptr<RawDataInfo> data_info;
-
     boost::shared_array<complex<float>> data(reinterpret_cast<complex<float>*>(reader.ReadAllData(data_info.get(), path2)));
 
 
@@ -93,3 +93,70 @@ void Databin::Load(std::wstring dataPath)
     //OnScanComplete(data, data_info);
 
 }
+
+
+boost::shared_array<complex<float>> Databin::GetRawData(unsigned int channelIndex)
+{
+
+    assert(channelIndex + 1 < _dataInfo.get()->channel_count);
+
+    int channelSize =  _dataInfo.get()->freq_point_count *
+                        _dataInfo.get()->phase_point_count *
+                        _dataInfo.get()->slice_count;
+
+    std::complex<float>* srcChannel = _data.get() + channelIndex * channelSize;
+
+    //拷贝一份返回给用户。需要这么做吗？
+    boost::shared_array<complex<float>> destChannel(new complex<float>[channelSize]);
+
+    memcpy(destChannel.get(), srcChannel, channelSize * sizeof(complex<float>));
+    return destChannel;
+
+}
+//
+boost::shared_array<complex<float>> Databin::GetRawData(unsigned int channelIndex, unsigned int sliceIndex)
+{
+    //assert(0);
+    //return boost::shared_array<complex<float>>(nullptr);
+    assert(channelIndex + 1 < _dataInfo.get()->channel_count);
+    assert(sliceIndex + 1 < _dataInfo.get()->slice_count);
+
+    unsigned int freqPointCount  = _dataInfo.get()->freq_point_count;
+    unsigned int phasePointCount = _dataInfo.get()->phase_point_count;
+    unsigned int sliceCount = _dataInfo.get()->slice_count;
+
+
+    unsigned int sliceSize = freqPointCount * phasePointCount;
+    unsigned int channelSize = freqPointCount * phasePointCount * sliceCount;
+
+
+    complex<float> *srcSlice = _data.get() + channelSize * channelIndex + sliceCount * sliceIndex;
+
+    boost::shared_array<complex<float>> destSlice(new complex<float>[freqPointCount * phasePointCount]);
+
+    memcpy(destSlice.get(), srcSlice, sliceSize * sizeof(complex<float>));
+
+    return destSlice;
+
+
+}
+
+
+
+boost::shared_array<complex<float>> Databin::GetRawData(unsigned int channelIndex, unsigned int sliceIndex, unsigned int phaseIndex)
+{
+    //assert(0);
+    //return boost::shared_array<complex<float>>(nullptr);
+    assert(channelIndex + 1 < _dataInfo.get()->channel_count);
+    assert(sliceIndex + 1 < _dataInfo.get()->slice_count);
+    assert(phaseIndex + 1 < _dataInfo.get()->phase_point_count);
+
+    unsigned int freqPointCount = _dataInfo.get()->freq_point_count;
+    complex<float>* srcLine = GetRawData(channelIndex, sliceIndex).get() + freqPointCount * phaseIndex;
+    boost::shared_array<complex<float>> destLine(new complex<float>[freqPointCount]);
+
+    memcpy(destLine.get(), srcLine, sizeof(complex<float>) * freqPointCount);
+    return destLine;
+
+}
+

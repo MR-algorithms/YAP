@@ -7,6 +7,7 @@ ReconClientSocket::ReconClientSocket(QObject *parent) : QTcpSocket(parent), _end
 {
     connect(this, &QTcpSocket::readyRead, this, &ReconClientSocket::slotDataReceived);
     connect(this, &QTcpSocket::disconnected, this, &ReconClientSocket::slotDisconnected);
+
 }
 
 void ReconClientSocket::slotDataReceived()
@@ -77,13 +78,6 @@ void ReconClientSocket::slotDataReceived()
 
 
         }
-
-
-//--
-
-
-
-
 
     }
 }

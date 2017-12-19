@@ -25,6 +25,9 @@ private:
     SampleDataData  _dataStruct;
     SampleDataEnd   _endStruct;
 
+    //-------
+
+
 
 
 };
