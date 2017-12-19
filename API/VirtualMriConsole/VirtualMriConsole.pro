@@ -18,7 +18,9 @@ SOURCES += main.cpp\
     databin.cpp \
     mask.cpp \
     EcnuRawDataFile.cpp \
-    EcnuRawDataReader.cpp
+    EcnuRawDataReader.cpp \
+    virtualconsole.cpp \
+    communicator.cpp
 
 HEADERS  += mainwindow.h \
     SampleDataProtocol.h \
@@ -26,7 +28,9 @@ HEADERS  += mainwindow.h \
     mask.h \
     EcnuRawDataFile.h \
     EcnuRawDataReader.h \
-    RawDataReader.h
+    RawDataReader.h \
+    virtualconsole.h \
+    communicator.h
 
 FORMS    += mainwindow.ui
 

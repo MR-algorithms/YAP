@@ -3,7 +3,6 @@
 
 Mask::Mask()
 {
-
 }
 
 bool Mask::Initialize(int phaseCount, ScanMode mode, float sampleRate)

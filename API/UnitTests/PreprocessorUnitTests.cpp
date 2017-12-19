@@ -97,5 +97,4 @@ Yap::Tokens GetPipelineTokens(const wchar_t * const script)
 }
 BOOST_AUTO_TEST_CASE(pipiline_preprocessor_test)
 {
-	BOOST_CHECK(GetPipelineTokens(L"TestProcessor processor(property = -1.0);").GetLiteralValue() == L"-1");
 }

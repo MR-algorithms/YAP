@@ -68,8 +68,8 @@ void Databin::Load(std::wstring dataPath)
     //auto reader = Hardware::CSpectrometerFactory::CreateReader(system.spectrometer.spec_type, 0, raw_data_folder);
     CEcnuRawDataReader reader;
 
-    wstring file_ext = L"fid";//L"mrd" :
-    unsigned int channel_mask = 0x0F;//应跟实际读取文件完全一致
+    wstring file_ext = L"fid"; //L"mrd" :
+    unsigned int channel_mask = 0x0F;
     DstRawDataName name_function(file_ext, group_count, group_index);
     std::vector<std::wstring> path = name_function.GetNames(channel_mask);
     std::vector<std::string> path2;

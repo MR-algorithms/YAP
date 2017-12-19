@@ -23,7 +23,6 @@ Yap::Nlmeans::Nlmeans(const Nlmeans & rhs) :
 
 Nlmeans::~Nlmeans()
 {
-	LOG_TRACE(L"Nlmeans destructor called.", L"BasicRecon");
 }
 
 bool Yap::Nlmeans::Input(const wchar_t * name, IData * data)

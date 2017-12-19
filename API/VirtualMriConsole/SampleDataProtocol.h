@@ -2,13 +2,14 @@
 #include <stdint.h>
 #include <complex>
 #include <vector>
-#include <QByteArray>
 
 #define SAMPLE_DATA_START		1
 #define SAMPLE_DATA_DATA		2
 #define SAMPLE_DATA_END			3
 
 #define SAMPLE_DATA_PROTOCOL_VERSION 1
+
+class QByteArray;
 
 struct HeadItem
 {
@@ -30,6 +31,7 @@ struct SampleDataStart
 	uint32_t dim5_size;
 	uint32_t dim6_size;
 	uint32_t channel_mask;
+
 	SampleDataStart();
     bool Pack(QByteArray &byteArray);
     bool Unpack(QByteArray &byteArray);
@@ -49,6 +51,7 @@ struct SampleDataData
     bool Unpack(QByteArray &byteArray);
     void CreatDemoData(double phi0, double freq, double dw, unsigned int dataCount);
 };
+
 /*
 struct SampleDataDataRef
 {
@@ -86,8 +89,6 @@ struct FloatArray
 
     void CreateDemoStruct();
     void CreateDemoSinStruct(double phi0, double freq, double dw, unsigned int dataCount);
-
-
 };
 
 static bool SampleData_TestDemo = false;

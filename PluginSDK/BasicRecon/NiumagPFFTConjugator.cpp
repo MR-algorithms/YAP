@@ -77,7 +77,6 @@ Yap::NiumagPFFTConjugator::NiumagPFFTConjugator(const NiumagPFFTConjugator& rhs)
 
 Yap::NiumagPFFTConjugator::~NiumagPFFTConjugator()
 {
-	LOG_TRACE(L"NiumagPFFTConjugator destructor called.", L"BasicRecon");
 }
 
 bool Yap::NiumagPFFTConjugator::Input(const wchar_t * name, IData * data)

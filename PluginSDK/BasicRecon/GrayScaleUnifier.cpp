@@ -24,7 +24,6 @@ Yap::GrayScaleUnifier::GrayScaleUnifier(const GrayScaleUnifier& rhs) :
 
 Yap::GrayScaleUnifier::~GrayScaleUnifier()
 {
-	LOG_TRACE(L"GrayScaleUnifier destructor called.", L"BasicRecon");
 }
 
 bool Yap::GrayScaleUnifier::Input(const wchar_t * name, IData * data)

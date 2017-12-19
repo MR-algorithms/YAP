@@ -31,7 +31,6 @@ NiumagFidWriter::NiumagFidWriter(const NiumagFidWriter& rhs) :
 
 NiumagFidWriter::~NiumagFidWriter()
 {
-	LOG_TRACE(L"NiumagFidWriter destructor called.", L"BasicRecon");
 }
 
 bool Yap::NiumagFidWriter::Input(const wchar_t * name, IData * data)

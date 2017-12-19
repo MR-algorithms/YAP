@@ -31,6 +31,7 @@ namespace Yap
 		bool Process();
 		bool ProcessStatement(Tokens& tokens);
 		bool ProcessSimpleDeclaration(Tokens& tokens);
+		bool ProcessEnumDeclaration(Tokens& tokens);
 		bool ProcessArrayDeclaration(Tokens& tokens, VariableSpace& variables);
 		bool ProcessStructDeclaration(Tokens& tokens);
 		bool ProcessNamespace(Tokens& tokens);

@@ -25,7 +25,6 @@ Yap::LinesSelector::LinesSelector(const LinesSelector& rhs):
 
 Yap::LinesSelector::~LinesSelector()
 {
-	LOG_TRACE(L"LinesSelector destructor called.", L"BasicRecon");
 }
 
 bool Yap::LinesSelector::Input(const wchar_t * name, IData * data)

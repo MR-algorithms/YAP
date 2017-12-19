@@ -950,7 +950,7 @@ BOOST_AUTO_TEST_CASE(processor_ZeroFilling)
 {
 	auto pipe = GetPipeline(
 		L"import \"BasicRecon.dll\";"
-		L"ZeroFilling zero_filling(DestWidth = -1);");
+		L"ZeroFilling zero_filling(DestWidth = 1);");
 
 	auto processor = pipe->Find(L"zero_filling");
 	BOOST_CHECK(processor != nullptr);

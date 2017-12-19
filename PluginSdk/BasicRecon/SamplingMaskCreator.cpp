@@ -37,7 +37,6 @@ SamplingMaskCreator::SamplingMaskCreator(const SamplingMaskCreator& rhs)
 }
 SamplingMaskCreator::~SamplingMaskCreator()
 {
-	LOG_TRACE(L"SampleingMaskCreator destructor called.", L"BasicRecon");
 }
 
 bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)

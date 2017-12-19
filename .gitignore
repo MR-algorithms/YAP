@@ -18,8 +18,11 @@ acommand.txt
 *.exp
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+*.autosave
+*.log
+*.1
+*.2
 
-# Qt
 [Bb]uild-*-Debug
 [Bb]uild-*-Release
 

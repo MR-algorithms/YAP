@@ -4,15 +4,16 @@
 
 enum ScanMode
 {
-    smFullSampling,//全采
-    smEqualSampling,//
+    smFullSampling,
+    smEqualSampling,// 你好
     smCustom
 };
+
 class Mask
 {
 private:
-    std::vector<int> _data;//每个元素表示了采集的相位编码索引。
-    unsigned int _currentIndex;//表示_data的索引。
+    std::vector<int> _data;
+    unsigned int _currentIndex;
 
     float _sampleRate;
 
