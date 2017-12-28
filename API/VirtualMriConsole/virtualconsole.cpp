@@ -14,7 +14,7 @@ class VirtualConsoleImpl
 public:
     VirtualConsoleImpl();
     ~VirtualConsoleImpl();
-    bool SetReconHost(QString ip_address, unsigned short port);
+    bool SetReconHost(wchar_t *ip_address, unsigned short port);
 
     bool PrepareScan(ScanTask& task);
 
@@ -320,7 +320,7 @@ bool VirtualConsoleImpl::SetData()
 }
 
 
-bool VirtualConsoleImpl::SetReconHost(QString ip_address, unsigned short port)
+bool VirtualConsoleImpl::SetReconHost(wchar_t *ip_address, unsigned short port)
 {
     assert(0);
 
@@ -383,7 +383,7 @@ bool VirtualConsole::PrepareScan(ScanTask &task)
 }
 
 
-bool VirtualConsole::SetReconHost(QString ip_address, unsigned short port)
+bool VirtualConsole::SetReconHost(wchar_t* ip_address, unsigned short port)
 {
     assert(_impl);
 

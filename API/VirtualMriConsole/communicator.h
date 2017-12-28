@@ -20,7 +20,7 @@ public:
         }
     explicit Communicator(QObject *parent = 0);
 
-    bool SetRemoteHost(QString ip_address, unsigned short port);
+    bool SetRemoteHost(const wchar_t * const ip_address, unsigned short port);
     bool Connect();
     bool Disconnect();
     bool Send(const DataPackage& data);

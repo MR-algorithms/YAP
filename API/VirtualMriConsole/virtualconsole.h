@@ -28,7 +28,7 @@ public:
         }
     VirtualConsole();
     bool PrepareScan(ScanTask& task);
-    bool SetReconHost(QString ip_address, unsigned short port);
+    bool SetReconHost(wchar_t* ip_address, unsigned short port);
 
     bool Start();
     void Stop();
