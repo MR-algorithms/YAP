@@ -28,16 +28,20 @@ private:
 
 
     // Thread function used to carry out the scan task.
-    static unsigned int ThreadFunction(const std::string& name , EventQueue *queue);
+    //static member function. 静态成员函数怎么访问
+    static unsigned int ThreadFunction(VirtualConsoleImpl * This);
     bool Init();
 
+public:
     std::shared_ptr<ScanTask> _scanTask;
     std::mutex _scanTask_mutex;
-    EventQueue _evtQueue;
+    std::shared_ptr<EventQueue> _evtQueue;
     bool _initialized;
 
+    std::thread _thread;
+
 };
-VirtualConsoleImpl::VirtualConsoleImpl():_initialized(false), _scanTask(new ScanTask)
+VirtualConsoleImpl::VirtualConsoleImpl():_initialized(false), _scanTask(new ScanTask),_evtQueue(new EventQueue)
 {
     Init();
 }
@@ -51,7 +55,8 @@ bool VirtualConsoleImpl::Init()
     if (_initialized)
         return true;
 
-    std::thread thread1(ThreadFunction , "thread1" , &_evtQueue);//join or detach?
+
+    _thread = std::thread(ThreadFunction , this);
 
     _initialized = true;
 
@@ -64,12 +69,13 @@ bool VirtualConsoleImpl::Init()
     \todo Add state checking.
     \bug Hardcoding file name.
 */
-unsigned int VirtualConsoleImpl::ThreadFunction(const std::string& name , EventQueue *queue)
+unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This)
 {
+
 
     for(;;)
     {
-        MyEvent *evt = queue->GetEvent();
+        MyEvent *evt = This->_evtQueue->GetEvent();
         switch(evt->type())
         {
         case MyEvent::quit:
@@ -87,7 +93,12 @@ unsigned int VirtualConsoleImpl::ThreadFunction(const std::string& name , EventQ
             break;
 
         }
-        //检查定时器。
+
+
+        std::chrono::milliseconds dura(30000);
+        std::this_thread::sleep_for(dura);
+        std::lock_guard<std::mutex> Lock_scantask(This->_scanTask_mutex);
+        //Do something.
 
     }
 
@@ -124,7 +135,7 @@ bool VirtualConsoleImpl::PrepareScantask(ScanTask& scan_task)
 
 bool VirtualConsoleImpl::Scan()
 {
-    _evtQueue.PushEvent(new MyEvent(MyEvent::scan));
+    _evtQueue.get()->PushEvent(new MyEvent(MyEvent::scan));
 
 
     return true;
@@ -132,13 +143,13 @@ bool VirtualConsoleImpl::Scan()
 
 void VirtualConsoleImpl::Stop()
 {
-    _evtQueue.PushEvent(new MyEvent(MyEvent::stop));
+    _evtQueue.get()->PushEvent(new MyEvent(MyEvent::stop));
 
 }
 void VirtualConsoleImpl::Quit()
 {
-    _evtQueue.PushEvent(new MyEvent(MyEvent::quit));
-    //join the thread according to thread id.
+    _evtQueue.get()->PushEvent(new MyEvent(MyEvent::quit));
+    _thread.join();
 
 }
 
