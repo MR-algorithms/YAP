@@ -27,11 +27,13 @@ public:
             return s_instance;
         }
     VirtualConsole();
-    bool PrepareScan(ScanTask& task);
-    bool SetReconHost(wchar_t* ip_address, unsigned short port);
+    bool PrepareScantask(ScanTask& task);
+    bool SetReconHost(const wchar_t* ip_address, unsigned short port);
 
-    bool Start();
+    bool Connect();
+    bool Scan();
     void Stop();
+    void Quit();
 private:
     std::shared_ptr<_details::VirtualConsoleImpl> _impl;
 

@@ -40,8 +40,8 @@ void MainWindow::on_connectButton_clicked()
         QString ip_address = ui->editReconHost->text();
         std::wstring temp = ip_address.toStdWString();
 
-        VirtualConsole::GetHandle().SetReconHost(ip_address, ui->editReconPort->text().toInt());
-        VirtualConsole::GetHandle().Start();
+        VirtualConsole::GetHandle().SetReconHost(temp.c_str(), ui->editReconPort->text().toInt());
+        VirtualConsole::GetHandle().Connect();
         //--
 
         _connected = true;
@@ -63,7 +63,6 @@ void MainWindow::on_connectButton_clicked()
 void MainWindow::Reset()
 {
     ui->connectButton->setText("Connect");
-    _index1 = 0;
     ui->scanButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
 
@@ -87,8 +86,11 @@ void MainWindow::on_scanButton_clicked()
         std::shared_ptr<ScanTask> scantask(new ScanTask);
         scantask.get()->tr_millisecond = TRms;
 
-        VirtualConsole::GetHandle().PrepareScan(*scantask.get());
-        VirtualConsole::GetHandle().Start();
+        qDebug()<<"MainWidow: onScanButton_clicked";
+        qDebug()<<L"on_testButton_clicked !";
+
+        VirtualConsole::GetHandle().PrepareScantask(*scantask.get());
+        VirtualConsole::GetHandle().Scan();
 
     }
     else
@@ -100,10 +102,7 @@ void MainWindow::on_scanButton_clicked()
 void MainWindow::on_stopButton_clicked()
 {
 
-    this->killTimer(_timeId1);
-
     ui->editInfo->appendPlainText(QString("Stoped!"));
-    _index1 = 0;//
     ui->scanButton->setEnabled(true);
     ui->stopButton->setEnabled(false);
 
@@ -114,10 +113,8 @@ void MainWindow::on_stopButton_clicked()
 void MainWindow::ScanFinished()
 {
 
-    this->killTimer(_timeId1);
 
     ui->editInfo->appendPlainText(QString("Finished!"));
-    _index1 = 0;//
     ui->scanButton->setEnabled(true);
     ui->stopButton->setEnabled(false);
 
@@ -126,8 +123,11 @@ void MainWindow::ScanFinished()
 
 void MainWindow::on_testButton_clicked()
 {
-    Databin databin;
-    databin.Load(L"D:\\test_data\\RawData_256");
+
+    qDebug()<<"on_testButton_clicked !";
+
+    //Databin databin;
+    //databin.Load(L"D:\\test_data\\RawData_256");
 
     /*
 

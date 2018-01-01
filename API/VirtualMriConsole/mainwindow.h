@@ -34,9 +34,6 @@ private:
 
     bool _connected;
 
-    int _timeId1;
-    int _index1;
-
 
     void SendTestSample(int index, bool &finished);
     void ScanFinished();

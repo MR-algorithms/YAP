@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     EcnuRawDataFile.cpp \
     EcnuRawDataReader.cpp \
     virtualconsole.cpp \
-    communicator.cpp
+    communicator.cpp \
+    myevent.cpp
 
 HEADERS  += mainwindow.h \
     SampleDataProtocol.h \
@@ -30,7 +31,8 @@ HEADERS  += mainwindow.h \
     EcnuRawDataReader.h \
     RawDataReader.h \
     virtualconsole.h \
-    communicator.h
+    communicator.h \
+    myevent.h
 
 FORMS    += mainwindow.ui
 

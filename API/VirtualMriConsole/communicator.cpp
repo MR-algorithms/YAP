@@ -14,7 +14,7 @@ Communicator::Communicator(QObject *parent): QTcpSocket(parent)
     connect(this, &QTcpSocket::disconnected, this, &Communicator::slotDisconnected);
 }
 
-bool Communicator::SetRemoteHost(const wchar_t * const ip_address, unsigned short port)
+bool Communicator::SetRemoteHost(const wchar_t * ip_address, unsigned short port)
 {
     //_ip_address = *ip_address;
 
@@ -35,15 +35,19 @@ bool Communicator::SetRemoteHost(const wchar_t * const ip_address, unsigned shor
     _port = port;
     return true;
 }
+void Communicator::slotConnected()
+{
+    qDebug()<<L"Communicator: slotConnected.";
+}
 
 void Communicator::slotDataReceived()
 {
-    assert(0);
+    qDebug()<<L"Communicator: slotDataReceived.";
 }
 
 void Communicator::slotDisconnected()
 {
-    assert(0);
+    qDebug()<<L"Communicator: slotDisconnected.";
 }
 
 bool Communicator::Connect()
@@ -62,6 +66,6 @@ bool Communicator::Connect()
 
 bool Communicator::Disconnect()
 {
-    disconnectFromHost();
+    //disconnectFromHost();
     return true;
 }
