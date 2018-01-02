@@ -36,7 +36,6 @@ private:
 
 
     void SendTestSample(int index, bool &finished);
-    void ScanFinished();
     void Reset();
 
 };

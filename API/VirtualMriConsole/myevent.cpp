@@ -1,22 +1,38 @@
 #include "myevent.h"
+#include <mutex>
 
 
-MyEvent* EventQueue::GetEvent()
+MyEvent* EventQueue::GetEvent(std::timed_mutex &timeMutex, int milliSeconds)
 {
-    std::unique_lock<std::mutex> locker(m_evtQueueMtx);
-    while(m_eventQueue.empty())
-        m_evtQueueCondVar.wait(locker);
-    MyEvent* evt = m_eventQueue.front();
-    m_eventQueue.pop_front();
+    std::unique_lock<std::mutex> locker(_evtQueueMtx);
+    bool timeOut = false;
+    while(_eventQueue.empty() && !timeOut)
+    {
+        _evtQueueCondVar.wait(locker, [&]{
+            if(milliSeconds < 0 || milliSeconds > 60000)
+            {
+                timeOut = false;
+            }
+            else
+            {
+                timeOut =  !timeMutex.try_lock_for(std::chrono::milliseconds(milliSeconds));
+            }
+
+            return timeOut;
+        });
+
+    }
+    MyEvent* evt = _eventQueue.front();
+    _eventQueue.pop_front();
     return evt;
 }
 
 void EventQueue::PushEvent(MyEvent* evt)
 {
-    m_evtQueueMtx.lock();
-    const bool bNeedNotify = m_eventQueue.empty();
-    m_eventQueue.push_back(evt);
-    m_evtQueueMtx.unlock();
+    _evtQueueMtx.lock();
+    const bool bNeedNotify = _eventQueue.empty();
+    _eventQueue.push_back(evt);
+    _evtQueueMtx.unlock();
     if (bNeedNotify)
-        m_evtQueueCondVar.notify_all();
+        _evtQueueCondVar.notify_all();
 }

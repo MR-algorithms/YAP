@@ -21,7 +21,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     Reset();
 
-    //TestSampleStruct();
 
 }
 
@@ -106,19 +105,8 @@ void MainWindow::on_stopButton_clicked()
     ui->scanButton->setEnabled(true);
     ui->stopButton->setEnabled(false);
 
-    qDebug()<<"Scan stopped!";
-}
-
-
-void MainWindow::ScanFinished()
-{
-
-
-    ui->editInfo->appendPlainText(QString("Finished!"));
-    ui->scanButton->setEnabled(true);
-    ui->stopButton->setEnabled(false);
-
-    qDebug()<<"Scan finished!";
+    VirtualConsole::GetHandle().Stop();
+    //qDebug()<<"Scan stopped!";
 }
 
 void MainWindow::on_testButton_clicked()

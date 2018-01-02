@@ -10,6 +10,7 @@
 #include <string>
 #include <iostream>
 #include <chrono>
+#include <mutex>
 
 class MyEvent {
 public:
@@ -17,30 +18,24 @@ public:
         quit  = 0 ,
         scan  = 1,
         stop  = 2,
-
+        time  = 3,
     };
 
-    explicit MyEvent(Type type)
-        : m_type(type)
-    { }
-
-    virtual ~MyEvent()
-    { }
-
-    Type type() const { return m_type; }
+    explicit MyEvent(Type type): _type(type){ }
+    virtual ~MyEvent() { }
+    Type type() const { return _type; }
 private:
-    Type m_type;
+    Type _type;
 };
 
 class EventQueue {
 public:
-    MyEvent* GetEvent();
+    MyEvent* GetEvent(std::timed_mutex &timeMutex, int milliSeconds);
     void PushEvent(MyEvent* evt);
 private:
-
-    std::condition_variable m_evtQueueCondVar;
-    std::mutex m_evtQueueMtx;
-    std::list<MyEvent*> m_eventQueue;
+    std::condition_variable _evtQueueCondVar;
+    std::mutex _evtQueueMtx;
+    std::list<MyEvent*> _eventQueue;
 };
 
 

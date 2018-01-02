@@ -10,6 +10,9 @@ namespace _details{
 
 enum EThreadState{ idle, scanning, paused, };
 
+std::timed_mutex g_timeMutex1;
+int g_times = 0;
+
 class VirtualConsoleImpl
 {
 public:
@@ -28,8 +31,8 @@ private:
 
 
     // Thread function used to carry out the scan task.
-    //static member function. 静态成员函数怎么访问
     static unsigned int ThreadFunction(VirtualConsoleImpl * This);
+    static void SendFunction(ScanTask& task);
     bool Init();
 
 public:
@@ -39,8 +42,10 @@ public:
     bool _initialized;
 
     std::thread _thread;
+    EThreadState _threadState;
 
 };
+
 VirtualConsoleImpl::VirtualConsoleImpl():_initialized(false), _scanTask(new ScanTask),_evtQueue(new EventQueue)
 {
     Init();
@@ -55,6 +60,8 @@ bool VirtualConsoleImpl::Init()
     if (_initialized)
         return true;
 
+
+    _threadState = idle;
 
     _thread = std::thread(ThreadFunction , this);
 
@@ -73,32 +80,52 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This)
 {
 
 
+    assert(This->_threadState == idle);
+
     for(;;)
     {
-        MyEvent *evt = This->_evtQueue->GetEvent();
+        MyEvent *evt = This->_evtQueue->GetEvent(g_timeMutex1, This->_scanTask.get()->tr_millisecond);
         switch(evt->type())
         {
         case MyEvent::quit:
+        {
+            This->_threadState = idle;
             qDebug()<<"quit Event";
+
             return 1;
+        }
             break;
         case MyEvent::scan:
+        {
+            //This->_scanTask_mutex.lock();
+            This->_threadState = scanning;
+            g_timeMutex1.lock();
+
+            //SendFunction(*This->_scanTask.get());
+
             qDebug()<<"scan Event";
+
+        }
             break;
         case MyEvent::stop:
+        {
+            g_timeMutex1.unlock();
+            //This->_scanTask_mutex.unlock();
+            g_times = 0;
             qDebug()<<"stop Event";
+        }
             break;
 
+        case MyEvent::time:
+        {
+            g_times ++;
+            qDebug() << "time: "<< g_times;
+        }
         default:
             break;
 
         }
 
-
-        std::chrono::milliseconds dura(30000);
-        std::this_thread::sleep_for(dura);
-        std::lock_guard<std::mutex> Lock_scantask(This->_scanTask_mutex);
-        //Do something.
 
     }
 
@@ -106,6 +133,22 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This)
 }
 
 
+void VirtualConsoleImpl::SendFunction(ScanTask &task)
+{
+    //std::chrono::milliseconds dura(2000);
+    //std::this_thread::sleep_for(dura);
+    //std::unique_lock<std::mutex> Lock_scantask(This->_scanTask_mutex);
+    //Do something.
+
+    while (!g_timeMutex1.try_lock_for(std::chrono::milliseconds(1000))) {
+      qDebug() << "time: "<< g_times;
+
+      g_times ++;
+
+    }
+    int test = 3;
+
+}
 
 bool VirtualConsoleImpl::SetReconHost(const wchar_t *ip_address, unsigned short port)
 {
@@ -126,7 +169,7 @@ bool VirtualConsoleImpl::PrepareScantask(ScanTask& scan_task)
 {
     //assert(scan_task);
 
-    std::lock_guard<std::mutex> Lock_scantask(_scanTask_mutex);//mutex::lock:locks the mutex, blocks if the mutex is not available
+    std::unique_lock<std::mutex> Lock_scantask(_scanTask_mutex);//mutex::lock:locks the mutex, blocks if the mutex is not available
 
     _scanTask = std::shared_ptr<ScanTask>(&scan_task);
     return true;
@@ -153,7 +196,7 @@ void VirtualConsoleImpl::Quit()
 
 }
 
-};
+}
 
 // ===========================
 
