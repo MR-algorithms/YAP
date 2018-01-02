@@ -15,10 +15,9 @@
 class MyEvent {
 public:
     enum Type : int {
-        quit  = 0 ,
-        scan  = 1,
-        stop  = 2,
-        time  = 3,
+        scan  = 0,
+        stop  = 1,
+        time  = 2,
     };
 
     explicit MyEvent(Type type): _type(type){ }

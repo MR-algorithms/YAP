@@ -82,13 +82,13 @@ void MainWindow::on_scanButton_clicked()
         int TRms = ui->editTR->text().toInt();
 
         //
-        std::shared_ptr<ScanTask> scantask(new ScanTask);
-        scantask.get()->tr_millisecond = TRms;
+        ScanTask* scantask = new ScanTask;
+        scantask->tr_millisecond = TRms;
 
         qDebug()<<"MainWidow: onScanButton_clicked";
         qDebug()<<L"on_testButton_clicked !";
 
-        VirtualConsole::GetHandle().PrepareScantask(*scantask.get());
+        VirtualConsole::GetHandle().PrepareScantask(scantask);
         VirtualConsole::GetHandle().Scan();
 
     }
