@@ -5,21 +5,22 @@
 
 using namespace Scan;
 
-ScanTask * ScantaskGenerator::Create(int trMs, Mask mask, std::wstring dataPath)
+ScanTask * ScantaskGenerator::Create(int trMs, Mask mask, std::wstring dataPath, int channelCount)
 {
     ScanTask *scantask = new ScanTask;
+    scantask->tr_millisecond = trMs;
 
     Databin databin;
-    databin.Load(dataPath);
+    databin.Load(dataPath, channelCount);
 
     scantask->data = databin.GetRawData();
 
     int phaseCount = databin.GetPhaseCount();
-    Mask::MaskType mt = mask.maskType;
-    int sampleRate= mask.sampleRate;
+    Mask::MaskType type = mask.type;
+    float rate= mask.rate;
 
 
-    MaskGenerator::Create(phaseCount, mt, sampleRate);
+    scantask->mask = *(MaskGenerator::Create(phaseCount, type, rate).get());
 
     return scantask;
 

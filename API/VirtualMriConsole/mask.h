@@ -19,10 +19,16 @@ namespace Scan
 
         std::vector<int> data;
 
-        float sampleRate;
-        MaskType maskType;
-        Mask(): sampleRate(0), maskType(mtNone){ data.resize(0);}
-        Mask(float rate, MaskType type): sampleRate(rate), maskType(type){ data.resize(0);}
+        float rate;
+        MaskType type;
+        Mask(): rate(0), type(mtNone){ data.resize(0);}
+        Mask(float rate, MaskType type): rate(rate), type(type){ data.resize(0);}
+        Mask& operator = (const Mask& rhs){
+            rate = rhs.rate;
+            type = rhs.type;
+            data.assign(rhs.data.begin(),rhs.data.end());
+            return *this;
+        }
     };
     class MaskGenerator
     {

@@ -20,7 +20,7 @@ namespace Scan
     {
     public:
         ScantaskGenerator(){}
-        static ScanTask * Create(int trMs, Mask mask, std::wstring dataPath);
+        static ScanTask * Create(int trMs, Mask mask, std::wstring dataPath, int channelCount);
 
     };
 

@@ -52,15 +52,27 @@ struct DstRawDataName
 };
 
 
-Databin::Databin()
+Databin::Databin(): _dataInfo( new RawDataInfo)
 {
 
 }
 
+unsigned int Databin::AllChannel(int channelCount)
+{
+    unsigned int selectAll = 0;
+    for(int channel_index = 0; channel_index < channelCount; channel_index ++)
+    {
+         unsigned int selectOne = (1 << channel_index);
+         selectAll += selectOne;
+    }
 
-void Databin::Load(std::wstring dataPath)
+    return selectAll;
+
+}
+void Databin::Load(std::wstring dataPath, int channelCount)
 {
     std::shared_ptr<RawDataInfo> data_info = _dataInfo;
+
     std::wstring raw_data_folder = dataPath;
     int group_count = 1;
     int group_index = 0;
@@ -69,7 +81,7 @@ void Databin::Load(std::wstring dataPath)
     CEcnuRawDataReader reader;
 
     wstring file_ext = L"fid"; //L"mrd" :
-    unsigned int channel_mask = 0x0F;//临时代码:读取四个通道数据。
+    unsigned int channel_mask = AllChannel(channelCount);
     DstRawDataName name_function(file_ext, group_count, group_index);
     std::vector<std::wstring> path = name_function.GetNames(channel_mask);
     std::vector<std::string> path2;
@@ -81,6 +93,8 @@ void Databin::Load(std::wstring dataPath)
         path2.push_back(temp);
 
     }
+
+
 
     _data = boost::shared_array<complex<float>>( reinterpret_cast<complex<float>*>(reader.ReadAllData(data_info.get(), path2)));
 

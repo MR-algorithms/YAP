@@ -67,7 +67,7 @@ void MainWindow::on_scanButton_clicked()
     Scan::Mask::MaskType type = static_cast<Scan::Mask::MaskType>( ui->maskComboBox->currentIndex() );
 
     //
-    auto scantask = Scan::ScantaskGenerator::Create(trMs, Scan::Mask(rate, type),L"D:\\test_data\\RawData_256");
+    auto scantask = Scan::ScantaskGenerator::Create(trMs, Scan::Mask(rate, type),L"D:\\test_data\\RawData_256\\RawData", 4);//因为样本数据是四个通道。
 
     qDebug()<<"MainWidow: onScanButton_clicked";
 

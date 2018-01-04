@@ -11,12 +11,13 @@ class Databin
 private:
     boost::shared_array<complex<float>> _data;
     std::shared_ptr<RawDataInfo> _dataInfo;
+    unsigned int AllChannel(int channelCount);
 
 public:
 
     Databin();
 
-    void Load(std::wstring dataPath);
+    void Load(std::wstring dataPath, int channelCount);
 
     boost::shared_array<complex<float>> GetRawData();
     boost::shared_array<complex<float>> GetRawData(unsigned int channelIndex);
