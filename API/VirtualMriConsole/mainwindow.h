@@ -32,12 +32,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    bool _connected;
-
-
-    void SendTestSample(int index, bool &finished);
-    void Reset();
-
 };
 
 #endif // MAINWINDOW_H

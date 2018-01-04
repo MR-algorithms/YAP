@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     EcnuRawDataReader.cpp \
     virtualconsole.cpp \
     communicator.cpp \
-    myevent.cpp
+    myevent.cpp \
+    scantask.cpp
 
 HEADERS  += mainwindow.h \
     SampleDataProtocol.h \
@@ -32,7 +33,8 @@ HEADERS  += mainwindow.h \
     RawDataReader.h \
     virtualconsole.h \
     communicator.h \
-    myevent.h
+    myevent.h \
+    scantask.h
 
 FORMS    += mainwindow.ui
 

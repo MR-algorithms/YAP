@@ -7,25 +7,30 @@
 #include <QDebug>
 #include <vector>
 #include "Windows.h"
-#include "databin.h"
 #include "virtualconsole.h"
+#include "scantask.h"
+#include "mask.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    _connected(false)
+    ui(new Ui::MainWindow)
 {
-
-
     ui->setupUi(this);
+    ui->connectButton->setEnabled(true);
+    ui->scanButton->setEnabled(false);
+    ui->stopButton->setEnabled(false);
 
-    Reset();
+    QRegExp rx("^(1|[0]?(\\.\\d{1,2})?)$");
+    QRegExpValidator *pReg = new QRegExpValidator(rx, ui->editMaskFile);
 
+    ui->editMaskFile->setValidator(pReg);
 
 }
 
 MainWindow::~MainWindow()
 {
+    VirtualConsole::GetHandle().Disconnect();
+
     delete ui;
 }
 
@@ -34,38 +39,18 @@ MainWindow::~MainWindow()
 void MainWindow::on_connectButton_clicked()
 {
 
-    if (!_connected)
-    {
-        QString ip_address = ui->editReconHost->text();
-        std::wstring temp = ip_address.toStdWString();
+    QString ip_address = ui->editReconHost->text();
+    std::wstring temp = ip_address.toStdWString();
 
-        VirtualConsole::GetHandle().SetReconHost(temp.c_str(), ui->editReconPort->text().toInt());
-        VirtualConsole::GetHandle().Connect();
-        //--
+    VirtualConsole::GetHandle().SetReconHost(temp.c_str(), ui->editReconPort->text().toInt());
+    VirtualConsole::GetHandle().Connect();
 
-        _connected = true;
-
-        ui->connectButton->setText("Disconnect");
-        ui->scanButton->setEnabled(true);
-
-    }
-    else
-    {
-        //VirtualConsole::GetHandle().Disconnect();
-        _connected = false;
-        Reset();
-    }
+    //ui->connectButton->setText("Disconnect");
+    ui->connectButton->setEnabled(false);
+    ui->scanButton->setEnabled(true);
 
 
-}
 
-void MainWindow::Reset()
-{
-    ui->connectButton->setText("Connect");
-    ui->scanButton->setEnabled(false);
-    ui->stopButton->setEnabled(false);
-
-    _connected = false;
 
 }
 
@@ -74,26 +59,22 @@ void MainWindow::Reset()
 void MainWindow::on_scanButton_clicked()
 {
 
-    if(_connected)
-    {
-        ui->scanButton->setEnabled(false);
-        ui->stopButton->setEnabled(true);
+    ui->scanButton->setEnabled(false);
+    ui->stopButton->setEnabled(true);
 
-        int TRms = ui->editTR->text().toInt();
+    int trMs = ui->editTR->text().toInt();
+    float rate = ui->editMaskFile->text().toFloat();
+    Scan::Mask::MaskType type = static_cast<Scan::Mask::MaskType>( ui->maskComboBox->currentIndex() );
 
-        //
-        ScanTask* scantask = new ScanTask;
-        scantask->tr_millisecond = TRms;
+    //
+    auto scantask = Scan::ScantaskGenerator::Create(trMs, Scan::Mask(rate, type),L"D:\\test_data\\RawData_256");
 
-        qDebug()<<"MainWidow: onScanButton_clicked";
-        qDebug()<<L"on_testButton_clicked !";
+    qDebug()<<"MainWidow: onScanButton_clicked";
 
-        VirtualConsole::GetHandle().PrepareScantask(scantask);
-        VirtualConsole::GetHandle().Scan();
+    VirtualConsole::GetHandle().PrepareScantask(scantask);
+    VirtualConsole::GetHandle().Scan();
 
-    }
-    else
-        QMessageBox::warning(this,"Warning", "Not connected", QMessageBox::Yes);//, QMessageBox::No);
+    //QMessageBox::warning(this,"Warning", "Not connected", QMessageBox::Yes);//, QMessageBox::No);
 
 
 }
@@ -114,8 +95,6 @@ void MainWindow::on_testButton_clicked()
 
     qDebug()<<"on_testButton_clicked !";
 
-    //Databin databin;
-    //databin.Load(L"D:\\test_data\\RawData_256");
 
     /*
 

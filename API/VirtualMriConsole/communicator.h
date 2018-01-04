@@ -24,6 +24,7 @@ public:
     bool Connect();
     bool Disconnect();
     bool Send(const DataPackage& data);
+
 protected slots:
     void slotDataReceived();
     void slotDisconnected();

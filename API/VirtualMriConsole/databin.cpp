@@ -69,7 +69,7 @@ void Databin::Load(std::wstring dataPath)
     CEcnuRawDataReader reader;
 
     wstring file_ext = L"fid"; //L"mrd" :
-    unsigned int channel_mask = 0x0F;
+    unsigned int channel_mask = 0x0F;//临时代码:读取四个通道数据。
     DstRawDataName name_function(file_ext, group_count, group_index);
     std::vector<std::wstring> path = name_function.GetNames(channel_mask);
     std::vector<std::string> path2;
@@ -82,7 +82,7 @@ void Databin::Load(std::wstring dataPath)
 
     }
 
-    boost::shared_array<complex<float>> data(reinterpret_cast<complex<float>*>(reader.ReadAllData(data_info.get(), path2)));
+    _data = boost::shared_array<complex<float>>( reinterpret_cast<complex<float>*>(reader.ReadAllData(data_info.get(), path2)));
 
 
     //CString data_info_str;
@@ -94,6 +94,20 @@ void Databin::Load(std::wstring dataPath)
 
 }
 
+boost::shared_array<complex<float>> Databin::GetRawData()
+{
+    int TotalSize =  _dataInfo.get()->freq_point_count *
+                     _dataInfo.get()->phase_point_count *
+                     _dataInfo.get()->slice_count *
+                     _dataInfo.get()->channel_count;
+
+     //拷贝一份返回给用户。
+    boost::shared_array<complex<float>> destChannel(new complex<float>[TotalSize]);
+
+    memcpy(destChannel.get(), _data.get(), TotalSize * sizeof(complex<float>));
+    return destChannel;
+
+}
 
 boost::shared_array<complex<float>> Databin::GetRawData(unsigned int channelIndex)
 {
@@ -106,7 +120,7 @@ boost::shared_array<complex<float>> Databin::GetRawData(unsigned int channelInde
 
     std::complex<float>* srcChannel = _data.get() + channelIndex * channelSize;
 
-    //拷贝一份返回给用户。需要这么做吗？
+    //拷贝一份返回给用户。
     boost::shared_array<complex<float>> destChannel(new complex<float>[channelSize]);
 
     memcpy(destChannel.get(), srcChannel, channelSize * sizeof(complex<float>));
@@ -160,3 +174,8 @@ boost::shared_array<complex<float>> Databin::GetRawData(unsigned int channelInde
 
 }
 
+
+unsigned int Databin::GetPhaseCount()
+{
+    return _dataInfo.get()->phase_point_count;
+}

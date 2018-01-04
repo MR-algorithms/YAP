@@ -3,27 +3,35 @@
 #include <vector>
 #include <memory>
 
-enum ScanMode
+namespace Scan
 {
-    smFullSampling,
-    smEqualSampling,// 你好
-    smCustom
-};
+    struct Mask
+    {
+        enum MaskType
+        {
+            mtSequential,
+            mtFromCenter,
+            mtFromSide,
+            mtEqualSampling,
+            mtCustom,
+            mtNone
+        };
 
-struct Mask
-{
-    std::vector<int> data;
-    unsigned int currentIndex;
+        std::vector<int> data;
 
-    float sampleRate;
-};
-class MaskGenerator
-{
-public:
-    MaskGenerator();
-    std::shared_ptr<Mask> Create(unsigned int phaseCount, ScanMode mode, float sampleRate);
+        float sampleRate;
+        MaskType maskType;
+        Mask(): sampleRate(0), maskType(mtNone){ data.resize(0);}
+        Mask(float rate, MaskType type): sampleRate(rate), maskType(type){ data.resize(0);}
+    };
+    class MaskGenerator
+    {
+    public:
+        MaskGenerator();
+        static std::shared_ptr<Mask> Create(unsigned int phaseCount, Mask::MaskType masktype, float sampleRate);
 
+        static bool Write(std::wstring path);
 
-};
-
+    };
+}
 #endif // CMASK_H

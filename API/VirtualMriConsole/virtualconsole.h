@@ -7,16 +7,11 @@ using namespace std;
 
 namespace _details{
     class VirtualConsoleImpl;
-};
-
-struct Mask;
-
-struct ScanTask
-{
-    Mask *mask;
-    complex<float>* data;
-    int tr_millisecond;
-};
+}
+namespace Scan {
+    struct Mask;
+    struct ScanTask;
+}
 
 class VirtualConsole
 {
@@ -27,10 +22,11 @@ public:
             return s_instance;
         }
     VirtualConsole();
-    bool PrepareScantask(ScanTask* task);
+    bool PrepareScantask(Scan::ScanTask* task);
     bool SetReconHost(const wchar_t* ip_address, unsigned short port);
 
     bool Connect();
+    void Disconnect();
     bool Scan();
     void Stop();
 private:

@@ -50,7 +50,7 @@
          </widget>
         </item>
         <item row="0" column="2">
-         <widget class="QPushButton" name="buttonBrowseData">
+         <widget class="QPushButton" name="browsedatabutton">
           <property name="text">
            <string>Browse...</string>
           </property>
@@ -83,13 +83,6 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
-         <widget class="QPushButton" name="buttonBrowseMask">
-          <property name="text">
-           <string>Browse...</string>
-          </property>
-         </widget>
-        </item>
         <item row="5" column="0">
          <widget class="QLabel" name="label_6">
           <property name="text">
@@ -104,7 +97,14 @@
          <widget class="QLineEdit" name="editDataFile"/>
         </item>
         <item row="1" column="1">
-         <widget class="QLineEdit" name="editMaskFile"/>
+         <widget class="QLineEdit" name="editMaskFile">
+          <property name="text">
+           <string>1.00</string>
+          </property>
+          <property name="placeholderText">
+           <string>sample rate</string>
+          </property>
+         </widget>
         </item>
         <item row="2" column="0">
          <widget class="QLabel" name="label_3">
@@ -124,6 +124,35 @@
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QComboBox" name="maskComboBox">
+          <item>
+           <property name="text">
+            <string>Sequential</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>FromCenter</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>FromSide</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>EqualSampling</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Customization</string>
+           </property>
+          </item>
          </widget>
         </item>
        </layout>

@@ -13,8 +13,8 @@ CEcnuRawDataReader::~CEcnuRawDataReader(void)
 
 float* CEcnuRawDataReader::ReadChannelData(RawDataInfo* pid, const std::string& file_path)
 {
-	pid->dim5 = 1;
-	pid->dim6 = 1;
+    //pid->dim5 = 1;
+    //pid->dim6 = 1;
     return CEcnuRawDataFile::Read(file_path.c_str(), pid->freq_point_count, pid->phase_point_count, pid->slice_count, pid->dim4);
 }
 
