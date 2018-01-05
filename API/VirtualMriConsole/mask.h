@@ -21,11 +21,18 @@ namespace Scan
 
         float rate;
         MaskType type;
-        Mask(): rate(0), type(mtNone){ data.resize(0);}
-        Mask(float rate, MaskType type): rate(rate), type(type){ data.resize(0);}
+        int phaseCount;
+        int channelCount;
+
+        Mask(): rate(0), type(mtNone),phaseCount(0), channelCount(0){ data.resize(0);}
+        Mask(float rate, MaskType type, int phases, int channels ):
+            rate(rate), type(type),phaseCount(phases), channelCount(channels) { data.resize(0);}
         Mask& operator = (const Mask& rhs){
             rate = rhs.rate;
             type = rhs.type;
+            phaseCount = rhs.phaseCount;
+            channelCount = rhs.channelCount;
+
             data.assign(rhs.data.begin(),rhs.data.end());
             return *this;
         }
@@ -34,7 +41,7 @@ namespace Scan
     {
     public:
         MaskGenerator();
-        static std::shared_ptr<Mask> Create(unsigned int phaseCount, Mask::MaskType masktype, float sampleRate);
+        static Mask Create(unsigned int channelCount, unsigned int phaseCount, Mask::MaskType masktype, float sampleRate);
 
         static bool Write(std::wstring path);
 

@@ -22,7 +22,7 @@ public:
             return s_instance;
         }
     VirtualConsole();
-    bool PrepareScantask(Scan::ScanTask* task);
+    bool PrepareScantask(const Scan::ScanTask& task);
     bool SetReconHost(const wchar_t* ip_address, unsigned short port);
 
     bool Connect();

@@ -4,6 +4,7 @@
 #include "mask.h"
 #include "scantask.h"
 #include "myevent.h"
+#include "databin.h"
 
 VirtualConsole VirtualConsole::s_instance;
 using namespace Scan;
@@ -22,7 +23,7 @@ public:
     ~VirtualConsoleImpl();
     bool SetReconHost(const wchar_t *ip_address, unsigned short port);
 
-    bool PrepareScantask(ScanTask* task);
+    bool PrepareScantask(const ScanTask& task);
 
     bool Connect();
     void Disconnect();
@@ -37,7 +38,7 @@ private:
     bool Init();
 
 public:
-    std::shared_ptr<ScanTask> _scanTask;
+    ScanTask _scanTask;
     std::mutex _scanTask_mutex;
     std::shared_ptr<EventQueue> _evtQueue;
     bool _initialized;
@@ -50,7 +51,7 @@ public:
 
 };
 
-VirtualConsoleImpl::VirtualConsoleImpl():_initialized(false), _scanTask(new ScanTask),_evtQueue(new EventQueue)
+VirtualConsoleImpl::VirtualConsoleImpl():_initialized(false), _evtQueue(new EventQueue)
 {
     Init();
 }
@@ -81,17 +82,22 @@ bool VirtualConsoleImpl::Init()
 unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This)
 {
 
+    std::unique_lock<std::mutex> Lock_scantask(This->_scanTask_mutex);//mutex::lock:locks the mutex, blocks if the mutex is not available
+    ScanTask scantask = This->_scanTask;
+    Lock_scantask.unlock();
+
+    Databin databin;
+    databin.Load(scantask.dataPath, scantask.mask.channelCount);
 
     assert(This->_threadState == idle);
 
     for(;;)
     {
-        MyEvent *evt = This->_evtQueue->GetEvent(This->_timeMutex1, This->_scanTask.get()->tr_millisecond);
+        MyEvent *evt = This->_evtQueue->GetEvent(This->_timeMutex1, scantask.trMs);
         switch(evt->type())
         {
         case MyEvent::scan:
         {
-            //This->_scanTask_mutex.lock();
             This->_threadState = scanning;
             This->_timeIndex = 0;
 
@@ -111,6 +117,10 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This)
 
         case MyEvent::time:
         {
+            //Doing something.
+
+
+            //end of doing
             This->_timeIndex ++;
             qDebug() << "time: "<< This->_timeIndex;
         }
@@ -148,16 +158,12 @@ void VirtualConsoleImpl::Disconnect()
 }
 
 
-bool VirtualConsoleImpl::PrepareScantask(ScanTask* scan_task)
+bool VirtualConsoleImpl::PrepareScantask(const ScanTask& scan_task)
 {
-    assert(scan_task);
 
     std::unique_lock<std::mutex> Lock_scantask(_scanTask_mutex);//mutex::lock:locks the mutex, blocks if the mutex is not available
 
-    if(_scanTask)
-        _scanTask.reset();
-
-    _scanTask = std::shared_ptr<ScanTask>(scan_task);
+    _scanTask = scan_task;
     return true;
 }
 
@@ -190,7 +196,7 @@ VirtualConsole::VirtualConsole()
     _impl = std::make_shared<_details::VirtualConsoleImpl>();
 }
 
-bool VirtualConsole::PrepareScantask(ScanTask * task)
+bool VirtualConsole::PrepareScantask(const ScanTask& task)
 {
     assert(_impl);
 

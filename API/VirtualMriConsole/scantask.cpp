@@ -1,26 +1,24 @@
 #include "scantask.h"
-#include "databin.h"
 
 
 
 using namespace Scan;
 
-ScanTask * ScantaskGenerator::Create(int trMs, Mask mask, std::wstring dataPath, int channelCount)
+ScanTask ScantaskGenerator::Create(int trMs, Mask reference, std::wstring dataPath)
 {
-    ScanTask *scantask = new ScanTask;
-    scantask->tr_millisecond = trMs;
+    ScanTask scantask;
 
-    Databin databin;
-    databin.Load(dataPath, channelCount);
-
-    scantask->data = databin.GetRawData();
-
-    int phaseCount = databin.GetPhaseCount();
-    Mask::MaskType type = mask.type;
-    float rate= mask.rate;
+    scantask.trMs = trMs;
+    scantask.dataPath = dataPath;
 
 
-    scantask->mask = *(MaskGenerator::Create(phaseCount, type, rate).get());
+
+    Mask::MaskType type = reference.type;
+    float rate= reference.rate;
+    unsigned int phaseCount = reference.phaseCount;
+    unsigned int channelCount = reference.channelCount;
+
+    scantask.mask = MaskGenerator::Create(channelCount, phaseCount, type, rate);
 
     return scantask;
 
