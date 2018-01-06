@@ -9,6 +9,7 @@ acommand.txt
 
 
 # User-specific files
+.cs
 *.suo
 *.user
 *.userosscache
