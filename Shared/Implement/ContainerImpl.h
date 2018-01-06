@@ -9,6 +9,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 namespace Yap
 {
@@ -130,6 +131,25 @@ namespace Yap
 
 		std::map<std::wstring, SmartPtr<TYPE>> _elements;
 	};
+
+	template <typename TYPE>
+	class PtrArrayImpl : public IPtrArray<TYPE>
+	{
+		IMPLEMENT_LOCK_RELEASE
+
+		unsigned int GetSize() const override
+		{
+
+		}
+
+		TYPE * Element(unsigned int index) override
+		{
+
+		}
+
+
+	};
+
 }
 
 #endif // ProcessorImpl_h_20160830

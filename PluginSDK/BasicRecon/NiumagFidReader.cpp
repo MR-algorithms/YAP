@@ -46,7 +46,6 @@ NiumagFidReader::NiumagFidReader(const NiumagFidReader& rhs):
 
 NiumagFidReader::~NiumagFidReader()
 {
-	LOG_TRACE(L"NiumagFidReader destructor called.", L"BasicRecon");
 }
 
 bool Yap::NiumagFidReader::Input(const wchar_t * name, IData * data)

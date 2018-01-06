@@ -21,9 +21,9 @@ SubSampling::SubSampling(const SubSampling& rhs)
 {
 	LOG_TRACE(L"SubSampling copy constructor called.", L"BasicRecon");
 }
+
 SubSampling::~SubSampling()
 {
-	LOG_TRACE(L"SubSampling destructor called.", L"BasicRecon");
 }
 
 bool Yap::SubSampling::Input(const wchar_t * port, IData * data)

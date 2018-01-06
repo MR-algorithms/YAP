@@ -57,18 +57,28 @@ Yap::ModulePhase::ModulePhase(const ModulePhase& rhs):
 
 ModulePhase::~ModulePhase()
 {
-	LOG_TRACE(L"ModulePhase destructor called.", L"BasicRecon");
 }
 
 bool ModulePhase::Input(const wchar_t * port, IData * data)
 {
-	if (std::wstring(port) != L"Input")
+	// Do some check.
+	if (data == nullptr)
+	{
+		LOG_ERROR(L"<ModulePhase> Invalid input data!", L"BasicRecon");
 		return false;
-
-	if (data->GetDataType() != DataTypeComplexDouble && data->GetDataType() != DataTypeComplexFloat)
+	}
+	if (_wcsicmp(port, L"Input") != 0)
+	{
+		LOG_ERROR(L"<ModulePhase> Error input port name!", L"BasicRecon");
 		return false;
+	}
 
 	DataHelper input_data(data);
+	if (input_data.GetDataType() != DataTypeComplexFloat && input_data.GetDataType() != DataTypeComplexDouble)
+	{
+		LOG_ERROR(L"<ModulePhase> Error input data type!(DataTypeComplexFloat and DataTypeComplexDouble available)!", L"BasicRecon");
+		return false;
+	}
 
 	auto want_module = OutportLinked(L"Module");
 	auto want_phase = OutportLinked(L"Phase");

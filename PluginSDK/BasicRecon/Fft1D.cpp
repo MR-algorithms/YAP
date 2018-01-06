@@ -1,7 +1,6 @@
 #include "Fft1D.h"
 
 #include "Client/DataHelper.h"
-#include "Implement/DataObject.h"
 #include "Implement/LogUserImpl.h"
 
 #include <string.h>
@@ -39,7 +38,6 @@ Fft1D::Fft1D(const Fft1D& rhs)
 
 Fft1D::~Fft1D()
 {
-	LOG_TRACE(L"Fft1D destructor called.", L"BasicRecon");
 }
 
 template<typename T> bool Fft1D::DoFft(IData * data, size_t size)
@@ -120,7 +118,7 @@ void Fft1D::Plan<double>(size_t size, bool inverse, bool in_place)
 		_fft_plan_double = fftw_plan_dft_1d(int(size), (fftw_complex*)data.data(),
 			(fftw_complex*)data.data(),
 			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
-			FFTW_MEASURE);
+			FFTW_UNALIGNED);
 	}
 	else
 	{
@@ -128,7 +126,7 @@ void Fft1D::Plan<double>(size_t size, bool inverse, bool in_place)
 		_fft_plan_double = fftw_plan_dft_1d(int(size), (fftw_complex*)data.data(),
 			(fftw_complex*)result.data(),
 			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
-			FFTW_MEASURE);
+			FFTW_UNALIGNED);
 	}
 
 	_plan_data_size = static_cast<unsigned int> (size);
@@ -145,7 +143,7 @@ void Fft1D::Plan<float>(size_t size, bool inverse, bool in_place)
 		_fft_plan_float = fftwf_plan_dft_1d(int(size), (fftwf_complex*)data.data(),
 			(fftwf_complex*)data.data(),
 			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
-			FFTW_MEASURE);
+			FFTW_UNALIGNED);
 	}
 	else
 	{
@@ -153,7 +151,7 @@ void Fft1D::Plan<float>(size_t size, bool inverse, bool in_place)
 		_fft_plan_float = fftwf_plan_dft_1d(int(size), (fftwf_complex*)data.data(),
 			(fftwf_complex*)result.data(),
 			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
-			FFTW_MEASURE);
+			FFTW_UNALIGNED);
 	}
 
 	_plan_data_size = static_cast<unsigned int> (size);

@@ -13,18 +13,18 @@ namespace Yap
 		int GetDataType();
 		unsigned int GetDimensionCount();
 
-                /// Return the actual number of dimensions of the data.
+        /// Return the actual number of dimensions of the data.
 		/**
-                \remarks
-                For example, if dimension information is:
-                    \li Readout 0， 255；
-                    \li phaseencoding 0， 255；
-                    \li slice 0, 1；
-                    \li channel 0，1;
+            \remarks
+            For example, if dimension information is:
+            \li Readout 0， 255；
+            \li phaseencoding 0， 255；
+            \li slice 0, 1；
+            \li channel 0，1;
 
-                then the actual number of dimensions is 2。If we change the slice to
-                0, 2 while keeping all other dimensions unchanged, then the actual
-                number of dimensions is 3.
+            then the actual number of dimensions is 2。If we change the slice to
+            0, 2 while keeping all other dimensions unchanged, then the actual
+            number of dimensions is 3.
 		*/
 		unsigned int GetActualDimensionCount() const;
 

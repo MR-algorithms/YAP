@@ -43,7 +43,7 @@ namespace _details
 	template <> struct variable_store_type<bool> 
 	{
 		typedef bool type;
-		typedef std::vector<bool> vector_type;
+		typedef std::vector<unsigned char> vector_type;
 	};
 
 	template <> struct variable_store_type<const wchar_t * const> 
@@ -71,7 +71,7 @@ namespace _details
 
 		IMPLEMENT_SHARED(SimpleVariable<TYPE>)
 		IMPLEMENT_VARIABLE
-    public:
+	public:
 		SimpleVariable(
 			const wchar_t * id,
 			const wchar_t * description) :
@@ -203,54 +203,6 @@ namespace _details
 		std::wstring _value_string;
 	};
 
-
-//  	template <>
-// 	const wchar_t * const SimpleVariable<const wchar_t * const>::Get() const
-// 	{
-// 		return _value.c_str();
-// 	}
-// 
-// 	template <>
-// 	void SimpleVariable<const wchar_t * const>::Set(const wchar_t * const value) 
-// 	{
-// 		_value = value;
-// 	}
-// 
-// 	template <>
-// 	const wchar_t * const SimpleVariable<const wchar_t * const>::ToString() 
-// 	{
-// 		_value_string = L'\"';
-// 		_value_string += _value + L'\"';
-// 		return _value_string.c_str();
-// 	}
-// 
-// 	template <>
-// 	size_t SimpleVariable<const wchar_t * const>::FromString(const wchar_t * value_string)
-// 	{
-// 		assert(value_string != nullptr);
-// 		_value_string = value_string;
-// 		assert(!_value_string.empty());
-//         _value = _value_string;
-// 		return _value_string.size();
-// 
-// // 		auto first_quote_pos = _value_string.find_first_not_of(L" \t\n\r");
-// // 		if (first_quote_pos == wstring::npos)
-// // 			return 0;
-// // 
-// // 		if (_value_string[first_quote_pos] != L'\"')
-// // 			return 0;
-// // 
-// // 		auto second_quote_pos = _value_string.find(L'\"', first_quote_pos + 1);
-// // 		if (second_quote_pos == wstring::npos)
-// // 			return 0;
-// // 
-// // 		_value = _value_string.substr(first_quote_pos + 1, second_quote_pos - first_quote_pos - 1);
-// // 		return second_quote_pos + 1;
-// 	}
-
- 	 // End specialization for SimpleVariable<wchar_t *>.
-
-
 	template <typename T>
 	class ValueArrayVariable : public virtual IValueArrayVariable<T>
 	{
@@ -258,8 +210,8 @@ namespace _details
 			std::is_same<T, double>::value ||
 			std::is_same<T, bool>::value ||
 			std::is_same<T, const wchar_t * const>::value ||
-			std::is_same<T, IVariable*>::value,
-			"You can only use one of the following types: int, double, bool, const wchar_t * const");
+			std::is_same<T, typename SmartPtr<IVariable>>::value,
+			"You can only use one of the following types: int, double, bool, const wchar_t * const, SmartPtr<IVariable>");
 
 		typedef typename variable_store_type<T>::vector_type vector_type;
 		typedef typename variable_store_type<T>::type type;
@@ -270,33 +222,50 @@ namespace _details
 	public:
 		ValueArrayVariable(size_t size, T value, const wchar_t * id, const wchar_t * title = nullptr, const wchar_t * description = nullptr) :
 			_id{ id },
-            _title{ title != nullptr ? description : L"" },
+			_title{ title != nullptr ? description : L"" },
 			_description{ description != nullptr ? description : L"" },
-			_type{ variable_type_id<T>::array_type_id }
+			_type{ variable_type_id<T>::array_type_id },
+			_element_template{Clone(value)}
 		{
-			_elements.resize(size, value);
+			_elements.reserve(size);
+			for (size_t i = 0; i < size; ++i)
+			{
+				_elements.push_back(Clone(value));
+			}
 		}
 
 		ValueArrayVariable(const ValueArrayVariable<T>& rhs) :
-			_elements{ rhs._elements },
 			_id{ rhs._id },
 			_title{ rhs._title },
 			_description{ rhs._description },
-			_type{ rhs._type }
+			_type{ rhs._type },
+			_element_template{Clone(rhs.GetElementTemplate())}
 		{
+			_elements.reserve(rhs.GetSize());
+
+			for (size_t i = 0; i < rhs.GetSize(); ++i)
+			{
+#pragma warning(disable:4800)
+				_elements.push_back(Clone(rhs.Get(i)));
+			}
 		}
 
 		ValueArrayVariable(IValueArrayVariable<T>& rhs) :
 			_id{ rhs.GetId() },
 			_title{ rhs.GetTitle() },
 			_type{ variable_type_id<VALUE_TYPE>::array_type_id },
-			_description{ rhs.GetDescription() }
+			_description{ rhs.GetDescription() },
+			_element_template{Clone(rhs.GetElementTemplate())}
 		{
-			auto source_elements = rhs.Data();
 			_elements.resize(rhs.GetSize());
 			for (size_t i = 0; i < rhs.GetSize(); ++i) {
-				_elements[i] = source_elements[i];
+				_elements[i] = Clone(rhs.Get(i));
 			}
+		}
+
+		virtual T GetElementTemplate() const
+		{
+			return _element_template;
 		}
 
 		virtual size_t GetSize() const override
@@ -312,6 +281,7 @@ namespace _details
 		virtual T Get(size_t index) const override
 		{
 			assert(index < _elements.size());
+#pragma warning(disable:4800)	// casting from unsigned char to bool
 			return _elements[index];
 		}
 
@@ -335,11 +305,17 @@ namespace _details
 				{
 					first = false;
 				}
+#pragma warning(disable:4800)
 				_value_string += ElementToString(element);
 			}
 			_value_string += L']';
 
 			return _value_string.c_str();
+		}
+
+		T Clone(const T& source) const
+		{
+			return source;
 		}
 
 		virtual size_t FromString(const wchar_t * value_string) override
@@ -356,6 +332,7 @@ namespace _details
 
 			size_t begin = left_bracket_pos + 1;
 
+			
 			for (;;)
 			{
 				type element;
@@ -402,33 +379,7 @@ namespace _details
 
 		vector_type _elements;
 		std::wstring _value_string;
-	};
-
-	template <typename T>
-	class ReferenceArrayVariable : public ValueArrayVariable<T>, public IElementReference<T>
-	{
-		IMPLEMENT_SHARED(ReferenceArrayVariable<T>)
-	public:
-		using ValueArrayVariable<T>::ValueArrayVariable;
-
-		virtual T& Element(size_t index) override
-		{
-			assert(index < _elements.size());
-			return _elements[index];
-		}
-	};
-
-	template <typename T>
-	class RawArrayVariable : public ReferenceArrayVariable<T>, public IRawArray<T>
-	{
-		IMPLEMENT_SHARED(RawArrayVariable<T>)
-	public:
-		using ReferenceArrayVariable<T>::ReferenceArrayVariable;
-
-		virtual T * Data() override
-		{
-			return _elements.data();
-		}
+		type _element_template;
 	};
 
 	// Specialization for ValueArrayVariable<wchar_t *>.
@@ -448,18 +399,25 @@ namespace _details
 	}
 
 	template <>
-	IVariable * ValueArrayVariable<IVariable *>::Get(size_t index) const
+	const wchar_t * const ValueArrayVariable<const wchar_t * const>::GetElementTemplate() const
 	{
-		assert(index < _elements.size());
-		return (const_cast<ValueArrayVariable<IVariable*>*>(this))->_elements[index].get();
+		return _element_template.c_str();
 	}
 
 	template <>
-	void ValueArrayVariable<IVariable*>::Set(size_t index, IVariable * value) 
+	SmartPtr<IVariable> ValueArrayVariable<SmartPtr<IVariable>>::Get(size_t index) const
 	{
 		assert(index < _elements.size());
-		_elements[index] = YapShared(value);
+		return (const_cast<ValueArrayVariable<SmartPtr<IVariable>>*>(this))->_elements[index];
 	}
+
+	template <>
+	void ValueArrayVariable<SmartPtr<IVariable>>::Set(size_t index, SmartPtr<IVariable> value) 
+	{
+		assert(index < _elements.size());
+		_elements[index] = value;
+	}
+
 
 	// Begin specialization for ValueArrayVariable<bool>.
 	template <>
@@ -488,15 +446,23 @@ namespace _details
 		}
 	}
 
-
 	// Begin specialization for ArrayVariable<SmartPtr<IVariable>>
+	template<>
+	SmartPtr<IVariable> ValueArrayVariable<SmartPtr<IVariable>>::Clone(const SmartPtr<IVariable>& source) const
+	{
+		return YapShared<IVariable>(source->Clone());
+	}
 
 	template <>
-	ValueArrayVariable<IVariable*>::ValueArrayVariable(size_t size, 
-		IVariable* value, const wchar_t * id, const wchar_t * title, const wchar_t * description) 
+	ValueArrayVariable<SmartPtr<IVariable>>::ValueArrayVariable(size_t size, 
+		SmartPtr<IVariable> value, const wchar_t * id, const wchar_t * title, const wchar_t * description) :
+		_id{id == nullptr ? L"" : id}, 
+		_title{title == nullptr ? L"" : title},
+		_description {description == nullptr ? L"" : _description},
+		_element_template{YapShared(value->Clone())}
 	{
 		assert(size >= 1 && "There should be at least one element in the array.");
-		assert(value != nullptr && "The template could not be null.");
+		assert(value && "The template could not be null.");
 
 		_type = variable_type_id<IVariable*>::array_type_id;
 
@@ -509,10 +475,11 @@ namespace _details
 	}
 
 	template <>
-	ValueArrayVariable<IVariable*>::ValueArrayVariable(const ValueArrayVariable<IVariable*>& rhs) :
+	ValueArrayVariable<SmartPtr<IVariable>>::ValueArrayVariable(const ValueArrayVariable<SmartPtr<IVariable>>& rhs) :
 		_id{ rhs._id },
 		_title{rhs._title},
-		_description{ rhs._description }
+		_description{ rhs._description },
+		_element_template{YapShared(rhs._element_template->Clone())}
 	{
 		_type = rhs._type;
 
@@ -524,35 +491,64 @@ namespace _details
 	}
 
 	template <>
-	IVariable *& ReferenceArrayVariable<IVariable*>::Element(size_t index)
-	{
-		assert(index < _elements.size());
-		return _elements[index].get();
-	}
-
-	template <>
-	void ReferenceArrayVariable<IVariable*>::SetSize(size_t size) 
-	{
-		size_t old_size = _elements.size();
-		_elements.resize(size);
-		for (size_t i = old_size; i < size; ++i) 
-		{
-			_elements[i] = YapShared(_elements[0]->Clone());
-		}
-	}
-
-	template <>
-	std::wstring ReferenceArrayVariable<IVariable*>::ElementToString(type element)
+	std::wstring ValueArrayVariable<SmartPtr<IVariable>>::ElementToString(SmartPtr<IVariable> element)
 	{
 		return element->ToString();
 	}
 
 	template <>
-	size_t ReferenceArrayVariable<IVariable*>::ElementFromString(type& element, const wchar_t * value_string)
+	size_t ValueArrayVariable<SmartPtr<IVariable>>::ElementFromString(type& element, const wchar_t * value_string)
 	{
+		assert(_element_template);
+		element = YapShared(_element_template->Clone());
 		return element->FromString(value_string);
 	}
 
+	template <>
+	void ValueArrayVariable<SmartPtr<IVariable>>::SetSize(size_t size)
+	{
+		size_t old_size = _elements.size();
+		_elements.resize(size);
+		for (size_t i = old_size; i < size; ++i)
+		{
+			_elements[i] = YapShared(_elements[0]->Clone());
+		}
+	}
+
+	template <typename T>
+	class ReferenceArrayVariable : public ValueArrayVariable<T>, public IElementReference<T>
+	{
+		IMPLEMENT_SHARED(ReferenceArrayVariable<T>)
+	public:
+		/// delegate constructors to base class ValueArrayVariable<T>.
+		using ValueArrayVariable<T>::ValueArrayVariable;
+
+		virtual T& Element(size_t index) override
+		{
+			assert(index < _elements.size());
+			return _elements[index];
+		}
+	};
+
+	template <>
+	SmartPtr<IVariable>& ReferenceArrayVariable<SmartPtr<IVariable>>::Element(size_t index)
+	{
+		assert(index < _elements.size());
+		return _elements[index];
+	}
+
+	template <typename T>
+	class RawArrayVariable : public ReferenceArrayVariable<T>, public IRawArray<T>
+	{
+		IMPLEMENT_SHARED(RawArrayVariable<T>)
+	public:
+		using ReferenceArrayVariable<T>::ReferenceArrayVariable;
+
+		virtual T * Data() override
+		{
+			return _elements.data();
+		}
+	};
 
 	struct StructVariable : public IStructVariable
 	{
@@ -615,7 +611,7 @@ namespace _details
 			}
 		}
 
-        virtual bool IsEnabled() const override
+		virtual bool IsEnabled() const override
 		{
 			return _enabled;
 		}
@@ -640,7 +636,7 @@ namespace _details
 
 				_value_string += L'\"';
 				_value_string += member->GetId();
-				_value_string += L"\"=";
+				_value_string += L"\" : ";
 				_value_string += member->ToString();
 			}
 
@@ -683,7 +679,7 @@ namespace _details
 					return 0;
 
 				pos = _value_string.find_first_not_of(L" \t\n\r", pos + 1);
-				if (_value_string[pos] != L'=')
+				if (_value_string[pos] != L':')
 					return 0;
 
 				auto member = _members->Find(member_id.c_str());
@@ -725,20 +721,20 @@ using namespace _details;
 VariableSpace::VariableSpace() :
 	_variables(YapShared(new PtrContainerImpl<IVariable>))
 {
-    InitTypes();
+	InitTypes();
 }
 
 VariableSpace::VariableSpace(IVariableContainer * variables) :
 	_variables(YapShared(variables))
 {
-    InitTypes();
+	InitTypes();
 }
 
 VariableSpace::VariableSpace(const VariableSpace& rhs) :
 	_variables{ YapShared(rhs.Variables()->Clone()) },
 	_types {rhs._types}
 {
-    InitTypes();
+	InitTypes();
 }
 
 VariableSpace::VariableSpace(VariableSpace&& rhs) :
@@ -771,15 +767,15 @@ const VariableSpace& VariableSpace::operator = (VariableSpace&& rhs)
 
 bool VariableSpace::InitTypes()
 {
-    _types.emplace(L"int", YapShared(new SimpleVariable<int>(L"int", nullptr)));
-    _types.emplace(L"float", YapShared(new SimpleVariable<double>(L"float", nullptr)));
-    _types.emplace(L"string", YapShared(new SimpleVariable<const wchar_t * const>(L"string", nullptr)));
-    _types.emplace(L"bool", YapShared(new SimpleVariable<bool>(L"bool", nullptr)));
+	_types.emplace(L"int", YapShared(new SimpleVariable<int>(L"int", nullptr)));
+	_types.emplace(L"float", YapShared(new SimpleVariable<double>(L"float", nullptr)));
+	_types.emplace(L"string", YapShared(new SimpleVariable<const wchar_t * const>(L"string", nullptr)));
+	_types.emplace(L"bool", YapShared(new SimpleVariable<bool>(L"bool", nullptr)));
 	
 	_basic_array_types.emplace(L"int", YapShared(new RawArrayVariable<int>(1, 0, L"array<int>", nullptr)));
 	_basic_array_types.emplace(L"float", YapShared(new RawArrayVariable<double>(1, 0.0, L"array<float>", nullptr)));
 	_basic_array_types.emplace(L"bool", YapShared(new ValueArrayVariable<bool>(1, false, L"array<bool>", nullptr)));
-    _basic_array_types.emplace(L"string", YapShared(new ValueArrayVariable<const wchar_t * const>(1, L"", L"array<string>", nullptr)));
+	_basic_array_types.emplace(L"string", YapShared(new ValueArrayVariable<const wchar_t * const>(1, L"", L"array<string>", nullptr)));
 
 	return true;
 }
@@ -800,23 +796,23 @@ bool VariableSpace::Add(int type, const wchar_t * name, const wchar_t * descript
 }
 
 bool VariableSpace::Add(const wchar_t * type,
-                        const wchar_t * id,
-                        const wchar_t * description)
+						const wchar_t * id,
+						const wchar_t * description)
 {
-    auto iter = _types.find(type);
-    if (iter == _types.end())
-        return false;
+	auto iter = _types.find(type);
+	if (iter == _types.end())
+		return false;
 
-    if (!iter->second)
-        return false;
+	if (!iter->second)
+		return false;
 
-    auto new_variable = dynamic_cast<IVariable*>(iter->second->Clone());
-    if (new_variable == nullptr)
-        return false;
+	auto new_variable = dynamic_cast<IVariable*>(iter->second->Clone());
+	if (new_variable == nullptr)
+		return false;
 
-    new_variable->SetId(id);
-    new_variable->SetDescription(description);
-    return _variables->Add(id, new_variable);
+	new_variable->SetId(id);
+	new_variable->SetDescription(description);
+	return _variables->Add(id, new_variable);
 }
 
 bool VariableSpace::AddArray(const wchar_t * element_type_id, 
@@ -840,8 +836,8 @@ bool VariableSpace::AddArray(const wchar_t * element_type_id,
 		if (iter == _types.end() || !iter->second)
 			return false;
 
-		auto template_element = dynamic_cast<IVariable*>(iter->second->Clone());
-		new_variable = new ReferenceArrayVariable<IVariable*>(1, template_element, id);
+		auto template_element = YapShared<IVariable>(iter->second->Clone());
+		new_variable = new ReferenceArrayVariable<SmartPtr<IVariable>>(1, template_element, id);
 	}
 
 	new_variable->SetDescription(description);
@@ -850,8 +846,8 @@ bool VariableSpace::AddArray(const wchar_t * element_type_id,
 
 bool VariableSpace::Add(IVariable* variable)
 {
-    assert(variable != nullptr);
-    return _variables->Add(variable->GetId(), variable);
+	assert(variable != nullptr);
+	return _variables->Add(variable->GetId(), variable);
 }
 
 IVariableContainer* VariableSpace::Variables()
@@ -924,16 +920,16 @@ IVariable * VariableSpace::GetVariable(IVariableContainer * variables,
 
 			auto index = _wtoi(variable_id.substr(left_square_pos + 1, right_square_pos - left_square_pos - 1).c_str());
 
-			auto array_variable = dynamic_cast<IValueArrayVariable<IVariable*>*>(variable);
+			auto array_variable = dynamic_cast<IValueArrayVariable<SmartPtr<IVariable>>*>(variable);
 			assert(array_variable != nullptr);
 
 			if (index < 0 || index >= int(array_variable->GetSize()))
 				throw VariableException(id, VariableException::OutOfRange);
 
-			auto element_reference = dynamic_cast<IElementReference<IVariable*>*>(variable);
+			auto element_reference = dynamic_cast<IElementReference<SmartPtr<IVariable>>*>(variable);
 			assert(element_reference != nullptr);
 
-			lhs_variable = element_reference->Element(index);
+			lhs_variable = element_reference->Element(index).get();
 		}
 		else
 		{
@@ -975,8 +971,8 @@ IVariable * VariableSpace::GetVariable(const wchar_t * id, int expected_type)
 
 shared_ptr<VariableSpace> VariableSpace::Load(const wchar_t * path)
 {
-    VdfParser parser;
-    return parser.CompileFile(path);
+	VdfParser parser;
+	return parser.CompileFile(path);
 }
 
 void VariableSpace::Reset()
@@ -986,46 +982,46 @@ void VariableSpace::Reset()
 
 bool VariableSpace::TypeExists(const wchar_t * type) const
 {
-    return _types.find(type) != _types.end();
+	return _types.find(type) != _types.end();
 }
 
 bool VariableSpace::VariableExists(const wchar_t *variable_id) const
 {
-    auto This = const_cast<VariableSpace*>(this);
-    return This->GetVariable(variable_id) != nullptr;
+	auto This = const_cast<VariableSpace*>(this);
+	return This->GetVariable(variable_id) != nullptr;
 }
 
 const IVariable * VariableSpace::GetType(const wchar_t * type) const
 {
-    auto iter = _types.find(type);
-    return (iter != _types.end()) ? iter->second.get() : nullptr;
+	auto iter = _types.find(type);
+	return (iter != _types.end()) ? iter->second.get() : nullptr;
 }
 
 bool VariableSpace::AddType(const wchar_t * type_id, IPtrContainer<IVariable> * variables)
 {
-    try
-    {
-        auto variable = new StructVariable(variables, type_id, nullptr);
-        return AddType(type_id, variable);
-    }
-    catch(bad_alloc&)
-    {
-        return false;
-    }
+	try
+	{
+		auto variable = new StructVariable(variables, type_id, nullptr);
+		return AddType(type_id, variable);
+	}
+	catch(bad_alloc&)
+	{
+		return false;
+	}
 }
 
 bool VariableSpace::AddType(const wchar_t * type_id, IVariable *type)
 {
-    assert(_types.find(type_id) == _types.end());
-    assert(type != nullptr);
-    assert(type_id != nullptr);
+	assert(_types.find(type_id) == _types.end());
+	assert(type != nullptr);
+	assert(type_id != nullptr);
 
-    if (_types.find(type_id) != _types.end())
-        return false;
+	if (_types.find(type_id) != _types.end())
+		return false;
 
-    _types.insert({type_id, YapShared(type)});
+	_types.insert({type_id, YapShared(type)});
 
-    return true;
+	return true;
 }
 
 bool VariableSpace::ResizeArray(const wchar_t * id, size_t size)
@@ -1045,6 +1041,19 @@ bool VariableSpace::ResizeArray(const wchar_t * id, size_t size)
 	array_base->SetSize(size);
 
 	return true;
+}
+
+size_t VariableSpace::GetArraySize(const wchar_t * id)
+{
+	auto variable = GetVariable(id);
+	if (variable == nullptr)
+		return -1;
+
+	auto array = dynamic_cast<IArrayBase*>(variable);
+	if (array == nullptr)
+		return -1;
+
+	return array->GetSize();
 }
 
 }	// end Yap

@@ -1,7 +1,6 @@
 #include "DcRemover.h"
 
 #include "Client/DataHelper.h"
-#include "Implement/DataObject.h"
 #include "Implement/LogUserImpl.h"
 
 #include <string>
@@ -77,7 +76,6 @@ Yap::DcRemover::DcRemover(const DcRemover& rhs)
 
 DcRemover::~DcRemover()
 {
-	LOG_TRACE(L"DcRemover destructor called.", L"BasicRecon");
 }
 
 bool DcRemover::Input(const wchar_t * port, IData * data)

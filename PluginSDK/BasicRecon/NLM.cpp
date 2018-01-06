@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "NLM.h"
 #include "Client/DataHelper.h"
-#include "Implement/DataObject.h"
 #include "Implement/LogUserImpl.h"
 
 using namespace std;
@@ -24,7 +23,6 @@ NLM::NLM(const NLM& rhs)
 
 NLM::~NLM()
 {
-	LOG_TRACE(L"NLM destructor called.", L"BasicRecon");
 }
 
 bool Yap::NLM::Input(const wchar_t * name, IData * data)

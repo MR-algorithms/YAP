@@ -27,7 +27,6 @@ Yap::ChannelDataCollector::ChannelDataCollector(const ChannelDataCollector& rhs)
 
 ChannelDataCollector::~ChannelDataCollector(void)
 {
-	LOG_TRACE(L"ChannelDataCollector destructor called.", L"BasicRecon");
 }
 
 bool Yap::ChannelDataCollector::Input(const wchar_t * name, IData * data)

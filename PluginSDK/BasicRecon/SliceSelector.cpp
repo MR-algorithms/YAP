@@ -1,6 +1,5 @@
 #include "SliceSelector.h"
 #include "Client/DataHelper.h"
-#include "Implement/DataObject.h"
 #include "Implement/LogUserImpl.h"
 
 #include <complex>
@@ -26,7 +25,6 @@ Yap::SliceSelector::SliceSelector(const SliceSelector & rhs)
 
 SliceSelector::~SliceSelector()
 {
-	LOG_TRACE(L"SliceSelector destructor called.", L"BasicRecon");
 }
 
 bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)

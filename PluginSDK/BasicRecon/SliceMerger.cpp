@@ -3,7 +3,6 @@
 
 #include <complex.h>
 #include "Client/DataHelper.h"
-#include "Implement/DataObject.h"
 #include "Implement/LogUserImpl.h"
 
 using namespace Yap;
@@ -27,7 +26,6 @@ SliceMerger::SliceMerger(const SliceMerger& rhs)
 
 SliceMerger::~SliceMerger()
 {
-	LOG_TRACE(L"SliceMerger destructor called.", L"BasicRecon");
 }
 
 bool SliceMerger::Input(const wchar_t * port, IData * data)

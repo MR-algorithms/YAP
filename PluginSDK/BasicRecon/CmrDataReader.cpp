@@ -51,7 +51,6 @@ CmrDataReader::CmrDataReader(const CmrDataReader& rhs)
 
 CmrDataReader::~CmrDataReader()
 {
-	LOG_TRACE(L"CmrDataReader destructor called.", L"BasicRecon");
 }
 
 bool CmrDataReader::Input(const wchar_t * name, IData * data)

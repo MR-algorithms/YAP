@@ -3,7 +3,6 @@
 
 #include "Client/DataHelper.h"
 #include <complex>
-#include "Implement/DataObject.h"
 #include "Implement/LogUserImpl.h"
 
 using namespace Yap;
@@ -27,7 +26,6 @@ SliceIterator::SliceIterator( const SliceIterator& rhs)
 
 SliceIterator::~SliceIterator(void)
 {
-	LOG_TRACE(L"SliceIterator destructor called.", L"BasicRecon");
 }
 
 bool SliceIterator::Input(const wchar_t * name, IData * data)

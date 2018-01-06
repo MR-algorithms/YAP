@@ -132,7 +132,6 @@ DataTypeConvertor::DataTypeConvertor(const DataTypeConvertor& rhs) :
 
 DataTypeConvertor::~DataTypeConvertor()
 {
-	LOG_TRACE(L"DataTypeConvertor destructor called.", L"BasicRecon");
 }
 
 static int DataTypeFromPortName(const wchar_t * port_name)

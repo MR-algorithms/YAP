@@ -31,7 +31,6 @@ NiumagFidWriter::NiumagFidWriter(const NiumagFidWriter& rhs) :
 
 NiumagFidWriter::~NiumagFidWriter()
 {
-	LOG_TRACE(L"NiumagFidWriter destructor called.", L"BasicRecon");
 }
 
 bool Yap::NiumagFidWriter::Input(const wchar_t * name, IData * data)
@@ -107,13 +106,17 @@ std::wstring Yap::NiumagFidWriter::GetFilePath(const wchar_t * output_folder, co
 		file_path += L".";
 	}
 
-	time_t t = time(0);
-	char tmp[64];
-	strftime(tmp, sizeof(tmp), "%Y%m%d-%H%M%S", localtime(&t));
-	string str(tmp);
-	std::wstring wstr;
-	wstr.assign(str.begin(), str.end());
-	file_path += wstr;
+	struct tm t;
+	time_t now;
+	localtime_s(&t, &now);
+	wstring time{ to_wstring(t.tm_year + 1900) };
+	time += to_wstring(t.tm_mon + 1);
+	time += to_wstring(t.tm_mday);
+	time += L"-";
+	time += to_wstring(t.tm_hour);
+	time += to_wstring(t.tm_min);
+	time += to_wstring(t.tm_sec);
+	file_path += time;
 
 	file_path += L".fid";
 
