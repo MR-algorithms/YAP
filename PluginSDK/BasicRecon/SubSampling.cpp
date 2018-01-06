@@ -19,7 +19,7 @@ SubSampling::SubSampling():
 SubSampling::SubSampling(const SubSampling& rhs)
 	:ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"SubSampling constructor called.", L"BasicRecon");
+	LOG_TRACE(L"SubSampling copy constructor called.", L"BasicRecon");
 }
 SubSampling::~SubSampling()
 {

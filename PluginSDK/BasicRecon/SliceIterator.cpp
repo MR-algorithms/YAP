@@ -20,7 +20,7 @@ SliceIterator::SliceIterator(void) :
 SliceIterator::SliceIterator( const SliceIterator& rhs)
 	: ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"SliceIterator constructor called.", L"BasicRecon");
+	LOG_TRACE(L"SliceIterator copy constructor called.", L"BasicRecon");
 
 }
 

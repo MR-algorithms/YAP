@@ -34,7 +34,7 @@ SamplingMaskCreator::SamplingMaskCreator():
 SamplingMaskCreator::SamplingMaskCreator(const SamplingMaskCreator& rhs)
 	:ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"SampleingMaskCreator constructor called.", L"BasicRecon");
+	LOG_TRACE(L"SampleingMaskCreator copy constructor called.", L"BasicRecon");
 }
 SamplingMaskCreator::~SamplingMaskCreator()
 {
@@ -58,7 +58,7 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
 		double sample_percent = GetProperty<double>(L"SamplePercent");
 		double radius = GetProperty<double>(L"Radius");
 
-		auto mask = GenerateRandomMask(width, height, pow, sample_percent, radius);
+		auto mask = GenerateRandomMask(width, height, float(pow), float(sample_percent), float(radius));
 		float * mask_buffer = nullptr;
 		try
 		{

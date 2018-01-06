@@ -5,6 +5,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include "Yap/PipelineCompiler.h"
+#include "BasicRecon/Radiomics.h"
 
 using namespace Yap;
 
@@ -1021,4 +1022,9 @@ BOOST_AUTO_TEST_CASE(processor_ZeroFilling)
 	BOOST_CHECK(top != nullptr);
 	BOOST_CHECK(top->GetType() == VariableInt);
 	BOOST_CHECK(std::wstring(top->ToString()) == L"0");
+}
+
+BOOST_AUTO_TEST_CASE(test_demo_CreateData_func)
+{
+
 }

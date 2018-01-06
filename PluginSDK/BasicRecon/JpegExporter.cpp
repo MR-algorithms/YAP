@@ -141,7 +141,7 @@ JpegExporter::JpegExporter() :
 JpegExporter::JpegExporter(const JpegExporter& rhs)
 	: ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"JepgExporter constructor called.", L"BasicRecon");
+	LOG_TRACE(L"JepgExporter copy constructor called.", L"BasicRecon");
 	_impl = std::shared_ptr<JpegExporterImp>(new JpegExporterImp(*rhs._impl));
 }
 

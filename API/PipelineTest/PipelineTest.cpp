@@ -86,20 +86,20 @@ void PipelineTest()
 	VdfParser parser;
 	auto variable_manager = parser.CompileFile(L"sysParams_yap.txt");
 
-	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"Pipelines\\ImgPythonShow.pipeline");
-	if (pipeline.get() == nullptr)
 	{
-		return;
-	}
-	pipeline->SetGlobalVariables(variable_manager->Variables());
+		PipelineCompiler compiler;
+		auto pipeline = compiler.CompileFile(L"Pipelines\\Radiomics_test.pipeline");
+		if (pipeline.get() == nullptr)
+		{
+			return;
+		}
+		pipeline->SetGlobalVariables(variable_manager->Variables());
 
-	if (pipeline) 
-	{
-		pipeline->Input(L"Input", nullptr);
+		if (pipeline)
+		{
+			pipeline->Input(L"Input", nullptr);
+		}
 	}
-
-	auto sfo1 = variable_manager->Get<double>(L"SFO1");
 
 	ModuleManager::GetInstance().Release();
 }

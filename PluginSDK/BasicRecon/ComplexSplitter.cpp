@@ -77,7 +77,7 @@ void Yap::ComplexSplitter::Split(std::complex<double> * data,
 Yap::ComplexSplitter::ComplexSplitter(const ComplexSplitter& rhs)
 	:ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"ComplexSplitter constructor called.", L"BasicRecon");
+	LOG_TRACE(L"ComplexSplitter copy constructor called.", L"BasicRecon");
 }
 
 void ComplexSplitter::ExtractReal(std::complex<double> * data, double * real, size_t size)

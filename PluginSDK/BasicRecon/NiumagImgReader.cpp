@@ -45,7 +45,7 @@ NiumagImgReader::NiumagImgReader():
 Yap::NiumagImgReader::NiumagImgReader(const NiumagImgReader& rhs):
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"NiumagImgReader constructor called.", L"BasicRecon");
+	LOG_TRACE(L"NiumagImgReader copy constructor called.", L"BasicRecon");
 }
 
 NiumagImgReader::~NiumagImgReader()

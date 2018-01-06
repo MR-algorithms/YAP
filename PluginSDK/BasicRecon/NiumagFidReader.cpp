@@ -41,7 +41,7 @@ NiumagFidReader::NiumagFidReader(void):
 NiumagFidReader::NiumagFidReader(const NiumagFidReader& rhs):
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"NiumagFidReader constructor called.", L"BasicRecon");
+	LOG_TRACE(L"NiumagFidReader copy constructor called.", L"BasicRecon");
 }
 
 NiumagFidReader::~NiumagFidReader()
@@ -121,6 +121,5 @@ bool Yap::NiumagFidReader::ReadNiumagFidData()
 	{
 		return false;
 	}
-
 	return true;
 }

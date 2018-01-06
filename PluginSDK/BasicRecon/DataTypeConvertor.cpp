@@ -127,7 +127,7 @@ DataTypeConvertor::DataTypeConvertor(void):
 DataTypeConvertor::DataTypeConvertor(const DataTypeConvertor& rhs) :
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"DataTypeConvertor constructor called.", L"BasicRecon");
+	LOG_TRACE(L"DataTypeConvertor copy constructor called.", L"BasicRecon");
 }
 
 DataTypeConvertor::~DataTypeConvertor()

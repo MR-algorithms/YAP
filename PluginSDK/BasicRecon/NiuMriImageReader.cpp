@@ -45,7 +45,7 @@ NiuMriImageReader::NiuMriImageReader(void) :
 Yap::NiuMriImageReader::NiuMriImageReader(const NiuMriImageReader& rhs) :
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"NiuMriImageReader constructor called.", L"BasicRecon");
+	LOG_TRACE(L"NiuMriImageReader copy constructor called.", L"BasicRecon");
 }
 
 Yap::NiuMriImageReader::~NiuMriImageReader()

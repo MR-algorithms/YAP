@@ -242,7 +242,7 @@ bool Yap::Module::Load(const wchar_t * plugin_path, IProcessorContainer& importe
 			auto python_user = python_func();
 			if (python_user != nullptr)
 			{
-				python_user->SetPython(&PythonImpl::GetInstance());
+				python_user->SetPython(PythonFactory::GetPython());
 			}
 		}
 	}

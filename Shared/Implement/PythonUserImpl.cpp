@@ -10,7 +10,6 @@ std::shared_ptr<PythonUserImpl> PythonUserImpl::s_instance;
 Yap::PythonUserImpl::~PythonUserImpl()
 {
 	LOG_TRACE(L"PythonUserImpl Deconstructor", L"PythonUserImpl");
-	std::cout << L"PythonUserImpl destructor" << std::endl;
 }
 
 Yap::PythonUserImpl& Yap::PythonUserImpl::GetInstance()

@@ -46,7 +46,7 @@ CmrDataReader::CmrDataReader(void) :
 CmrDataReader::CmrDataReader(const CmrDataReader& rhs)
 	: ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"CmrDataReader constructor called.", L"BasicRecon");
+	LOG_TRACE(L"CmrDataReader copy constructor called.", L"BasicRecon");
 }
 
 CmrDataReader::~CmrDataReader()
@@ -85,7 +85,7 @@ bool CmrDataReader::ReadRawData(unsigned int channel_index)
 
 	std::vector<float*> channel_data_buffer;
 	std::vector<unsigned int> slices;
-	unsigned int width, height, dim4, total_slice_count = 0; // 对于未进行累加处理的数据，得到的slice实际是 真实的slice  × 实际累加次数。
+	unsigned int width = 0, height = 0, dim4 = 0, total_slice_count = 0; // 对于未进行累加处理的数据，得到的slice实际是 真实的slice  × 实际累加次数。
 	int group_count = GetProperty<int>(L"GroupCount");
 	if (group_count == 0)
 	{

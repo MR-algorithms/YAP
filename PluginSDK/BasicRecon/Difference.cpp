@@ -34,7 +34,7 @@ Difference::Difference() : ProcessorImpl(L"Difference")
 Difference::Difference(const Difference& rhs)
 	:ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"Difference constructor called.", L"BasicRecon");
+	LOG_TRACE(L"Difference copy constructor called.", L"BasicRecon");
 }
 
 

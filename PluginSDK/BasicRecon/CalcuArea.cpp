@@ -18,7 +18,7 @@ CalcuArea::CalcuArea() :
 CalcuArea::CalcuArea(const CalcuArea& rhs) :
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"CalcuArea constructor called.", L"BasicRecon");
+	LOG_TRACE(L"CalcuArea copy constructor called.", L"BasicRecon");
 }
 
 CalcuArea::~CalcuArea()

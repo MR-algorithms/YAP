@@ -185,10 +185,13 @@
     <ClInclude Include="Difference.h" />
     <ClInclude Include="Fft1D.h" />
     <ClInclude Include="Fft2D.h" />
+    <ClInclude Include="FilesIterator.h" />
     <ClInclude Include="FineCF.h" />
+    <ClInclude Include="FolderIterator.h" />
     <ClInclude Include="imageProcessing.h" />
     <ClInclude Include="JpegExporter.h" />
     <ClInclude Include="ModulePhase.h" />
+    <ClInclude Include="NiiReader.h" />
     <ClInclude Include="NiumagFidReader.h" />
     <ClInclude Include="NiumagFidWriter.h" />
     <ClInclude Include="NiumagImgReader.h" />
@@ -196,6 +199,8 @@
     <ClInclude Include="NiuMriImageWriter.h" />
     <ClInclude Include="NLM.h" />
     <ClInclude Include="Nlmeans.h" />
+    <ClInclude Include="Radiomics.h" />
+    <ClInclude Include="RFeaturesCollector.h" />
     <ClInclude Include="SamplingMaskCreator.h" />
     <ClInclude Include="SliceIterator.h" />
     <ClInclude Include="SliceMerger.h" />
@@ -272,7 +277,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="FilesIterator.cpp" />
     <ClCompile Include="FineCF.cpp" />
+    <ClCompile Include="FolderIterator.cpp" />
     <ClCompile Include="JpegExporter.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
@@ -285,6 +292,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="NiiReader.cpp" />
     <ClCompile Include="NiumagFidReader.cpp" />
     <ClCompile Include="NiumagFidWriter.cpp" />
     <ClCompile Include="NiumagImgReader.cpp" />
@@ -292,6 +300,8 @@
     <ClCompile Include="NiuMriImageWriter.cpp" />
     <ClCompile Include="NLM.cpp" />
     <ClCompile Include="Nlmeans.cpp" />
+    <ClCompile Include="Radiomics.cpp" />
+    <ClCompile Include="RFeaturesCollector.cpp" />
     <ClCompile Include="SamplingMaskCreator.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
