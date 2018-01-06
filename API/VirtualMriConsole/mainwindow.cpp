@@ -1,66 +1,115 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QtNetwork/QHostAddress>
+
 #include <QMessageBox>
+#include <QByteArray>
+#include "SampleDataProtocol.h"
+#include <QDebug>
+#include <vector>
+#include "Windows.h"
+#include "virtualconsole.h"
+#include "scantask.h"
+#include "mask.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    reconHost(nullptr),
-    tcpSocket(nullptr),
-    connected(false)
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->connectButton->setEnabled(true);
+    ui->scanButton->setEnabled(false);
+    ui->stopButton->setEnabled(false);
+
+    QRegExp rx("^(1|[0]?(\\.\\d{1,2})?)$");
+    QRegExpValidator *pReg = new QRegExpValidator(rx, ui->editMaskFile);
+
+    ui->editMaskFile->setValidator(pReg);
+
 }
 
 MainWindow::~MainWindow()
 {
+    VirtualConsole::GetHandle().Disconnect();
+
     delete ui;
 }
 
-void MainWindow::slotConnected()
-{
-    QString message = "Hello!";
 
-    if (tcpSocket->write(message.toLatin1(), message.length()) != message.length())
-    {
-        return;
-    }
+
+void MainWindow::on_connectButton_clicked()
+{
+
+    QString ip_address = ui->editReconHost->text();
+    std::wstring temp = ip_address.toStdWString();
+
+    VirtualConsole::GetHandle().SetReconHost(temp.c_str(), ui->editReconPort->text().toInt());
+    VirtualConsole::GetHandle().Connect();
+
+    //ui->connectButton->setText("Disconnect");
+    ui->connectButton->setEnabled(false);
+    ui->scanButton->setEnabled(true);
+
+
+
+
 }
 
-void MainWindow::slotDisconnected()
+
+
+void MainWindow::on_scanButton_clicked()
 {
+
+    ui->scanButton->setEnabled(false);
+    ui->stopButton->setEnabled(true);
+
+    int trMs = ui->editTR->text().toInt();
+    float rate = ui->editMaskFile->text().toFloat();
+    Scan::Mask::MaskType type = static_cast<Scan::Mask::MaskType>( ui->maskComboBox->currentIndex() );
+
+    //Hardcode: dataPath, channeleCount, phaseCount,
+    auto scantask = Scan::ScantaskGenerator::Create(trMs, Scan::Mask(rate, type, 256, 4),L"D:\\test_data\\RawData_256\\RawData");
+
+    qDebug()<<"MainWidow: onScanButton_clicked";
+
+    VirtualConsole::GetHandle().PrepareScantask(scantask);
+    VirtualConsole::GetHandle().Scan();
+
+    //QMessageBox::warning(this,"Warning", "Not connected", QMessageBox::Yes);//, QMessageBox::No);
+
+
 }
 
-void MainWindow::slotDataReceived()
+void MainWindow::on_stopButton_clicked()
 {
+
+    ui->editInfo->appendPlainText(QString("Stoped!"));
+    ui->scanButton->setEnabled(true);
+    ui->stopButton->setEnabled(false);
+
+    VirtualConsole::GetHandle().Stop();
+    //qDebug()<<"Scan stopped!";
 }
 
-void MainWindow::on_buttonStart_clicked()
+void MainWindow::on_testButton_clicked()
 {
-    if (!connected)
+
+    qDebug()<<"on_testButton_clicked !";
+
+
+    /*
+
+    uint16_t temp = 0x3424;
+    QByteArray tempArray = QByteArray::fromRawData((char*)(&temp), sizeof(uint16_t)*5);
+
+    for(int i = 0; i < 10000000; i ++)
     {
-        QString ip_address = ui->editReconHost->text();
-        reconHost = std::make_shared<QHostAddress>();
 
-        if (!reconHost->setAddress(ip_address))
-        {
-            QMessageBox::information(this, tr("Error"),
-                                     tr("Server ip address error."));
-            return;
-        }
+        _tcpSocket->write(tempArray);
+        QApplication::processEvents();
+        //Sleep(1000);
 
-        tcpSocket = std::make_shared<QTcpSocket>(this);
-        connect(tcpSocket.get(), &QTcpSocket::connected, this, &MainWindow::slotConnected);
-        connect(tcpSocket.get(), &QTcpSocket::disconnected, this, &MainWindow::slotDisconnected);
-        connect(tcpSocket.get(), &QTcpSocket::readyRead, this, &MainWindow::slotDataReceived);
-
-        tcpSocket->connectToHost(*reconHost, ui->editReconPort->text().toInt());
-        connected = true;
     }
-    else
-    {
-        tcpSocket->disconnectFromHost();
-        connected = false;
-    }
+
+    qDebug()<< "send another "<< tempArray.length()<<" bytes";
+    */
 }

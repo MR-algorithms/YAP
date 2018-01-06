@@ -164,6 +164,7 @@ int EchoPosRatio;
 float SEMinTE;
 float GREMinTE;
 float SSInterval;
+// SSInterval = 0
 
 //--------- const variables ----------------
 float H_GAMMA_KG;

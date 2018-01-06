@@ -36,9 +36,12 @@ namespace Yap
         TokenOperatorAssign,            ///< =
         TokenSemiColon,                 ///< ;
         TokenComma,                     ///< ,
+		TokenColon,						///< :
 		TokenDoubleColon,				///< ::
         TokenOperatorMinus,             ///< -
-
+		TokenOperatorPlus,				///< +
+		TokenOperatorMultiply,			///< *
+		TokenOperatorDivide,			///< /
         TokenLeftBrace,                 ///< {
         TokenRightBrace,                ///< }
 
@@ -55,7 +58,7 @@ namespace Yap
 		TokenStringLiteral,
 		TokenNumericLiteral,
 
-		// keywords: bool, float, int, string, array, struct, 
+		// keywords: bool, float, int, string, enum, array, struct, 
 		// import, include
 		// self
 		// true, false
@@ -65,6 +68,7 @@ namespace Yap
 		TokenKeywordInt,
 		TokenKeywordString,
 		TokenKeywordArray,
+		TokenKeywordEnum,
 		TokenKeywordStruct,
 		TokenKeywordImport,
 		TokenKeywordInclude,
@@ -124,13 +128,13 @@ namespace Yap
 	const int CompileErrorFailedOpenFile			= 1032;
 
     const int CompileErrorUnknownToken				= 1033;
-    const int CompileErrorInvalidImport = 1034;
-    const int CompileErrorTypeExpected = 1035;
-    const int CompileErrorTokenExpected = 1036;
-    const int CompileErrorTypeNotFound = 1037;
-    const int CompileErrorNestStruct = 1038;
-    const int CompileErrorMemeberExists = 1039;
-	const int CompileErrorAmbiguousId = 1040;
+    const int CompileErrorInvalidImport             = 1034;
+    const int CompileErrorTypeExpected              = 1035;
+    const int CompileErrorTokenExpected             = 1036;
+    const int CompileErrorTypeNotFound              = 1037;
+    const int CompileErrorNestStruct                = 1038;
+    const int CompileErrorMemeberExists             = 1039;
+	const int CompileErrorAmbiguousId               = 1040;
 
 	class CompileError
 	{

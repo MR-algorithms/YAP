@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QtNetwork/QTcpSocket>
 #include <memory>
+#include "SampleDataProtocol.h"
+#include <QTimer>
 
 namespace Ui {
 class MainWindow;
@@ -17,21 +19,19 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-public slots:
-    void slotConnected();
-    void slotDisconnected();
-    void slotDataReceived();
 
 private slots:
-    void on_buttonStart_clicked();
+    void on_connectButton_clicked();
 
+    void on_scanButton_clicked();
+
+    void on_stopButton_clicked();
+
+    void on_testButton_clicked();
 
 private:
     Ui::MainWindow *ui;
 
-    std::shared_ptr<QTcpSocket> tcpSocket;
-    std::shared_ptr<QHostAddress> reconHost;
-    bool connected;
 };
 
 #endif // MAINWINDOW_H

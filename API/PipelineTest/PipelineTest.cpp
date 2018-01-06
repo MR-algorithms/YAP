@@ -107,7 +107,24 @@ void PipelineTest()
 bool FFT3DTest()
 {
 	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"Pipelines\\niumag_recon_yap.pipeline");
+	auto pipeline = compiler.CompileFile(L"Pipelines\\FFT3DTest.pipeline");
+	if (pipeline.get() == nullptr)
+	{
+		return false;
+	}
+
+	if (pipeline)
+	{
+		return pipeline->Input(L"Input", nullptr);
+	}
+
+	return false;
+}
+
+bool PartialFFTTest()
+{
+	PipelineCompiler compiler;
+	auto pipeline = compiler.CompileFile(L"Pipelines\\PartialFFT.pipeline");
 	if (pipeline.get() == nullptr)
 	{
 		return false;
@@ -165,14 +182,31 @@ bool VdfParserTest()
 
 int main()
 {
+
+	auto complex_slices = std::shared_ptr<std::complex<float>>(new std::complex<float>[10]);
+
+	complex_slices.get()[0].imag(1.2f);
+	complex_slices.get()[0].real(1.7f);
+	
+	complex_slices.get()[2].imag(5.2f);
+	complex_slices.get()[2].real(5.7f);
+	auto test = complex_slices.get();
+	std::complex<float> test2[10];
+
+	memcpy(test2, test, sizeof(std::complex<float>) *10);
+	
+
+
+
 	log4cplus::Initializer initializer;
 
 	time_t start = clock();
 
 //	ConstructorTest();
-	PipelineTest();
+  PipelineTest();
 //	VdfParserTest();
 //	FFT3DTest();
+//	PartialFFTTest();
 
 	time_t end = clock();
 	printf("\n");

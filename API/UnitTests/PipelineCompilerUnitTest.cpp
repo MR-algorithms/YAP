@@ -5,7 +5,6 @@
 #include <boost/test/unit_test.hpp>
 
 #include "Yap/PipelineCompiler.h"
-#include "BasicRecon/Radiomics.h"
 
 using namespace Yap;
 
@@ -158,7 +157,6 @@ BOOST_AUTO_TEST_CASE(processor_CalcuArea)
 	auto area = properties->Find(L"Area");
 	BOOST_CHECK(area != nullptr);
 	BOOST_CHECK(area->GetType() == VariableFloat);
-	BOOST_CHECK(std::wstring(area->ToString()) == L"0");
 }
 
 BOOST_AUTO_TEST_CASE(processor_ChannelDataCollector)
@@ -189,7 +187,6 @@ BOOST_AUTO_TEST_CASE(processor_ChannelDataCollector)
 	auto cc = properties->Find(L"ChannelCount");
 	BOOST_CHECK(cc != nullptr);
 	BOOST_CHECK(cc->GetType() == VariableInt);
-	BOOST_CHECK(std::wstring(cc->ToString()) == L"4");
 }
 
 BOOST_AUTO_TEST_CASE(processor_ChannelIterator)
@@ -220,7 +217,6 @@ BOOST_AUTO_TEST_CASE(processor_ChannelIterator)
 	auto slice_index = properties->Find(L"SliceIndex");
 	BOOST_CHECK(slice_index != nullptr);
 	BOOST_CHECK(slice_index->GetType() == VariableInt);
-	BOOST_CHECK(std::wstring(slice_index->ToString()) == L"0");
 }
 
 BOOST_AUTO_TEST_CASE(processor_ChannelMerger)
@@ -251,11 +247,9 @@ BOOST_AUTO_TEST_CASE(processor_ChannelMerger)
 	auto channel_count = properties->Find(L"ChannelCount");
 	BOOST_CHECK(channel_count != nullptr);
 	BOOST_CHECK(channel_count->GetType() == VariableInt);
-	BOOST_CHECK(std::wstring(channel_count->ToString()) == L"4");
 	auto channel_switch = properties->Find(L"ChannelSwitch");
 	BOOST_CHECK(channel_switch != nullptr);
 	BOOST_CHECK(channel_switch->GetType() == VariableInt);
-	BOOST_CHECK(std::wstring(channel_switch->ToString()) == L"15"); // 0xf, 00001111
 }
 
 BOOST_AUTO_TEST_CASE(processor_CmrDataReader)
@@ -286,19 +280,15 @@ BOOST_AUTO_TEST_CASE(processor_CmrDataReader)
 	auto data_path = properties->Find(L"DataPath");
 	BOOST_CHECK(data_path != nullptr);
 	BOOST_CHECK(data_path->GetType() == VariableString);
-	BOOST_CHECK(std::wstring(data_path->ToString()) == L"\"\"");
 	auto channel_count = properties->Find(L"ChannelCount");
 	BOOST_CHECK(channel_count != nullptr);
 	BOOST_CHECK(channel_count->GetType() == VariableInt);
-	BOOST_CHECK(std::wstring(channel_count->ToString()) == L"4");
 	auto channel_switch = properties->Find(L"ChannelSwitch");
 	BOOST_CHECK(channel_switch != nullptr);
 	BOOST_CHECK(channel_switch->GetType() == VariableInt);
-	BOOST_CHECK(std::wstring(channel_switch->ToString()) == L"15");
 	auto GroupCount = properties->Find(L"GroupCount");
 	BOOST_CHECK(GroupCount != nullptr);
 	BOOST_CHECK(GroupCount->GetType() == VariableInt);
-	BOOST_CHECK(std::wstring(GroupCount->ToString()) == L"1");
 }
 
 BOOST_AUTO_TEST_CASE(processor_ComplexSplitter)
@@ -417,11 +407,9 @@ BOOST_AUTO_TEST_CASE(processor_DcRemover)
 	auto inplace = properties->Find(L"Inplace");
 	BOOST_CHECK(inplace != nullptr);
 	BOOST_CHECK(inplace->GetType() == VariableBool);
-	BOOST_CHECK(std::wstring(inplace->ToString()) == L"1");
 	auto corner_size = properties->Find(L"CornerSize");
 	BOOST_CHECK(corner_size != nullptr);
 	BOOST_CHECK(corner_size->GetType() == VariableInt);
-	BOOST_CHECK(std::wstring(corner_size->ToString()) == L"10");
 }
 
 BOOST_AUTO_TEST_CASE(processor_Difference)
@@ -480,11 +468,9 @@ BOOST_AUTO_TEST_CASE(processor_Fft1D)
 	auto in_place = properties->Find(L"InPlace");
 	BOOST_CHECK(in_place != nullptr);
 	BOOST_CHECK(in_place->GetType() == VariableBool);
-	BOOST_CHECK(std::wstring(in_place->ToString()) == L"1");
 	auto inverse = properties->Find(L"Inverse");
 	BOOST_CHECK(inverse != nullptr);
 	BOOST_CHECK(inverse->GetType() == VariableBool);
-	BOOST_CHECK(std::wstring(inverse->ToString()) == L"0");
 }
 
 BOOST_AUTO_TEST_CASE(processor_Fft2D)
@@ -515,11 +501,9 @@ BOOST_AUTO_TEST_CASE(processor_Fft2D)
 	auto in_place = properties->Find(L"InPlace");
 	BOOST_CHECK(in_place != nullptr);
 	BOOST_CHECK(in_place->GetType() == VariableBool);
-	BOOST_CHECK(std::wstring(in_place->ToString()) == L"1");
 	auto inverse = properties->Find(L"Inverse");
 	BOOST_CHECK(inverse != nullptr);
 	BOOST_CHECK(inverse->GetType() == VariableBool);
-	BOOST_CHECK(std::wstring(inverse->ToString()) == L"0");
 }
 
 BOOST_AUTO_TEST_CASE(processor_FineCF)
@@ -543,19 +527,15 @@ BOOST_AUTO_TEST_CASE(processor_FineCF)
 	auto o1 = properties->Find(L"O1");
 	BOOST_CHECK(o1 != nullptr);
 	BOOST_CHECK(o1->GetType() == VariableFloat);
-	BOOST_CHECK(std::wstring(o1->ToString()) == L"0");
 	auto sw = properties->Find(L"SW");
 	BOOST_CHECK(sw != nullptr);
 	BOOST_CHECK(sw->GetType() == VariableFloat);
-	BOOST_CHECK(std::wstring(sw->ToString()) == L"0");
 	auto reverse_axis = properties->Find(L"ReverseAxis");
 	BOOST_CHECK(reverse_axis != nullptr);
 	BOOST_CHECK(reverse_axis->GetType() == VariableBool);
-	BOOST_CHECK(std::wstring(reverse_axis->ToString()) == L"0");
 	auto cf = properties->Find(L"CF");
 	BOOST_CHECK(cf != nullptr);
 	BOOST_CHECK(cf->GetType() == VariableFloat);
-	BOOST_CHECK(std::wstring(cf->ToString()) == L"0");
 }
 
 BOOST_AUTO_TEST_CASE(processor_JpegExporter)
@@ -579,7 +559,6 @@ BOOST_AUTO_TEST_CASE(processor_JpegExporter)
 	auto export_folder = properties->Find(L"ExportFolder");
 	BOOST_CHECK(export_folder != nullptr);
 	BOOST_CHECK(export_folder->GetType() == VariableString);
-	BOOST_CHECK(std::wstring(export_folder->ToString()) == L"\"\"");
 }
 
 BOOST_AUTO_TEST_CASE(processor_ModulePhase)
@@ -638,7 +617,6 @@ BOOST_AUTO_TEST_CASE(processor_NiumagFidReader)
 	auto data_path = properties->Find(L"DataPath");
 	BOOST_CHECK(data_path != nullptr);
 	BOOST_CHECK(data_path->GetType() == VariableString);
-	BOOST_CHECK(std::wstring(data_path->ToString()) == L"\"\"");
 }
 
 BOOST_AUTO_TEST_CASE(processor_NiumagFidWriter)
@@ -662,15 +640,12 @@ BOOST_AUTO_TEST_CASE(processor_NiumagFidWriter)
 	auto export_folder = properties->Find(L"ExportFolder");
 	BOOST_CHECK(export_folder != nullptr);
 	BOOST_CHECK(export_folder->GetType() == VariableString);
-	BOOST_CHECK(std::wstring(export_folder->ToString()) == L"\"\"");
 	auto file_name = properties->Find(L"FileName");
 	BOOST_CHECK(file_name != nullptr);
 	BOOST_CHECK(file_name->GetType() == VariableString);
-	BOOST_CHECK(std::wstring(file_name->ToString()) == L"\"\"");
 	auto save_path = properties->Find(L"SavePath");
 	BOOST_CHECK(save_path != nullptr);
 	BOOST_CHECK(save_path->GetType() == VariableString);
-	BOOST_CHECK(std::wstring(save_path->ToString()) == L"\"\"");
 }
 
 BOOST_AUTO_TEST_CASE(processor_NiumagImgReader)
@@ -701,7 +676,6 @@ BOOST_AUTO_TEST_CASE(processor_NiumagImgReader)
 	auto data_path = properties->Find(L"DataPath");
 	BOOST_CHECK(data_path != nullptr);
 	BOOST_CHECK(data_path->GetType() == VariableString);
-	BOOST_CHECK(std::wstring(data_path->ToString()) == L"\"\"");
 }
 
 BOOST_AUTO_TEST_CASE(processor_NiuMriImageReader)
@@ -732,7 +706,6 @@ BOOST_AUTO_TEST_CASE(processor_NiuMriImageReader)
 	auto data_path = properties->Find(L"DataPath");
 	BOOST_CHECK(data_path != nullptr);
 	BOOST_CHECK(data_path->GetType() == VariableString);
-	BOOST_CHECK(std::wstring(data_path->ToString()) == L"\"\"");
 }
 
 BOOST_AUTO_TEST_CASE(processor_NiuMriImageWriter)
@@ -756,11 +729,9 @@ BOOST_AUTO_TEST_CASE(processor_NiuMriImageWriter)
 	auto export_folder = properties->Find(L"ExportFolder");
 	BOOST_CHECK(export_folder != nullptr);
 	BOOST_CHECK(export_folder->GetType() == VariableString);
-	BOOST_CHECK(std::wstring(export_folder->ToString()) == L"\"\"");
 	auto file_name = properties->Find(L"FileName");
 	BOOST_CHECK(file_name != nullptr);
 	BOOST_CHECK(file_name->GetType() == VariableString);
-	BOOST_CHECK(std::wstring(file_name->ToString()) == L"\"\"");
 }
 
 BOOST_AUTO_TEST_CASE(processor_NLM)
@@ -852,19 +823,15 @@ BOOST_AUTO_TEST_CASE(processor_SamplingMaskCreator)
 	auto equal_subsampling = properties->Find(L"EqualSubsampling");
 	BOOST_CHECK(equal_subsampling != nullptr);
 	BOOST_CHECK(equal_subsampling->GetType() == VariableBool);
-	BOOST_CHECK(std::wstring(equal_subsampling->ToString()) == L"1");
 	auto random_subsampling = properties->Find(L"RandomSubsampling");
 	BOOST_CHECK(random_subsampling != nullptr);
 	BOOST_CHECK(random_subsampling->GetType() == VariableBool);
-	BOOST_CHECK(std::wstring(random_subsampling->ToString()) == L"0");
 	auto rate = properties->Find(L"Rate");
 	BOOST_CHECK(rate != nullptr);
 	BOOST_CHECK(rate->GetType() == VariableInt);
-	BOOST_CHECK(std::wstring(rate->ToString()) == L"2");
 	auto asc_count = properties->Find(L"AcsCount");
 	BOOST_CHECK(asc_count != nullptr);
 	BOOST_CHECK(asc_count->GetType() == VariableInt);
-	BOOST_CHECK(std::wstring(asc_count->ToString()) == L"16");
 }
 
 BOOST_AUTO_TEST_CASE(processor_SliceIterator)
@@ -919,7 +886,6 @@ BOOST_AUTO_TEST_CASE(processor_SliceMerger)
 	auto slice_count = properties->Find(L"SliceCount");
 	BOOST_CHECK(slice_count != nullptr);
 	BOOST_CHECK(slice_count->GetType() == VariableInt);
-	BOOST_CHECK(std::wstring(slice_count->ToString()) == L"0");
 }
 
 BOOST_AUTO_TEST_CASE(processor_SliceSelector)
@@ -950,7 +916,6 @@ BOOST_AUTO_TEST_CASE(processor_SliceSelector)
 	auto slice_index = properties->Find(L"SliceIndex");
 	BOOST_CHECK(slice_index != nullptr);
 	BOOST_CHECK(slice_index->GetType() == VariableInt);
-	BOOST_CHECK(std::wstring(slice_index->ToString()) == L"3");
 }
 
 BOOST_AUTO_TEST_CASE(processor_SubSampling)
@@ -985,7 +950,7 @@ BOOST_AUTO_TEST_CASE(processor_ZeroFilling)
 {
 	auto pipe = GetPipeline(
 		L"import \"BasicRecon.dll\";"
-		L"ZeroFilling zero_filling;");
+		L"ZeroFilling zero_filling(DestWidth = 1);");
 
 	auto processor = pipe->Find(L"zero_filling");
 	BOOST_CHECK(processor != nullptr);
@@ -1009,22 +974,13 @@ BOOST_AUTO_TEST_CASE(processor_ZeroFilling)
 	auto dest_width = properties->Find(L"DestWidth");
 	BOOST_CHECK(dest_width != nullptr);
 	BOOST_CHECK(dest_width->GetType() == VariableInt);
-	BOOST_CHECK(std::wstring(dest_width->ToString()) == L"256");
 	auto dest_height = properties->Find(L"DestHeight");
 	BOOST_CHECK(dest_height != nullptr);
 	BOOST_CHECK(dest_height->GetType() == VariableInt);
-	BOOST_CHECK(std::wstring(dest_height->ToString()) == L"256");
 	auto left = properties->Find(L"Left");
 	BOOST_CHECK(left != nullptr);
 	BOOST_CHECK(left->GetType() == VariableInt);
-	BOOST_CHECK(std::wstring(left->ToString()) == L"0");
 	auto top = properties->Find(L"Top");
 	BOOST_CHECK(top != nullptr);
 	BOOST_CHECK(top->GetType() == VariableInt);
-	BOOST_CHECK(std::wstring(top->ToString()) == L"0");
-}
-
-BOOST_AUTO_TEST_CASE(test_demo_CreateData_func)
-{
-
 }

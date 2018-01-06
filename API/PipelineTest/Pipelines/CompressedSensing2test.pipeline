@@ -64,9 +64,13 @@ reader->slice_selector2;
 slice_selector1->mask_creator;
 
 mask_creator->sub_sampling.Mask;
+mask_creator->compressed_sensing.Mask;
+
 slice_selector2->sub_sampling.Input;
 
-sub_sampling->module_phase;
+sub_sampling->compressed_sensing.Input;
+
+compressed_sensing->module_phase;
 module_phase.Module->jpeg_temp;
 
 

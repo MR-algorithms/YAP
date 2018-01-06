@@ -38,7 +38,8 @@ shared_ptr<VariableSpace> VdfParser::CompileFile(const wchar_t * path)
 	if (!script_file)
 	{
 		wstring message = wstring(L"Failed to open script file: ") + path;
-		// throw CompileError(Token(), CompileErrorFailedOpenFile, message);
+		throw CompileError(Token(), CompileErrorFailedOpenFile, message);
+
 		return shared_ptr<VariableSpace>();
 	}
 
@@ -107,6 +108,9 @@ bool VdfParser::ProcessStatement(Tokens& tokens)
         case TokenKeywordStruct:
             ProcessStructDeclaration(tokens);
             break;
+		case TokenKeywordEnum:
+			ProcessEnumDeclaration(tokens);
+			break;
 		case TokenKeywordNamespace:
 			ProcessNamespace(tokens);
 			break;
@@ -362,6 +366,27 @@ bool VdfParser::ProcessArrayDeclaration(Tokens& tokens, VariableSpace& variables
 	tokens.AssertToken(TokenSemiColon, true);
 
 	return true;
+}
+
+/**
+Process enum declarations, for example: 
+	enum Dimension {
+		DimensionUnknown,
+		DimensionRead,
+		DimensionPhase, 
+		DimensionSlice,
+	};
+*/
+bool VdfParser::ProcessEnumDeclaration(Tokens& tokens)
+{
+	tokens.AssertToken(TokenKeywordEnum, true);
+	auto enum_id = GetFqId(tokens.GetId().c_str());
+	tokens.AssertToken(TokenLeftParenthesis, true);
+
+
+	assert(0 && "not finished yet.");
+
+	return false;
 }
 
 bool VdfParser::ProcessStructDeclaration(Tokens& tokens)

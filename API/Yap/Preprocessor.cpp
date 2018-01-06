@@ -9,7 +9,7 @@
 using namespace Yap;
 using namespace std;
 
-map <TokenType, pair<wstring, TokenCategory>> token_info {
+map <TokenType, pair<wstring, TokenCategory>> token_info{
 	{ TokenOperatorPortLink, {L"->", TokenCategoryOperator }},
 	{ TokenOperatorInOutMapping, {L"<=>", TokenCategoryOperator}},
 	{ TokenOperatorInMapping, {L"<==", TokenCategoryOperator}},
@@ -22,6 +22,7 @@ map <TokenType, pair<wstring, TokenCategory>> token_info {
 	{ TokenComma, {L",", TokenCategorySeparator}},
 	{ TokenSemiColon, {L";", TokenCategorySeparator}},
 	{ TokenDoubleColon, {L"::", TokenCategoryOperator}},
+	{ TokenColon, {L":", TokenCategoryOperator}},
 	{ TokenLeftBrace, {L"{", TokenCategorySeparator}},
 	{ TokenRightBrace, {L"}", TokenCategorySeparator}},
 	{ TokenLeftParenthesis, {L"(", TokenCategorySeparator}},
@@ -37,6 +38,7 @@ map <TokenType, pair<wstring, TokenCategory>> token_info {
 	{ TokenKeywordInt,	  {L"int", TokenCategoryKeyword }},
 	{ TokenKeywordString,  {L"string", TokenCategoryKeyword }},
 	{ TokenKeywordArray,	  {L"array", TokenCategoryKeyword }},
+	{ TokenKeywordEnum, {L"enum", TokenCategoryKeyword}},
 	{ TokenKeywordStruct,  {L"struct", TokenCategoryKeyword }},
 	{ TokenKeywordImport,  {L"import", TokenCategoryKeyword }},
 	{ TokenKeywordInclude, {L"include", TokenCategoryKeyword }},
@@ -180,14 +182,23 @@ wstring Tokens::GetStringLiteral()
 
 std::wstring Tokens::GetLiteralValue()
 {
-	if (AtEnd() ||
-		(_iter->type != TokenStringLiteral && _iter->type != TokenNumericLiteral &&
-		_iter->type != TokenKeywordTrue && _iter->type != TokenKeywordFalse))
+	if (!AtEnd())
 	{
-		throw CompileError(*_iter, CompileErrorValueExpected, L"Property value expected.");
+		if (_iter->type == TokenOperatorPlus || _iter->type == TokenOperatorMinus)
+		{
+			wstring result{ (_iter++)->text };
+			return result + GetLiteralValue();
+		}
+		else if (_iter->type == TokenStringLiteral ||
+			_iter->type == TokenNumericLiteral ||
+			_iter->type == TokenKeywordTrue ||
+			_iter->type == TokenKeywordFalse)
+		{
+			return (_iter++)->text;
+		}
 	}
 
-	return (_iter++)->text;
+	throw CompileError(*_iter, CompileErrorValueExpected, L"Property value expected.");
 }
 
 std::pair<std::wstring, std::wstring> Tokens::GetProcessorMember(bool empty_member_allowed)
@@ -484,6 +495,7 @@ Preprocessor::Preprocessor(PreprocessType type)
 				TokenOperatorDot,
 				TokenOperatorAssign,
 				TokenSemiColon,
+				TokenColon,
 				TokenDoubleColon,
 				TokenStringLiteral,
 				TokenNumericLiteral,
@@ -524,6 +536,7 @@ Preprocessor::Preprocessor(PreprocessType type)
 		{L".", TokenOperatorDot},
 		{L"=", TokenOperatorAssign},
 		{L";", TokenSemiColon},
+		{L":", TokenColon},
 		{L"::", TokenDoubleColon},
 		{L",", TokenComma},
 		{L"-", TokenOperatorMinus},

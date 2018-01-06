@@ -3,6 +3,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include "Yap/VdfParser.h"
+#include <string>
 
 using namespace Yap;
 
@@ -157,6 +158,13 @@ BOOST_AUTO_TEST_CASE(vdf_test_struct)
 	BOOST_CHECK(variables->GetVariable(L"ms.f") != nullptr);
 	BOOST_CHECK(variables->GetVariable(L"ms.s") != nullptr);
 	BOOST_CHECK(variables->GetVariable(L"ms.b") != nullptr);
+
+	struct my_struct {
+		int i;
+		float f;
+		bool b;
+	};
+	auto a = variables->GetVariable(L"ms");
 }
 
 BOOST_AUTO_TEST_CASE(vdf_array_in_struct)
@@ -198,9 +206,22 @@ BOOST_AUTO_TEST_CASE(vdf_test_array_of_struct)
 {
 	auto variables = Compile(
 		L"struct my_struct{"
-		L"int size;};"
+		L"int value;};"
 		L"array<my_struct> arr;");
-	BOOST_CHECK(variables->GetVariable(L"arr[0].size") != nullptr);
+	BOOST_CHECK(variables->GetVariable(L"arr[0].value") != nullptr);
+	variables->Set<int>(L"arr[0].value", 1);
+	BOOST_CHECK(variables->Get<int>(L"arr[0].value") == 1);
+
+	BOOST_CHECK(variables->Variables() != nullptr);
+	BOOST_CHECK(variables->Variables()->GetIterator() != nullptr);
+	auto iter = variables->Variables()->GetIterator();
+
+	auto first = iter->GetFirst();
+	BOOST_CHECK(first != nullptr);
+	BOOST_CHECK(std::wstring(first->GetId()) == std::wstring(L"arr"));
+
+	variables->ResizeArray(L"arr", 5);
+	BOOST_CHECK(variables->GetArraySize(L"arr") == 5);
 
 	variables = Compile(
 		L"namespace n{"
@@ -209,5 +230,25 @@ BOOST_AUTO_TEST_CASE(vdf_test_array_of_struct)
 		L"array<my_struct> arr;"
 		L"}");
 	BOOST_CHECK(variables->GetVariable(L"n::arr[0].size") != nullptr);
-}
 
+
+	variables = Compile(L"array<int> int_arr;");
+	auto int_arr = variables->GetVariable(L"int_arr");
+	BOOST_CHECK(int_arr != nullptr);
+	BOOST_CHECK(int_arr->GetType() == VariableIntArray);
+	BOOST_CHECK(std::wstring(int_arr->GetId()) == std::wstring(L"int_arr"));
+	int_arr->FromString(L"[1, 2]");
+
+	variables = Compile(
+		L"struct S{"
+		L"float a;"
+		L"float b;};"
+		L"array<S> arr;");
+
+	auto arr = variables->GetVariable(L"arr");
+	BOOST_CHECK(arr != nullptr);
+	BOOST_CHECK(arr->GetType() == VariableStructArray);
+	BOOST_CHECK(std::wstring(arr->GetId()) == std::wstring(L"arr"));
+
+	arr->FromString(L"[{\"a\" : 0.1, \"b\" : 0.2}]");
+}
