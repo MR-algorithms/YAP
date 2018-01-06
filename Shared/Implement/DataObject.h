@@ -108,7 +108,7 @@ namespace Yap
 		public IDataArray<T>
 	{
 		IMPLEMENT_CLONE(DataObject<T>)
-        public:
+	public:
 		DataObject(IData * reference, T* data, const Dimensions& dimensions, 
 			ISharedObject * parent = nullptr, bool own_data = false, 
 			ISharedObject * module = nullptr) :
@@ -242,6 +242,65 @@ namespace Yap
 		{
 			return _variables.get();
 		}
+
+		static SmartPtr<DataObject<T>> Create(IData * reference, T* data, const Dimensions& dimensions,
+			ISharedObject * parent = nullptr, bool own_data = false, ISharedObject * module = nullptr)
+		{
+			try
+			{
+				return YapShared(new DataObject<T>(reference, data, dimensions, parent, own_data, module));
+			}
+			catch (std::bad_alloc&)
+			{
+				return YapShared<DataObject<T>>(nullptr);
+			}
+		}
+
+		static SmartPtr<DataObject<T>> Create(IData * reference, T* data, IDimensions * dimensions,
+			ISharedObject * parent = nullptr, bool own_data = false, ISharedObject * module = nullptr)
+		{
+			try
+			{
+				return YapShared(new DataObject<T>(reference, data, dimensions, parent, own_data, module));
+			}
+			catch (std::bad_alloc&)
+			{
+				return YapShared<DataObject<T>>(nullptr);
+			}
+		}
+
+		static SmartPtr<DataObject<T>> Create(IData * reference, IDimensions * dimensions = nullptr,
+			ISharedObject * module = nullptr)
+		{
+			try
+			{
+				return YapShared<DataObject<T>>(new DataObject<T>(reference,
+					(dimensions != nullptr) ? dimensions : ((reference != nullptr) ? reference->GetDimensions() : nullptr),
+					module));
+			}
+			catch (std::bad_alloc&)
+			{
+				return YapShared<DataObject<T>>(nullptr);
+			}
+		}
+
+		/// Copy constructor
+		/**
+		\remarks  Deep copy a data object. The new object will own the copied data
+		even if the rhs does not own its data.
+		*/
+		static SmartPtr<DataObject<T>> Create(const DataObject<T>& rhs, ISharedObject * module)
+		{
+			try
+			{
+				return YapShared(new DataObject<T>(rhs, module));
+			}
+			catch (std::bad_alloc&)
+			{
+				return YapShared<DataObject<T>>(nullptr);
+			}
+		}
+
 	private:
 		~DataObject()
 		{
@@ -278,4 +337,6 @@ namespace Yap
 	typedef DataObject<std::complex<double>> ComplexDoubleData;
 	typedef DataObject<std::complex<float>> ComplexFloatData;
 	typedef DataObject<unsigned short> UnsignedShortData;
+
+
 };

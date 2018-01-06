@@ -14,25 +14,20 @@
 #include "Difference.h"
 #include "Fft1D.h"
 #include "Fft2D.h"
-#include "Fft3D.h"
 #include "FilesIterator.h"
 #include "FineCF.h"
 #include "FolderIterator.h"
-#include "GrayScaleUnifier.h"
 #include "imageProcessing.h"
 #include "JpegExporter.h"
-#include "LinesSelector.h"
 #include "ModulePhase.h"
 #include "NiiReader.h"
 #include "NiumagFidReader.h"
 #include "NiumagFidWriter.h"
 #include "NiumagImgReader.h"
-#include "NiumagPFFTConjugator.h"
 #include "NiuMriImageReader.h"
 #include "NiuMriImageWriter.h"
 #include "NLM.h"
 #include "Nlmeans.h"
-#include "PhaseCorrector.h"
 #include "Radiomics.h"
 #include "RFeaturesCollector.h"
 #include "SamplingMaskCreator.h"
@@ -73,24 +68,19 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(Difference)
 	ADD_PROCESSOR(Fft1D)
 	ADD_PROCESSOR(Fft2D)
-	ADD_PROCESSOR(Fft3D)
 	ADD_PROCESSOR(FilesIterator)
 	ADD_PROCESSOR(FineCF)
 	ADD_PROCESSOR(FolderIterator)
-	ADD_PROCESSOR(GrayScaleUnifier)
 	ADD_PROCESSOR(JpegExporter)
-	ADD_PROCESSOR(LinesSelector)
 	ADD_PROCESSOR(ModulePhase)
 	ADD_PROCESSOR(NiiReader)
 	ADD_PROCESSOR(NiumagFidReader)
 	ADD_PROCESSOR(NiumagFidWriter)
 	ADD_PROCESSOR(NiumagImgReader)
-	ADD_PROCESSOR(NiumagPFFTConjugator)
 	ADD_PROCESSOR(NiuMriImageReader)
 	ADD_PROCESSOR(NiuMriImageWriter)
 	ADD_PROCESSOR(NLM)
 	ADD_PROCESSOR(Nlmeans)
-	ADD_PROCESSOR(PhaseCorrector)
 	ADD_PROCESSOR(Radiomics)
 	ADD_PROCESSOR(RFeaturesCollector)
 	ADD_PROCESSOR(SamplingMaskCreator)
@@ -103,8 +93,8 @@ BEGIN_DECL_PROCESSORS
 END_DECL_PROCESSORS
 
 BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
+					   DWORD  ul_reason_for_call,
+					   LPVOID lpReserved
 					 )
 {
 	switch (ul_reason_for_call)

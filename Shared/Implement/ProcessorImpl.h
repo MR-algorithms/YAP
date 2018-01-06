@@ -52,43 +52,20 @@ namespace Yap
 		SmartPtr<DataObject<T>> CreateData(IData * reference, T* data, const Dimensions& dimensions, 
 			ISharedObject * parent = nullptr, bool own_data = false)
 		{
-			try
-			{
-				return YapShared(new DataObject<T>(reference, data, dimensions, parent, own_data, _module.get()));
-			}
-			catch (std::bad_alloc&)
-			{
-				return YapShared<DataObject<T>>(nullptr);
-			}
+			return DataObject<T>::Create(reference, data, dimensions, parent, own_data, _module.get());
 		}
 
 		template<typename T>
 		SmartPtr<DataObject<T>> CreateData(IData * reference, T* data, IDimensions * dimensions, 
 			ISharedObject * parent = nullptr, bool own_data = false) 
 		{
-			try
-			{
-				return YapShared(new DataObject<T>(reference, data, dimensions, parent, own_data, _module.get()));
-			}
-			catch (std::bad_alloc&)
-			{
-				return YapShared<DataObject<T>>(nullptr);
-			}
+			return DataObject<T>::Create(reference, data, dimensions, parent, own_data, _module.get());
 		}
 
 		template<typename T>
 		SmartPtr<DataObject<T>> CreateData(IData * reference, IDimensions * dimensions = nullptr)
 		{
-			try
-			{
-				return YapShared<DataObject<T>>(new DataObject<T>(reference, 
-					(dimensions != nullptr) ? dimensions : ((reference != nullptr) ? reference->GetDimensions() : nullptr),
-					_module.get()));
-			}
-			catch (std::bad_alloc&)
-			{
-				return YapShared<DataObject<T>>(nullptr);
-			}
+			return DataObject<T>::Create(reference, dimensions, _module.get());
 		}
 
 		/// Copy constructor
@@ -99,14 +76,7 @@ namespace Yap
 		template <typename T>
 		SmartPtr<DataObject<T>> CreateData(const DataObject<T>& rhs)
 		{
-			try
-			{
-				return YapShared(new DataObject<T>(rhs, _module.get()));
-			}
-			catch (std::bad_alloc& )
-			{
-				return YapShared<DataObject<T>>(nullptr);
-			}
+			return DataObject<T>::Create(rhs, _module.get());
 		}
 
 	protected:
