@@ -99,32 +99,40 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This)
         case MyEvent::scan:
         {
             This->_threadState = scanning;
+            This->_timeMutex1.lock();
             This->_timeIndex = 0;
+            int scan_id = 180106;
 
+            databin.Start(scan_id, scantask.mask.channelCount);
             qDebug()<<"scan Event";
 
         }
             break;
-        case MyEvent::stop:
-        {
-            This->_timeMutex1.unlock();
-            //This->_scanTask_mutex.unlock();
-            This->_timeIndex = 0;
-            This->_threadState = idle;
-            qDebug()<<"stop Event";
-            return 1;
-        }
 
         case MyEvent::time:
         {
             //Doing something.
 
 
+            databin.Go();
             //end of doing
             This->_timeIndex ++;
             qDebug() << "time: "<< This->_timeIndex;
         }
             break;
+
+        case MyEvent::stop:
+        {
+            databin.End();
+
+            This->_timeMutex1.unlock();
+            This->_timeIndex = 0;
+            This->_threadState = idle;
+
+            qDebug()<<"stop Event";
+            return 1;
+        }
+
         default:
             break;
 

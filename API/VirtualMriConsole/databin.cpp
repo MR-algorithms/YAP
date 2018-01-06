@@ -6,6 +6,9 @@
 #include <fstream>
 #include <iomanip>
 #include <cassert>
+#include "SampleDataProtocol.h"
+#include "datapackage.h"
+#include "communicator.h"
 
 using namespace std;
 
@@ -52,11 +55,6 @@ struct DstRawDataName
 };
 
 
-Databin::Databin(): _dataInfo( new RawDataInfo)
-{
-
-}
-
 unsigned int Databin::AllChannel(int channelCount)
 {
     unsigned int selectAll = 0;
@@ -71,8 +69,6 @@ unsigned int Databin::AllChannel(int channelCount)
 }
 void Databin::Load(std::wstring dataPath, int channelCount)
 {
-    std::shared_ptr<RawDataInfo> data_info = _dataInfo;
-
     std::wstring raw_data_folder = dataPath;
     int group_count = 1;
     int group_index = 0;
@@ -96,7 +92,7 @@ void Databin::Load(std::wstring dataPath, int channelCount)
 
 
 
-    _data = boost::shared_array<complex<float>>( reinterpret_cast<complex<float>*>(reader.ReadAllData(data_info.get(), path2)));
+    _data = boost::shared_array<complex<float>>( reinterpret_cast<complex<float>*>(reader.ReadAllData(&_dataInfo, path2)));
 
 
     //CString data_info_str;
@@ -110,10 +106,10 @@ void Databin::Load(std::wstring dataPath, int channelCount)
 
 boost::shared_array<complex<float>> Databin::GetRawData()
 {
-    int TotalSize =  _dataInfo.get()->freq_point_count *
-                     _dataInfo.get()->phase_point_count *
-                     _dataInfo.get()->slice_count *
-                     _dataInfo.get()->channel_count;
+    int TotalSize =  _dataInfo.freq_point_count *
+                     _dataInfo.phase_point_count *
+                     _dataInfo.slice_count *
+                     _dataInfo.channel_count;
 
      //拷贝一份返回给用户。
     boost::shared_array<complex<float>> destChannel(new complex<float>[TotalSize]);
@@ -126,11 +122,11 @@ boost::shared_array<complex<float>> Databin::GetRawData()
 boost::shared_array<complex<float>> Databin::GetRawData(unsigned int channelIndex)
 {
 
-    assert(channelIndex + 1 < _dataInfo.get()->channel_count);
+    assert(channelIndex + 1 < _dataInfo.channel_count);
 
-    int channelSize =  _dataInfo.get()->freq_point_count *
-                        _dataInfo.get()->phase_point_count *
-                        _dataInfo.get()->slice_count;
+    int channelSize =  _dataInfo.freq_point_count *
+                        _dataInfo.phase_point_count *
+                        _dataInfo.slice_count;
 
     std::complex<float>* srcChannel = _data.get() + channelIndex * channelSize;
 
@@ -146,12 +142,12 @@ boost::shared_array<complex<float>> Databin::GetRawData(unsigned int channelInde
 {
     //assert(0);
     //return boost::shared_array<complex<float>>(nullptr);
-    assert(channelIndex + 1 < _dataInfo.get()->channel_count);
-    assert(sliceIndex + 1 < _dataInfo.get()->slice_count);
+    assert(channelIndex + 1 < _dataInfo.channel_count);
+    assert(sliceIndex + 1 < _dataInfo.slice_count);
 
-    unsigned int freqPointCount  = _dataInfo.get()->freq_point_count;
-    unsigned int phasePointCount = _dataInfo.get()->phase_point_count;
-    unsigned int sliceCount = _dataInfo.get()->slice_count;
+    unsigned int freqPointCount  = _dataInfo.freq_point_count;
+    unsigned int phasePointCount = _dataInfo.phase_point_count;
+    unsigned int sliceCount = _dataInfo.slice_count;
 
 
     unsigned int sliceSize = freqPointCount * phasePointCount;
@@ -175,11 +171,11 @@ boost::shared_array<complex<float>> Databin::GetRawData(unsigned int channelInde
 {
     //assert(0);
     //return boost::shared_array<complex<float>>(nullptr);
-    assert(channelIndex + 1 < _dataInfo.get()->channel_count);
-    assert(sliceIndex + 1 < _dataInfo.get()->slice_count);
-    assert(phaseIndex + 1 < _dataInfo.get()->phase_point_count);
+    assert(channelIndex + 1 < _dataInfo.channel_count);
+    assert(sliceIndex + 1 < _dataInfo.slice_count);
+    assert(phaseIndex + 1 < _dataInfo.phase_point_count);
 
-    unsigned int freqPointCount = _dataInfo.get()->freq_point_count;
+    unsigned int freqPointCount = _dataInfo.freq_point_count;
     complex<float>* srcLine = GetRawData(channelIndex, sliceIndex).get() + freqPointCount * phaseIndex;
     boost::shared_array<complex<float>> destLine(new complex<float>[freqPointCount]);
 
@@ -191,5 +187,52 @@ boost::shared_array<complex<float>> Databin::GetRawData(unsigned int channelInde
 
 unsigned int Databin::GetPhaseCount()
 {
-    return _dataInfo.get()->phase_point_count;
+    return _dataInfo.phase_point_count;
 }
+
+void Databin::Start(int scan_id, int channel_count)
+{
+    SampleDataStart start;
+    start.scan_id = scan_id;
+    start.dim1_size = _dataInfo.freq_point_count;
+    start.dim2_size = _dataInfo.phase_point_count;
+    start.dim3_size = _dataInfo.slice_count;
+    start.dim4_size = _dataInfo.dim4;
+    start.dim5_size = _dataInfo.dim5;
+    start.dim6_size = _dataInfo.dim6;
+
+    start.channel_mask = AllChannel(channel_count);
+
+    start.dim23456_size = start.dim2_size
+            * start.dim3_size
+            * start.dim4_size
+            * start.dim5_size
+            * start.dim6_size;
+
+    DataPackage dataPackage;
+    MessageProcess::Pack(dataPackage, start);
+    //
+    Communicator::GetHandle().Send(dataPackage);
+
+
+
+
+}
+void Databin::Go()
+{
+    //go
+    if(CanbeFinished())
+    {
+        End();
+    }
+}
+void Databin::End()
+{
+    if(!_ended)
+    {
+        //end.
+        _ended = true;
+    }
+}
+
+

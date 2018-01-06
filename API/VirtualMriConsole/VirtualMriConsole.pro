@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     virtualconsole.cpp \
     communicator.cpp \
     myevent.cpp \
-    scantask.cpp
+    scantask.cpp \
+    datapackage.cpp
 
 HEADERS  += mainwindow.h \
     SampleDataProtocol.h \
@@ -34,7 +35,8 @@ HEADERS  += mainwindow.h \
     virtualconsole.h \
     communicator.h \
     myevent.h \
-    scantask.h
+    scantask.h \
+    datapackage.h
 
 FORMS    += mainwindow.ui
 

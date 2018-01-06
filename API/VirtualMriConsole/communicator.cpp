@@ -4,6 +4,7 @@
 #include <cassert>
 #include <memory>
 #include <QString>
+#include "datapackage.h"
 
 Communicator Communicator::s_instance;
 
@@ -67,5 +68,10 @@ bool Communicator::Connect()
 bool Communicator::Disconnect()
 {
     //disconnectFromHost();
+    return true;
+}
+
+bool Communicator::Send(const DataPackage &data)
+{
     return true;
 }
