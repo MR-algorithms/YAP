@@ -50,16 +50,16 @@ namespace Yap
 
 		template<typename T> 
 		SmartPtr<DataObject<T>> CreateData(IData * reference, T* data, const Dimensions& dimensions, 
-			ISharedObject * parent = nullptr, bool own_data = false)
+			ISharedObject * parent = nullptr)
 		{
-			return DataObject<T>::Create(reference, data, dimensions, parent, own_data, _module.get());
+			return DataObject<T>::Create(reference, data, dimensions, parent, _module.get());
 		}
 
 		template<typename T>
 		SmartPtr<DataObject<T>> CreateData(IData * reference, T* data, IDimensions * dimensions, 
-			ISharedObject * parent = nullptr, bool own_data = false) 
+			ISharedObject * parent = nullptr) 
 		{
-			return DataObject<T>::Create(reference, data, dimensions, parent, own_data, _module.get());
+			return DataObject<T>::Create(reference, data, dimensions, parent, _module.get());
 		}
 
 		template<typename T>
@@ -68,7 +68,6 @@ namespace Yap
 			return DataObject<T>::Create(reference, dimensions, _module.get());
 		}
 
-		/// Copy constructor
 		/**
 		\remarks  Deep copy a data object. The new object will own the copied data
 		even if the rhs does not own its data.

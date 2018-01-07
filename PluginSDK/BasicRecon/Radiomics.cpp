@@ -118,37 +118,37 @@ bool Yap::Radiomics::FeedOut(void*& out_data, Dimensions dimensions, int data_ty
 	switch (data_type)
 	{
 	case DataTypeInt:
-		Feed(L"Output", CreateData<int>(nullptr, reinterpret_cast<int*>(out_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<int>(nullptr, reinterpret_cast<int*>(out_data), dimensions, nullptr).get());
 		break;
 	case DataTypeUnsignedInt:
-		Feed(L"Output", CreateData<unsigned int>(nullptr, reinterpret_cast<unsigned int*>(out_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<unsigned int>(nullptr, reinterpret_cast<unsigned int*>(out_data), dimensions, nullptr).get());
 		break;
 	case DataTypeShort:
-		Feed(L"Output", CreateData<short>(nullptr, reinterpret_cast<short*>(out_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<short>(nullptr, reinterpret_cast<short*>(out_data), dimensions, nullptr).get());
 		break;
 	case DataTypeUnsignedShort:
-		Feed(L"Output", CreateData<unsigned short>(nullptr, reinterpret_cast<unsigned short*>(out_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<unsigned short>(nullptr, reinterpret_cast<unsigned short*>(out_data), dimensions, nullptr).get());
 		break;
 	case DataTypeChar:
-		Feed(L"Output", CreateData<char>(nullptr, reinterpret_cast<char*>(out_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<char>(nullptr, reinterpret_cast<char*>(out_data), dimensions, nullptr).get());
 		break;
 	case DataTypeUnsignedChar:
-		Feed(L"Output", CreateData<unsigned char>(nullptr, reinterpret_cast<unsigned char*>(out_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<unsigned char>(nullptr, reinterpret_cast<unsigned char*>(out_data), dimensions, nullptr).get());
 		break;
 	case DataTypeFloat:
-		Feed(L"Output", CreateData<float>(nullptr, reinterpret_cast<float*>(out_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<float>(nullptr, reinterpret_cast<float*>(out_data), dimensions, nullptr).get());
 		break;
 	case DataTypeDouble:
-		Feed(L"Output", CreateData<double>(nullptr, reinterpret_cast<double*>(out_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<double>(nullptr, reinterpret_cast<double*>(out_data), dimensions, nullptr).get());
 		break;
 	case DataTypeComplexFloat:
-		Feed(L"Output", CreateData<std::complex<float>>(nullptr, reinterpret_cast<std::complex<float>*>(out_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<std::complex<float>>(nullptr, reinterpret_cast<std::complex<float>*>(out_data), dimensions, nullptr).get());
 		break;
 	case DataTypeComplexDouble:
-		Feed(L"Output", CreateData<std::complex<double>>(nullptr, reinterpret_cast<std::complex<double>*>(out_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<std::complex<double>>(nullptr, reinterpret_cast<std::complex<double>*>(out_data), dimensions, nullptr).get());
 		break;
 	case DataTypeBool:
-		Feed(L"Output", CreateData<bool>(nullptr, reinterpret_cast<bool*>(out_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<bool>(nullptr, reinterpret_cast<bool*>(out_data), dimensions, nullptr).get());
 		break;
 	default:
 		return false;

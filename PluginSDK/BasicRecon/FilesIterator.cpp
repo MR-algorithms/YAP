@@ -64,8 +64,6 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 	}
 	else
 	{
-		/*std::wstring ws(file_dir);
-		std::string st(ws.begin(), ws.end());*/
 		file_path = ToMbs(file_dir);
 	}
 	
@@ -83,7 +81,7 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 			dimension(DimensionReadout, 0U, unsigned(iter.length()));
 			char * tempt = new char[iter.length()];
 			strcpy(tempt, iter.c_str());
-			auto out_data = CreateData<char>(nullptr, tempt, dimension, nullptr, true);
+			auto out_data = CreateData<char>(nullptr, tempt, dimension);
 		}
 	}
 	else
@@ -97,7 +95,7 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 				dimension(DimensionReadout, 0U, unsigned(iter.length()));
 				char * tempt = new char[iter.length()];
 				strcpy(tempt, iter.c_str());
-				auto out_data = CreateData<char>(nullptr, tempt, dimension, nullptr, true);
+				auto out_data = CreateData<char>(nullptr, tempt, dimension);
 				Feed(L"Reference", out_data.get());
 			}
 		}
@@ -106,13 +104,12 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 		{
 			if (!regex_match(iter, regex(ToMbs(reference_regex))))
 			{
-				SmartPtr<DataObject<char>> out_data1;
 				Dimensions dimension;
 				dimension(DimensionReadout, 0U, unsigned(iter.length()));
 				char * tempt = new char[iter.length()];
 				strcpy(tempt, iter.c_str());
-				out_data1 = CreateData<char>(nullptr, tempt, dimension, nullptr, true);
-				Feed(L"Output", out_data1.get());
+				auto out_data = CreateData<char>(nullptr, tempt, dimension);
+				Feed(L"Output", out_data.get());
 			}
 		}
 	}
