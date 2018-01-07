@@ -81,7 +81,9 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 		{
 			Dimensions dimension;
 			dimension(DimensionReadout, 0U, unsigned(iter.length()));
-			auto out_data = CreateData<char>(nullptr, const_cast<char*>(iter.data()), dimension, nullptr, true);
+			char * tempt = new char[iter.length()];
+			strcpy(tempt, iter.c_str());
+			auto out_data = CreateData<char>(nullptr, tempt, dimension, nullptr, true);
 		}
 	}
 	else
@@ -93,11 +95,10 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 			{
 				Dimensions dimension;
 				dimension(DimensionReadout, 0U, unsigned(iter.length()));
-				char * tempt = const_cast<char*>(iter.data());
+				char * tempt = new char[iter.length()];
+				strcpy(tempt, iter.c_str());
 				auto out_data = CreateData<char>(nullptr, tempt, dimension, nullptr, true);
 				Feed(L"Reference", out_data.get());
-				BUG(为什么退出会出现退出错误？？);
-				break;
 			}
 		}
 
@@ -108,7 +109,8 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 				SmartPtr<DataObject<char>> out_data1;
 				Dimensions dimension;
 				dimension(DimensionReadout, 0U, unsigned(iter.length()));
-				char * tempt = const_cast<char*>(iter.data());
+				char * tempt = new char[iter.length()];
+				strcpy(tempt, iter.c_str());
 				out_data1 = CreateData<char>(nullptr, tempt, dimension, nullptr, true);
 				Feed(L"Output", out_data1.get());
 			}

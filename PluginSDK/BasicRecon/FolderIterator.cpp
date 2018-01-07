@@ -63,7 +63,9 @@ bool FolderIterator::Input(const wchar_t * name, IData * data)
 		{
 			Dimensions dimension;
 			dimension(DimensionReadout, 0U, unsigned(iter.length()));
-			auto out_data = CreateData<char>(nullptr, const_cast<char*>(iter.data()), dimension, nullptr, true);
+			char * tempt = new char[iter.length()];
+			strcpy(tempt, iter.c_str());
+			auto out_data = CreateData<char>(nullptr, tempt, dimension, nullptr, true);
 			Feed(L"Output", out_data.get());
 		}
 	}
@@ -74,11 +76,11 @@ bool FolderIterator::Input(const wchar_t * name, IData * data)
 		{
 			if (regex_match(iter, re))
 			{
-				// char * tempt;
-				// strcpy(tempt, iter.data());
 				Dimensions dimension;
 				dimension(DimensionReadout, 0U, unsigned(iter.length()));
-				auto out_data = CreateData<char>(nullptr, const_cast<char*>(iter.data()), dimension, nullptr, true);
+				char * tempt = new char[iter.length()];
+				strcpy(tempt, iter.c_str());
+				auto out_data = CreateData<char>(nullptr, tempt, dimension, nullptr, true);
 				Feed(L"Output", out_data.get());
 			}
 		}
