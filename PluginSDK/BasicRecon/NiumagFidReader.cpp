@@ -108,7 +108,7 @@ bool Yap::NiumagFidReader::ReadNiumagFidData()
 			(Dimension4, 0U, dim4);
 
 		auto data = CreateData<complex<float>>(nullptr,
-			reinterpret_cast<complex<float>*>(buffer), dimensions, nullptr, true);
+			reinterpret_cast<complex<float>*>(buffer), dimensions);
 
 		Feed(L"Output", data.get());
 	}

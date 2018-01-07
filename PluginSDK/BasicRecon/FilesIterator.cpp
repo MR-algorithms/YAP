@@ -81,7 +81,7 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 		{
 			Dimensions dimension;
 			dimension(DimensionReadout, 0U, unsigned(iter.length()));
-			auto out_data = CreateData<char>(nullptr, const_cast<char*>(iter.data()), dimension, nullptr, true);
+			auto out_data = CreateData<char>(nullptr, const_cast<char*>(iter.data()), dimension, nullptr);
 		}
 	}
 	else
@@ -94,7 +94,7 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 				Dimensions dimension;
 				dimension(DimensionReadout, 0U, unsigned(iter.length()));
 				char * tempt = const_cast<char*>(iter.data());
-				auto out_data = CreateData<char>(nullptr, tempt, dimension, nullptr, true);
+				auto out_data = CreateData<char>(nullptr, tempt, dimension, nullptr);
 				Feed(L"Reference", out_data.get());
 				BUG(为什么退出会出现退出错误？？);
 				break;
@@ -109,7 +109,7 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 				Dimensions dimension;
 				dimension(DimensionReadout, 0U, unsigned(iter.length()));
 				char * tempt = const_cast<char*>(iter.data());
-				out_data1 = CreateData<char>(nullptr, tempt, dimension, nullptr, true);
+				out_data1 = CreateData<char>(nullptr, tempt, dimension, nullptr);
 				Feed(L"Output", out_data1.get());
 			}
 		}

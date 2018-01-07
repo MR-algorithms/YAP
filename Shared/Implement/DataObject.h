@@ -104,56 +104,42 @@ namespace Yap
 	};
 
 	template<typename T>
-	class DataObject : 
+	class DataObject :
 		public IDataArray<T>
 	{
 		IMPLEMENT_CLONE(DataObject<T>)
 	public:
-		DataObject(IData * reference, T* data, const Dimensions& dimensions, 
-			ISharedObject * parent = nullptr, bool own_data = false, 
+		DataObject(IData * reference, T* data, const Dimensions& dimensions,
+			ISharedObject * parent = nullptr,
 			ISharedObject * module = nullptr) :
-			_data(data), 
-			_own_memory(own_data), 
-			_use_count(0), 
+			_data(data),
 			_parent(YapShared(parent)),
 			_module(YapShared(module)),
-			_geometry{ YapShared(reference != nullptr ? new Localization(reference->GetGeometry()) : nullptr)},
+			_geometry{ YapShared(reference != nullptr ? new Localization(reference->GetGeometry()) : nullptr) },
 			_variables{ YapShared(reference != nullptr ? reference->GetVariables() : nullptr) }
 		{
 			assert(data != nullptr);
 			_dimensions = dimensions;
-			if (!own_data)
-			{
-				assert(parent != nullptr);
-			}
 		}
-		
-		DataObject(IData * reference, T* data, IDimensions * dimensions, 
-			ISharedObject * parent = nullptr, bool own_data = false, 
-			ISharedObject * module = nullptr) : 
-			_data(data), 
-			_own_memory(own_data), 
-			_dimensions(dimensions), 
-			_use_count(0), 
+
+		DataObject(IData * reference, T * data, IDimensions * dimensions,
+			ISharedObject * parent = nullptr,
+			ISharedObject * module = nullptr) :
+			_data(data),
+			_dimensions(dimensions),
 			_parent(YapShared(parent)),
 			_module(YapShared(module)),
 			_geometry{ YapShared(reference != nullptr ? new Localization(reference->GetGeometry()) : nullptr) },
 			_variables{ YapShared(reference != nullptr ? reference->GetVariables() : nullptr) }
 		{
 			assert(data != nullptr);
-			if (!own_data)
-			{
-				assert(parent != nullptr);
-			}
 		}
 
 		DataObject(IData * reference, IDimensions * dimensions, ISharedObject * module) :
-			_own_memory(true), 
-			_dimensions(dimensions), 
-			_use_count(0),
-			_module(YapShared(module)),
-			_geometry{ YapShared(reference != nullptr ? new Localization(reference->GetGeometry()) : nullptr) },
-			_variables{ YapShared(reference != nullptr ? reference->GetVariables() : nullptr) }
+			_dimensions(dimensions),
+			_module(module),
+			_geometry{ reference != nullptr ? new Localization(reference->GetGeometry()) : nullptr },
+			_variables{ reference != nullptr ? reference->GetVariables() : nullptr }
 		{
 			unsigned int total_size = 1;
 
@@ -170,13 +156,11 @@ namespace Yap
 			\remarks  Deep copy a data object. The new object will own the copied data
 			even if the rhs does not own its data.
 		*/
-		DataObject(const DataObject& rhs, ISharedObject * module = nullptr) : 
-			_own_memory{true}, 
-			_dimensions{rhs._dimensions}, 
-			_use_count(0),
-			_module(YapShared(module)), 
-			_geometry(rhs._geometry),
-			_variables(rhs._variables)
+		DataObject(const DataObject& rhs, ISharedObject * module = nullptr) :
+			_dimensions{ rhs._dimensions },
+			_module{ module },
+			_geometry{ rhs._geometry },
+			_variables{ rhs._variables }
 		{
 			unsigned int total_size = 1;
 
@@ -243,12 +227,17 @@ namespace Yap
 			return _variables.get();
 		}
 
+		static SmartPtr<DataObject<T>> CreateVariableObject(ISharedObject * module)
+		{
+
+		}
+
 		static SmartPtr<DataObject<T>> Create(IData * reference, T* data, const Dimensions& dimensions,
 			ISharedObject * parent = nullptr, bool own_data = false, ISharedObject * module = nullptr)
 		{
 			try
 			{
-				return YapShared(new DataObject<T>(reference, data, dimensions, parent, own_data, module));
+				return YapShared(new DataObject<T>(reference, data, dimensions, parent, module));
 			}
 			catch (std::bad_alloc&)
 			{
@@ -257,11 +246,11 @@ namespace Yap
 		}
 
 		static SmartPtr<DataObject<T>> Create(IData * reference, T* data, IDimensions * dimensions,
-			ISharedObject * parent = nullptr, bool own_data = false, ISharedObject * module = nullptr)
+			ISharedObject * parent = nullptr, ISharedObject * module = nullptr)
 		{
 			try
 			{
-				return YapShared(new DataObject<T>(reference, data, dimensions, parent, own_data, module));
+				return YapShared(new DataObject<T>(reference, data, dimensions, parent, module));
 			}
 			catch (std::bad_alloc&)
 			{
@@ -284,7 +273,6 @@ namespace Yap
 			}
 		}
 
-		/// Copy constructor
 		/**
 		\remarks  Deep copy a data object. The new object will own the copied data
 		even if the rhs does not own its data.
@@ -304,9 +292,9 @@ namespace Yap
 	private:
 		~DataObject()
 		{
-			if (_own_memory)
+			if (!_parent)
 			{
-				delete []_data;
+				delete[]_data;
 				_data = nullptr;
 			}
 		}
@@ -316,13 +304,13 @@ namespace Yap
 			return data_type_id<T>::type;
 		}
 
-		T * _data;
+		T * _data = nullptr;
 		Dimensions _dimensions;
 
-		unsigned int _use_count;
-		bool _own_memory;
-		SmartPtr<ISharedObject> _parent;
-		SmartPtr<ISharedObject> _module;
+		unsigned int _use_count = 0;
+
+		SmartPtr<ISharedObject> _parent;	// default to null pointer
+		SmartPtr<ISharedObject> _module;	// default to null pointer
 
 		SmartPtr<Localization> _geometry;
 		SmartPtr<IVariableContainer> _variables;
@@ -337,6 +325,4 @@ namespace Yap
 	typedef DataObject<std::complex<double>> ComplexDoubleData;
 	typedef DataObject<std::complex<float>> ComplexFloatData;
 	typedef DataObject<unsigned short> UnsignedShortData;
-
-
 };

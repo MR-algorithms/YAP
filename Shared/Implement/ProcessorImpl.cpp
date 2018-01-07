@@ -61,7 +61,7 @@ namespace _details
 	}
 
 	Yap::ProcessorImpl::ProcessorImpl(const ProcessorImpl& rhs) :
-		_input(YapShared<PtrContainerImpl<IPort>>(rhs._input->Clone())),
+		_input(rhs._input->Clone()),
 		_output(YapShared<PtrContainerImpl<IPort>>(rhs._output->Clone())),
 		_properties(new VariableSpace(*(rhs._properties))),
 		_instance_id(rhs._instance_id),

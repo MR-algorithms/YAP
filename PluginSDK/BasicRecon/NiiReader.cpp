@@ -574,40 +574,40 @@ bool Yap::NiiReader::Input(const wchar_t * name, IData * data)
 	switch (_current_type) 
 	{
 	case Yap::TYPE_BOOL:
-		Feed(L"Output", CreateData<bool>(nullptr, reinterpret_cast<bool*>(nii_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<bool>(nullptr, reinterpret_cast<bool*>(nii_data), dimensions).get());
 		break;
 	case Yap::TYPE_UNSIGNEDCHAR:
-		Feed(L"Output", CreateData<unsigned char>(nullptr, reinterpret_cast<unsigned char*>(nii_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<unsigned char>(nullptr, reinterpret_cast<unsigned char*>(nii_data), dimensions).get());
 		break;
 	case Yap::TYPE_SHORT:
-		Feed(L"Output", CreateData<short>(nullptr, reinterpret_cast<short*>(nii_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<short>(nullptr, reinterpret_cast<short*>(nii_data), dimensions).get());
 		break;
 	case Yap::TYPE_INT:
-		Feed(L"Output", CreateData<int>(nullptr, reinterpret_cast<int*>(nii_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<int>(nullptr, reinterpret_cast<int*>(nii_data), dimensions).get());
 		break;
 	case Yap::TYPE_FLOAT:
-		Feed(L"Output", CreateData<float>(nullptr, reinterpret_cast<float*>(nii_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<float>(nullptr, reinterpret_cast<float*>(nii_data), dimensions).get());
 		break;
 	case Yap::TYPE_COMPLEX:
-		Feed(L"Output", CreateData<complex<float>>(nullptr, reinterpret_cast<complex<float>*>(nii_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<complex<float>>(nullptr, reinterpret_cast<complex<float>*>(nii_data), dimensions).get());
 		break;
 	case Yap::TYPE_DOUBLE:
-		Feed(L"Output", CreateData<double>(nullptr, reinterpret_cast<double*>(nii_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<double>(nullptr, reinterpret_cast<double*>(nii_data), dimensions).get());
 		break;
 	case Yap::TYPE_CHAR:
-		Feed(L"Output", CreateData<char>(nullptr, reinterpret_cast<char*>(nii_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<char>(nullptr, reinterpret_cast<char*>(nii_data), dimensions).get());
 		break;
 	case Yap::TYPE_UNSIGNEDSHORT:
-		Feed(L"Output", CreateData<unsigned short>(nullptr, reinterpret_cast<unsigned short*>(nii_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<unsigned short>(nullptr, reinterpret_cast<unsigned short*>(nii_data), dimensions).get());
 		break;
 	case Yap::TYPE_UNSIGNEDINT:
-		Feed(L"Output", CreateData<unsigned int>(nullptr, reinterpret_cast<unsigned int*>(nii_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<unsigned int>(nullptr, reinterpret_cast<unsigned int*>(nii_data), dimensions).get());
 		break;
 	case Yap::TYPE_LONGLONG:
-		Feed(L"Output", CreateData<long long>(nullptr, reinterpret_cast<long long*>(nii_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<long long>(nullptr, reinterpret_cast<long long*>(nii_data), dimensions).get());
 		break;
 	case Yap::TYPE_UNSIGNEDLONGLONG:
-		Feed(L"Output", CreateData<unsigned long long>(nullptr, reinterpret_cast<unsigned long long*>(nii_data), dimensions, nullptr, true).get());
+		Feed(L"Output", CreateData<unsigned long long>(nullptr, reinterpret_cast<unsigned long long*>(nii_data), dimensions).get());
 		break;
 	case Yap::TYPE_RGB:
 	case Yap::TYPE_RGBA:

@@ -46,15 +46,15 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 		if (is_type_complexf)
 		{
 			auto output = CreateData<complex<float>>(data,
-				Yap::GetDataArray<complex<float>>(data)
-				+ slice_index * slice_block_size, data_dimentions, data, false);
+				Yap::GetDataArray<complex<float>>(data) + slice_index * slice_block_size, 
+				data_dimentions, data);
 			Feed(L"Output", output.get());
 		}
 		if(is_type_short)
 		{
 			auto output = CreateData<short>(data,
 				Yap::GetDataArray<short>(data)
-				+ slice_index * slice_block_size, data_dimentions, data, false);
+				+ slice_index * slice_block_size, data_dimentions, data);
 			Feed(L"Output", output.get());
 		}
 	}
@@ -85,7 +85,7 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 				memcpy(slice_channel_data + i * slice_block_size, Yap::GetDataArray<complex<float>>(data) + slice_index * slice_block_size + i * channel_block_size, 
 					slice_block_size * sizeof(complex<float>));
 			}
-			auto outdata = CreateData<complex<float>>(data, slice_channel_data, dimensions, nullptr, true);
+			auto outdata = CreateData<complex<float>>(data, slice_channel_data, dimensions, nullptr);
 			Feed(L"Output", outdata.get());
 		}
 		if(is_type_short)
@@ -104,7 +104,7 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 				memcpy(slice_channel_data + i * slice_block_size, Yap::GetDataArray<short>(data) + slice_index * slice_block_size + i * channel_block_size,
 					slice_block_size * sizeof(short));
 			}
-			auto outdata = CreateData<short>(data, slice_channel_data, dimensions, nullptr, true);
+			auto outdata = CreateData<short>(data, slice_channel_data, dimensions, nullptr);
 			Feed(L"Output", outdata.get());
 		}
 	}

@@ -63,7 +63,7 @@ bool FolderIterator::Input(const wchar_t * name, IData * data)
 		{
 			Dimensions dimension;
 			dimension(DimensionReadout, 0U, unsigned(iter.length()));
-			auto out_data = CreateData<char>(nullptr, const_cast<char*>(iter.data()), dimension, nullptr, true);
+			auto out_data = CreateData<char>(nullptr, const_cast<char*>(iter.data()), dimension, nullptr);
 			Feed(L"Output", out_data.get());
 		}
 	}
@@ -78,7 +78,7 @@ bool FolderIterator::Input(const wchar_t * name, IData * data)
 				// strcpy(tempt, iter.data());
 				Dimensions dimension;
 				dimension(DimensionReadout, 0U, unsigned(iter.length()));
-				auto out_data = CreateData<char>(nullptr, const_cast<char*>(iter.data()), dimension, nullptr, true);
+				auto out_data = CreateData<char>(nullptr, const_cast<char*>(iter.data()), dimension);
 				Feed(L"Output", out_data.get());
 			}
 		}
