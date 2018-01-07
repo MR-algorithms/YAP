@@ -1,0 +1,8 @@
+import "BasicRecon.dll";
+
+NiumagFloatReader reader(DataPath = "config\\TempResults\\temp_rfamp.rfa");
+NiuMriDisplay1D display1d;
+
+reader->display1d;
+
+self.Input->reader.Input;

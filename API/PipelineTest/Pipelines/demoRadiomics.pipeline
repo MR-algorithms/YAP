@@ -1,0 +1,16 @@
+import "BasicRecon.dll";
+
+NiiReader img_reader(FilePath = "D:\\test_data\\Brats17_2013_11_1_t1ce.nii");
+Radiomics radiomicshandle(ScriptPath = 
+	"D:\\Projects\\Demo_Cplus_extend_python\\PythonScripts\\Py2C.py", 
+	MethodName = "test2d", ReturnDataType = 8);
+SliceSelector selector(SliceIndex = 40);
+JpegExporter jpeg_exporter(ExportFolder = "d:\\Output");
+
+img_reader->selector;
+selector->radiomicshandle.Input;
+radiomicshandle->jpeg_exporter;
+
+self.Input->img_reader.Input;
+
+

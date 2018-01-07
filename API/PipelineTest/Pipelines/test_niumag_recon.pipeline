@@ -1,0 +1,22 @@
+import "BasicRecon.dll";
+
+NiumagFidReader reader(DataPath = "D:\\Projects\\Niumag\\data\\UU.img.fid");
+SliceIterator slice_iterator;
+DcRemover dc_remover;
+ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);
+Fft2D fft;
+ModulePhase module_phase;
+DataTypeConvertor convertor;
+JpegExporter jpeg_exporter(ExportFolder = "d:\\Output\\test_niuman");
+//NiuMriDisplay2D display2d;
+	
+reader->slice_iterator;
+slice_iterator->dc_remover;
+dc_remover->zero_filling;
+zero_filling->fft;
+fft->module_phase;
+module_phase.Module->convertor;
+//convertor.UnsignedShort->display2d;
+convertor.UnsignedShort->jpeg_exporter;
+
+self.Input->reader.Input;

@@ -1,0 +1,10 @@
+import "BasicRecon.dll";
+
+NiumagImgReader reader;
+SliceIterator slice_iterator;
+NiuMriDisplay2D display2d;
+	
+reader->slice_iterator;
+slice_iterator->display2d;
+
+self.Input->reader.Input;
