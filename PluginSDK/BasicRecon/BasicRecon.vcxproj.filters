@@ -100,10 +100,10 @@
     <ClCompile Include="LinesSelector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PhaseCorrector.cpp">
+    <ClCompile Include="NiumagPFFTConjugator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NiumagPFFTConjugator.cpp">
+    <ClCompile Include="PhaseCorrector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -210,10 +210,10 @@
     <ClInclude Include="LinesSelector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PhaseCorrector.h">
+    <ClInclude Include="NiumagPFFTConjugator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NiumagPFFTConjugator.h">
+    <ClInclude Include="PhaseCorrector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

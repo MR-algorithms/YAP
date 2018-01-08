@@ -1,0 +1,12 @@
+import "BasicRecon.dll";
+
+NiumagImgReader reader(DataPath = "D:\\Output\\1.img");
+Python2DUSUS pyUSimshow(ScriptPath = 
+	"D:\\Projects\\YAP\\PluginSDK\\BasicRecon\\Python\\example.py", 
+	MethodName = "ShowImage");
+SliceIterator slice_iterator;
+
+reader->slice_iterator;
+slice_iterator->pyUSimshow;
+
+self.Input->reader.Input;

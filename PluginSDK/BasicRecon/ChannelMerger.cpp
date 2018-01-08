@@ -22,7 +22,7 @@ ChannelMerger::ChannelMerger(void) :
 ChannelMerger::ChannelMerger( const ChannelMerger& rhs )
 	: ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"ChannelMerger constructor called.", L"BasicRecon");
+	LOG_TRACE(L"ChannelMerger copy constructor called.", L"BasicRecon");
 }
 
 ChannelMerger::~ChannelMerger(void)

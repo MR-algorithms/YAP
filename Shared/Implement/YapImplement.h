@@ -30,8 +30,8 @@ catch(...){\
 	return nullptr;\
 }\
 
-#define ADD(a, b) auto pb = b; \
-g_processor_manager->Add((a), pb);
+#define ADD(a, b) {auto pb = b; \
+g_processor_manager->Add((a), pb);}\
 
 #define END_DECL_PROCESSORS return g_processor_manager;\
 }\

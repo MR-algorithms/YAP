@@ -86,22 +86,20 @@ void PipelineTest()
 	VdfParser parser;
 	auto variable_manager = parser.CompileFile(L"sysParams_yap.txt");
 
-	PipelineCompiler compiler;
-	auto pipeline = compiler.CompileFile(L"Pipelines\\test1.pipeline"); 
-	//test_niumag_recon.pipeline");
-	//test1.pipeline");
-	if (pipeline.get() == nullptr)
 	{
-		return;
-	}
-	pipeline->SetGlobalVariables(variable_manager->Variables());
+		PipelineCompiler compiler;
+		auto pipeline = compiler.CompileFile(L"Pipelines\\Radiomics_test.pipeline");
+		if (pipeline.get() == nullptr)
+		{
+			return;
+		}
+		pipeline->SetGlobalVariables(variable_manager->Variables());
 
-	if (pipeline)
-	{
-		pipeline->Input(L"Input", nullptr);
+		if (pipeline)
+		{
+			pipeline->Input(L"Input", nullptr);
+		}
 	}
-
-	auto sfo1 = variable_manager->Get<double>(L"SFO1");
 
 	ModuleManager::GetInstance().Release();
 }
@@ -211,7 +209,10 @@ int main()
 //	PartialFFTTest();
 
 	time_t end = clock();
+	printf("\n");
 	printf("the running time is : %f\n", float(end - start) / CLOCKS_PER_SEC);
+	system("pause");
+
 	return 0;
 }
 

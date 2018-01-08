@@ -408,7 +408,8 @@ namespace _details
 	SmartPtr<IVariable> ValueArrayVariable<SmartPtr<IVariable>>::Get(size_t index) const
 	{
 		assert(index < _elements.size());
-		return (const_cast<ValueArrayVariable<SmartPtr<IVariable>>*>(this))->_elements[index];
+		auto This = const_cast<ValueArrayVariable<SmartPtr<IVariable>>*>(this);
+		return This->_elements[index];
 	}
 
 	template <>

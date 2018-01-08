@@ -5,9 +5,9 @@
 using namespace Yap;
 using namespace std;
 
-shared_ptr<LogUserImpl> LogUserImpl::s_instance;
+std::shared_ptr<Yap::LogUserImpl> Yap::LogUserImpl::s_instance;
 
-LogUserImpl::LogUserImpl()
+LogUserImpl::LogUserImpl():_log(nullptr)
 {
 	_log_name = L"sys.log";
 	_module = L"";
@@ -26,7 +26,7 @@ LogUserImpl& LogUserImpl::GetInstance()
 {
 	if (!s_instance)
 	{
-		s_instance = shared_ptr<LogUserImpl>(new LogUserImpl);
+		s_instance = shared_ptr<LogUserImpl>(new LogUserImpl());
 	}
 	return *s_instance;
 }
@@ -44,7 +44,7 @@ void LogUserImpl::SetLog(ILog* log)
 	_log = log;
 }
 
-void Yap::LogUserImpl ::Trace(const wchar_t * info, const wchar_t * module, const wchar_t * log_name)
+void Yap::LogUserImpl::Trace(const wchar_t * info, const wchar_t * module, const wchar_t * log_name)
 {
 	if (_log != nullptr)
 	{

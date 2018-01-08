@@ -41,7 +41,7 @@ NiumagFidReader::NiumagFidReader(void):
 NiumagFidReader::NiumagFidReader(const NiumagFidReader& rhs):
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"NiumagFidReader constructor called.", L"BasicRecon");
+	LOG_TRACE(L"NiumagFidReader copy constructor called.", L"BasicRecon");
 }
 
 NiumagFidReader::~NiumagFidReader()
@@ -108,7 +108,7 @@ bool Yap::NiumagFidReader::ReadNiumagFidData()
 			(Dimension4, 0U, dim4);
 
 		auto data = CreateData<complex<float>>(nullptr,
-			reinterpret_cast<complex<float>*>(buffer), dimensions, nullptr, true);
+			reinterpret_cast<complex<float>*>(buffer), dimensions);
 
 		Feed(L"Output", data.get());
 	}
@@ -120,6 +120,5 @@ bool Yap::NiumagFidReader::ReadNiumagFidData()
 	{
 		return false;
 	}
-
 	return true;
 }

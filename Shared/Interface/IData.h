@@ -32,6 +32,8 @@ namespace Yap
 	const int DataTypeComplexFloat = 0x00000100;	///< complex<float> (2 * 4 bytes)
 	const int DataTypeComplexDouble = 0x00000200;	///< complex<double> (2 * 8 bytes)
 	const int DataTypeBool = 0x00000400;			///< bool (1 bytes)
+	const int DataTypeLongLong = 0x00000800;		///< long long (8 bytes) == int64_t
+	const int DataTypeUnsignedLongLong = 0x00001000;///< unsigned long long (8 bytes) == uint64_t
 	const int DataTypeAll = 0xFFFFFFFF;				///< all types accepted
 
 	/**
@@ -55,6 +57,8 @@ namespace Yap
 	template <> struct data_type_id<std::complex<float>> { static const int type = DataTypeComplexFloat; };
 	template <> struct data_type_id<std::complex<double>> { static const int type = DataTypeComplexDouble; };
 	template <> struct data_type_id<bool> { static const int type = DataTypeBool; };
+	template <> struct data_type_id<long long> { static const int type = DataTypeLongLong; };
+	template <> struct data_type_id<unsigned long long> { static const int type = DataTypeUnsignedLongLong; };
 	/** @} */
 
 

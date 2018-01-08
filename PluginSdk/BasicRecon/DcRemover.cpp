@@ -71,7 +71,7 @@ DcRemover::DcRemover() :
 Yap::DcRemover::DcRemover(const DcRemover& rhs)
 	:ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"DcRemover constructor called.", L"BasicRecon");
+	LOG_TRACE(L"DcRemover copy constructor called.", L"BasicRecon");
 }
 
 DcRemover::~DcRemover()

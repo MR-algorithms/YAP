@@ -7,44 +7,44 @@
 
 namespace Yap {
 
-    struct VariableException
-    {
-        enum Type
-        {
-            VariableNotFound,
-            TypeNotMatch,
-            InvalidType,
+	struct VariableException
+	{
+		enum Type
+		{
+			VariableNotFound,
+			TypeNotMatch,
+			InvalidType,
 			OutOfRange,
 			InvalidId,
 			NotAStruct,
 			NotAnArray,
-        };
-        std::wstring variable_id;
-        Type type;
-        VariableException(const wchar_t * id, Type type_) : variable_id(id), type(type_) {}
-    };
+		};
+		std::wstring variable_id;
+		Type type;
+		VariableException(const wchar_t * id, Type type_) : variable_id(id), type(type_) {}
+	};
 
-    class VariableSpace
-    {
-    public:
-        VariableSpace();
-        explicit VariableSpace(IVariableContainer * variables);
-        VariableSpace(const VariableSpace& rhs);
+	class VariableSpace
+	{
+	public:
+		VariableSpace();
+		explicit VariableSpace(IVariableContainer * variables);
+		VariableSpace(const VariableSpace& rhs);
 		VariableSpace(VariableSpace&& rhs);
 
-        ~VariableSpace();
+		~VariableSpace();
 
 		const VariableSpace& operator = (const VariableSpace& rhs);
 		const VariableSpace& operator = (VariableSpace&& rhs);
 
 		bool Add(int type, const wchar_t * name, const wchar_t * description);
-        bool Add(const wchar_t * type, const wchar_t * name, const wchar_t * description);
-        bool Add(IVariable* variable);
+		bool Add(const wchar_t * type, const wchar_t * name, const wchar_t * description);
+		bool Add(IVariable* variable);
 
 		bool AddArray(const wchar_t * element_type_id, const wchar_t * id, const wchar_t * description);
 
-        IVariableContainer * Variables();
-        const IVariableContainer * Variables() const;
+		IVariableContainer * Variables();
+		const IVariableContainer * Variables() const;
 
 		/// Enable or disable a variable in variable space.
 		bool Enable(const wchar_t * id, bool enable);
@@ -84,7 +84,8 @@ namespace Yap {
 			static_assert(std::is_same<T, int>::value ||
 				std::is_same<T, double>::value ||
 				std::is_same<T, bool>::value ||
-				std::is_same<T, const wchar_t * const>::value,
+				std::is_same<T, const wchar_t * const>::value ||
+				std::is_same<T, const wchar_t *>::value,
 				"You can only use one of the following types: int, double, bool, const wchar_t * const");
 
 			std::wstring variable_id{ id };
@@ -125,12 +126,12 @@ namespace Yap {
 
 		static std::shared_ptr<VariableSpace> Load(const wchar_t * path);
 
-        void Reset();
-        bool TypeExists(const wchar_t * type_id) const;
-        bool VariableExists(const wchar_t * id) const;
-        const IVariable * GetType(const wchar_t * type_id) const;
-        bool AddType(const wchar_t * type_id, IVariable *type);
-        bool AddType(const wchar_t * type_id, IPtrContainer<IVariable> * variables);
+		void Reset();
+		bool TypeExists(const wchar_t * type_id) const;
+		bool VariableExists(const wchar_t * id) const;
+		const IVariable * GetType(const wchar_t * type_id) const;
+		bool AddType(const wchar_t * type_id, IVariable *type);
+		bool AddType(const wchar_t * type_id, IPtrContainer<IVariable> * variables);
 
 		IVariable * GetVariable(const wchar_t * name, int expected_type = VariableAllTypes);
 
@@ -143,6 +144,7 @@ namespace Yap {
 				std::is_same<T, double>::value ||
 				std::is_same<T, bool>::value ||
 				std::is_same<T, const wchar_t * const>::value ||
+				std::is_same<T, const wchar_t *>::value ||
 				std::is_same<T, IVariable* >::value,
 				"You can only use one of the following types: int, double, bool, const wchar_t * const");
 
@@ -171,9 +173,9 @@ namespace Yap {
 		bool InitTypes();
 
 		static IVariable * GetVariable(IVariableContainer * variables, const wchar_t * name, int type = VariableAllTypes);
-        SmartPtr<IVariableContainer> _variables;
+		SmartPtr<IVariableContainer> _variables;
 
-        std::map<std::wstring, SmartPtr<IVariable>> _types;
+		std::map<std::wstring, SmartPtr<IVariable>> _types;
 		std::map<std::wstring, SmartPtr<IVariable>> _basic_array_types;
-    };
+	};
 }

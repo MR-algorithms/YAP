@@ -11,7 +11,7 @@ namespace Yap {
 	/**
 	@remark In YAP framework, objects are often created in one module and used in another. Since different
 	modules can be developed by different developers and built with different compilers (or different
-	versions of compiler), objects can only be passed from on module to another in form of interface
+	versions of compiler), objects can only be passed from one module to another in form of interface
 	pointers.
 
 	There are three typical scenarios:
@@ -85,47 +85,65 @@ class SmartPtr
 public:
 	SmartPtr() : _pointer(nullptr) {}
 
-	SmartPtr(const SmartPtr<TYPE>& source) : _pointer(source._pointer) 
+	template <typename SOURCE_TYPE>
+	explicit SmartPtr(SOURCE_TYPE * pointer = nullptr)  
 	{
+		if (pointer == nullptr)
+			return;
+
+		_pointer = dynamic_cast<TYPE*>(pointer);
+		assert(_pointer && "SOURCE_TYPE should be same as the TYPE, or can be convert to TYPE.");
+
 		auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
+		assert(shared_object != nullptr &&
+			"Only pointers to object implementing ISharedObject can be wrapped using YapShared().");
+
 		if (shared_object != nullptr)
 		{
 			shared_object->Lock();
 		}
 	}
 
-	template <typename SOURCE_TYPE>
-		SmartPtr(const SmartPtr<SOURCE_TYPE>& source) : _pointer(source.get())
+	SmartPtr(const SmartPtr<TYPE>& source)
 	{
-			if (source.get() == nullptr)
-				return;
+		if (source.get() == nullptr)
+			return;
 
-			if (dynamic_cast<TYPE*>(source.get()) == nullptr)
-				throw std::bad_cast();
-
-			auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
-			if (shared_object != nullptr)
-			{
-				 shared_object->Lock();
-			}
-	}
-
-		SmartPtr(SmartPtr<TYPE>&& source) : _pointer(source._pointer)
-	{
-			source._pointer = nullptr;
+		auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
+		assert(shared_object && "Only type derived from ISharedObject can be wrapped in SmartPtr.");
+		shared_object->Lock();
 	}
 
 	template <typename SOURCE_TYPE>
-		SmartPtr(SmartPtr<SOURCE_TYPE>&& source) : _pointer(dynamic_cast<TYPE*>(source.get()))
+	SmartPtr(const SmartPtr<SOURCE_TYPE>& source)
 	{
-				if (_pointer == nullptr && source.get() != nullptr)
+		if (source.get() == nullptr)
+			return;
+
+		assert(dynamic_cast<TYPE*>(source.get()) != nullptr &&
+			"SOURCE_TYPE should be same as the TYPE, or can be convert to TYPE.");
+
+		auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
+		assert(shared_object && "Only type derived from ISharedObject can be wrapped in SmartPtr.");
+		shared_object->Lock();
+	}
+
+	SmartPtr(SmartPtr<TYPE>&& source) : _pointer(source._pointer)
+	{
+		source._pointer = nullptr;
+	}
+
+	template <typename SOURCE_TYPE>
+	SmartPtr(SmartPtr<SOURCE_TYPE>&& source) : _pointer(dynamic_cast<TYPE*>(source.get()))
+	{
+		if (_pointer == nullptr && source.get() != nullptr)
 			throw std::bad_cast();
 
-				auto shared_pointer = dynamic_cast<ISharedObject*>(_pointer);
-				if (shared_pointer != nullptr)
-				{
-					shared_pointer->Lock();
-				}
+		auto shared_pointer = dynamic_cast<ISharedObject*>(_pointer);
+		if (shared_pointer != nullptr)
+		{
+			shared_pointer->Lock();
+		}
 	}
 
 	~SmartPtr()
@@ -224,16 +242,7 @@ public:
 		return _pointer != nullptr;
 	}
 private:
-	TYPE * _pointer;
-
-	explicit SmartPtr(TYPE * pointer) : _pointer(pointer)
-	{
-		auto shared_object = dynamic_cast<ISharedObject*>(pointer);
-		if (shared_object != nullptr) 
-		{
-			shared_object->Lock();
-		}
-	}
+	TYPE * _pointer = nullptr;
 
 	template<typename TYPE> friend SmartPtr<TYPE> YapShared(TYPE * object);
 	template<typename TYPE> friend SmartPtr<TYPE> YapShared(ISharedObject* object);

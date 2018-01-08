@@ -45,7 +45,7 @@ NiumagImgReader::NiumagImgReader():
 Yap::NiumagImgReader::NiumagImgReader(const NiumagImgReader& rhs):
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"NiumagImgReader constructor called.", L"BasicRecon");
+	LOG_TRACE(L"NiumagImgReader copy constructor called.", L"BasicRecon");
 }
 
 NiumagImgReader::~NiumagImgReader()
@@ -113,7 +113,7 @@ bool Yap::NiumagImgReader::ReadNiumagImgData()
 			(DimensionSlice, 0U, dim3);
 
 		auto data = CreateData<unsigned short>(nullptr,
-			reinterpret_cast<unsigned short*>(buffer), dimensions, nullptr, true);
+			reinterpret_cast<unsigned short*>(buffer), dimensions);
 
 		Feed(L"Output", data.get());
 	}

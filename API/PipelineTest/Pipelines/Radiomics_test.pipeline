@@ -1,0 +1,24 @@
+import "BasicRecon.dll";
+
+FolderIterator folders(Path = "D:\\test_data\\MICCAI_BraTS17_Data_Training_for_TGuo_2017modified\\Brats17TrainingData\\HGG",
+	SearchSubDir = false);
+FilesIterator files(FileRegex = "nii",SearchSubDir = false, ReferenceRegex = ".*seg.nii");
+NiiReader ref_reader;
+NiiReader img_reader;
+Radiomics radiomicshandle(ScriptPath = 
+	"D:\\Projects\\Demo_Cplus_extend_python\\PythonScripts\\Py2C.py", 
+	MethodName = "test2d", ReturnDataType = 8);
+// RFeaturesCollector features;
+JpegExporter jpeg_exporter(ExportFolder = "d:\\Output");
+
+
+folders->files;
+files.Reference->ref_reader;
+files.Output->img_reader;
+ref_reader->radiomicshandle.Reference;
+img_reader->radiomicshandle.Input;
+radiomicshandle->jpeg_exporter;
+
+
+self.Input->folders.Input;
+

@@ -52,7 +52,7 @@ ModulePhase::ModulePhase(void) :
 Yap::ModulePhase::ModulePhase(const ModulePhase& rhs):
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"ModulePhase constructor called.", L"BasicRecon");
+	LOG_TRACE(L"ModulePhase copy constructor called.", L"BasicRecon");
 }
 
 ModulePhase::~ModulePhase()

@@ -1,0 +1,12 @@
+import "BasicRecon.dll";
+
+NiiReader ref_reader(FilePath = "D:\\test_data\\Brats17_2013_11_1_t1ce.nii");
+SliceSelector selector(SliceIndex = 40);
+DataTypeConvertor convertor;
+JpegExporter jpeg_exporter(ExportFolder = "d:\\Output");
+
+ref_reader->selector;
+selector->convertor;
+convertor.UnsignedShort->jpeg_exporter;
+
+self.Input->ref_reader.Input;

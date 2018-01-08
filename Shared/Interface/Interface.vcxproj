@@ -148,6 +148,8 @@
     <ClInclude Include="ILog.h" />
     <ClInclude Include="Interfaces.h" />
     <ClInclude Include="IProcessor.h" />
+    <ClInclude Include="IPython.h" />
+    <ClInclude Include="IPythonUser.h" />
     <ClInclude Include="IVariable.h" />
     <ClInclude Include="smartptr.h" />
   </ItemGroup>

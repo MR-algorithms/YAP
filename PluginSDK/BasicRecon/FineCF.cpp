@@ -23,7 +23,7 @@ FineCF::FineCF()
 Yap::FineCF::FineCF(const FineCF& rhs) :
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"FineCF constructor called.", L"BasicRecon");
+	LOG_TRACE(L"FineCF copy constructor called.", L"BasicRecon");
 }
 
 

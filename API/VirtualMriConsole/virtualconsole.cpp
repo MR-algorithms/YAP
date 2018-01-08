@@ -258,4 +258,3 @@ void VirtualConsole::Stop()
     assert(_impl);
     _impl->Stop();
 }
-

@@ -23,7 +23,7 @@ NiuMriImageWriter::NiuMriImageWriter(void) :
 NiuMriImageWriter::NiuMriImageWriter(const NiuMriImageWriter& rhs) :
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"NiuMriImageWriter constructor called.", L"BasicRecon");
+	LOG_TRACE(L"NiuMriImageWriter copy constructor called.", L"BasicRecon");
 }
 
 NiuMriImageWriter::~NiuMriImageWriter()

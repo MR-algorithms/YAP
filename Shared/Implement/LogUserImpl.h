@@ -1,8 +1,10 @@
 #ifndef LOGUSERIMPL_H_20170426
 #define LOGUSERIMPL_H_20170426
-#pragma once
 
-#include "Interface/Interfaces.h"
+#pragma once
+#include <string>
+#include "Interface\ILog.h"
+#include <memory>
 
 #define LOG_TRACE(info, module) LogUserImpl::GetInstance().Trace(info, module)
 #define LOG_DEBUG(info, module) LogUserImpl::GetInstance().Debug(info, module)
@@ -10,6 +12,8 @@
 #define LOG_WARN(info, module) LogUserImpl::GetInstance().Warn(info, module)
 #define LOG_ERROR(info, module) LogUserImpl::GetInstance().Error(info, module)
 #define LOG_FATAL(info, module) LogUserImpl::GetInstance().Fatal(info, module)
+
+struct Yap::ILogUser;
 
 namespace Yap
 {

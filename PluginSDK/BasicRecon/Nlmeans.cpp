@@ -18,7 +18,7 @@ Nlmeans::Nlmeans(void):
 Yap::Nlmeans::Nlmeans(const Nlmeans & rhs) :
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"Nlmeans constructor called.", L"BasicRecon");
+	LOG_TRACE(L"Nlmeans copy constructor called.", L"BasicRecon");
 }
 
 Nlmeans::~Nlmeans()
@@ -105,7 +105,7 @@ void Yap::Nlmeans::nlmeans_ipol(unsigned int iDWin, unsigned int iDBloc, float S
 	float * fpLut = new float[iLutLength];//
 	wxFillExpLut(fpLut, iLutLength);
 
-	float * fpCount = new float[iwxh];//
+	float * fpCount = new  float[iwxh];//
 
 	for (unsigned int y = 0; y < iHeight; y++)
 	{

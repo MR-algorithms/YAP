@@ -21,7 +21,7 @@ SliceMerger::SliceMerger(void) :
 SliceMerger::SliceMerger(const SliceMerger& rhs)
 	: ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"SliceMerger constructor called.", L"BasicRecon");
+	LOG_TRACE(L"SliceMerger copy constructor called.", L"BasicRecon");
 }
 
 SliceMerger::~SliceMerger()

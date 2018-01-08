@@ -33,10 +33,11 @@ SamplingMaskCreator::SamplingMaskCreator():
 SamplingMaskCreator::SamplingMaskCreator(const SamplingMaskCreator& rhs)
 	:ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"SampleingMaskCreator constructor called.", L"BasicRecon");
+	LOG_TRACE(L"SampleingMaskCreator copy constructor called.", L"BasicRecon");
 }
 SamplingMaskCreator::~SamplingMaskCreator()
 {
+	LOG_TRACE(L"SampleingMaskCreator destructor called.", L"BasicRecon");
 }
 
 bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
@@ -56,7 +57,7 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
 		double sample_percent = GetProperty<double>(L"SamplePercent");
 		double radius = GetProperty<double>(L"Radius");
 
-		auto mask = GenerateRandomMask(width, height, (float)pow, (float)sample_percent, (float)radius);
+		auto mask = GenerateRandomMask(width, height, float(pow), float(sample_percent), float(radius));
 		float * mask_buffer = nullptr;
 		try
 		{
@@ -75,7 +76,7 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
 			(Dimension4, 0U, 1)
 			(DimensionChannel, 0U, 1);
 
-		auto outdata = CreateData<float>(data, mask_buffer, dimensions, nullptr, true);
+		auto outdata = CreateData<float>(data, mask_buffer, dimensions, nullptr);
 
 		Feed(L"Output", outdata.get());
 	}
@@ -104,7 +105,7 @@ bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)
 			(Dimension4, 0U, 1)
 			(DimensionChannel, 0U, 1);
 
-		auto outdata = CreateData<float>(data, mask_buffer, dimensions, nullptr, true);
+		auto outdata = CreateData<float>(data, mask_buffer, dimensions, nullptr);
 
 		Feed(L"Output", outdata.get());
 	}

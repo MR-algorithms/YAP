@@ -39,10 +39,11 @@
 
 #include "Implement/LogUserImpl.h"
 #include "Implement/YapImplement.h"
+#include "Interface/IPythonUser.h"
 
 using namespace Yap;
 
-extern "C" {
+extern "C" { 
 	__declspec(dllexport) ILogUser* GetLogUser() 
 	{
 		return (ILogUser*) &LogUserImpl::GetInstance();
@@ -86,8 +87,8 @@ BEGIN_DECL_PROCESSORS
 END_DECL_PROCESSORS
 
 BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
+					   DWORD  ul_reason_for_call,
+					   LPVOID lpReserved
 					 )
 {
 	switch (ul_reason_for_call)

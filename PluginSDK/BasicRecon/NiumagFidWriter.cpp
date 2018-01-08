@@ -26,7 +26,7 @@ NiumagFidWriter::NiumagFidWriter(void) :
 NiumagFidWriter::NiumagFidWriter(const NiumagFidWriter& rhs) :
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"NiumagFidWriter constructor called.", L"BasicRecon");
+	LOG_TRACE(L"NiumagFidWriter copy constructor called.", L"BasicRecon");
 }
 
 NiumagFidWriter::~NiumagFidWriter()

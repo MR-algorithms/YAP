@@ -33,7 +33,7 @@ Fft1D::Fft1D(const Fft1D& rhs)
 	_plan_inverse(rhs._plan_inverse),
 	_plan_in_place(rhs._plan_in_place)
 {
-	LOG_TRACE(L"Fft1D constructor called.", L"BasicRecon");
+	LOG_TRACE(L"Fft1D copy constructor called.", L"BasicRecon");
 }
 
 Fft1D::~Fft1D()

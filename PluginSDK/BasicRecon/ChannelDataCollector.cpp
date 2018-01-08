@@ -21,7 +21,7 @@ ChannelDataCollector::ChannelDataCollector(void):
 Yap::ChannelDataCollector::ChannelDataCollector(const ChannelDataCollector& rhs):
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"ChannelDataCollector constructor called.", L"BasicRecon");
+	LOG_TRACE(L"ChannelDataCollector copy constructor called.", L"BasicRecon");
 }
 
 

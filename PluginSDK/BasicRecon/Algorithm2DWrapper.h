@@ -3,9 +3,14 @@
 #ifndef Algorithm2DWrapper_h__20160813
 #define Algorithm2DWrapper_h__20160813
 
-
 #include "Implement/ProcessorImpl.h"
 #include <complex>
+#include <map>
+#include <comdef.h>
+#include <stdio.h>
+#include <assert.h>
+#include <iostream>
+#include "Implement/LogUserImpl.h"
 
 namespace Yap
 {
@@ -17,16 +22,17 @@ namespace Yap
 		IMPLEMENT_SHARED(this_class)
 	public:
 		typedef void (*ProcessingFunc) (INPUT_TYPE * input_data, OUTPUT_TYPE * output_data, 
-			size_t width, size_t height);	
+			size_t width, size_t height);
 
-		explicit Algorithm2DWrapper(ProcessingFunc func, const wchar_t * processor_name) :
+		explicit Algorithm2DWrapper(ProcessingFunc func, const wchar_t * processor_name):
 			_func(func), ProcessorImpl(processor_name)
 		{
-			AddInput(L"Input", 2, type_id<INPUT_TYPE>::type);
-			AddOutput(L"Output", 2, type_id<OUTPUT_TYPE>::type);
+			AddInput(L"Input", 2, data_type_id<INPUT_TYPE>::type);
+			AddOutput(L"Output", 2, data_type_id<OUTPUT_TYPE>::type);
 		}
 
-		Algorithm2DWrapper(const Algorithm2DWrapper<INPUT_TYPE, OUTPUT_TYPE>& rhs) :
+
+		Algorithm2DWrapper(const Algorithm2DWrapper<INPUT_TYPE, OUTPUT_TYPE>& rhs):
 			_func(rhs._func), ProcessorImpl(rhs)
 		{
 		}
@@ -36,7 +42,7 @@ namespace Yap
 			if (wstring(port) != L"Input")
 				return false;
 
-			if (data->GetDataType() != type_id<INPUT_TYPE>::type)
+			if (data->GetDataType() != data_type_id<INPUT_TYPE>::type)
 				return false;
 
 			DataHelper input_data(data);
@@ -55,11 +61,12 @@ namespace Yap
 		}
 
 	protected:
-		~Algorithm2DWrapper() {}
+		~Algorithm2DWrapper() 
+		{
+		}
 
 		ProcessingFunc _func;
 	};
-
 
 	template<typename T>
 	class Algorithm2DInPlaceWrapper :
@@ -76,9 +83,10 @@ namespace Yap
 			AddOutput(L"Output", 2, data_type_id<T>::type);
 		}
 
-		Algorithm2DInPlaceWrapper(const Algorithm2DInPlaceWrapper<T>& rhs) :
+		Algorithm2DInPlaceWrapper(const Algorithm2DInPlaceWrapper<T>& rhs):
 			_func(rhs._func), ProcessorImpl(rhs)
 		{
+
 		}
 
 		virtual bool Input(const wchar_t * port, IData * data) override
@@ -103,11 +111,13 @@ namespace Yap
 		}
 
 	protected:
-		~Algorithm2DInPlaceWrapper() {}
+		~Algorithm2DInPlaceWrapper() {
+			LOG_TRACE(L"Algorithm2DInPlaceWrapper destructor", L"Algorithm2DInPlaceWrapper");
+		}
 
 		ProcessingFunc _func;
 	};
-}
 
+}
 
 #endif // Algorithm2DWrapper_h__
