@@ -22,7 +22,7 @@ struct HeadItem //MsgPackBufferSocketIO
     uint32_t size; // sizeof(T) * element_count
 };
 
-struct BodyItem
+struct DataItem
 {
     std::vector<char> data;
 };
@@ -35,8 +35,10 @@ struct BodyItem
 struct DataPackage
 {
     uint32_t magic_anditem_count[2];
-    std::vector<HeadItem> head_chache;
-    std::vector<BodyItem> datas;
+    std::vector<HeadItem> head;
+    std::vector<DataItem> data;
+
+    void AddItem(uint16_t data_type, uint16_t second_type, const char* value, int size);
 };
 
 class MessageProcess

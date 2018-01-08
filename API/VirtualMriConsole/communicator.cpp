@@ -73,5 +73,17 @@ bool Communicator::Disconnect()
 
 bool Communicator::Send(const DataPackage &data)
 {
+    QByteArray byteArray1 =
+            QByteArray::fromRawData((char*)(&data.magic_anditem_count[0]), sizeof(uint32_t));
+
+
+    QByteArray byteArray2;
+    for(int i = 0; i < static_cast<int>( data.data.size() ); i ++)    {
+         DataItem dataitem = data.data[i];
+         QByteArray temp = QByteArray::fromRawData((char*)dataitem.data.data(), dataitem.data.size());
+         byteArray2 += temp;
+    }
+
+
     return true;
 }

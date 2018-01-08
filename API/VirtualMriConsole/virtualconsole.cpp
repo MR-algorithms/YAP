@@ -114,10 +114,24 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This)
             //Doing something.
 
 
-            databin.Go();
-            //end of doing
-            This->_timeIndex ++;
-            qDebug() << "time: "<< This->_timeIndex;
+            bool finished = false;
+            databin.Go(finished);
+            if(finished)
+            {
+                databin.End();
+                This->_timeMutex1.unlock();
+                This->_timeIndex = 0;
+                This->_threadState = idle;
+                qDebug()<<"finish scan.";
+                //通知主线程:更新状态，回收扫描线程。
+                return 1;
+            }
+            else
+            {
+                //end of doing
+                This->_timeIndex ++;
+                qDebug() << "time: "<< This->_timeIndex;
+            }
         }
             break;
 

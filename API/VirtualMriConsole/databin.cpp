@@ -140,10 +140,8 @@ boost::shared_array<complex<float>> Databin::GetRawData(unsigned int channelInde
 //
 boost::shared_array<complex<float>> Databin::GetRawData(unsigned int channelIndex, unsigned int sliceIndex)
 {
-    //assert(0);
-    //return boost::shared_array<complex<float>>(nullptr);
-    assert(channelIndex + 1 < _dataInfo.channel_count);
-    assert(sliceIndex + 1 < _dataInfo.slice_count);
+    assert(channelIndex < _dataInfo.channel_count);
+    assert(sliceIndex  < _dataInfo.slice_count);
 
     unsigned int freqPointCount  = _dataInfo.freq_point_count;
     unsigned int phasePointCount = _dataInfo.phase_point_count;
@@ -171,15 +169,27 @@ boost::shared_array<complex<float>> Databin::GetRawData(unsigned int channelInde
 {
     //assert(0);
     //return boost::shared_array<complex<float>>(nullptr);
-    assert(channelIndex + 1 < _dataInfo.channel_count);
-    assert(sliceIndex + 1 < _dataInfo.slice_count);
-    assert(phaseIndex + 1 < _dataInfo.phase_point_count);
+    assert(channelIndex  < _dataInfo.channel_count);
+    assert(sliceIndex  < _dataInfo.slice_count);
+    assert(phaseIndex  < _dataInfo.phase_point_count);
 
-    unsigned int freqPointCount = _dataInfo.freq_point_count;
-    complex<float>* srcLine = GetRawData(channelIndex, sliceIndex).get() + freqPointCount * phaseIndex;
+    unsigned int sliceCount      = _dataInfo.slice_count;
+    unsigned int phasePointCount = _dataInfo.phase_point_count;
+    unsigned int freqPointCount  = _dataInfo.freq_point_count;
+
+    //complex<float>* srcLine = GetRawData(channelIndex, sliceIndex).get() + freqPointCount * phaseIndex;
+
+    unsigned int sliceSize = freqPointCount * phasePointCount;
+    unsigned int channelSize = freqPointCount * phasePointCount * sliceCount;
+
+    complex<float>* srcLine = _data.get()
+            + channelSize * channelIndex
+            + sliceCount * sliceIndex
+            + freqPointCount * phaseIndex;
+
     boost::shared_array<complex<float>> destLine(new complex<float>[freqPointCount]);
-
     memcpy(destLine.get(), srcLine, sizeof(complex<float>) * freqPointCount);
+
     return destLine;
 
 }
@@ -212,25 +222,71 @@ void Databin::Start(int scan_id, int channel_count)
     DataPackage dataPackage;
     MessageProcess::Pack(dataPackage, start);
     //
+    SampleDataStart start2;
+    MessageProcess::Unpack(dataPackage, start2);
+    assert(start == start2);
+    //
     Communicator::GetHandle().Send(dataPackage);
+
+    _current_phase_index = 0;
 
 
 
 
 }
-void Databin::Go()
+void Databin::Go(bool &finished)
 {
     //go
-    if(CanbeFinished())
+    //The dimension of CMR rawdata is different from the dimension of Communication protocol.
+
+    int lines_image = _dataInfo.phase_point_count;
+    int lines_channel = _dataInfo.phase_point_count * _dataInfo.slice_count;
+
+    for(int channel_index = 0; channel_index < static_cast<int>( _dataInfo.channel_count); channel_index ++)
     {
-        End();
+        for(int image_index = 0; image_index < static_cast<int>( _dataInfo.slice_count ); image_index ++)
+        {
+            //
+            SampleDataData data;
+
+            data.dim23456_index
+                    = channel_index * lines_channel
+                    + image_index   * lines_image
+                    + _current_phase_index;
+
+            boost::shared_array<complex<float>> aline
+                    = GetRawData(channel_index, image_index, _current_phase_index);
+            memcpy(data.data.data(), aline.get(), sizeof(std::complex<float>) * _dataInfo.freq_point_count);
+
+            DataPackage dataPackage;
+            MessageProcess::Pack(dataPackage, data);
+            //
+            SampleDataData data2;
+            MessageProcess::Unpack(dataPackage, data2);
+            assert(data == data2);
+            //
+            Communicator::GetHandle().Send(dataPackage);
+        }
     }
+
+    _current_phase_index ++;
+
+    finished = CanbeFinished();
+
 }
 void Databin::End()
 {
     if(!_ended)
     {
         //end.
+        SampleDataEnd end;
+
+        end.error_code = 7;
+        DataPackage dataPackage;
+        MessageProcess::Pack(dataPackage, end);
+
+        Communicator::GetHandle().Send(dataPackage);
+
         _ended = true;
     }
 }

@@ -14,7 +14,6 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    SampleDataProtocol.cpp \
     databin.cpp \
     mask.cpp \
     EcnuRawDataFile.cpp \
@@ -36,7 +35,9 @@ HEADERS  += mainwindow.h \
     communicator.h \
     myevent.h \
     scantask.h \
-    datapackage.h
+    datapackage.h \
+    CmrPackItemTypeHelper.h \
+    CmrPackType.h
 
 FORMS    += mainwindow.ui
 
