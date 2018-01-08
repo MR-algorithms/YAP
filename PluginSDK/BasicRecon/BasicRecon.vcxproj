@@ -82,6 +82,7 @@
     <CodeAnalysisRuleSet>C:\Program Files (x86)\Microsoft Visual Studio 14.0\Team Tools\Static Analysis Tools\Rule Sets\NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <OutDir>$(YAP_ROOT)\$(Platform)\$(Configuration)\</OutDir>
+    <IncludePath>D:\ThirdParty\log4cplus-2.0.0-rc1\include;D:\ThirdParty\FFTW-64\include;D:\ThirdParty\Armadillo\Armadillo-7200.2\include;D:\ThirdParty\boost_1_61_0;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -193,15 +194,12 @@
     <ClInclude Include="Fft1D.h" />
     <ClInclude Include="Fft2D.h" />
     <ClInclude Include="Fft3D.h" />
-    <ClInclude Include="FilesIterator.h" />
     <ClInclude Include="FineCF.h" />
-    <ClInclude Include="FolderIterator.h" />
     <ClInclude Include="GrayScaleUnifier.h" />
     <ClInclude Include="imageProcessing.h" />
     <ClInclude Include="JpegExporter.h" />
     <ClInclude Include="LinesSelector.h" />
     <ClInclude Include="ModulePhase.h" />
-    <ClInclude Include="NiiReader.h" />
     <ClInclude Include="NiumagFidReader.h" />
     <ClInclude Include="NiumagFidWriter.h" />
     <ClInclude Include="NiumagImgReader.h" />
@@ -211,8 +209,6 @@
     <ClInclude Include="NLM.h" />
     <ClInclude Include="Nlmeans.h" />
     <ClInclude Include="PhaseCorrector.h" />
-    <ClInclude Include="Radiomics.h" />
-    <ClInclude Include="RFeaturesCollector.h" />
     <ClInclude Include="SamplingMaskCreator.h" />
     <ClInclude Include="SliceIterator.h" />
     <ClInclude Include="SliceMerger.h" />
@@ -290,9 +286,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Fft3D.cpp" />
-    <ClCompile Include="FilesIterator.cpp" />
     <ClCompile Include="FineCF.cpp" />
-    <ClCompile Include="FolderIterator.cpp" />
     <ClCompile Include="GrayScaleUnifier.cpp" />
     <ClCompile Include="JpegExporter.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -307,7 +301,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="NiiReader.cpp" />
     <ClCompile Include="NiumagFidReader.cpp" />
     <ClCompile Include="NiumagFidWriter.cpp" />
     <ClCompile Include="NiumagImgReader.cpp" />
@@ -317,8 +310,6 @@
     <ClCompile Include="NLM.cpp" />
     <ClCompile Include="Nlmeans.cpp" />
     <ClCompile Include="PhaseCorrector.cpp" />
-    <ClCompile Include="Radiomics.cpp" />
-    <ClCompile Include="RFeaturesCollector.cpp" />
     <ClCompile Include="SamplingMaskCreator.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>

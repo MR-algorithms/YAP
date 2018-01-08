@@ -15,15 +15,12 @@
 #include "Fft1D.h"
 #include "Fft2D.h"
 #include "Fft3D.h"
-#include "FilesIterator.h"
 #include "FineCF.h"
-#include "FolderIterator.h"
 #include "GrayScaleUnifier.h"
 #include "imageProcessing.h"
 #include "JpegExporter.h"
 #include "LinesSelector.h"
 #include "ModulePhase.h"
-#include "NiiReader.h"
 #include "NiumagFidReader.h"
 #include "NiumagFidWriter.h"
 #include "NiumagImgReader.h"
@@ -33,8 +30,6 @@
 #include "NLM.h"
 #include "Nlmeans.h"
 #include "PhaseCorrector.h"
-#include "Radiomics.h"
-#include "RFeaturesCollector.h"
 #include "SamplingMaskCreator.h"
 #include "SliceIterator.h"
 #include "SliceMerger.h"
@@ -44,16 +39,11 @@
 
 #include "Implement/LogUserImpl.h"
 #include "Implement/YapImplement.h"
-#include "Implement/PythonUserImpl.h"
+#include "Interface/IPythonUser.h"
 
 using namespace Yap;
 
 extern "C" { 
-	_declspec(dllexport) IPythonUser * GetPythonUser()
-	{
-		return (IPythonUser*)&PythonUserImpl::GetInstance();
-	}
-
 	__declspec(dllexport) ILogUser* GetLogUser() 
 	{
 		return (ILogUser*) &LogUserImpl::GetInstance();
@@ -73,14 +63,11 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(Fft1D)
 	ADD_PROCESSOR(Fft2D)
 	ADD_PROCESSOR(Fft3D)
-	ADD_PROCESSOR(FilesIterator)
 	ADD_PROCESSOR(FineCF)
-	ADD_PROCESSOR(FolderIterator)
 	ADD_PROCESSOR(GrayScaleUnifier)
 	ADD_PROCESSOR(JpegExporter)
 	ADD_PROCESSOR(LinesSelector)
 	ADD_PROCESSOR(ModulePhase)
-	ADD_PROCESSOR(NiiReader)
 	ADD_PROCESSOR(NiumagFidReader)
 	ADD_PROCESSOR(NiumagFidWriter)
 	ADD_PROCESSOR(NiumagImgReader)
@@ -90,8 +77,6 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(NLM)
 	ADD_PROCESSOR(Nlmeans)
 	ADD_PROCESSOR(PhaseCorrector)
-	ADD_PROCESSOR(Radiomics)
-	ADD_PROCESSOR(RFeaturesCollector)
 	ADD_PROCESSOR(SamplingMaskCreator)
 	ADD_PROCESSOR(SliceIterator)
 	ADD_PROCESSOR(SliceMerger)

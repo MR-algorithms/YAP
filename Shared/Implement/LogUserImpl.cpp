@@ -5,7 +5,7 @@
 using namespace Yap;
 using namespace std;
 
-shared_ptr<LogUserImpl> LogUserImpl::s_instance;
+std::shared_ptr<Yap::LogUserImpl> Yap::LogUserImpl::s_instance;
 
 LogUserImpl::LogUserImpl():_log(nullptr)
 {

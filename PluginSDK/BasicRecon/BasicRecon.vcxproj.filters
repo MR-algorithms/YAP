@@ -91,21 +91,6 @@
     <ClCompile Include="CalcuArea.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NiiReader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Radiomics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FolderIterator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FilesIterator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RFeaturesCollector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Fft3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -214,21 +199,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CalcuArea.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NiiReader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Radiomics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FolderIterator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FilesIterator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RFeaturesCollector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Fft3D.h">

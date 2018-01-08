@@ -15,53 +15,55 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CompositeProcessor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ProcessorImpl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DataObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LogImpl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LogUserImpl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VariableSpace.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CompositeProcessor.h">
+    <ClInclude Include="FilesIterator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessorImpl.h">
+    <ClInclude Include="FolderIterator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ContainerImpl.h">
+    <ClInclude Include="NiiReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="YapImplement.h">
+    <ClInclude Include="Radiomics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DataObject.h">
+    <ClInclude Include="RFeaturesCollector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LogImpl.h">
+    <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LogUserImpl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VariableSpace.h">
+    <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="README.md" />
-    <None Include="ImplememtClassDiagram.cd" />
+    <ClCompile Include="PythonRecon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FilesIterator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FolderIterator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NiiReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Radiomics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RFeaturesCollector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

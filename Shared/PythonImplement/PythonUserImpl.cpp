@@ -1,6 +1,7 @@
 #include "PythonUserImpl.h"
 #include "Utilities\macros.h"
-#include "LogUserImpl.h"
+#include "Implement\LogUserImpl.h"
+
 #include <iostream>
 
 using namespace Yap;

@@ -6,6 +6,8 @@
 #include <io.h>
 #include <regex>
 
+#pragma warning(disable:4996)
+
 using namespace  Yap;
 using namespace std;
 

@@ -11,6 +11,7 @@
 #include <iomanip>
 #include <ctime>
 #include <direct.h>
+#pragma warning(disable:4996)
 
 using namespace Yap;
 using namespace std;

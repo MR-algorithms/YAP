@@ -3,14 +3,11 @@
 #ifndef Algorithm2DWrapper_h__20160813
 #define Algorithm2DWrapper_h__20160813
 
-#include <Python.h>
 #include "Implement/ProcessorImpl.h"
 #include <complex>
 #include <map>
 #include <comdef.h>
 #include <stdio.h>
-#include "Implement/PythonImpl.h"
-#include "Implement/PythonUserImpl.h"
 #include <assert.h>
 #include <iostream>
 #include "Implement/LogUserImpl.h"

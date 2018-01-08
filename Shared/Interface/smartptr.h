@@ -242,7 +242,7 @@ public:
 		return _pointer != nullptr;
 	}
 private:
-	TYPE * _pointer;
+	TYPE * _pointer = nullptr;
 
 	template<typename TYPE> friend SmartPtr<TYPE> YapShared(TYPE * object);
 	template<typename TYPE> friend SmartPtr<TYPE> YapShared(ISharedObject* object);

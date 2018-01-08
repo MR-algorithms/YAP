@@ -6,7 +6,7 @@
 #include "Implement\LogImpl.h"
 #include "Interface\Interfaces.h"
 #include "Interface/SmartPtr.h"
-#include "Implement\PythonImpl.h"
+#include "PythonImplement\PythonImpl.h"
 
 using namespace Yap;
 using namespace std;

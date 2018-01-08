@@ -3,7 +3,7 @@
 #ifndef PythonUserImpl_H_20171020
 #define PythonUserImpl_H_20171020
 
-#include <Interface/IPythonUser.h>
+#include "Interface\IPythonUser.h"
 #include <memory>
 
 namespace Yap
