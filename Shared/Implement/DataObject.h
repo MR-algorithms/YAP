@@ -233,7 +233,7 @@ namespace Yap
 		}
 
 		static SmartPtr<DataObject<T>> Create(IData * reference, T* data, const Dimensions& dimensions,
-			ISharedObject * parent = nullptr, bool own_data = false, ISharedObject * module = nullptr)
+			ISharedObject * parent = nullptr, ISharedObject * module = nullptr)
 		{
 			try
 			{

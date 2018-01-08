@@ -108,8 +108,11 @@ public:
 	{
 		if (source.get() == nullptr)
 			return;
+		
+		_pointer = dynamic_cast<TYPE*>(source._pointer);
+		assert(_pointer && "SOURCE_TYPE should be same as the TYPE, or can be convert to TYPE.");
 
-		auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
+		auto shared_object = dynamic_cast<ISharedObject*>(_pointer); // _pointer
 		assert(shared_object && "Only type derived from ISharedObject can be wrapped in SmartPtr.");
 		shared_object->Lock();
 	}

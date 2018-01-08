@@ -11,6 +11,7 @@
 using namespace Yap;
 using namespace std;
 
+
 std::map <std::wstring, Yap::SmartPtr<IProcessor>> ImportedProcessorManager::s_registered_processors;
 
 std::wstring GetFileNameFromPath(const wchar_t * path)
