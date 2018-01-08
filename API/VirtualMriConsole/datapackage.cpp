@@ -16,10 +16,10 @@ void DataPackage::AddItem(uint16_t data_type, uint16_t second_type, const char* 
     //
     DataItem dataitem;
     dataitem.data.resize(size);
-    for(int i = 0; i < size; i ++)
-    {
-        dataitem.data[i] = value[i];
-    }
+    //for(int i = 0; i < size; i ++)
+    //{
+    //    dataitem.data[i] = value[i];
+    //}
 
     memcpy(dataitem.data.data(), value, size);
     data.push_back(dataitem);//值拷贝？
@@ -172,7 +172,9 @@ bool MessageProcess::Unpack(const DataPackage &package, SampleDataData  &data)
 
 
     DataItem dataitem2 = package.data[5];
-    //int complex_points = dataitem2.data.size() / sizeof(std::complex<float>);
+    int complex_points = dataitem2.data.size() / sizeof(std::complex<float>);
+
+    data.data.resize( complex_points);
     memcpy(data.data.data(), dataitem2.data.data(), dataitem2.data.size());
 
 

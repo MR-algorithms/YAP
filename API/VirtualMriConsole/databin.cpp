@@ -256,6 +256,15 @@ void Databin::Go(bool &finished)
 
             boost::shared_array<complex<float>> aline
                     = GetRawData(channel_index, image_index, _current_phase_index);
+
+            //
+            std::vector<complex<float>> destline;
+            destline.resize(_dataInfo.freq_point_count);
+            memcpy(destline.data(), aline.get(), sizeof(std::complex<float>) * _dataInfo.freq_point_count);
+            //
+
+            data.data.resize( _dataInfo.freq_point_count);
+
             memcpy(data.data.data(), aline.get(), sizeof(std::complex<float>) * _dataInfo.freq_point_count);
 
             DataPackage dataPackage;
