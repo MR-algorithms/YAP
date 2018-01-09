@@ -192,8 +192,15 @@ bool VirtualConsoleImpl::PrepareScantask(const ScanTask& scan_task)
 
 bool VirtualConsoleImpl::Scan()
 {
+    //
+    //Databin databin;
+    //databin.Load(_scanTask.dataPath, _scanTask.mask.channelCount);
 
-    //_timeMutex1.lock();//
+    //databin.Start(178, _scanTask.mask.channelCount);
+
+
+
+    _timeMutex1.lock();//
     _thread = std::thread(ThreadFunction , this);
 
     _evtQueue.get()->PushEvent(new MyEvent(MyEvent::scan));

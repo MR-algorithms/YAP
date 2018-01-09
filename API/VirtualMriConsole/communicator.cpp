@@ -86,5 +86,7 @@ bool Communicator::Send(const DataPackage &data)
     }
 
 
-    return true;
+    this->write(byteArray1 + byteArray2);
+    bool success = this->waitForBytesWritten();
+    return success;
 }

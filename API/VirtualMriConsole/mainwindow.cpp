@@ -46,10 +46,19 @@ void MainWindow::on_connectButton_clicked()
     bool success = VirtualConsole::GetHandle().Connect();
 
 
+    if(success)
+    {
+        //ui->connectButton->setText("Disconnect");
+        ui->connectButton->setEnabled(false);
+        ui->scanButton->setEnabled(true);
 
-    //ui->connectButton->setText("Disconnect");
-    ui->connectButton->setEnabled(false);
-    ui->scanButton->setEnabled(true);
+    }
+    else
+    {
+        QMessageBox::warning(this,"Warning", "Not connected", QMessageBox::Yes);
+    }
+
+
 
 
 

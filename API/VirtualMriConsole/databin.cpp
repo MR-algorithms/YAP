@@ -249,6 +249,10 @@ void Databin::Go(bool &finished)
             //
             SampleDataData data;
 
+            data.coeff = 3.45;
+            data.rec   = 45;
+            data.rp_id = 824;
+
             data.dim23456_index
                     = channel_index * lines_channel
                     + image_index   * lines_image
