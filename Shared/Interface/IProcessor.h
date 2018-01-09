@@ -4,6 +4,7 @@
 
 #include "IContainer.h"
 #include "smartptr.h"
+#include "IVariable.h"
 
 namespace Yap
 {
