@@ -169,8 +169,8 @@ bool VirtualConsoleImpl::SetReconHost(const wchar_t *ip_address, unsigned short 
 }
 bool VirtualConsoleImpl::Connect()
 {
-    Communicator::GetHandle().Connect();
-    return true;
+    return Communicator::GetHandle().Connect();
+
 }
 
 void VirtualConsoleImpl::Disconnect()

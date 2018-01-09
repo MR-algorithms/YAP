@@ -43,7 +43,9 @@ void MainWindow::on_connectButton_clicked()
     std::wstring temp = ip_address.toStdWString();
 
     VirtualConsole::GetHandle().SetReconHost(temp.c_str(), ui->editReconPort->text().toInt());
-    VirtualConsole::GetHandle().Connect();
+    bool success = VirtualConsole::GetHandle().Connect();
+
+
 
     //ui->connectButton->setText("Disconnect");
     ui->connectButton->setEnabled(false);

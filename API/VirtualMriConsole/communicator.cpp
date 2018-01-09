@@ -55,6 +55,7 @@ bool Communicator::Connect()
 {
     connectToHost(*_reconHost, _port);
 
+
     /*QString message = "Hello!";
 
     if (tcpSocket->write(message.toLatin1(), message.length()) != message.length())
@@ -62,7 +63,7 @@ bool Communicator::Connect()
         return;
     }*/
 
-    return  true;
+    return  waitForConnected();
 }
 
 bool Communicator::Disconnect()
