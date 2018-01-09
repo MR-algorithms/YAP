@@ -3,6 +3,8 @@
 #include <boost/shared_array.hpp>
 #include <complex>
 #include "RawDataReader.h"
+//#include "communicator.h"
+class Communicator;
 using namespace std;
 
 class Databin
@@ -20,12 +22,14 @@ private:
     unsigned int GetPhaseCount();
     bool CanbeFinished(){return _current_phase_index >= static_cast<int>( GetPhaseCount());}
     int _current_phase_index;
+    std::shared_ptr<Communicator> _communicator;
     bool _ended;
 
 public:
 
-    Databin():_ended(false), _current_phase_index(0){}
+    Databin();
 
+    std::shared_ptr<Communicator> GetCommunicator(){return _communicator;}
     void Load(std::wstring dataPath, int channelCount);
     void Start(int scan_id, int channel_count);
     void Go(bool &Finished);

@@ -55,6 +55,7 @@ struct DstRawDataName
 };
 
 
+Databin::Databin():_ended(false), _current_phase_index(0),_communicator(new Communicator){}
 unsigned int Databin::AllChannel(int channelCount)
 {
     unsigned int selectAll = 0;
@@ -226,7 +227,7 @@ void Databin::Start(int scan_id, int channel_count)
     MessageProcess::Unpack(dataPackage, start2);
     assert(start == start2);
     //
-    Communicator::GetHandle().Send(dataPackage);
+    _communicator.get()->Send(dataPackage);
 
     _current_phase_index = 0;
 
@@ -242,14 +243,15 @@ void Databin::Go(bool &finished)
     int lines_image = _dataInfo.phase_point_count;
     int lines_channel = _dataInfo.phase_point_count * _dataInfo.slice_count;
 
-    for(int channel_index = 0; channel_index < static_cast<int>( _dataInfo.channel_count); channel_index ++)
+    //_dataInfo.channel_count
+    for(int channel_index = 0; channel_index < static_cast<int>(1 ); channel_index ++)
     {
         for(int image_index = 0; image_index < static_cast<int>( _dataInfo.slice_count ); image_index ++)
         {
             //
             SampleDataData data;
 
-            data.coeff = 3.45;
+            data.coeff = 3.45f;
             data.rec   = 45;
             data.rp_id = 824;
 
@@ -278,7 +280,7 @@ void Databin::Go(bool &finished)
             MessageProcess::Unpack(dataPackage, data2);
             assert(data == data2);
             //
-            Communicator::GetHandle().Send(dataPackage);
+            _communicator.get()->Send(dataPackage);
         }
     }
 
@@ -298,7 +300,7 @@ void Databin::End()
         DataPackage dataPackage;
         MessageProcess::Pack(dataPackage, end);
 
-        Communicator::GetHandle().Send(dataPackage);
+        _communicator.get()->Send(dataPackage);
 
         _ended = true;
     }

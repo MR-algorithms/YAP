@@ -15,9 +15,6 @@ class Communicator : public QTcpSocket
     Q_OBJECT
 public:
 
-    static Communicator& GetHandle(){
-            return s_instance;
-        }
     explicit Communicator(QObject *parent = 0);
 
     bool SetRemoteHost(const wchar_t * ip_address, unsigned short port);
@@ -31,10 +28,8 @@ protected slots:
     void slotConnected();
 
 protected:
-    static Communicator s_instance;
 
     std::shared_ptr<QHostAddress> _reconHost;
-    //std::wstring _ip_address;
     unsigned short _port;
 
 };
