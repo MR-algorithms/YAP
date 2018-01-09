@@ -14,11 +14,12 @@
 
 class MyEvent {
 public:
-    enum Type : int {
-        scan  = 0,
-        stop  = 1,
-        time  = 2,
-    };
+    enum Type {
+        scan,
+        stop,
+        time,
+        quit,
+   };
 
     explicit MyEvent(Type type): _type(type){ }
     virtual ~MyEvent() { }

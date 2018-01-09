@@ -21,12 +21,8 @@ class VirtualConsoleImpl
 public:
     VirtualConsoleImpl();
     ~VirtualConsoleImpl();
-    bool SetReconHost(const wchar_t *ip_address, unsigned short port);
 
     bool PrepareScantask(const ScanTask& task);
-
-    bool Connect();
-    void Disconnect();
     bool Scan();
     void Stop();
 
@@ -35,45 +31,38 @@ private:
 
     // Thread function used to carry out the scan task.
     static unsigned int ThreadFunction(VirtualConsoleImpl * This);
-    bool Init();
+    bool Init(const wchar_t *ip_address, unsigned short port);
 
 public:
     ScanTask _scanTask;
     std::mutex _scanTask_mutex;
     std::shared_ptr<EventQueue> _evtQueue;
-    bool _initialized;
+    std::mutex _event_mutex;
+    bool _connected;
 
-    std::thread _thread;
     EThreadState _threadState;
+    std::thread _thread;
 
     std::timed_mutex _timeMutex1;
     int _timeIndex;
 
 };
 
-VirtualConsoleImpl::VirtualConsoleImpl():_initialized(false), _evtQueue(new EventQueue)
+VirtualConsoleImpl::VirtualConsoleImpl():_connected(false), _evtQueue(new EventQueue)
 {
-    Init();
+
 }
 VirtualConsoleImpl::~VirtualConsoleImpl()
 {
-    // Communicator::GetHandle().disconnect();
+    if(_connected)
+    {
+        std::unique_lock<std::mutex> Lock_event(_event_mutex);
+
+        _evtQueue.get()->PushEvent(new MyEvent(MyEvent::stop));
+
+        _thread.join();
+    }
 }
-
-bool VirtualConsoleImpl::Init()
-{
-    if (_initialized)
-        return true;
-
-
-    _threadState = idle;
-
-    _initialized = true;
-
-    return _initialized;
-}
-
-
 
 /**
     \todo Add state checking.
@@ -86,9 +75,16 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This)
     ScanTask scantask = This->_scanTask;
     Lock_scantask.unlock();
 
+    //连接。
+    Communicator::GetHandle().SetRemoteHost(scantask.ip_address.c_str(), scantask.port);
+    bool succeed = Communicator::GetHandle().Connect();
+    if(!succeed)
+    {
+       // return -1;
+    }
+    //
     Databin databin;
     databin.Load(scantask.dataPath, scantask.mask.channelCount);
-
     assert(This->_threadState == idle);
 
     for(;;)
@@ -143,9 +139,12 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This)
             This->_timeIndex = 0;
             This->_threadState = idle;
 
-            qDebug()<<"stop Event";
+            Communicator::GetHandle().Disconnect();
             return 1;
+
+            qDebug()<<"stop Event";
         }
+            break;
 
         default:
             break;
@@ -158,26 +157,6 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This)
     return 1;
 }
 
-
-bool VirtualConsoleImpl::SetReconHost(const wchar_t *ip_address, unsigned short port)
-{
-
-    Communicator::GetHandle().SetRemoteHost(ip_address, port);
-
-
-    return true;
-}
-bool VirtualConsoleImpl::Connect()
-{
-    return Communicator::GetHandle().Connect();
-
-}
-
-void VirtualConsoleImpl::Disconnect()
-{
-    Communicator::GetHandle().Disconnect();
-
-}
 
 
 bool VirtualConsoleImpl::PrepareScantask(const ScanTask& scan_task)
@@ -192,16 +171,17 @@ bool VirtualConsoleImpl::PrepareScantask(const ScanTask& scan_task)
 
 bool VirtualConsoleImpl::Scan()
 {
-    //
-    //Databin databin;
-    //databin.Load(_scanTask.dataPath, _scanTask.mask.channelCount);
-
-    //databin.Start(178, _scanTask.mask.channelCount);
 
 
 
-    _timeMutex1.lock();//
+
+    _threadState = idle;
     _thread = std::thread(ThreadFunction , this);
+
+    //如果连接不成功，可以稍微等待观察返回值吗？
+    _timeMutex1.unlock();//
+    //rand();
+    std::unique_lock<std::mutex> Lock_event(_event_mutex);
 
     _evtQueue.get()->PushEvent(new MyEvent(MyEvent::scan));
 
@@ -211,8 +191,13 @@ bool VirtualConsoleImpl::Scan()
 
 void VirtualConsoleImpl::Stop()
 {
+    std::unique_lock<std::mutex> Lock_event(_event_mutex);
+
     _evtQueue.get()->PushEvent(new MyEvent(MyEvent::stop));
+
     _thread.join();
+    _connected = false;
+
 
 }
 
@@ -232,26 +217,6 @@ bool VirtualConsole::PrepareScantask(const ScanTask& task)
     return _impl->PrepareScantask(task);
 }
 
-
-bool VirtualConsole::SetReconHost(const wchar_t* ip_address, unsigned short port)
-{
-    assert(_impl);
-
-    return _impl->SetReconHost(ip_address, port);
-}
-bool VirtualConsole::Connect()
-{
-    assert(_impl);
-    return _impl->Connect();
-
-}
-
-void VirtualConsole::Disconnect()
-{
-    assert(_impl);
-    _impl->Disconnect();
-
-}
 
 bool VirtualConsole::Scan()
 {

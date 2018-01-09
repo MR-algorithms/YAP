@@ -12,12 +12,16 @@ namespace Scan
     {
         Mask mask;
         std::wstring dataPath;
+        std::wstring ip_address;
+        int port;
         int trMs;
-        ScanTask():trMs(-1), dataPath(L""){}
+        ScanTask():trMs(-1), dataPath(L""), port(-1), ip_address(L""){}
 
         ScanTask& operator = (const ScanTask& rhs){
             mask = rhs.mask;
             dataPath = rhs.dataPath;
+            ip_address = rhs.ip_address;
+            port = rhs.port;
             trMs = rhs.trMs;
 
             return *this;
@@ -28,7 +32,7 @@ namespace Scan
     {
     public:
         ScantaskGenerator(){}
-        static ScanTask Create(int trMs, Mask reference, std::wstring dataPath);
+        static ScanTask Create(ScanTask ref_scantask, Mask ref_mask);
 
     };
 

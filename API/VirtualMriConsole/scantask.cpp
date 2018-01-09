@@ -4,19 +4,19 @@
 
 using namespace Scan;
 
-ScanTask ScantaskGenerator::Create(int trMs, Mask reference, std::wstring dataPath)
+ScanTask ScantaskGenerator::Create(ScanTask ref_scantask, Mask ref_mask)
 {
     ScanTask scantask;
 
-    scantask.trMs = trMs;
-    scantask.dataPath = dataPath;
+    scantask.trMs = ref_scantask.trMs;
+    scantask.dataPath = ref_scantask.dataPath;
+    scantask.ip_address = ref_scantask.ip_address;
+    scantask.port = ref_scantask.port;
 
-
-
-    Mask::MaskType type = reference.type;
-    float rate= reference.rate;
-    unsigned int phaseCount = reference.phaseCount;
-    unsigned int channelCount = reference.channelCount;
+    Mask::MaskType type = ref_mask.type;
+    float rate= ref_mask.rate;
+    unsigned int phaseCount = ref_mask.phaseCount;
+    unsigned int channelCount = ref_mask.channelCount;
 
     scantask.mask = MaskGenerator::Create(channelCount, phaseCount, type, rate);
 
