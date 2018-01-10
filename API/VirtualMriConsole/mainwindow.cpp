@@ -16,8 +16,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->connectButton->setEnabled(true);
-    ui->scanButton->setEnabled(false);
+    ui->connectButton->setEnabled(false);
+    ui->scanButton->setEnabled(true);
     ui->stopButton->setEnabled(false);
 
     QRegExp rx("^(1|[0]?(\\.\\d{1,2})?)$");
@@ -29,7 +29,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    VirtualConsole::GetHandle().Disconnect();
 
     delete ui;
 }
@@ -39,18 +38,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_connectButton_clicked()
 {
 
-    QString ip_address = ui->editReconHost->text();
-    std::wstring temp = ip_address.toStdWString();
-
-    VirtualConsole::GetHandle().SetReconHost(temp.c_str(), ui->editReconPort->text().toInt());
-    VirtualConsole::GetHandle().Connect();
-
-    //ui->connectButton->setText("Disconnect");
-    ui->connectButton->setEnabled(false);
-    ui->scanButton->setEnabled(true);
-
-
-
+    //    QMessageBox::warning(this,"Warning", "Not connected", QMessageBox::Yes);
 
 }
 
@@ -59,15 +47,27 @@ void MainWindow::on_connectButton_clicked()
 void MainWindow::on_scanButton_clicked()
 {
 
+
     ui->scanButton->setEnabled(false);
     ui->stopButton->setEnabled(true);
 
-    int trMs = ui->editTR->text().toInt();
+    //参考scantask赋值
+
+    Scan::ScanTask reference_task;
+    reference_task.trMs = ui->editTR->text().toInt();
+
+    QString ip_address = ui->editReconHost->text();
+    reference_task.ip_address = ip_address.toStdWString();
+    reference_task.port = ui->editReconPort->text().toInt();
+
+    reference_task.dataPath =L"D:\\test_data\\RawData_256\\RawData";
+
+    //参考mask赋值。
     float rate = ui->editMaskFile->text().toFloat();
     Scan::Mask::MaskType type = static_cast<Scan::Mask::MaskType>( ui->maskComboBox->currentIndex() );
 
     //Hardcode: dataPath, channeleCount, phaseCount,
-    auto scantask = Scan::ScantaskGenerator::Create(trMs, Scan::Mask(rate, type, 256, 4),L"D:\\test_data\\RawData_256\\RawData");
+    auto scantask = Scan::ScantaskGenerator::Create(reference_task, Scan::Mask(rate, type, 256, 4));
 
     qDebug()<<"MainWidow: onScanButton_clicked";
 
@@ -90,10 +90,10 @@ void MainWindow::on_stopButton_clicked()
     //qDebug()<<"Scan stopped!";
 }
 
-void MainWindow::on_testButton_clicked()
-{
+//void MainWindow::on_testButton_clicked()
+//{
 
-    qDebug()<<"on_testButton_clicked !";
+    //qDebug()<<"on_testButton_clicked !";
 
 
     /*
@@ -112,4 +112,4 @@ void MainWindow::on_testButton_clicked()
 
     qDebug()<< "send another "<< tempArray.length()<<" bytes";
     */
-}
+//}

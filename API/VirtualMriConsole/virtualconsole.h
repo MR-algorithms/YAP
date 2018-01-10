@@ -23,10 +23,7 @@ public:
         }
     VirtualConsole();
     bool PrepareScantask(const Scan::ScanTask& task);
-    bool SetReconHost(const wchar_t* ip_address, unsigned short port);
 
-    bool Connect();
-    void Disconnect();
     bool Scan();
     void Stop();
 private:

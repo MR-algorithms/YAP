@@ -27,7 +27,7 @@ private slots:
 
     void on_stopButton_clicked();
 
-    void on_testButton_clicked();
+    //void on_testButton_clicked();
 
 private:
     Ui::MainWindow *ui;

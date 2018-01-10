@@ -1,12 +1,11 @@
 #include "ModuleManager.h"
-#include "ModuleAgent.h"
 
 #include <utility>
 #include <vector>
+
 #include "Implement\LogImpl.h"
 #include "Interface\Interfaces.h"
 #include "Interface/SmartPtr.h"
-#include "PythonImplement\PythonImpl.h"
 
 using namespace Yap;
 using namespace std;
@@ -52,6 +51,10 @@ ModuleManager::ModuleManager() :
 
 ModuleManager::~ModuleManager()
 {
+	if (_python_engine_module != 0)
+	{
+		FreeLibrary(_python_engine_module);
+	}
 }
 
 void ModuleManager::Release()
@@ -215,7 +218,9 @@ void Yap::ImportedProcessorManager::ProcessorIterator::DeleteThis()
 	delete this;
 }
 
-bool Yap::Module::Load(const wchar_t * plugin_path, IProcessorContainer& imported_processors)
+bool Yap::Module::Load(const wchar_t * plugin_path, 
+	IProcessorContainer& imported_processors,
+	IPython * python_engine)
 {
 	if (_module == 0)
 	{
@@ -237,14 +242,16 @@ bool Yap::Module::Load(const wchar_t * plugin_path, IProcessorContainer& importe
 			}
 		}
 
-		// SET_PYTHON_2USER(_module);
-		auto python_func = (Yap::IPythonUser*(*)()) ::GetProcAddress(_module, "GetPythonUser");
-		if (python_func != nullptr)
+		if (python_engine != nullptr)
 		{
-			auto python_user = python_func();
-			if (python_user != nullptr)
+			auto python_func = (Yap::IPythonUser*(*)()) ::GetProcAddress(_module, "GetPythonUser");
+			if (python_func != nullptr)
 			{
-				python_user->SetPython(PythonFactory::GetPython());
+				auto python_user = python_func();
+				if (python_user != nullptr)
+				{
+					python_user->SetPython(python_engine);
+				}
 			}
 		}
 	}
@@ -305,7 +312,7 @@ bool Yap::ModuleManager::LoadModule(const wchar_t * module_path)
 	if (iter == _modules.end())
 	{
 		auto module = make_pair(module_path, make_shared<Module>());
-		if (!module.second->Load(module_path, *_imported_processors))
+		if (!module.second->Load(module_path, *_imported_processors, GetPythonEngine()))
 			return false;
 
 		_modules.insert(module);
@@ -335,3 +342,20 @@ ImportedProcessorManager& Yap::ModuleManager::GetProcessorManager()
 	assert(_imported_processors);
 	return *_imported_processors;
 }
+
+Yap::IPython * Yap::ModuleManager::GetPythonEngine()
+{
+	if (_python_engine_module == 0)
+	{
+		_python_engine_module = ::LoadLibrary(L"PythonEngine.dll");
+	}
+
+	if (_python_engine_module == 0)
+	{
+		return nullptr;
+	}
+
+	auto python_func = (Yap::IPython*(*)()) ::GetProcAddress(_python_engine_module, "GetPython");
+	return  (python_func != nullptr) ? python_func() : nullptr;
+}
+

@@ -22,6 +22,7 @@ void DataPackage::AddItem(uint16_t data_type, uint16_t second_type, const char* 
     //}
 
     memcpy(dataitem.data.data(), value, size);
+
     data.push_back(dataitem);//值拷贝？
 
 }

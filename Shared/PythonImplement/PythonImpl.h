@@ -4,10 +4,19 @@
 #pragma once
 #include "Interface\IPython.h"
 
-#ifndef _DEFINE_PYTHON
-#define _DEFINE_PYTHON
-#endif // !_DEFINE_PYTHON
-
+#ifdef _DEBUG
+	#ifdef _WIN64
+		#pragma comment(lib, "PythonImplement64D")
+	#else
+		#pragma comment(lib, "PythonImplementD")
+	#endif
+#else    // release version
+	#ifdef _WIN64
+		#pragma comment(lib, "PythonImplement64")
+	#else
+		#pragma comment(lib, "PythonImplement")
+	#endif
+#endif
 
 // struct IPython;
 

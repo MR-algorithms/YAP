@@ -2,7 +2,10 @@
 #include <assert.h>
 #include "Implement\LogImpl.h"
 #include <WinBase.h>
+
+#ifdef _USE_PYTHON
 #include "Interface\IPython.h"
+#endif
 
 using namespace Yap;
 
@@ -35,7 +38,7 @@ bool Yap::ModuleAgent::Load(const wchar_t * plugin_path)
 		return false;
 	}
 
-	// SET_PYTHON_2USER(_module);
+#ifdef _USE_PYTHON
 	auto python_func = (Yap::IPythonUser*(*)())::GetProcAddress(_module, "GetPythonUser");
 	if (python_func != nullptr)
 	{
@@ -45,6 +48,7 @@ bool Yap::ModuleAgent::Load(const wchar_t * plugin_path)
 			python_user->SetPython(PythonFactory::GetPython());
 		}
 	}
+#endif
 
 	auto log_func = (Yap::ILogUser*(*)()) ::GetProcAddress(_module, "GetLogUser");
 	if (log_func != nullptr)
