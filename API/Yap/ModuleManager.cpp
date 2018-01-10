@@ -237,6 +237,7 @@ bool Yap::Module::Load(const wchar_t * plugin_path, IProcessorContainer& importe
 			}
 		}
 
+		// SET_PYTHON_2USER(_module);
 		auto python_func = (Yap::IPythonUser*(*)()) ::GetProcAddress(_module, "GetPythonUser");
 		if (python_func != nullptr)
 		{

@@ -183,6 +183,7 @@ namespace Yap {
 		bool _is_system_endian_same_data;
 		int _data_version;
 		NiiDataType _current_type;
+		SmartPtr<IData> _ref_data;
 	};
 
 }

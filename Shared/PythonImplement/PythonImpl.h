@@ -4,6 +4,11 @@
 #pragma once
 #include "Interface\IPython.h"
 
+#ifndef _DEFINE_PYTHON
+#define _DEFINE_PYTHON
+#endif // !_DEFINE_PYTHON
+
+
 // struct IPython;
 
 namespace Yap
@@ -11,7 +16,7 @@ namespace Yap
 	class PythonFactory
 	{
 	public:
-		static IPython * GetPython();
+		static IPython& GetPython();
 	};
 }
 #endif

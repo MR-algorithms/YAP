@@ -17,6 +17,7 @@ namespace Yap {
 		virtual void SetRefData(void * roi_data, int data_type, size_t dimension_count, size_t size[]) = 0;
 
 		virtual void DeleteRefData() = 0;
+		virtual ~IPython() = 0 {};
 	};
 
 };

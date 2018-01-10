@@ -165,6 +165,8 @@ bool JpegExporter::Input( const wchar_t * name, IData * data)
 
 	DataHelper data_helper(data);
 
+	assert(data_helper.GetActualDimensionCount() == 2 && L"Input JpegExporter data must actual 2 dimensions.");
+
 	auto stretch_pixel_data = GetProperty<bool>(L"StretchPixelData");
 	if (data->GetDataType() == DataTypeFloat)
 	{

@@ -3,9 +3,6 @@
 #include "Implement\LogImpl.h"
 #include <WinBase.h>
 #include "Interface\IPython.h"
-#include "PythonImplement\PythonImpl.h"
-#include "Interface\IPythonUser.h"
-
 
 using namespace Yap;
 
@@ -38,6 +35,7 @@ bool Yap::ModuleAgent::Load(const wchar_t * plugin_path)
 		return false;
 	}
 
+	// SET_PYTHON_2USER(_module);
 	auto python_func = (Yap::IPythonUser*(*)())::GetProcAddress(_module, "GetPythonUser");
 	if (python_func != nullptr)
 	{

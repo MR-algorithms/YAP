@@ -8,8 +8,7 @@ namespace Yap {
 
 	struct IPythonUser
 	{
-		virtual void SetPython(IPython* python) = 0;
-		virtual IPython* GetPython() = 0;
+		virtual void SetPython(IPython& python) = 0;
 	};
 }
 

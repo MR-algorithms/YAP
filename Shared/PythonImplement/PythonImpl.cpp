@@ -110,25 +110,6 @@ public:
 private:
 	PythonImpl();
 
-	template<typename T>
-	void pylist2Array(const bpy::object& iterable, T *& out_data, size_t size)
-	{
-		auto tv = std::vector<T>(bpy::stl_input_iterator<T>(iterable),
-			bpy::stl_input_iterator<T>());
-		T * source_data = tv.data();
-		memcpy(reinterpret_cast<void*>(out_data), reinterpret_cast<void*>(source_data), (size_t)(size * sizeof(T)));
-		out_data += size;
-	}
-
-	template<>
-	void pylist2Array(const bpy::object& iterable, bool *& out_data, size_t size)
-	{
-		for (size_t i = 0; i < size; ++i)
-		{
-			*(out_data++) = bpy::extract<bool>(iterable[i]);
-		}
-	}
-
 	size_t GetTotalSize(size_t dimension_count, size_t size[])
 	{
 		size_t total_size = 1;
@@ -279,11 +260,11 @@ private:
 
 		if (dim_count == 1)
 		{
-			pylist2Array(li, out_data, size[0]);
-			/*for (size_t i = 0; i < size[0]; ++i)
+			// pylist2Array(li, out_data, size[0]);
+			for (size_t i = 0; i < size[0]; ++i)
 			{
-			*(out_data++) = bpy::extract<T>(li[i]);
-			}*/
+				*(out_data++) = bpy::extract<T>(li[i]);
+			}
 		}
 		else
 		{
@@ -293,6 +274,25 @@ private:
 				DoPylist2CArray(sub_list, out_data, dim_count - 1, size + 1);
 			}
 
+		}
+	}
+
+	template<typename T>
+	void pylist2Array(const bpy::object& iterable, T *& out_data, size_t size)
+	{
+		auto tv = std::vector<T>(bpy::stl_input_iterator<T>(iterable),
+			bpy::stl_input_iterator<T>());
+		T * source_data = tv.data();
+		memcpy(reinterpret_cast<void*>(out_data), reinterpret_cast<void*>(source_data), (size_t)(size * sizeof(T)));
+		out_data += size;
+	}
+
+	template<>
+	void pylist2Array(const bpy::object& iterable, bool *& out_data, size_t size)
+	{
+		for (size_t i = 0; i < size; ++i)
+		{
+			*(out_data++) = bpy::extract<bool>(iterable[i]);
 		}
 	}
 
@@ -307,7 +307,6 @@ private:
 		return std::string(buffer);
 	}
 
-	/* _ref_data 和 _ref_data_list 都可以放在Processor中，这里可以不存放。 */
 	void* _ref_data;
 	bpy::list _ref_data_list;
 	static std::shared_ptr<PythonImpl> s_instance;
@@ -373,7 +372,7 @@ PythonImpl& PythonImpl::GetInstance()
 	return *s_instance;
 }
 
-IPython * PythonFactory::GetPython()
+IPython& PythonFactory::GetPython()
 {
-	return &PythonImpl::GetInstance();
+	return PythonImpl::GetInstance();
 }

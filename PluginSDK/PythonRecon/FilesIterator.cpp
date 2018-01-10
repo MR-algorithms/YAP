@@ -33,18 +33,18 @@ FilesIterator::FilesIterator():
 	AddProperty<bool>(L"SearchSubDir", false, L"是否搜索子目录文件下的文件");
 	AddProperty<const wchar_t* const>(L"ReferenceRegex", L"", L"选择参考图像的正则表达式.");
 
-	LOG_TRACE(L"FilesIterator constructor", L"BasicRecon");
+	LOG_TRACE(L"FilesIterator constructor", L"PythonRecon");
 }
 
 FilesIterator::FilesIterator(const FilesIterator & rhs) : 
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"FilesIterator copy constructor", L"BasicRecon");
+	LOG_TRACE(L"FilesIterator copy constructor", L"PythonRecon");
 }
 
 FilesIterator::~FilesIterator()
 {
-	LOG_TRACE(L"FilesIterator destructor", L"BasicRecon");
+	LOG_TRACE(L"FilesIterator destructor", L"PythonRecon");
 }
 
 bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
@@ -84,6 +84,7 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 			char * tempt = new char[iter.length()];
 			strcpy(tempt, iter.c_str());
 			auto out_data = CreateData<char>(nullptr, tempt, dimension);
+			Feed(L"Output", out_data.get());
 		}
 	}
 	else
@@ -95,9 +96,9 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 			{
 				Dimensions dimension;
 				dimension(DimensionReadout, 0U, unsigned(iter.length()));
-				char * tempt = new char[iter.length()];
-				strcpy(tempt, iter.c_str());
-				auto out_data = CreateData<char>(nullptr, tempt, dimension);
+				char * my_char = new char[iter.length()+1];
+				strcpy(my_char, iter.c_str());
+				auto out_data = CreateData<char>(nullptr, my_char, dimension);
 				Feed(L"Reference", out_data.get());
 			}
 		}
@@ -108,7 +109,7 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 			{
 				Dimensions dimension;
 				dimension(DimensionReadout, 0U, unsigned(iter.length()));
-				char * tempt = new char[iter.length()];
+				char * tempt = new char[iter.length() + 1];
 				strcpy(tempt, iter.c_str());
 				auto out_data = CreateData<char>(nullptr, tempt, dimension);
 				Feed(L"Output", out_data.get());
