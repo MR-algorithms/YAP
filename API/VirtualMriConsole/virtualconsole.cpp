@@ -113,32 +113,35 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This)
             //Doing something.
 
 
-            bool finished = false;
-            databin.Go(finished);
-            if(finished)
+            if(!databin.CanbeFinished())
             {
-                databin.End();
-                This->_timeMutex1.unlock();
-                This->_timeIndex = 0;
-                This->_threadState = idle;
-                qDebug()<<"finish scan.";
-                //通知主线程:更新状态，回收扫描线程。
-                return 1;
-            }
-            else
-            {
-                //end of doing
-                This->_timeIndex ++;
-                qDebug() << "time: "<< This->_timeIndex;
+                databin.Go();
+                if(databin.CanbeFinished())
+                {
+                    This->_timeMutex1.unlock();
+                    databin.End();
+                    This->_timeIndex = 0;
+                    This->_threadState = idle;
+                    qDebug()<<"finish scan.";
+                    //通知主线程:更新状态，回收扫描线程。
+                   // return 1;
+                }
+                else
+                {
+                    //end of doing
+                    This->_timeIndex ++;
+                    qDebug() << "time: "<< This->_timeIndex;
+                }
             }
         }
             break;
 
         case MyEvent::stop:
         {
+            This->_timeMutex1.unlock();
+
             databin.End();
 
-            This->_timeMutex1.unlock();
             This->_timeIndex = 0;
             This->_threadState = idle;
 
@@ -182,7 +185,7 @@ bool VirtualConsoleImpl::Scan()
     _thread = std::thread(ThreadFunction , this);
 
     //如果连接不成功，可以稍微等待观察返回值吗？
-    _timeMutex1.unlock();//
+    //_timeMutex1.unlock();//
     //rand();
     std::unique_lock<std::mutex> Lock_event(_event_mutex);
 

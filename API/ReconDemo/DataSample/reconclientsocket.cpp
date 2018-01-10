@@ -14,8 +14,6 @@ void ReconClientSocket::slotDataReceived()
 {
     int x =10;
     int lengthx = bytesAvailable();
-    int y = x+ 1;
-
 
     qDebug()<< "Enter client::slotRecieved():  "<< lengthx<<" bytes";
 
@@ -50,23 +48,11 @@ void ReconClientSocket::slotDataReceived()
             uint32_t cmd_id = -1;
             QByteArray dataArray = Read(cmd_id);
 
-            //测试代码，解码检查数据。
-            SampleDataStart start;
-            switch(cmd_id)
-            {
-            case SAMPLE_DATA_START:
-            {
 
-                start.Unpack(dataArray);
+            int left = bytesAvailable();
+            qDebug()<< "client::slotRecieved() left length:  "<< left<<" bytes";
 
-            }
-                break;
-            case SAMPLE_DATA_DATA:
-                break;
-            case SAMPLE_DATA_END:
-                break;
 
-            }
 
             //
             int templ = dataArray.length();
