@@ -6,8 +6,6 @@
 #include <QString>
 #include "datapackage.h"
 
-Communicator Communicator::s_instance;
-
 Communicator::Communicator(QObject *parent): QTcpSocket(parent)
 {
     connect(this, &QTcpSocket::connected,    this, &Communicator::slotConnected);
@@ -17,8 +15,6 @@ Communicator::Communicator(QObject *parent): QTcpSocket(parent)
 
 bool Communicator::SetRemoteHost(const wchar_t * ip_address, unsigned short port)
 {
-    //_ip_address = *ip_address;
-
     _reconHost = std::make_shared<QHostAddress>();
 
 
@@ -56,19 +52,12 @@ bool Communicator::Connect()
     connectToHost(*_reconHost, _port);
 
 
-    /*QString message = "Hello!";
-
-    if (tcpSocket->write(message.toLatin1(), message.length()) != message.length())
-    {
-        return;
-    }*/
-
     return  waitForConnected();
 }
 
 bool Communicator::Disconnect()
 {
-    //disconnectFromHost();
+    disconnectFromHost();
     return true;
 }
 

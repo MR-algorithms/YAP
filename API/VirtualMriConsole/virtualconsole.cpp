@@ -76,14 +76,17 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This)
     Lock_scantask.unlock();
 
     //连接。
-    Communicator::GetHandle().SetRemoteHost(scantask.ip_address.c_str(), scantask.port);
-    bool succeed = Communicator::GetHandle().Connect();
+    Databin databin;
+    databin.GetCommunicator().get()->SetRemoteHost(scantask.ip_address.c_str(), scantask.port);
+    bool succeed = databin.GetCommunicator().get()->Connect();
     if(!succeed)
     {
        // return -1;
     }
+    This->_connected = true;
+
     //
-    Databin databin;
+
     databin.Load(scantask.dataPath, scantask.mask.channelCount);
     assert(This->_threadState == idle);
 
@@ -139,7 +142,7 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This)
             This->_timeIndex = 0;
             This->_threadState = idle;
 
-            Communicator::GetHandle().Disconnect();
+            databin.GetCommunicator().get()->Disconnect();
             return 1;
 
             qDebug()<<"stop Event";
