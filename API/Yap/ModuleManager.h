@@ -2,10 +2,13 @@
 #define ModuleManager_h__20160813
 
 #pragma once
-#include "ModuleAgent.h"
 
 #include <map>
 #include <memory>
+#include "Interface\smartptr.h"
+#include "Interface\IProcessor.h"
+#include <windows.h>
+#include "Interface\IPython.h"
 
 namespace Yap
 {
@@ -84,7 +87,7 @@ namespace Yap
 			}
 		}
 
-		bool Load(const wchar_t * plugin_path, IProcessorContainer& containers);
+		bool Load(const wchar_t * plugin_path, IProcessorContainer& containers, IPython * python_engine = nullptr);
 
 	private:
 		std::wstring GetModuleNameFromPath(const wchar_t * path);
@@ -107,6 +110,9 @@ namespace Yap
 		void Reset();
 		IProcessor * CreateProcessor(const wchar_t * class_id, const wchar_t * instance_id);
 		ImportedProcessorManager& GetProcessorManager();
+		IPython * GetPythonEngine();
+
+		HINSTANCE _python_engine_module = 0;
 
 		void Release();
 	protected:
