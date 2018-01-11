@@ -25,7 +25,7 @@ bool Communicator::SetRemoteHost(const wchar_t * ip_address, unsigned short port
 
     if (!_reconHost->setAddress(ipAddress))
     {
-        qDebug()<<L"Server ip address error";
+        qDebug()<<"Server ip address error";
         return false;
     }
 
@@ -34,17 +34,17 @@ bool Communicator::SetRemoteHost(const wchar_t * ip_address, unsigned short port
 }
 void Communicator::slotConnected()
 {
-    qDebug()<<L"Communicator: slotConnected.";
+    qDebug()<<"Communicator: slotConnected.";
 }
 
 void Communicator::slotDataReceived()
 {
-    qDebug()<<L"Communicator: slotDataReceived.";
+    qDebug()<<"Communicator: slotDataReceived.";
 }
 
 void Communicator::slotDisconnected()
 {
-    qDebug()<<L"Communicator: slotDisconnected.";
+    qDebug()<<"Communicator: slotDisconnected.";
 }
 
 bool Communicator::Connect()

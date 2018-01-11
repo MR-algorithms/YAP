@@ -5,6 +5,9 @@
 #include "scantask.h"
 #include "myevent.h"
 #include "databin.h"
+#include <future>
+#include <utility>
+
 
 VirtualConsole VirtualConsole::s_instance;
 using namespace Scan;
@@ -30,7 +33,7 @@ private:
 
 
     // Thread function used to carry out the scan task.
-    static unsigned int ThreadFunction(VirtualConsoleImpl * This);
+    static unsigned int ThreadFunction(VirtualConsoleImpl * This, std::promise<bool> &promiseObj);
     bool Init(const wchar_t *ip_address, unsigned short port);
 
 public:
@@ -68,7 +71,7 @@ VirtualConsoleImpl::~VirtualConsoleImpl()
     \todo Add state checking.
     \bug Hardcoding file name.
 */
-unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This)
+unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::promise<bool> &promiseObj)
 {
 
     std::unique_lock<std::mutex> Lock_scantask(This->_scanTask_mutex);//mutex::lock:locks the mutex, blocks if the mutex is not available
@@ -81,8 +84,14 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This)
     bool succeed = databin.GetCommunicator().get()->Connect();
     if(!succeed)
     {
-       // return -1;
+        promiseObj.set_value(false);
+        return -1;
     }
+    else
+    {
+        promiseObj.set_value(true);
+    }
+
     This->_connected = true;
 
     //
@@ -179,20 +188,35 @@ bool VirtualConsoleImpl::Scan()
 {
 
 
+    std::promise<bool> promiseObj;
+    std::future<bool> futureObj = promiseObj.get_future();
 
+    //
 
     _threadState = idle;
-    _thread = std::thread(ThreadFunction , this);
-
-    //如果连接不成功，可以稍微等待观察返回值吗？
-    //_timeMutex1.unlock();//
-    //rand();
-    std::unique_lock<std::mutex> Lock_event(_event_mutex);
-
-    _evtQueue.get()->PushEvent(new MyEvent(MyEvent::scan));
+    _thread = std::thread(ThreadFunction , this, std::ref(promiseObj));
 
 
-    return true;
+    if( futureObj.get() )
+    {
+        //_timeMutex1.unlock();//
+        //rand();
+        std::unique_lock<std::mutex> Lock_event(_event_mutex);
+
+        _evtQueue.get()->PushEvent(new MyEvent(MyEvent::scan));
+        return true;
+
+    }
+    else
+    {
+        //连接不成功
+        qDebug() << "connecting fail.";
+        _thread.join();
+        return false;
+
+    }
+
+
 }
 
 void VirtualConsoleImpl::Stop()
