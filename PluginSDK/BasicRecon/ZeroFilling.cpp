@@ -47,7 +47,7 @@ ZeroFilling::ZeroFilling() : ProcessorImpl(L"ZeroFilling")
 ZeroFilling::ZeroFilling(const ZeroFilling& rhs)
 	:ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"ZeroFilling constructor called.", L"BasicRecon");
+	LOG_TRACE(L"ZeroFilling copy constructor called.", L"BasicRecon");
 }
 
 ZeroFilling::~ZeroFilling()

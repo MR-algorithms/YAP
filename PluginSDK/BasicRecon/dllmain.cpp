@@ -39,7 +39,6 @@
 
 #include "Implement/LogUserImpl.h"
 #include "Implement/YapImplement.h"
-#include "Interface/IPythonUser.h"
 
 using namespace Yap;
 

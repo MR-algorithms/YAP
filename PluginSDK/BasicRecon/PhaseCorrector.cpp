@@ -37,7 +37,7 @@ Yap::PhaseCorrector::PhaseCorrector(const PhaseCorrector& rhs):
 	ProcessorImpl(rhs),
 	_phase{rhs._phase}
 {
-	LOG_TRACE(L"PhaseCorrector constructor called.", L"BasicRecon");
+	LOG_TRACE(L"PhaseCorrector copy constructor called.", L"BasicRecon");
 }
 
 Yap::PhaseCorrector::~PhaseCorrector()
