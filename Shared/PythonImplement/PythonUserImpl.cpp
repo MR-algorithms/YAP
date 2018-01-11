@@ -11,7 +11,7 @@ std::shared_ptr<PythonUserImpl> PythonUserImpl::s_instance;
 
 Yap::PythonUserImpl::~PythonUserImpl()
 {
-	LOG_TRACE(L"PythonUserImpl Deconstructor", L"PythonUserImpl");
+	
 }
 
 Yap::PythonUserImpl& Yap::PythonUserImpl::GetInstance()
@@ -51,5 +51,5 @@ void Yap::PythonUserImpl::DeleteRefData()
 
 Yap::PythonUserImpl::PythonUserImpl() : _python{ nullptr }
 {
-	LOG_TRACE(L"PythonUserImpl constructor", L"PythonUserImpl");
+	
 }

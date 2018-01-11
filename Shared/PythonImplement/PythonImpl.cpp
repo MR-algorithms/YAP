@@ -4,10 +4,23 @@
 #include "Utilities\macros.h"
 
 #include <boost\python.hpp>
+#include <boost/python/list.hpp>
+#include <boost/python/extract.hpp>
+#include <boost/python/exec.hpp>
+#include <boost/python/import.hpp>
+#include <boost/python/stl_iterator.hpp>
 
 #include <Windows.h>
 #include <map>
 #include <vector>
+
+#ifdef _DEBUG
+#undef _DEBUG
+#include <Python.h>
+#define _DEBUG
+#else
+#include <Python.h>
+#endif
 
 using namespace std;
 using namespace Yap;
@@ -372,7 +385,7 @@ PythonImpl& PythonImpl::GetInstance()
 	return *s_instance;
 }
 
-IPython& PythonFactory::GetPython()
+IPython* PythonFactory::GetPython()
 {
-	return PythonImpl::GetInstance();
+	return &PythonImpl::GetInstance();
 }
