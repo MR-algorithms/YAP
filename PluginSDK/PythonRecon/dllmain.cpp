@@ -12,23 +12,16 @@
 #include "Implement\PythonUserImpl.h"
 
 using namespace Yap;
-#ifdef _cplusplus
 extern "C" {
-#endif
-#define PYRECON_EXTERN extern _declspec(dllexport)
-
-	PYRECON_EXTERN IPythonUser * GetPythonUser()
+	_declspec(dllexport) IPythonUser * GetPythonUser()
 	{
 		return &PythonUserImpl::GetInstance();
 	}
-	PYRECON_EXTERN ILogUser* GetLogUser()
+	_declspec(dllexport) ILogUser* GetLogUser()
 	{
 		return (ILogUser*)&LogUserImpl::GetInstance();
 	}
-
-#ifdef _cplusplus
 };
-#endif // _cplusplus
 
 BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(FilesIterator)

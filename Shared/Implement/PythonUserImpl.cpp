@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <vcruntime_new.h>
+#include <assert.h>
 
 using namespace Yap;
 
@@ -30,6 +31,7 @@ void Yap::PythonUserImpl::SetPython(IPython& python)
 
 void Yap::PythonUserImpl::SetReferenceData(void * data, int data_type, int input_dimensions, size_t * input_size)
 {
+	assert(_python != nullptr && "Python Server can not get!");
 	_python->SetRefData(data, data_type, input_dimensions, input_size);
 }
 
@@ -40,12 +42,14 @@ void * Yap::PythonUserImpl::PythonProcess(
 	size_t input_size[], OUT size_t output_size[],
 	bool is_need_ref_data)
 {
+	assert(_python != nullptr && "Python Server can not get!");
 	return _python->Process(module, method, data_type, input_dimensions, data,
 		output_dimensions, input_size, output_size, is_need_ref_data);
 }
 
 void Yap::PythonUserImpl::DeleteRefData()
 {
+	assert(_python != nullptr && "Python Server can not get!");
 	_python->DeleteRefData();
 }
 
