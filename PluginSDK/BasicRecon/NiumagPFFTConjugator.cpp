@@ -11,26 +11,28 @@ using namespace std;
 template <typename T>
 bool Conjugate(T* input_data,
 			   T* output_data,
-			   int data_size,
-			   int points_count,
-			   int first_point_index)
+			   int width,
+			   int height)
 {
-	assert(input_data != nullptr && output_data != nullptr && 
-		data_size > 0 && points_count > 0 && first_point_index >= 0);
-	assert(first_point_index + points_count <= data_size);
+	assert(input_data != nullptr && output_data != nullptr && width > 0 && height > 0);
+	auto data_size = width * height;
 
-	for (int i = 0; i < data_size; ++i)
+	T* data = new T[data_size];
+	memcpy(data, input_data, data_size * sizeof(T));
+
+	if (height < 40)
 	{
-		if (i >= first_point_index && i < first_point_index + points_count)
-		{
-			*(output_data + i) = conj(*(input_data + (data_size - 1 - i)));
-		}
-		else
-		{
-			*(output_data + i) = *(input_data + i);
-		}
+		LOG_ERROR(L"<NiumagPFFTConjugator>(Conjugate) Input data height must larger than 40!", L"BasicRecon");
+		return false;
 	}
 
+	auto start = width * (height / 2 + 20);
+	for (int i = start; i < data_size; ++i)
+	{
+		*(output_data + i) = conj(*(data + (data_size - 1 - i)));
+	}
+
+	delete []data;
 	return true;
 }
 
@@ -65,14 +67,13 @@ Yap::NiumagPFFTConjugator::NiumagPFFTConjugator():
 	AddInput(L"Input", 2, DataTypeComplexFloat);
 	AddOutput(L"Output", 2, DataTypeComplexFloat);
 
-	AddProperty<int>(L"FirstPointIndex", 0, L"The index of the first point you want to get.");
-	AddProperty<int>(L"PointsCount", 0, L"The count of points you want to get.");
+	AddProperty<int>(L"DestHeight", 0, L"Destination height.");
 }
 
 Yap::NiumagPFFTConjugator::NiumagPFFTConjugator(const NiumagPFFTConjugator& rhs):
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"NiumagPFFTConjugator constructor called.", L"BasicRecon");
+	LOG_TRACE(L"NiumagPFFTConjugator copy constructor called.", L"BasicRecon");
 }
 
 Yap::NiumagPFFTConjugator::~NiumagPFFTConjugator()
@@ -81,6 +82,7 @@ Yap::NiumagPFFTConjugator::~NiumagPFFTConjugator()
 
 bool Yap::NiumagPFFTConjugator::Input(const wchar_t * name, IData * data)
 {
+	LOG_TRACE(L"<NiumagPFFTConjugator> Before check.", L"BasicRecon");
 	if (wstring(name) != L"Input")
 	{
 		LOG_ERROR(L"<NiumagPFFTConjugator> Error input port name!", L"BasicRecon");
@@ -100,29 +102,15 @@ bool Yap::NiumagPFFTConjugator::Input(const wchar_t * name, IData * data)
 		return false;
 	}
 
-	auto points_count = GetProperty<int>(L"PointsCount");
-	if (points_count < 0)
-	{
-		LOG_ERROR(L"<NiumagPFFTConjugator> PointsCount cannot less than 0!", L"BasicRecon");
-		return false;
-	}
-
-	auto first_point_index = GetProperty<int>(L"FirstPointIndex");
-	if (first_point_index < 0)
-	{
-		LOG_ERROR(L"<NiumagPFFTConjugator> FirstPointIndex cannot less than 0!", L"BasicRecon");
-		return false;
-	}
-
 	auto data_size = input.GetWidth() * input.GetHeight();
-	if (points_count == 0)
+	auto dest_height = GetProperty<int>(L"DestHeight");
+	if (dest_height == 0)
 	{
-		points_count = data_size;
-		first_point_index = 0;
+		dest_height = input.GetHeight();
 	}
-	if (first_point_index + points_count > (int)data_size)
+	if (dest_height < (int)input.GetHeight())
 	{
-		LOG_ERROR(L"<NiumagPFFTConjugator> Improper properties, the sum of PointsCount and FirstPointIndex should be less than (or equal) data size!", L"BasicRecon");
+		LOG_ERROR(L"<NiumagPFFTConjugator> Improper properties, ReconHeight cannot smaller than input data height!", L"BasicRecon");
 		return false;
 	}
 
@@ -133,45 +121,63 @@ bool Yap::NiumagPFFTConjugator::Input(const wchar_t * name, IData * data)
 		return false;
 	}
 
-	auto output = CreateData<complex<float>>(data);
+	LOG_TRACE(L"<NiumagPFFTConjugator> After check.", L"BasicRecon");
+
+	// Create output data
+	Yap::Dimensions dims;
+	dims(DimensionReadout, 0, input.GetWidth())
+		(DimensionPhaseEncoding, 0, dest_height);
+	auto output = CreateData<complex<float>>(data, &dims);
 	auto output_data = GetDataArray<complex<float>>(output.get());
 	if (output_data == nullptr)
 	{
 		LOG_ERROR(L"<NiumagPFFTConjugator> Create output data failed!", L"BasicRecon");
 		return false;
 	}
+	memset(output_data, 0, input.GetWidth() * dest_height * sizeof(complex<float>));
+
+	LOG_TRACE(L"<NiumagPFFTConjugator> Create output data.", L"BasicRecon");
+
+	// Get valid data pointer
+	auto a = input.GetWidth() * (dest_height - input.GetHeight()) / 2;
+	auto valid_data = output_data + input.GetWidth() * (dest_height - input.GetHeight()) / 2;
 
 	// FFT2D
 	auto forward_plan = fftwf_plan_dft_2d(int(input.GetHeight()), int(input.GetWidth()),
 										(fftwf_complex*)input_data,
-										(fftwf_complex*)output_data,
+										(fftwf_complex*)valid_data,
 										FFTW_BACKWARD, FFTW_ESTIMATE);
 	fftwf_execute(forward_plan);
-	for (auto iter = output_data; iter < output_data + data_size; ++iter)
+	for (auto iter = valid_data; iter < valid_data + data_size; ++iter)
 	{
 		(*iter) /= float(sqrt(data_size));
 	}
 
-	FftShift(output_data, input.GetWidth(), input.GetHeight());
+	FftShift(valid_data, input.GetWidth(), input.GetHeight());
+
+	LOG_TRACE(L"<NiumagPFFTConjugator> FFT2D.", L"BasicRecon");
 
 	// conjugate
-	auto temp = output;
-	if (!Conjugate(GetDataArray<complex<float>>(temp.get()), output_data, data_size, points_count, first_point_index))
+	if (!Conjugate(valid_data, valid_data, input.GetWidth(), input.GetHeight()))
 	{
 		LOG_ERROR(L"<NiumagPFFTConjugator> Failed when conjugate data!", L"BasicRecon");
 		return false;
 	}
 
+	LOG_TRACE(L"<NiumagPFFTConjugator> Conjugate.", L"BasicRecon");
+
 	// inverse FFT2D
-	auto backward_plan = fftwf_plan_dft_2d(int(input.GetHeight()), int(input.GetWidth()),
+	auto backward_plan = fftwf_plan_dft_2d(dest_height, int(input.GetWidth()),
 										(fftwf_complex*)output_data,
 										(fftwf_complex*)output_data,
 										FFTW_FORWARD, FFTW_ESTIMATE);
 	fftwf_execute(backward_plan);
-	for (auto iter = output_data; iter < output_data + data_size; ++iter)
+	for (auto iter = output_data; iter < output_data + dest_height * input.GetWidth(); ++iter)
 	{
-		(*iter) /= float(sqrt(data_size));
+		(*iter) /= float(sqrt(dest_height * input.GetWidth()));
 	}
-	
+
+	LOG_TRACE(L"<NiumagPFFTConjugator> Inverse FFT3D.", L"BasicRecon");
+
 	return Feed(L"Output", output.get());
 } 

@@ -48,8 +48,6 @@ void MainWindow::on_scanButton_clicked()
 {
 
 
-    ui->scanButton->setEnabled(false);
-    ui->stopButton->setEnabled(true);
 
     //参考scantask赋值
 
@@ -72,9 +70,16 @@ void MainWindow::on_scanButton_clicked()
     qDebug()<<"MainWidow: onScanButton_clicked";
 
     VirtualConsole::GetHandle().PrepareScantask(scantask);
-    VirtualConsole::GetHandle().Scan();
+    if(!VirtualConsole::GetHandle().Scan())
+    {
+      QMessageBox::warning(this,"Warning", "Not connected", QMessageBox::Yes);//, QMessageBox::No);
+    }
+    else
+    {
+        ui->scanButton->setEnabled(false);
+        ui->stopButton->setEnabled(true);
 
-    //QMessageBox::warning(this,"Warning", "Not connected", QMessageBox::Yes);//, QMessageBox::No);
+    }
 
 
 }

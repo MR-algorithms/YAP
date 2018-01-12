@@ -20,7 +20,6 @@ private:
     boost::shared_array<complex<float>> GetRawData(unsigned int channelIndex, unsigned int sliceIndex, unsigned int phaseIndex);
 
     unsigned int GetPhaseCount();
-    bool CanbeFinished(){return _current_phase_index >= static_cast<int>( GetPhaseCount());}
     int _current_phase_index;
     std::shared_ptr<Communicator> _communicator;
     bool _ended;
@@ -32,8 +31,10 @@ public:
     std::shared_ptr<Communicator> GetCommunicator(){return _communicator;}
     void Load(std::wstring dataPath, int channelCount);
     void Start(int scan_id, int channel_count);
-    void Go(bool &Finished);
+    void Go();
     void End();
+    bool CanbeFinished(){return _current_phase_index >= 10;}//static_cast<int>( GetPhaseCount());}
+
 
 
 

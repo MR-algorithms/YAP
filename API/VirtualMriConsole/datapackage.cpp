@@ -105,7 +105,7 @@ bool MessageProcess::Pack(DataPackage &package, const SampleDataData &data)
 }
 bool MessageProcess::Pack(DataPackage &package, const SampleDataEnd &end)
 {
-    std::array<uint32_t, 11> info = {
+    std::array<uint32_t, 2> info = {
             end.cmd_id,
             end.error_code,
            };

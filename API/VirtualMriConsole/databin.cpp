@@ -235,8 +235,9 @@ void Databin::Start(int scan_id, int channel_count)
 
 
 }
-void Databin::Go(bool &finished)
+void Databin::Go()
 {
+
     //go
     //The dimension of CMR rawdata is different from the dimension of Communication protocol.
 
@@ -244,9 +245,10 @@ void Databin::Go(bool &finished)
     int lines_channel = _dataInfo.phase_point_count * _dataInfo.slice_count;
 
     //_dataInfo.channel_count
+    //_dataInfo.slice_count
     for(int channel_index = 0; channel_index < static_cast<int>(1 ); channel_index ++)
     {
-        for(int image_index = 0; image_index < static_cast<int>( _dataInfo.slice_count ); image_index ++)
+        for(int image_index = 0; image_index < static_cast<int>(1 ); image_index ++)
         {
             //
             SampleDataData data;
@@ -286,7 +288,6 @@ void Databin::Go(bool &finished)
 
     _current_phase_index ++;
 
-    finished = CanbeFinished();
 
 }
 void Databin::End()
