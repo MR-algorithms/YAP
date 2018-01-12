@@ -26,12 +26,10 @@ namespace Yap
 		bool FeedOut(void*& out_data, Dimensions dimensions, int data_type);
 
 		void* Run(int data_type, const wchar_t* script, const wchar_t* method,
-			int input_dims, IData * data, size_t output_dims, size_t * input_size,
+			int input_dims, IData * data, size_t& output_dims, size_t * input_size,
 			size_t * output_size,bool is_need_ref = true);
 
 		SmartPtr<IData> _ref_data;
-		/* ? is need ?*/
-		
 	};
 
 }

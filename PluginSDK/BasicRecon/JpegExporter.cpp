@@ -142,7 +142,7 @@ JpegExporter::JpegExporter() :
 {
 	LOG_TRACE(L"JepgExporter constructor called.", L"BasicRecon");
 	_impl = shared_ptr<JpegExporterImp>(new JpegExporterImp);
-	AddInput(L"Input", 2, DataTypeFloat | DataTypeUnsignedShort);
+	AddInput(L"Input", 2, DataTypeFloat | DataTypeUnsignedShort | DataTypeShort);
 	AddProperty<const wchar_t * const>(L"ExportFolder", L"", L"Set folder used to hold exported images.");
 	AddProperty<bool>(L"StretchPixelData", true, L"Stretch pixel value from 0 to 255");
 }
@@ -160,7 +160,10 @@ JpegExporter::~JpegExporter()
 
 bool JpegExporter::Input( const wchar_t * name, IData * data)
 {
-	assert((data != nullptr) && ((GetDataArray<float>(data) != nullptr) || (GetDataArray<unsigned short>(data) != nullptr)));
+	assert(data != nullptr); 
+	assert((GetDataArray<float>(data) != nullptr) || 
+		(GetDataArray<unsigned short>(data) != nullptr) ||
+		(GetDataArray<short>(data) != nullptr));
 	assert(_impl);
 
 	DataHelper data_helper(data);
@@ -168,21 +171,34 @@ bool JpegExporter::Input( const wchar_t * name, IData * data)
 	assert(data_helper.GetActualDimensionCount() == 2 && L"Input JpegExporter data must actual 2 dimensions.");
 
 	auto stretch_pixel_data = GetProperty<bool>(L"StretchPixelData");
-	if (data->GetDataType() == DataTypeFloat)
+	switch (data->GetDataType())
 	{
+	case DataTypeFloat:
 		_impl->ExportImage(GetDataArray<float>(data),
 			data_helper.GetWidth(), data_helper.GetHeight(),
 			GetProperty<const wchar_t * const>(L"ExportFolder"),
 			stretch_pixel_data);
-	}
-	else if (data->GetDataType() == DataTypeUnsignedShort)
-	{
+		break;
+	case DataTypeUnsignedShort:
 		_impl->ExportImage(GetDataArray<unsigned short>(data),
 			data_helper.GetWidth(), data_helper.GetHeight(),
 			GetProperty<const wchar_t* const>(L"ExportFolder"),
 			stretch_pixel_data);
+		break;
+	case DataTypeShort:
+		_impl->ExportImage(GetDataArray<short>(data),
+			data_helper.GetWidth(), data_helper.GetHeight(),
+			GetProperty<const wchar_t* const>(L"ExportFolder"),
+			stretch_pixel_data);
+		break;
+	case DataTypeUnsignedInt:
+	case DataTypeInt:
+	case DataTypeDouble:
+	case DataTypeUnsignedChar:
+	case DataTypeChar:
+	default:
+		return false;
 	}
-
 	return true;
 }
 

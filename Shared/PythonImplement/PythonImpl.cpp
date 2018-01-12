@@ -4,11 +4,6 @@
 #include "Utilities\macros.h"
 
 #include <boost\python.hpp>
-#include <boost/python/list.hpp>
-#include <boost/python/extract.hpp>
-#include <boost/python/exec.hpp>
-#include <boost/python/import.hpp>
-#include <boost/python/stl_iterator.hpp>
 
 #include <Windows.h>
 #include <map>
@@ -69,7 +64,6 @@ public:
 
 	virtual void SetRefData(void * ref_data, int data_type, size_t dimension_count, size_t size[]) override
 	{
-		// assert(ref_data != nullptr);
 		if (ref_data == nullptr)
 		{
 			return;
@@ -273,11 +267,11 @@ private:
 
 		if (dim_count == 1)
 		{
-			// pylist2Array(li, out_data, size[0]);
-			for (size_t i = 0; i < size[0]; ++i)
+			pylist2Array(li, out_data, size[0]);
+			/*for (size_t i = 0; i < size[0]; ++i)
 			{
 				*(out_data++) = bpy::extract<T>(li[i]);
-			}
+			}*/
 		}
 		else
 		{

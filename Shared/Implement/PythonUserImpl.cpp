@@ -20,7 +20,7 @@ Yap::PythonUserImpl& Yap::PythonUserImpl::GetInstance()
 	{
 		s_instance = std::shared_ptr<PythonUserImpl>(new (std::nothrow)PythonUserImpl());
 	}
-	return *s_instance;
+	return *s_instance.get();
 }
 
 void Yap::PythonUserImpl::SetPython(IPython& python)

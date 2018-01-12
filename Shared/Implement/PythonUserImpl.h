@@ -6,6 +6,7 @@
 #include "Interface\IPythonUser.h"
 #include <memory>
 
+
 #define PYTHON_SET_REF_DATA(data, data_type, input_dimensions, input_size) \
 	PythonUserImpl::GetInstance().SetReferenceData(data, data_type, input_dimensions, input_size)
 
@@ -24,19 +25,19 @@ namespace Yap
 		
 		virtual void SetPython(IPython& python) override;
 		
-		void SetReferenceData(void * data, int data_type, int input_dimensions, size_t * input_size);
+		virtual void SetReferenceData(void * data, int data_type, int input_dimensions, size_t * input_size) override;
 
-		void * PythonProcess(const wchar_t* module, const wchar_t* method, int data_type,
-			size_t input_dimensions, void * data, OUT size_t& output_dimensions, size_t input_size[], OUT size_t output_size[], bool is_need_ref_data);
+		virtual void * PythonProcess(const wchar_t* module, const wchar_t* method, int data_type,
+			size_t input_dimensions, void * data, OUT size_t& output_dimensions, 
+			size_t input_size[], OUT size_t output_size[], bool is_need_ref_data) override;
 
-		void DeleteRefData();
+		virtual void DeleteRefData() override;
 
 	private:
 
 		PythonUserImpl();
 		static std::shared_ptr<PythonUserImpl> s_instance;
 		IPython* _python;
-
 	};
 
 

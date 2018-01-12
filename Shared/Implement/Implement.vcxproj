@@ -163,6 +163,7 @@
     <ClCompile Include="LogImpl.cpp" />
     <ClCompile Include="LogUserImpl.cpp" />
     <ClCompile Include="ProcessorImpl.cpp" />
+    <ClCompile Include="PythonUserImpl.cpp" />
     <ClCompile Include="VariableSpace.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -177,6 +178,7 @@
     <ClInclude Include="LogImpl.h" />
     <ClInclude Include="LogUserImpl.h" />
     <ClInclude Include="ProcessorImpl.h" />
+    <ClInclude Include="PythonUserImpl.h" />
     <ClInclude Include="VariableSpace.h" />
     <ClInclude Include="YapImplement.h" />
   </ItemGroup>

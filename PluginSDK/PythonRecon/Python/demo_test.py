@@ -5,7 +5,17 @@ import sys
 import nipy
 import SimpleITK as sitk
 
-
+radiomics_parameter_path = r'C:\projects\pyradiomics\examples\exampleSettings\Params.yaml'
+extractor = featureextractor.RadiomicsFeaturesExtractor(radiomics_parameter_path)
+extractor.disableAllFeatures()
+extractor.enableFeatureClassByName('glcm')
+extractor.enableFeatureClassByName('glrlm')
+extractor.enableFeatureClassByName('glszm')
+extractor.enableFeatureClassByName('gldm')
+extractor.enableFeatureClassByName('ngtdm')
+extractor.enableFeatureClassByName('firstorder')
+extractor.enableFeatureClassByName('shape')
+    
 def test3d_2input(image1, image2, width,height,slice):
     print('Invoking Method: [test3d_2input].')
     for x in [int(slice/2),int(slice/2)+1]:
@@ -20,22 +30,13 @@ def test_radiomics(image, roi, width, height, slice):
     print('Invoking Method: [test_radiomics].')
     image1 = sitk.GetImageFromArray(np.array(image))
     image2 = sitk.GetImageFromArray(np.array(roi))
-    radiomics_parameter_path = r'C:\projects\pyradiomics\examples\exampleSettings\Params.yaml'
-    extractor = featureextractor.RadiomicsFeaturesExtractor(radiomics_parameter_path)
-    extractor.disableAllFeatures()
-    extractor.enableFeatureClassByName('glcm')
-    extractor.enableFeatureClassByName('glrlm')
-    extractor.enableFeatureClassByName('glszm')
-    extractor.enableFeatureClassByName('gldm')
-    extractor.enableFeatureClassByName('ngtdm')
-    extractor.enableFeatureClassByName('firstorder')
-    extractor.enableFeatureClassByName('shape')
     features = extractor.execute(image1,image2)
     for fn in features.keys():
         print("Compute %s : %s" %(fn,features[fn]))
-    print('Image size: [ %d, %d, %d]',width, height, slice)
-    images = np.array(image)[0].tolist()
-    pil_image = Image.fromarray(np.array(images))
-    pil_image.show()
-    print('Resize Image: [ %d, %d]',len(images),len(images[0]))
-    return [ 2, image, width, height ]
+    # print('Image size: ',width, height, slice)
+    # print('Image rank: ',np.min(np.array(image)),np.max(np.array(image)))
+    images = np.array(image)[40].tolist()
+    # pil_image = Image.fromarray(np.array(images))
+    # pil_image.show()
+    # print('Resize Image: ',len(images),len(images[0]))
+    return [ 2, images, width, height ]

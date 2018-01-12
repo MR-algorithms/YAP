@@ -1,7 +1,6 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "stdafx.h"
 
-#include "PythonImplement\PythonUserImpl.h"
 #include "Implement\LogUserImpl.h"
 #include "Implement\YapImplement.h"
 
@@ -10,20 +9,26 @@
 #include "NiiReader.h"
 #include "Radiomics.h"
 #include "RFeaturesCollector.h"
+#include "Implement\PythonUserImpl.h"
 
 using namespace Yap;
-
+#ifdef _cplusplus
 extern "C" {
-	_declspec(dllexport) IPythonUser * GetPythonUser()
-	{
-		return (IPythonUser*)&PythonUserImpl::GetInstance();
-	}
+#endif
+#define PYRECON_EXTERN extern _declspec(dllexport)
 
-	__declspec(dllexport) ILogUser* GetLogUser()
+	PYRECON_EXTERN IPythonUser * GetPythonUser()
+	{
+		return &PythonUserImpl::GetInstance();
+	}
+	PYRECON_EXTERN ILogUser* GetLogUser()
 	{
 		return (ILogUser*)&LogUserImpl::GetInstance();
 	}
+
+#ifdef _cplusplus
 };
+#endif // _cplusplus
 
 BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(FilesIterator)

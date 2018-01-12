@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "Radiomics.h"
-#include "PythonImplement\PythonUserImpl.h"
 #include "Implement\LogUserImpl.h"
 #include "Client\DataHelper.h"
+#include "Implement\PythonUserImpl.h"
 
 Yap::Radiomics::Radiomics() : 
 	_ref_data{ YapShared<ISharedObject>(nullptr) },
@@ -203,7 +203,7 @@ bool Yap::Radiomics::FeedOut(void*& out_data, Dimensions dimensions, int data_ty
 }
 
 void* Yap::Radiomics::Run(int data_type, const wchar_t* script, const wchar_t* method, 
-	int input_dims, IData * data, size_t output_dims, size_t * input_size, 
+	int input_dims, IData * data, size_t& output_dims, size_t * input_size, 
 	size_t * output_size, bool is_need_ref)
 {
 	void* out_data = 0;
