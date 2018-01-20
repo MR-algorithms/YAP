@@ -67,9 +67,30 @@ bool Communicator::Send(const DataPackage &data)
             QByteArray::fromRawData((char*)(&data.magic_anditem_count[0]), sizeof(uint32_t));
 
 
+    //
+    QByteArray byteArray1b =
+            QByteArray::fromRawData((char*)(&data.magic_anditem_count[1]), sizeof(uint32_t));
+
+    QByteArray byteArray1c =
+            QByteArray::fromRawData((char*)data.head.data(), sizeof(HeadItem) * data.head.size());
+
+
+    //或者
+    QByteArray byteArray1cc;
+    for(int i = 0; i < static_cast<int>( data.head.size() ); i ++)
+    {
+         HeadItem headitem = data.head[i];
+         QByteArray temp = QByteArray::fromRawData((char*)(&headitem), sizeof(HeadItem));
+         byteArray1cc += temp;
+    }
+
+    assert(byteArray1c == byteArray1cc);
+    //
     QByteArray byteArray2;
-    for(int i = 0; i < static_cast<int>( data.data.size() ); i ++)    {
+    for(int i = 0; i < static_cast<int>( data.data.size() ); i ++)
+    {
          DataItem dataitem = data.data[i];
+         //每一个item的成员又是vector。
          QByteArray temp = QByteArray::fromRawData((char*)dataitem.data.data(), dataitem.data.size());
          byteArray2 += temp;
     }

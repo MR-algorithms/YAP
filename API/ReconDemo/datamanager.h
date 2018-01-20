@@ -13,6 +13,7 @@ class DataManager
 public:
     static DataManager& GetHandle();
     bool Load(const QString& image_path);
+    bool Demo();
 /*
 
     bool ViewPrescan(const std::wstring& pipe);
@@ -28,7 +29,9 @@ private:
 
     bool LoadFidRecon(const QString& file_path);
 
-    bool DisplayCompile(const QString& file_path, const QString& pipe);
+    bool DoPipeline(const QString& file_path, const QString& pipe);
+
+    Yap::SmartPtr<Yap::IData> CreateDemoIData();
 
     /*
     bool LoadImage(const std::wstring& file_path);

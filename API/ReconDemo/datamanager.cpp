@@ -61,20 +61,22 @@ bool DataManager::Load(const QString& file_path)
     return true;
 }
 
+
+
 bool DataManager::LoadFidRecon(const QString& file_path)
 {
     QFileInfo file_info(file_path);
     auto file_name = file_info.baseName();
     auto path = file_info.path();
 
-    if (!DisplayCompile(file_path, QString("config//pipelines//niumag_recon.pipeline")))
+    if (!DoPipeline(file_path, QString("config//pipelines//niumag_recon.pipeline")))
         return false;
 
     return true;
 }
 
 
-bool DataManager::DisplayCompile(const QString &file_path, const QString &pipe)
+bool DataManager::DoPipeline(const QString &file_path, const QString &pipe)
 {
 
    Yap::PipelineCompiler compiler;
@@ -102,6 +104,127 @@ bool DataManager::DisplayCompile(const QString &file_path, const QString &pipe)
 
 
 }
+
+
+bool DataManager::Demo()
+{
+/*
+    NiumagFidReader reader;
+    SliceIterator slice_iterator;
+    DcRemover dc_remover;
+    ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);
+    Fft2D fft;
+    ModulePhase module_phase;
+    DataTypeConvertor convertor;
+    NiuMriDisplay2D display2d;
+
+    reader->slice_iterator;
+    slice_iterator->dc_remover;
+    dc_remover->zero_filling;
+    zero_filling->fft;
+    fft->module_phase;
+    module_phase.Module->convertor;
+    convertor.UnsignedShort->display2d;
+
+    self.Input->reader.Input;
+*/
+/*
+    try
+    {
+        PipelineConstructor constructor;
+        constructor.Reset(true);
+        constructor.LoadModule(L"BasicRecon.dll");
+
+        constructor.CreateProcessor(L"RecieveData", L"revieve_AComplexImage");
+        constructor.CreateProcessor(L"ModulePhase", L"module_phase");
+
+        constructor.CreateProcessor(L"DataTypeConvertor",L"datatype_convertor");
+
+        constructor.CreateProcessor(L"JpegExporter", L"jpeg_exporter");
+        constructor.SetProperty(L"jpeg_exporter", L"ExportFolder", L"d:\\output");
+
+        constructor.Link(L"revieve_AComplexImage", L"module_phase");
+
+        //constructor.Link(L"module_phase", L"Module", L"jpeg_exporter", L"Input");
+
+        constructor.MapInput(L"Input", L"reader", L"Input");
+
+        SmartPtr<IProcessor> pipeline = constructor.GetPipeline();
+        if (pipeline)
+        {
+            pipeline->Input(L"Input", nullptr);
+        }
+    }
+    catch (ConstructError& e)
+    {
+        wcout << e.GetErrorMessage() << std::endl;
+    }
+*/
+    return true;
+}
+
+Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData()
+{
+    Yap::Dimensions dimensions;
+    unsigned int width = 512;
+    unsigned int height = 512;
+    unsigned int total_slice_count = 1;
+
+    auto complex_slices = std::shared_ptr<std::complex<float>>(new std::complex<float>[width * height * total_slice_count]);
+
+    auto ushort_slices = new unsigned short[width * height * total_slice_count];
+
+    for(unsigned i = 0; i < total_slice_count; i ++)
+    {
+        unsigned slice_pixels = width * height;
+
+        for(unsigned j = 0; j < height; j ++)
+        {
+            for(unsigned k = 0; k < width; k ++)
+            {
+
+                unsigned index = i * slice_pixels + j* width + k;
+
+                if(j < height/2)
+                {
+                    complex_slices.get()[index].real(0);
+                    complex_slices.get()[index].imag(0);
+
+
+                }
+                else
+                {
+                    complex_slices.get()[index].real(10* (1+i));
+                    complex_slices.get()[index].imag(10* (1+i));
+                }
+
+                ushort_slices[index] = j;
+
+
+
+            }
+        }
+
+    }
+    //std::complex<float> test[512*2];
+    //memcpy(test, complex_slices.get() + 255*512, sizeof(std::complex<float>)* 512*2);
+
+    dimensions(Yap::DimensionReadout, 0U, width)
+        (Yap::DimensionPhaseEncoding, 0U, height)
+        (Yap::DimensionSlice, 0U, total_slice_count);
+
+
+
+    auto output_data1 = Yap::YapShared(
+                new Yap::DataObject<unsigned short>(nullptr, ushort_slices, dimensions, nullptr, nullptr));
+
+    //auto output_data2 = new Yap::DataObject<unsigned short>(nullptr, ushort_slices.get(), dimensions, nullptr, true, nullptr);
+
+    return output_data1;
+
+
+}
+
 /*
 bool DataManager::ViewPrescan(const std::wstring& pipe)
 {

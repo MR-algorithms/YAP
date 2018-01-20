@@ -48,7 +48,8 @@ SOURCES += \
     Processors/NiuMriDisplay2D.cpp \
     DataSample/reconclientsocket.cpp \
     DataSample/reconserver.cpp \
-    DataSample/SampleDataProtocol.cpp
+    DataSample/datapackage.cpp \
+    Processors/RecieveData.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -78,7 +79,11 @@ HEADERS += \
     DataSample/reconclientsocket.h \
     DataSample/reconserver.h \
     DataSample/SampleDataClient.h \
-    DataSample/SampleDataProtocol.h
+    DataSample/SampleDataProtocol.h \
+    DataSample/CmrPackItemTypeHelper.h \
+    DataSample/CmrPackType.h \
+    DataSample/datapackage.h \
+    Processors/RecieveData.h
 
 FORMS += \
         mainwindow.ui

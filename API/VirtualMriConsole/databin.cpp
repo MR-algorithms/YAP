@@ -223,6 +223,9 @@ void Databin::Start(int scan_id, int channel_count)
     DataPackage dataPackage;
     MessageProcess::Pack(dataPackage, start);
     //
+
+    dataPackage.CheckSelf();
+
     SampleDataStart start2;
     MessageProcess::Unpack(dataPackage, start2);
     assert(start == start2);
@@ -278,6 +281,7 @@ void Databin::Go()
             DataPackage dataPackage;
             MessageProcess::Pack(dataPackage, data);
             //
+            dataPackage.CheckSelf();
             SampleDataData data2;
             MessageProcess::Unpack(dataPackage, data2);
             assert(data == data2);
@@ -301,6 +305,13 @@ void Databin::End()
         DataPackage dataPackage;
         MessageProcess::Pack(dataPackage, end);
 
+        //
+        dataPackage.CheckSelf();
+        SampleDataEnd end2;
+        MessageProcess::Unpack(dataPackage, end2);
+        assert( end == end2);
+
+        //
         _communicator.get()->Send(dataPackage);
 
         _ended = true;

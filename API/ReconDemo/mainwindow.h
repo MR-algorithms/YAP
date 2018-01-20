@@ -28,7 +28,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    Yap::SmartPtr<Yap::IData> CreateDemoIData();
+
     void SetImportedProcessors();
     void test_plot1d();
     std::shared_ptr<ReconServer> reconServer;

@@ -3,7 +3,7 @@
 #include <QDebug>
 #include <cassert>
 
-ReconClientSocket::ReconClientSocket(QObject *parent) : QTcpSocket(parent), _endStruct(0)
+ReconClientSocket::ReconClientSocket(QObject *parent) : QTcpSocket(parent)
 {
     connect(this, &QTcpSocket::readyRead, this, &ReconClientSocket::slotDataReceived);
     connect(this, &QTcpSocket::disconnected, this, &ReconClientSocket::slotDisconnected);
@@ -12,154 +12,139 @@ ReconClientSocket::ReconClientSocket(QObject *parent) : QTcpSocket(parent), _end
 
 void ReconClientSocket::slotDataReceived()
 {
-    int x =10;
     int lengthx = bytesAvailable();
 
     qDebug()<< "Enter client::slotRecieved():  "<< lengthx<<" bytes";
 
-   // bool TestDemo = false;
-
-    //这段代码以后需要考虑一次不能完整读到一个结构体的数据；
-    //大约这样考虑：
-    //每次读取一个完整结构体的数据，如果没有读取完整，break；
-    while (bytesAvailable() > 0)
+    while (true)
     {
-        /*int length = bytesAvailable();
-        char buf[1024];
-        read(buf, length);
-        QString msg = buf;
-        int msglen = msg.length();
 
-        emit signalDataReceived(msg, length);
-        */
-
-        if(SampleData_TestDemo)
+        if( !Read(_bufferInfo.Next) )
         {
-            int length = bytesAvailable();
-            QByteArray data = this->readAll();
-            //FloatArray test;
-            //test.Unpack(data);
-            emit signalDataReceived(data,length);
+            return;
         }
         else
         {
-            int length = bytesAvailable();
-
-            uint32_t cmd_id = -1;
-            QByteArray dataArray = Read(cmd_id);
-
-
-            int left = bytesAvailable();
-            qDebug()<< "client::slotRecieved() left length:  "<< left<<" bytes";
-
-
-
-            //
-            int templ = dataArray.length();
-            if(dataArray.length() >= 4)
+            _bufferInfo.Next = static_cast<ReadinfoType>(
+                        static_cast<int>(_bufferInfo.Next) + 1 );
+            if(_bufferInfo.Next == ReadinfoType::rtFinished)
             {
-                emit signalDataReceived(dataArray,dataArray.length());
+                //process the package.
+
+                //
+                _bufferInfo.Reset();
 
             }
 
-
         }
 
+
+
     }
+
+
+}
+bool ReconClientSocket::Read(ReadinfoType rt)
+{
+    switch(rt)
+    {
+        case rtFlag:
+        {
+            return ReadFlag();
+        }
+        case rtHeadItem:
+        {
+            return ReadHeaditem();
+        }
+
+        case rtValue:
+        {
+            return ReadValue();
+        }
+        default:
+        {
+            return false;
+        }
+    }
+
 }
 
-QByteArray ReconClientSocket::Read(uint32_t &cmd_id)
+bool ReconClientSocket::ReadFlag()
 {
-    uint32_t markHead;//0xFFFFFFFF
+    QByteArray byteArray;
 
-    QByteArray data = this->read(sizeof(uint32_t));
-
-    //如果前面有两个干扰字节怎么办？只读到两个字节，怎么办？
-
-    if(data.length() < sizeof(uint32_t))
+    if( bytesAvailable() < 2 * sizeof(uint32_t) )
     {
-        return QByteArray(nullptr);
-    }
-
-    markHead = *(uint32_t*)(data.data());
-
-    if(markHead != 0xFFFFFFFF)
-    {
-        return QByteArray(nullptr);
-
+        return false;
     }
     else
     {
-        QByteArray data1 = this->read(sizeof(uint32_t));
-        assert(data1.length() == sizeof(uint32_t));
-        int cmdidLen = data1.length();
-        //已经读取了结构中的第一个uint32_t, 正式读取结构时应减少读取字节数，或回退。
-        //如果读取相位编码数据不足，应回退还是暂时保存，下次接着读呢？
+        byteArray = read(2 * sizeof(uint32_t));
 
-        cmd_id = *(uint32_t*)(char*)data1.data();
+        uint32_t first =  *(uint32_t*) (char*)byteArray.data();
+        uint32_t second = *(uint32_t*)((char*)byteArray.data() + sizeof(uint32_t));
 
-        switch(cmd_id)
-        {
+        _package.magic_anditem_count[0] = first;
+        _package.magic_anditem_count[1] = second;
+        _bufferInfo.headitem_count = second;
+        return true;
+    }
 
-        case SAMPLE_DATA_START:
-        {
-            QByteArray data = data1 + this->read(sizeof(SampleDataStart) - cmdidLen);
+}
+bool ReconClientSocket::ReadHeaditem()
+{
+    QByteArray byteArray;
 
-            if(data.length() < sizeof(SampleDataStart))
-            {
-                return QByteArray(nullptr);
-            }
-            _startStruct.Unpack(data);
-            QByteArray returnArray;
-            _startStruct.Pack(returnArray);
-            return returnArray;
+    int headitem_count = _bufferInfo.headitem_count;
+    int headitem_bytes = _bufferInfo.headitem_count * sizeof(HeadItem);
+    if( bytesAvailable() < headitem_bytes)
+    {
+        return false;
+    }
+    else
+    {
+        byteArray = read(headitem_bytes);
 
-        }
-            break;
-        case SAMPLE_DATA_DATA:
-        {
-            assert(_startStruct.dim1_size > 0);
+        assert(byteArray.size() == headitem_bytes);
 
-            int len =    sizeof(uint32_t) * 4
-                    +sizeof(float)
-                    +sizeof(std::complex<float>) * _startStruct.dim1_size;
-            QByteArray data = data1 + this->read(len - cmdidLen);
-            assert(data.length() == len);
-            _dataStruct.Unpack(data);
+        _package.head.resize( headitem_count);
 
-            QByteArray returnArray;
-            _dataStruct.Pack(returnArray);
-            return returnArray;
+        memcpy(_package.head.data(), byteArray.data(), byteArray.size());
 
+        _package.CheckSelf(true, false, false);
 
-        }
-            break;
-
-        case SAMPLE_DATA_END:
-        {
-            QByteArray data = data1 + this->read(sizeof(SampleDataEnd) - cmdidLen);
-            assert(data.length() == sizeof(SampleDataEnd));
-
-            _endStruct.Unpack(data);
-
-            QByteArray returnArray;
-            _endStruct.Pack(returnArray);
-            return returnArray;
-
-        }
-            break;
-        default:
-            return QByteArray(nullptr);
-
-
-        }
 
 
     }
 
-
-
+    return true;
 }
+
+bool ReconClientSocket::ReadValue()
+{
+
+    int bytesToRead = _package.BytesFromHeaditem();
+    if(bytesAvailable() < bytesToRead)
+    {
+        return false;
+    }
+
+    _package.data.resize( _package.head.size() );
+    for(int i = 0; i < static_cast<int>( _package.head.size() ); i ++)
+    {
+        int dataitem_bytes = _package.head[i].size;
+        QByteArray byteArray = read( dataitem_bytes );
+        memcpy( _package.data[i].data.data(), byteArray.data(), dataitem_bytes );
+
+    }
+
+    assert(_package.data[0].data.size() == sizeof(uint32_t));
+    memcpy( &_bufferInfo.cmd_id, _package.data[0].data.data(), sizeof(uint32_t));
+
+    _package.CheckSelf();
+    return true;
+}
+
 
 void ReconClientSocket::slotDisconnected()
 {
