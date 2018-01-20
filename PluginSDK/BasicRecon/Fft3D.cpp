@@ -35,7 +35,7 @@ Fft3D::Fft3D(const Fft3D& rhs)
 	_plan_in_place(rhs._plan_in_place),
 	_fft_plan(rhs._fft_plan)
 {
-	LOG_TRACE(L"Fft3D constructor called.", L"BasicRecon");
+	LOG_TRACE(L"Fft3D copy constructor called.", L"BasicRecon");
 }
 
 
@@ -125,7 +125,7 @@ void Fft3D::Plan(size_t width, size_t height, size_t depth, bool inverse, bool i
 			(fftwf_complex*)data.data(),
 			(fftwf_complex*)data.data(),
 			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
-			FFTW_MEASURE);
+			FFTW_UNALIGNED);
 	}
 	else
 	{
@@ -134,7 +134,7 @@ void Fft3D::Plan(size_t width, size_t height, size_t depth, bool inverse, bool i
 			(fftwf_complex*)data.data(),
 			(fftwf_complex*)result.data(),
 			inverse ? FFTW_BACKWARD : FFTW_FORWARD,
-			FFTW_MEASURE);
+			FFTW_UNALIGNED);
 	}
 
 	_plan_data_width = static_cast<unsigned int>(width);

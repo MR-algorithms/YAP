@@ -6,6 +6,20 @@
 #include "Implement\LogImpl.h"
 #include "Interface\Interfaces.h"
 #include "Interface/SmartPtr.h"
+#ifdef _DEBUG
+	#ifdef _WIN64
+		#define PythonEngine L"PythonEngine64D.dll"
+	#else
+		#define PythonEngine L"PythonEngineD.dll"
+	#endif
+#else
+	#ifdef _WIN64
+		#define PythonEngine L"PythonEngine64.dll"
+	#else
+		#define PythonEngine L"PythonEngine.dll"
+	#endif
+#endif
+
 
 using namespace Yap;
 using namespace std;
@@ -250,7 +264,7 @@ bool Yap::Module::Load(const wchar_t * plugin_path,
 				auto python_user = python_func();
 				if (python_user != nullptr)
 				{
-					python_user->SetPython(python_engine);
+					python_user->SetPython(*python_engine);
 				}
 			}
 		}
@@ -347,7 +361,7 @@ Yap::IPython * Yap::ModuleManager::GetPythonEngine()
 {
 	if (_python_engine_module == 0)
 	{
-		_python_engine_module = ::LoadLibrary(L"PythonEngine.dll");
+		_python_engine_module = ::LoadLibrary(PythonEngine);
 	}
 
 	if (_python_engine_module == 0)

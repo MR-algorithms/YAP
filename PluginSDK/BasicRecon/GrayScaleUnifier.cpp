@@ -19,7 +19,7 @@ Yap::GrayScaleUnifier::GrayScaleUnifier():
 Yap::GrayScaleUnifier::GrayScaleUnifier(const GrayScaleUnifier& rhs) :
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"GrayScaleUnifier constructor called.", L"BasicRecon");
+	LOG_TRACE(L"GrayScaleUnifier copy constructor called.", L"BasicRecon");
 }
 
 Yap::GrayScaleUnifier::~GrayScaleUnifier()

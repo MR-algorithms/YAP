@@ -72,18 +72,23 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(YAP_ROOT)\$(Platform)\$(Configuration)\</OutDir>
+    <LibraryPath>$(YAP_ROOT)\$(Platform)\$(Configuration);D:\ThirdParty\log4cplus-2.0.0-rc1\lib;D:\ThirdParty\boost_1_61_0\lib64-msvc-14.0;D:\ThirdParty\FFTW-64\lib;$(PYTHON_ROOT)\libs;D:\ThirdParty\Armadillo\Armadillo-7200.2\lib_debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(PYTHON_ROOT)\include;D:\ThirdParty\log4cplus-2.0.0-rc1\include;D:\ThirdParty\FFTW-64\include;D:\ThirdParty\Armadillo\Armadillo-7200.2\include;D:\ThirdParty\boost_1_61_0;$(IncludePath)</IncludePath>
-    <LibraryPath>$(PYTHON_ROOT)\libs;C:\Program Files\Python36\Lib\site-packages\numpy\core\lib;D:\ThirdParty\boost_1_61_0\lib64-msvc-14.0;D:\ThirdParty\Armadillo\Armadillo-7200.2\lib_debug;D:\ThirdParty\FFTW-64\lib;D:\ThirdParty\log4cplus-2.0.0-rc1\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(YAP_ROOT)\$(Platform)\$(Configuration);$(PYTHON_ROOT)\libs;C:\Program Files\Python36\Lib\site-packages\numpy\core\lib;D:\ThirdParty\boost_1_61_0\lib64-msvc-14.0;D:\ThirdParty\Armadillo\Armadillo-7200.2\lib_debug;D:\ThirdParty\FFTW-64\lib;D:\ThirdParty\log4cplus-2.0.0-rc1\lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(YAP_ROOT)\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(YAP_ROOT)\$(Platform)\$(Configuration)\</OutDir>
+    <LibraryPath>$(YAP_ROOT)\$(Platform)\$(Configuration);D:\ThirdParty\log4cplus-2.0.0-rc1\lib;D:\ThirdParty\boost_1_61_0\lib64-msvc-14.0;D:\ThirdParty\FFTW-64\lib;$(PYTHON_ROOT)\libs;D:\ThirdParty\Armadillo\Armadillo-7200.2\lib_debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(YAP_ROOT)\$(Platform)\$(Configuration)\</OutDir>
+    <LibraryPath>$(YAP_ROOT)\$(Platform)\$(Configuration);C:\Program Files\Python36\Lib\site-packages\numpy\core\lib;D:\ThirdParty\boost_1_61_0\lib64-msvc-14.0;D:\ThirdParty\Armadillo\Armadillo-7200.2\lib_debug;D:\ThirdParty\FFTW-64\lib;D:\ThirdParty\log4cplus-2.0.0-rc1\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -98,7 +103,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Yapd.lib;Clientd.lib;Implementd.lib;PythonImplementd.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win32_MTd.lib;lapack_win32_MTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Yapd.lib;Clientd.lib;Implementd.lib;PythonEngined.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win32_MTd.lib;lapack_win32_MTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -116,7 +121,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(YAP_ROOT)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Yap64d.lib;Client64d.lib;Implement64d.lib;PythonImplement64d.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win64_MTd.lib;lapack_win64_MTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Yap64d.lib;Client64d.lib;Implement64d.lib;PythonEngine64d.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win64_MTd.lib;lapack_win64_MTd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -129,12 +134,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;PYTHONRECON_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(YAP_ROOT)\Interface;$(Yap_ROOT)\Shared;C:\Program Files\Python36\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>Yap.lib;Client.lib;Implement.lib;PythonEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,12 +154,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;PYTHONRECON_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(YAP_ROOT)\Interface;$(Yap_ROOT)\Shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>Yap64.lib;Client64.lib;Implement64.lib;PythonEngine64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(YAP_ROOT)\Lib;D:\ThirdParty\log4cplus-2.0.0-rc1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

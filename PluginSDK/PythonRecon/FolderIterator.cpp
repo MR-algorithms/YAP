@@ -26,18 +26,18 @@ FolderIterator::FolderIterator() :
 	AddProperty<bool>(L"SearchSubDir", false, L"搜索当前Path目录下的子目录文件夹");
 	AddProperty<const wchar_t * const>(L"Regular", L"", L"文件件搜索正则表达式");
 
-	LOG_TRACE(L"FolderIterator constructor called.", L"BasicRecon");
+	LOG_TRACE(L"FolderIterator constructor called.", L"PythonRecon");
 }
 
 FolderIterator::~FolderIterator()
 {
-	LOG_TRACE(L"FolderIterator destructor", L"BasicRecon");
+	LOG_TRACE(L"FolderIterator destructor", L"PythonRecon");
 }
 
 FolderIterator::FolderIterator(const FolderIterator& rhs) : 
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"FolderIterator copy constructor", L"BasicRecon");
+	LOG_TRACE(L"FolderIterator copy constructor", L"PythonRecon");
 }
 
 bool FolderIterator::Input(const wchar_t * name, IData * data)
@@ -52,7 +52,7 @@ bool FolderIterator::Input(const wchar_t * name, IData * data)
 
 	if (folders.empty())
 	{
-		LOG_ERROR(L"Property [Path] is not aproperate a directories", L"BasicRecon");
+		LOG_ERROR(L"Property [Path] is not aproperate a directories", L"PythonRecon");
 		return false;
 	}
 
@@ -64,7 +64,7 @@ bool FolderIterator::Input(const wchar_t * name, IData * data)
 		{
 			Dimensions dimension;
 			dimension(DimensionReadout, 0U, unsigned(iter.length()));
-			char * tempt = new char[iter.length()];
+			char * tempt = new char[iter.length() + 1];
 			strcpy(tempt, iter.c_str());
 			auto out_data = CreateData<char>(nullptr, tempt, dimension);
 			Feed(L"Output", out_data.get());
@@ -79,7 +79,7 @@ bool FolderIterator::Input(const wchar_t * name, IData * data)
 			{
 				Dimensions dimension;
 				dimension(DimensionReadout, 0U, unsigned(iter.length()));
-				char * tempt = new char[iter.length()];
+				char * tempt = new char[iter.length() + 1];
 				strcpy(tempt, iter.c_str());
 				auto out_data = CreateData<char>(nullptr, tempt, dimension);
 				Feed(L"Output", out_data.get());

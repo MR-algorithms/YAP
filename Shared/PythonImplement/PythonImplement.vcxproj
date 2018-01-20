@@ -26,26 +26,26 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -70,14 +70,22 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(YAP_ROOT)\Lib\</OutDir>
-    <TargetName>$(ProjectName)64d</TargetName>
+    <OutDir>$(YAP_ROOT)\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>PythonEngine64D</TargetName>
     <IncludePath>$(PYTHON_ROOT)\include;D:\ThirdParty\log4cplus-2.0.0-rc1\include;D:\ThirdParty\FFTW-64\include;D:\ThirdParty\Armadillo\Armadillo-7200.2\include;D:\ThirdParty\boost_1_61_0;$(IncludePath)</IncludePath>
     <LibraryPath>$(PYTHON_ROOT)\libs;C:\Program Files\Python36\libs;C:\Program Files\Python36\Lib\site-packages\numpy\core\lib;D:\ThirdParty\boost_1_61_0\lib64-msvc-14.0;D:\ThirdParty\Armadillo\Armadillo-7200.2\lib_debug;D:\ThirdParty\FFTW-64\lib;D:\ThirdParty\log4cplus-2.0.0-rc1\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(YAP_ROOT)\Lib\</OutDir>
-    <TargetName>$(ProjectName)d</TargetName>
+    <OutDir>$(YAP_ROOT)\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>PythonEngineD</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(YAP_ROOT)\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>PythonEngine64</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(YAP_ROOT)\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>PythonEngine</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -137,6 +145,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(YAP_ROOT)\Interface;$(Yap_ROOT)\Shared%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -149,12 +158,11 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="PythonImpl.cpp" />
-    <ClCompile Include="PythonUserImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PythonImpl.h" />
-    <ClInclude Include="PythonUserImpl.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

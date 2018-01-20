@@ -37,7 +37,7 @@ NiiReader::NiiReader()
 	AddInput(L"Input", 1, DataTypeChar);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeAll);
 	AddProperty<const wchar_t * const>(L"FilePath", L"", L"ÎÄ¼þÂ·¾¶");
-	LOG_TRACE(L"NiiReader constructor", L"BasicRecon");
+	LOG_TRACE(L"NiiReader constructor", L"PythonRecon");
 }
 
 Yap::NiiReader::NiiReader(const NiiReader& rhs):
@@ -50,12 +50,12 @@ Yap::NiiReader::NiiReader(const NiiReader& rhs):
 	{
 		_dimensions[i] = rhs._dimensions[i];
 	}
-	LOG_TRACE(L"NiiReader copy constructor", L"BasicRecon");
+	LOG_TRACE(L"NiiReader copy constructor", L"PythonRecon");
 }
 
 NiiReader::~NiiReader()
 {
-	LOG_TRACE(L"NiiReader destructor", L"BasicRecon");
+	LOG_TRACE(L"NiiReader destructor", L"PythonRecon");
 }
 
 int NiiReader::GetFileVersion(const wchar_t * file_path)
@@ -74,6 +74,140 @@ std::pair<void *, Nii_v2_FileHeaderInfo*> NiiReader::ReadNiiV2(const wchar_t * f
 {
 	throw "error";
 	return std::make_pair((void*)nullptr, new Nii_v2_FileHeaderInfo());
+}
+
+bool Yap::NiiReader::Input(const wchar_t * name, IData * data)
+{
+	if (wstring(name) != L"Input")
+		return false;
+
+	string nii_path;
+	if (data != nullptr)
+	{
+		if (data->GetDataType() != DataTypeChar)
+			return false;
+		nii_path = GetDataArray<char>(data);
+	}
+	const wchar_t * nii_dir = GetProperty<const wchar_t* const>(L"FilePath");
+	if (wcslen(nii_dir) != 0)
+	{
+		nii_path = ToMbs(nii_dir);
+	}
+
+	auto nii_data = ReadFile(nii_path);
+	if (nii_data == nullptr)
+		return false;
+	//decode data to output port
+	Dimensions dimensions;
+	switch (_dimension_size)
+	{
+	case 4:
+		dimensions(DimensionReadout, 0U, _dimensions[0])
+			(DimensionPhaseEncoding, 0U, _dimensions[1])
+			(DimensionSlice, 0U, _dimensions[2])
+			(Dimension4, 0U, _dimensions[3]);
+		break;
+	case 3:
+		dimensions(DimensionReadout, 0U, _dimensions[0])
+			(DimensionPhaseEncoding, 0U, _dimensions[1])
+			(DimensionSlice, 0U, _dimensions[2]);
+		break;
+	case 2:
+		dimensions(DimensionReadout, 0U, _dimensions[0])
+			(DimensionPhaseEncoding, 0U, _dimensions[1]);
+		break;
+	case 1:
+		dimensions(DimensionReadout, 0U, _dimensions[0]);
+		break;
+	default:
+		return false;
+	}
+
+	switch (_current_type) 
+	{
+	case Yap::TYPE_BOOL:
+	{	
+		auto out_data = CreateData<bool>(nullptr, reinterpret_cast<bool*>(nii_data), dimensions);
+		Feed(L"Output", out_data.get());
+	break;
+	}
+	case Yap::TYPE_UNSIGNEDCHAR:
+	{
+		auto out_data = CreateData<unsigned char>(nullptr, reinterpret_cast<unsigned char*>(nii_data), dimensions);
+		Feed(L"Output", out_data.get());
+	break;
+	}
+	case Yap::TYPE_SHORT:
+	{
+		auto out_data = CreateData<short>(nullptr, reinterpret_cast<short*>(nii_data), dimensions);
+		Feed(L"Output", out_data.get());
+	break;
+	}
+	case Yap::TYPE_INT:
+	{
+		auto out_data = CreateData<int>(nullptr, reinterpret_cast<int*>(nii_data), dimensions);
+		Feed(L"Output", out_data.get());
+	break;
+	}
+	case Yap::TYPE_FLOAT:
+	{
+		auto out_data = CreateData<float>(nullptr, reinterpret_cast<float*>(nii_data), dimensions);
+		Feed(L"Output", out_data.get());
+	break;
+	}
+	case Yap::TYPE_COMPLEX:
+	{
+		auto out_data = CreateData<complex<float>>(nullptr, reinterpret_cast<complex<float>*>(nii_data), dimensions);
+		Feed(L"Output", out_data.get());
+	break;
+	}
+	case Yap::TYPE_DOUBLE:
+	{
+		auto out_data = CreateData<double>(nullptr, reinterpret_cast<double*>(nii_data), dimensions);
+		Feed(L"Output", out_data.get());
+	break;
+	}
+	case Yap::TYPE_CHAR:
+	{
+		auto out_data = CreateData<char>(nullptr, reinterpret_cast<char*>(nii_data), dimensions);
+		Feed(L"Output", out_data.get());
+	break;
+	}
+	case Yap::TYPE_UNSIGNEDSHORT:
+	{	
+		auto out_data = CreateData<unsigned short>(nullptr, reinterpret_cast<unsigned short*>(nii_data), dimensions);
+		Feed(L"Output", out_data.get());
+	break;
+	}
+	case Yap::TYPE_UNSIGNEDINT:
+	{	
+		auto out_data = CreateData<unsigned int>(nullptr, reinterpret_cast<unsigned int*>(nii_data), dimensions);
+		Feed(L"Output", out_data.get());
+	break;
+	}
+	case Yap::TYPE_LONGLONG:
+	{
+		auto out_data = CreateData<long long>(nullptr, reinterpret_cast<long long*>(nii_data), dimensions);
+		Feed(L"Output", out_data.get());
+	break;
+	}
+	case Yap::TYPE_UNSIGNEDLONGLONG:
+	{	
+		auto out_data = CreateData<unsigned long long>(nullptr, reinterpret_cast<unsigned long long*>(nii_data), dimensions);
+		Feed(L"Output", out_data.get());
+	break;
+	}
+	case Yap::TYPE_RGB:
+	case Yap::TYPE_RGBA:
+	case Yap::TYPE_LONGDOUBLE:
+	case Yap::TYPE_DOUBLEPAIR:
+	case Yap::TYPE_LONGDOUBLEPAIR:
+	case Yap::TYPE_UNKNOWN:
+	case Yap::TYPE_ALL:
+	default:
+		return false;
+	}
+	return true;
 }
 
 void* NiiReader::ReadFile(std::string nii_path)
@@ -522,102 +656,4 @@ void * NiiReader::LoadData(ifstream & file, size_t byte_count, size_t data_size)
 		}
 		return reinterpret_cast<void*>(data);
 	}
-}
-
-bool Yap::NiiReader::Input(const wchar_t * name, IData * data)
-{
-	if (wstring(name) != L"Input")
-		return false;
-
-	string nii_path;
-	if (data != nullptr)
-	{
-		if (data->GetDataType() != DataTypeChar)
-			return false;
-		nii_path = GetDataArray<char>(data);
-	}
-	const wchar_t * nii_dir = GetProperty<const wchar_t* const>(L"FilePath");
-	if (wcslen(nii_dir) != 0)
-	{
-		nii_path = ToMbs(nii_dir);
-	}
-
-	auto nii_data = ReadFile(nii_path);
-	if (nii_data == nullptr)
-		return false;
-	//decode data to output port
-	Dimensions dimensions;
-	switch (_dimension_size)
-	{
-	case 4:
-		dimensions(DimensionReadout, 0U, _dimensions[0])
-			(DimensionPhaseEncoding, 0U, _dimensions[1])
-			(DimensionSlice, 0U, _dimensions[2])
-			(Dimension4, 0U, _dimensions[3]);
-		break;
-	case 3:
-		dimensions(DimensionReadout, 0U, _dimensions[0])
-			(DimensionPhaseEncoding, 0U, _dimensions[1])
-			(DimensionSlice, 0U, _dimensions[2]);
-		break;
-	case 2:
-		dimensions(DimensionReadout, 0U, _dimensions[0])
-			(DimensionPhaseEncoding, 0U, _dimensions[1]);
-		break;
-	case 1:
-		dimensions(DimensionReadout, 0U, _dimensions[0]);
-		break;
-	default:
-		return false;
-	}
-
-	switch (_current_type) 
-	{
-	case Yap::TYPE_BOOL:
-		Feed(L"Output", CreateData<bool>(nullptr, reinterpret_cast<bool*>(nii_data), dimensions).get());
-		break;
-	case Yap::TYPE_UNSIGNEDCHAR:
-		Feed(L"Output", CreateData<unsigned char>(nullptr, reinterpret_cast<unsigned char*>(nii_data), dimensions).get());
-		break;
-	case Yap::TYPE_SHORT:
-		Feed(L"Output", CreateData<short>(nullptr, reinterpret_cast<short*>(nii_data), dimensions).get());
-		break;
-	case Yap::TYPE_INT:
-		Feed(L"Output", CreateData<int>(nullptr, reinterpret_cast<int*>(nii_data), dimensions).get());
-		break;
-	case Yap::TYPE_FLOAT:
-		Feed(L"Output", CreateData<float>(nullptr, reinterpret_cast<float*>(nii_data), dimensions).get());
-		break;
-	case Yap::TYPE_COMPLEX:
-		Feed(L"Output", CreateData<complex<float>>(nullptr, reinterpret_cast<complex<float>*>(nii_data), dimensions).get());
-		break;
-	case Yap::TYPE_DOUBLE:
-		Feed(L"Output", CreateData<double>(nullptr, reinterpret_cast<double*>(nii_data), dimensions).get());
-		break;
-	case Yap::TYPE_CHAR:
-		Feed(L"Output", CreateData<char>(nullptr, reinterpret_cast<char*>(nii_data), dimensions).get());
-		break;
-	case Yap::TYPE_UNSIGNEDSHORT:
-		Feed(L"Output", CreateData<unsigned short>(nullptr, reinterpret_cast<unsigned short*>(nii_data), dimensions).get());
-		break;
-	case Yap::TYPE_UNSIGNEDINT:
-		Feed(L"Output", CreateData<unsigned int>(nullptr, reinterpret_cast<unsigned int*>(nii_data), dimensions).get());
-		break;
-	case Yap::TYPE_LONGLONG:
-		Feed(L"Output", CreateData<long long>(nullptr, reinterpret_cast<long long*>(nii_data), dimensions).get());
-		break;
-	case Yap::TYPE_UNSIGNEDLONGLONG:
-		Feed(L"Output", CreateData<unsigned long long>(nullptr, reinterpret_cast<unsigned long long*>(nii_data), dimensions).get());
-		break;
-	case Yap::TYPE_RGB:
-	case Yap::TYPE_RGBA:
-	case Yap::TYPE_LONGDOUBLE:
-	case Yap::TYPE_DOUBLEPAIR:
-	case Yap::TYPE_LONGDOUBLEPAIR:
-	case Yap::TYPE_UNKNOWN:
-	case Yap::TYPE_ALL:
-	default:
-		return false;
-	}
-	return true;
 }

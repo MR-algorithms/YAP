@@ -7,5 +7,6 @@
 #include "IProcessor.h"
 #include "ILog.h"
 #include "IPythonUser.h"
+#include "IPython.h"
 
 #endif // Interface_h__20160825

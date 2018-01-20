@@ -5,8 +5,6 @@
 
 #ifdef _USE_PYTHON
 #include "Interface\IPython.h"
-#include "PythonImplement\PythonImpl.h"
-#include "Interface\IPythonUser.h"
 #endif
 
 using namespace Yap;
