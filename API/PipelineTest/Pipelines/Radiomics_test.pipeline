@@ -8,8 +8,9 @@ NiiReader ref_reader;
 NiiReader img_reader;
 Radiomics radiomicshandle(ScriptPath = 
 	"D:\\Projects\\YAP\\PluginSDK\\PythonRecon\\Python\\demo_test.py", 
-	MethodName = "test_radiomics", ReturnDataType = 4);
-// RFeaturesCollector features;
+	MethodName = "test_radiomics", ReturnDataType = 16); //16-Double
+RFeaturesCollector rf_collector;
+CaseCollector case;
 JpegExporter jpeg_exporter(ExportFolder = "d:\\Output");
 
 folders->files;
@@ -17,7 +18,9 @@ files.Reference->ref_reader;
 files.Output->img_reader;
 ref_reader->radiomicshandle.Reference;
 img_reader->radiomicshandle.Input;
-radiomicshandle->jpeg_exporter;
+radiomicshandle->rf_collector;
+rf_collector->case;
+case->jpeg_exporter;
 
 
 self.Input->folders.Input;

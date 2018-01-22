@@ -99,6 +99,18 @@ bool Yap::NiiReader::Input(const wchar_t * name, IData * data)
 		return false;
 	//decode data to output port
 	Dimensions dimensions;
+	DataHelper helper(data);
+	auto dim1 = helper.GetDimension(DimensionUser1);
+	auto dim2 = helper.GetDimension(DimensionUser2);
+	if (dim1.type != DimensionInvalid)
+	{
+		dimensions(dim1.type, dim1.start_index, dim1.length);
+	}
+	if (dim2.type != DimensionInvalid)
+	{
+		dimensions(dim2.type, dim2.start_index, dim2.length);
+	}
+
 	switch (_dimension_size)
 	{
 	case 4:
@@ -133,7 +145,7 @@ bool Yap::NiiReader::Input(const wchar_t * name, IData * data)
 	}
 	case Yap::TYPE_UNSIGNEDCHAR:
 	{
-		auto out_data = CreateData<unsigned char>(nullptr, reinterpret_cast<unsigned char*>(nii_data), dimensions);
+		auto out_data = CreateData<uint_least8_t>(nullptr, reinterpret_cast<uint_least8_t*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
 	break;
 	}
@@ -553,7 +565,7 @@ void * NiiReader::ReadData(ifstream &file, short datatype)
 	case TYPE_BOOL:
 		return LoadData<bool>(file, 1, data_size);
 	case TYPE_UNSIGNEDCHAR:
-		return LoadData<unsigned char>(file, 1, data_size);
+		return LoadData<uint_least8_t>(file, 1, data_size);
 	case TYPE_SHORT:
 		return LoadData<short>(file, 2, data_size);
 	case TYPE_INT:
@@ -563,31 +575,23 @@ void * NiiReader::ReadData(ifstream &file, short datatype)
 	case TYPE_COMPLEX:
 		return LoadData<complex<float>>(file, 4, data_size * 2);
 	case TYPE_DOUBLE:
-		LoadData<double>(file, 8, data_size);
-		break;
+		return LoadData<double>(file, 8, data_size);
 	case TYPE_RGB:
 		// rgb & rgba use unsigned char to store，虽然rgb是3字节，
 		// 但是因为在_dimensions中已经保存了数据的rgb值信息，所以不许需要做特殊处理
-		LoadData<unsigned char>(file, 1, data_size);
-		break;
+		return LoadData<unsigned char>(file, 1, data_size);
 	case TYPE_RGBA:
-		LoadData<unsigned char>(file, 1, data_size);
-		break;
+		return LoadData<unsigned char>(file, 1, data_size);
 	case TYPE_CHAR:
-		LoadData<char>(file, 1, data_size);
-		break;
+		return LoadData<char>(file, 1, data_size);
 	case TYPE_UNSIGNEDSHORT:
-		LoadData<unsigned short>(file, 2, data_size);
-		break;
+		return LoadData<unsigned short>(file, 2, data_size);
 	case TYPE_UNSIGNEDINT:
-		LoadData<unsigned int>(file, 4, data_size);
-		break;
+		return LoadData<unsigned int>(file, 4, data_size);
 	case TYPE_LONGLONG:
-		LoadData<long long>(file, 8, data_size);
-		break;
+		return LoadData<long long>(file, 8, data_size);
 	case TYPE_UNSIGNEDLONGLONG:
-		LoadData<unsigned long long>(file, 8, data_size);
-		break;
+		return LoadData<unsigned long long>(file, 8, data_size);
 	case TYPE_LONGDOUBLE:
 	case TYPE_DOUBLEPAIR:
 	case TYPE_LONGDOUBLEPAIR:
@@ -596,7 +600,6 @@ void * NiiReader::ReadData(ifstream &file, short datatype)
 	default:
 		return (void*)nullptr;
 	}
-	return (void*)nullptr;
 }
 
 int * NiiReader::GetDimensions()
@@ -654,6 +657,6 @@ void * NiiReader::LoadData(ifstream & file, size_t byte_count, size_t data_size)
 		{
 			SwapByteOrder(reinterpret_cast<void*>(data), byte_count, data_size);
 		}
-		return reinterpret_cast<void*>(data);
+		return data;
 	}
 }

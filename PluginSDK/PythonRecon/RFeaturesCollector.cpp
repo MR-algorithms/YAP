@@ -10,6 +10,8 @@ using namespace std;
 Yap::RFeaturesCollector::RFeaturesCollector():
 	ProcessorImpl(L"RFeaturesCollector")
 {
+	AddInput(L"Input", 3U, DataTypeFloat );
+	AddOutput(L"Output", 2U, DataTypeFloat );
 	LOG_TRACE(L"RadiomicsFeaturesCollector constructor", L"PythonRecon");
 }
 
@@ -26,84 +28,51 @@ Yap::RFeaturesCollector::~RFeaturesCollector()
 
 bool Yap::RFeaturesCollector::Input(const wchar_t * name, IData * data)
 {
-
 	assert(data != nullptr);
 	assert(Inputs()->Find(name) != nullptr);
 
 	DataHelper helper(data);
+	auto dim1 = helper.GetDimension(DimensionUser1);
+	auto dim2 = helper.GetDimension(DimensionUser2);
+	assert(dim1.type != DimensionInvalid && dim2.type != DimensionInvalid);
+	assert(helper.GetDataType() == DataTypeFloat);
 
-	vector<unsigned int> key = GetKey(data->GetDimensions());
-	auto iter = _collector_buffers.find(key);
-	if (iter == _collector_buffers.end())
+	_collector.insert(make_pair(_count++, CreateData<float>(data)));
+	if (_count == dim2.length)
 	{
-		Dimensions collector_dimensions(helper.GetDimensionCount());
-		DimensionType type = DimensionInvalid;
-		unsigned int index = 0, length = 0;
-
-		for (unsigned int i = 0; i < helper.GetDimensionCount(); ++i)
+		unsigned int total_length = 0;
+		for (unsigned int i = 0; i < _count; ++i)
 		{
-
-			data->GetDimensions()->GetDimensionInfo(i, type, index, length);
-			if (type == DimensionChannel)
-			{
-				collector_dimensions.SetDimensionInfo(i, type, index, GetProperty<int>(L"ChannelCount"));
-			}
-			else
-			{
-				collector_dimensions.SetDimensionInfo(i, type, index, length);
-			}
+			DataHelper h(_collector[i].get());
+			auto dim = h.GetDimension(DimensionReadout);
+			total_length += dim.length;
+		}
+		Dimensions dimension;
+		dimension(dim1.type, dim1.start_index, dim1.length)
+			(DimensionReadout, 0U, total_length);
+		float * collect_data;
+		try
+		{
+			collect_data = new  float[total_length];
+		}
+		catch (const std::bad_alloc&)
+		{
+			return false;
+		}
+		size_t count = 0;
+		for (unsigned int i = 0; i < _count; ++i)
+		{
+			DataHelper h(_collector[i].get());
+			auto dim = h.GetDimension(DimensionReadout);
+			memcpy(collect_data + count, GetDataArray<float>(_collector[i].get()), (dim.length) * sizeof(float));
+			count += dim.length;
 		}
 
-		CollectorBuffer collector_buffer;
-		collector_buffer.buffer = CreateData<double>(data, &collector_dimensions);
-
-		auto * data_array = Yap::GetDataArray<double>(data);
-		memcpy(collector_buffer.buffer->GetData(), data_array, helper.GetBlockSize(DimensionSlice) * sizeof(double));
-		collector_buffer.count = 1;
-
-		auto result = _collector_buffers.insert(make_pair(key, collector_buffer));
-		iter = result.first;
+		auto out_data = CreateData<float>(nullptr, collect_data, dimension, nullptr);
+			Feed(L"Output", out_data.get());
+		_count = 0;
+		_collector.clear();
 	}
-	else
-	{
-		double * collector_cursor = reinterpret_cast<double*>(iter->second.buffer->GetData());
-
-		auto * source_data_array = Yap::GetDataArray<complex<float>>(data);
-		complex<float> * source_cursor = source_data_array;
-
-		memcpy(collector_cursor + iter->second.count * helper.GetBlockSize(DimensionSlice),
-			source_cursor, helper.GetBlockSize(DimensionSlice) * sizeof(double));
-		++iter->second.count;
-	}
-
-	if (iter->second.count == GetProperty<int>(L"ChannelCount"))
-	{
-		Feed(L"Output", iter->second.buffer.get());
-	}
-
 	return true;
+
 }
-
-std::vector<unsigned int> Yap::RFeaturesCollector::GetKey(IDimensions * dimensions)
-{
-	std::vector<unsigned int> result;
-	for (unsigned int i = 0; i < dimensions->GetDimensionCount(); ++i)
-	{
-		DimensionType type = DimensionInvalid;
-		unsigned int start_index = 0;
-		unsigned int length = 0;
-
-		dimensions->GetDimensionInfo(i, type, start_index, length);
-		if (type == DimensionPhaseEncoding)
-		{
-			result.push_back(0);
-		}
-		else
-		{
-			result.push_back(start_index);
-		}
-	}
-
-	return result;
-}
-

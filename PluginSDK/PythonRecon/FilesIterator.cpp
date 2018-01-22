@@ -31,7 +31,11 @@ FilesIterator::FilesIterator():
 	AddProperty<const wchar_t* const>(L"FileDir", L"", L"文件的指定目录，该属性启用，则抑制从输入端口传入文件目录.");
 	AddProperty<const wchar_t* const>(L"FileRegex", L"", L"文件名查找正则表达式");
 	AddProperty<bool>(L"SearchSubDir", false, L"是否搜索子目录文件下的文件");
-	AddProperty<const wchar_t* const>(L"ReferenceRegex", L"", L"选择参考图像的正则表达式.");
+	AddProperty<const wchar_t* const>(L"ReferenceRegex", L"", L"选择参考图像的正则表达式(仅只能获得到一个参考图像).");
+
+	/* THIS PROPERTY CAN NOT BE SETTED AT PIPELINE!!!*/
+	AddProperty<bool>(L"FilesIteratorFinished", false,
+		L"Mark FilesIterator has send patients' all modalities data or not. FORBIDEN SETTED IN PIPELINE!!!");
 
 	LOG_TRACE(L"FilesIterator constructor", L"PythonRecon");
 }
@@ -75,31 +79,57 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 	if (file_container.size() == 0)
 		return false;
 
+	DataHelper helper(data);
+	auto dim = helper.GetDimension(DimensionUser1);
+	
+	SetProperty<bool>(L"FilesIteratorFinished", false);
 	if (wcslen(reference_regex)==0)
 	{
+		unsigned int count = 0;
 		for (auto iter:file_container)
 		{
 			Dimensions dimension;
-			dimension(DimensionReadout, 0U, unsigned(iter.length()));
-			char * tempt = new char[iter.length()];
+			if (dim.type != DimensionInvalid)
+			{
+				dimension(dim.type, dim.start_index, dim.length)
+					(DimensionUser2, count, unsigned(file_container.size()))
+					(DimensionUser3, 0U, unsigned(iter.length() + 1));
+			}
+			else
+			{
+				dimension(DimensionUser2, count, unsigned(file_container.size()))
+					(DimensionUser3, 0U, unsigned(iter.length() + 1));
+			}
+			++count;
+			char * tempt = new char[iter.length()+1];
 			strcpy(tempt, iter.c_str());
 			auto out_data = CreateData<char>(nullptr, tempt, dimension);
 			Feed(L"Output", out_data.get());
 		}
+		SetProperty<bool>(L"FilesIteratorFinished", true);
 	}
 	else
 	{
+		unsigned int count = 0;
 		auto reg = regex(ToMbs(reference_regex).data());
 		for (auto iter : file_container)
 		{
 			if (regex_match(iter,reg))
 			{
 				Dimensions dimension;
-				dimension(DimensionReadout, 0U, unsigned(iter.length()));
+				if(dim.type != DimensionInvalid)
+					dimension(dim.type,dim.start_index, dim.length)
+						(DimensionUser2, count, unsigned(file_container.size() - 1))
+						(DimensionUser3, 0U, unsigned(iter.length()+1));
+				else
+					dimension(DimensionUser2, count, unsigned(file_container.size() - 1))
+						(DimensionUser3, 0U, unsigned(iter.length() + 1));
+				++count;
 				char * my_char = new char[iter.length()+1];
 				strcpy(my_char, iter.c_str());
 				auto out_data = CreateData<char>(nullptr, my_char, dimension);
 				Feed(L"Reference", out_data.get());
+				break;
 			}
 		}
 
@@ -108,13 +138,21 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 			if (!regex_match(iter, regex(ToMbs(reference_regex))))
 			{
 				Dimensions dimension;
-				dimension(DimensionReadout, 0U, unsigned(iter.length()));
-				char * tempt = new char[iter.length() + 1];
-				strcpy(tempt, iter.c_str());
-				auto out_data = CreateData<char>(nullptr, tempt, dimension);
+				if (dim.type != DimensionInvalid)
+					dimension(dim.type, dim.start_index, dim.length)
+					(DimensionUser2, count, unsigned(file_container.size() - 1))
+					(DimensionUser3, 0U, unsigned(iter.length() + 1));
+				else
+					dimension(DimensionUser2, count, unsigned(file_container.size() - 1))
+					(DimensionUser3, 0U, unsigned(iter.length() + 1));
+				++count;
+				char * my_char = new char[iter.length() + 1];
+				strcpy(my_char, iter.c_str());
+				auto out_data = CreateData<char>(nullptr, my_char, dimension);
 				Feed(L"Output", out_data.get());
 			}
 		}
+		SetProperty<bool>(L"FilesIteratorFinished", true);
 	}
 	return true;
 }

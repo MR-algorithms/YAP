@@ -21,13 +21,16 @@ namespace Yap
 	private:
 		~Radiomics();
 
-		Dimensions CreateDimension(size_t output_dims, size_t * output_size);
+		void CreateDimension(Dimensions& dimensions, size_t output_dims, size_t * output_size);
 
-		bool FeedOut(void*& out_data, Dimensions dimensions, int data_type);
+		bool FeedOut(void* out_data, Dimensions dimensions, int data_type, size_t size);
 
-		void* Run(int data_type, const wchar_t* script, const wchar_t* method,
-			int input_dims, IData * data, size_t& output_dims, size_t * input_size,
-			size_t * output_size,bool is_need_ref = true);
+		size_t GetTotalSize(size_t dimension_count, size_t size[]);
+
+		bool SetRefData(IData * data);
+
+		void* PythonRunScript(IData * data, OUT int & output_type, Dimensions& dimensions,
+			OUT size_t & output_dims, size_t output_size[]);
 
 		SmartPtr<IData> _ref_data;
 	};

@@ -47,7 +47,7 @@ namespace Yap
 	template <typename T>
 	T * GetDataArray(IData * data)
 	{
-		auto * data_array = dynamic_cast<IDataArray<T> *>(data);
+		IDataArray<T> * data_array = dynamic_cast<IDataArray<T> *>(data);
 		return (data_array != nullptr) ? data_array->GetData() : nullptr;
 	}
 

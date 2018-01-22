@@ -37,14 +37,14 @@ void Yap::PythonUserImpl::SetReferenceData(void * data, int data_type, int input
 
 void * Yap::PythonUserImpl::PythonProcess(
 	const wchar_t* module, const wchar_t* method,
-	int data_type, size_t input_dimensions,
+	int data_type, int out_data_type, size_t input_dimensions,
 	void * data, OUT size_t& output_dimensions,
 	size_t input_size[], OUT size_t output_size[],
 	bool is_need_ref_data)
 {
 	assert(_python != nullptr && "Python Server can not get!");
-	return _python->Process(module, method, data_type, input_dimensions, data,
-		output_dimensions, input_size, output_size, is_need_ref_data);
+	return _python->Process(module, method, data_type, out_data_type,
+		input_dimensions, data, output_dimensions, input_size, output_size, is_need_ref_data);
 }
 
 void Yap::PythonUserImpl::DeleteRefData()

@@ -49,7 +49,7 @@ namespace _details
 };	// namespace Yap::details
 
 	using namespace _details;
-
+	 
 	ProcessorImpl::ProcessorImpl(const wchar_t * class_id) :
 		_system_variables(nullptr),
 		_class_id(class_id),
