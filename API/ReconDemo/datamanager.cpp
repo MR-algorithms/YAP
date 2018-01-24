@@ -5,6 +5,7 @@
 #include "API/Yap/PipelineCompiler.h"
 #include "API/Yap/ProcessorAgent.h"
 #include "Implement/CompositeProcessor.h"
+#include "API/Yap/PipelineConstructor.h"
 
 #include <algorithm>
 #include <qmessagebox>
@@ -106,64 +107,58 @@ bool DataManager::DoPipeline(const QString &file_path, const QString &pipe)
 }
 
 
-bool DataManager::Demo()
+bool DataManager::Demo2D()
 {
 /*
-    NiumagFidReader reader;
-    SliceIterator slice_iterator;
-    DcRemover dc_remover;
-    ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);
-    Fft2D fft;
+    RecieveData recieve_data;
     ModulePhase module_phase;
     DataTypeConvertor convertor;
     NiuMriDisplay2D display2d;
 
-    reader->slice_iterator;
-    slice_iterator->dc_remover;
-    dc_remover->zero_filling;
-    zero_filling->fft;
-    fft->module_phase;
+    recieve_data->module_phase;
     module_phase.Module->convertor;
     convertor.UnsignedShort->display2d;
 
     self.Input->reader.Input;
 */
-/*
     try
     {
-        PipelineConstructor constructor;
+        Yap::PipelineConstructor constructor;
         constructor.Reset(true);
         constructor.LoadModule(L"BasicRecon.dll");
 
-        constructor.CreateProcessor(L"RecieveData", L"revieve_AComplexImage");
+        constructor.CreateProcessor(L"RecieveData", L"recieve_data");
         constructor.CreateProcessor(L"ModulePhase", L"module_phase");
 
         constructor.CreateProcessor(L"DataTypeConvertor",L"datatype_convertor");
+        constructor.CreateProcessor(L"NiuMriDisplay2D", L"display2D");
 
-        constructor.CreateProcessor(L"JpegExporter", L"jpeg_exporter");
-        constructor.SetProperty(L"jpeg_exporter", L"ExportFolder", L"d:\\output");
 
-        constructor.Link(L"revieve_AComplexImage", L"module_phase");
+        //constructor.Link(L"recieve_data", L"module_phase");
 
-        //constructor.Link(L"module_phase", L"Module", L"jpeg_exporter", L"Input");
+        //constructor.Link(L"module_phase", L"Module", L"datatype_convertor", L"Input");
+        //constructor.Link("datatype_convertor", L"UnsignedShort", L"display2D", L"Input");
 
-        constructor.MapInput(L"Input", L"reader", L"Input");
+        constructor.Link(L"recieve_data", L"display2D");
+        constructor.MapInput(L"Input", L"recieve_data", L"Input");
 
         SmartPtr<IProcessor> pipeline = constructor.GetPipeline();
         if (pipeline)
         {
-            pipeline->Input(L"Input", nullptr);
+
+            auto output_data = CreateDemoIData2D();
+            pipeline->Input(L"Input", output_data.get());
         }
     }
     catch (ConstructError& e)
     {
-        wcout << e.GetErrorMessage() << std::endl;
+        //wcout << e.GetErrorMessage() << std::endl;
     }
-*/
+
     return true;
 }
 
-Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData()
+Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData2D()
 {
     Yap::Dimensions dimensions;
     unsigned int width = 512;
@@ -222,6 +217,86 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData()
 
     return output_data1;
 
+
+}
+bool DataManager::Demo1D()
+{
+
+    try
+    {
+        Yap::PipelineConstructor constructor;
+        constructor.Reset(true);
+        constructor.LoadModule(L"BasicRecon.dll");
+
+        constructor.CreateProcessor(L"RecieveData", L"recieve_data");
+
+        constructor.CreateProcessor(L"NiuMriDisplay1D", L"Plot1D");
+
+
+        constructor.Link(L"recieve_data", L"Plot1D");
+        constructor.MapInput(L"Input", L"recieve_data", L"Input");
+
+        SmartPtr<IProcessor> pipeline = constructor.GetPipeline();
+        if (pipeline)
+        {
+
+            auto output_data = CreateDemoIData1D();
+            pipeline->Input(L"Input", output_data.get());
+        }
+    }
+    catch (ConstructError& e)
+    {
+        //wcout << e.GetErrorMessage() << std::endl;
+    }
+
+    return true;
+}
+
+
+Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData1D()
+{
+
+
+    const double PI = 3.1415926;
+    //float * data_vector(222);
+
+    int data_vector2_size = 314;
+    std::complex<float> * data_vector2 = new std::complex<float>[data_vector2_size];
+
+
+
+    //double dw = 4*PI / data_vector.size();
+
+    //for(unsigned int i = 0; i < data_vector.size(); i ++)
+    //{
+      //data_vector[i] = 10* sin(i * dw + 30 * PI/ 180);
+
+    //}
+
+    double dw = 4*PI / data_vector2_size;
+    for(unsigned int i = 0; i < data_vector2_size; i ++)
+    {
+
+      double temp = data_vector2_size + 10 - i;
+      data_vector2[i].real( temp* 10* sin(i * dw + 30 * PI/ 180) );
+      data_vector2[i].imag( temp* 10* cos(i * dw + 30 * PI/ 180) );
+
+
+    }
+
+    //
+    Yap::Dimensions dimensions;
+    dimensions(Yap::DimensionReadout, 0U, data_vector2_size)
+        (Yap::DimensionPhaseEncoding, 0U, 1)
+        (Yap::DimensionSlice, 0U, 1);
+
+
+
+    auto output_data1 = Yap::YapShared(
+                new Yap::DataObject<std::complex<float>>(nullptr, data_vector2, dimensions, nullptr, nullptr));
+
+
+    return output_data1;
 
 }
 

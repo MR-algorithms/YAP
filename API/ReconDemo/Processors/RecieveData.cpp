@@ -9,8 +9,8 @@ using namespace std;
 RecieveData::RecieveData() : ProcessorImpl(L"RecieveData")
 {
 
-    AddInput(L"Input",   YAP_ANY_DIMENSION, DataTypeComplexFloat);
-    AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
+    AddInput(L"Input",   YAP_ANY_DIMENSION, DataTypeFloat | DataTypeComplexFloat);
+    AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeFloat | DataTypeComplexFloat);
 }
 
 

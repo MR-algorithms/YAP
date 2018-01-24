@@ -30,7 +30,6 @@ private:
     Ui::MainWindow *ui;
 
     void SetImportedProcessors();
-    void test_plot1d();
     std::shared_ptr<ReconServer> reconServer;
 };
 
