@@ -4,6 +4,7 @@
 #define _FolderIterator_h__20171227
 
 #include "Implement\ProcessorImpl.h"
+#include <vector>
 
 #ifndef _MAX_PATH
 #define _MAX_PATH   260 // max. length of full pathname
@@ -27,7 +28,7 @@ namespace Yap
 	private:
 		~FolderIterator();
 
-		void GetFolders(std::string path, std::vector<std::string>& folders, bool is_subfolder);
+		void GetFolders(std::string path, std::vector<std::string>& folders, bool is_subfolder, const wchar_t * regex_);
 
 		std::string ToMbs(const wchar_t * wcs);
 	};

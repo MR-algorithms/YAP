@@ -10,7 +10,7 @@ namespace Yap {
 
 	struct IPython
 	{
-		virtual void* Process(const wchar_t* module_name, const wchar_t* method_name, int data_type,
+		virtual void* Process(const wchar_t* module_name, const wchar_t* method_name, int data_type, int out_data_type,
 			size_t input_dimensions, void * data, OUT size_t &output_dimensions, size_t input_size[],
 			OUT size_t output_size[], bool is_need_ref_data = 0) = 0;
 

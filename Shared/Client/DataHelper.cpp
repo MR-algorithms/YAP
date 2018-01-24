@@ -77,7 +77,8 @@ Yap::Dimension Yap::DataHelper::GetDimension(DimensionType dimension_type)
 	assert(dims != nullptr);
 
 	Dimension dimension;
-	for (unsigned int dim_index = 0; dim_index < dims->GetDimensionCount(); ++dim_index)
+	unsigned int dim_index;
+	for (dim_index = 0; dim_index < dims->GetDimensionCount(); ++dim_index)
 	{
 		dims->GetDimensionInfo(dim_index,
 			dimension.type, dimension.start_index, dimension.length);
@@ -86,7 +87,12 @@ Yap::Dimension Yap::DataHelper::GetDimension(DimensionType dimension_type)
 			break;
 		}
 	}
-
+	if (dim_index == dims->GetDimensionCount())
+	{
+		dimension.type = DimensionInvalid;
+		dimension.start_index = 0U;
+		dimension.length = 0U;
+	}
 	return dimension;
 }
 

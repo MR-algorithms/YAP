@@ -10,6 +10,7 @@
 #include "Radiomics.h"
 #include "RFeaturesCollector.h"
 #include "Implement\PythonUserImpl.h"
+#include "CaseCollector.h"
 
 using namespace Yap;
 extern "C" {
@@ -24,6 +25,7 @@ extern "C" {
 };
 
 BEGIN_DECL_PROCESSORS
+	ADD_PROCESSOR(CaseCollector)
 	ADD_PROCESSOR(FilesIterator)
 	ADD_PROCESSOR(FolderIterator)
 	ADD_PROCESSOR(NiiReader)

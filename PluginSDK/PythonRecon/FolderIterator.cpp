@@ -11,6 +11,8 @@
 #include <iomanip>
 #include <ctime>
 #include <direct.h>
+#include <iostream>
+
 #pragma warning(disable:4996)
 
 using namespace Yap;
@@ -25,6 +27,10 @@ FolderIterator::FolderIterator() :
 	AddProperty<const wchar_t * const>(L"Path", L"", L"文件夹目录");
 	AddProperty<bool>(L"SearchSubDir", false, L"搜索当前Path目录下的子目录文件夹");
 	AddProperty<const wchar_t * const>(L"Regular", L"", L"文件件搜索正则表达式");
+
+	/* THIS PROPERTY CAN NOT BE SETTED AT PIPELINE!!!*/
+	AddProperty<bool>(L"FolderIteratorFinished", false, 
+		L"Mark FolderIterator has send all patients data or not. FORBIDEN SETTED IN PIPELINE!!!");
 
 	LOG_TRACE(L"FolderIterator constructor called.", L"PythonRecon");
 }
@@ -46,9 +52,11 @@ bool FolderIterator::Input(const wchar_t * name, IData * data)
 
 	string path = ToMbs(GetProperty<const wchar_t * const>(L"Path"));
 	bool is_subfolder = GetProperty<bool>(L"SearchSubDir");
+	/* regular */
+	const wchar_t * c_reg = GetProperty<const wchar_t* const>(L"Regular");
 
 	vector<string> folders;
-	GetFolders(path, folders, is_subfolder);
+	GetFolders(path, folders, is_subfolder,c_reg);
 
 	if (folders.empty())
 	{
@@ -56,36 +64,28 @@ bool FolderIterator::Input(const wchar_t * name, IData * data)
 		return false;
 	}
 
-	/* regular */
-	const wchar_t * c_reg = GetProperty<const wchar_t* const>(L"Regular");
-	if (wcslen(c_reg) == 0)
+	unsigned int count = 0;
+	TODO("how 'SetProperty' & 'GetProperty' work in Multi-thread or multi-processor?");
+	SetProperty<bool>(L"FolderIteratorFinished", false);
+	for (auto iter:folders)
 	{
-		for (auto iter:folders)
-		{
-			Dimensions dimension;
-			dimension(DimensionReadout, 0U, unsigned(iter.length()));
-			char * tempt = new char[iter.length() + 1];
-			strcpy(tempt, iter.c_str());
-			auto out_data = CreateData<char>(nullptr, tempt, dimension);
-			Feed(L"Output", out_data.get());
-		}
+		/*
+		//@note  This dimensions created is not real dimension of data, it just for
+		//  sending message with dimensions; And the data sent is a folder name only.
+		// DimensionUser1 --> marks folder #number.
+		// DimensionUser2 --> size of current folder name string.
+		*/
+		Dimensions dimension;
+		dimension(DimensionUser1, count, folders.size())(DimensionUser2, 0U, unsigned(iter.length()+1));
+		++count;
+		std::cout << count << "(/" << folders.size() << ") Iterator" << std::endl;
+		std::cout << iter.c_str() << std::endl;
+		char * tempt = new  char[iter.length() + 1];
+		strcpy(tempt, iter.c_str());
+		auto out_data = CreateData<char>(nullptr, tempt, dimension);
+		Feed(L"Output", out_data.get());
 	}
-	else
-	{
-		std::regex re(ToMbs(c_reg));
-		for (auto iter : folders)
-		{
-			if (regex_match(iter, re))
-			{
-				Dimensions dimension;
-				dimension(DimensionReadout, 0U, unsigned(iter.length()));
-				char * tempt = new char[iter.length() + 1];
-				strcpy(tempt, iter.c_str());
-				auto out_data = CreateData<char>(nullptr, tempt, dimension);
-				Feed(L"Output", out_data.get());
-			}
-		}
-	}
+	SetProperty<bool>(L"FolderIteratorFinished", true);
 	return true;
 }
 
@@ -99,7 +99,7 @@ string FolderIterator::ToMbs(const wchar_t * wcs)
 	return std::string(buffer);
 }
 
-void FolderIterator::GetFolders(string path, vector<string>& folders,bool is_subfolder) 
+void FolderIterator::GetFolders(std::string path, std::vector<string>& folders,bool is_subfolder,const wchar_t * regex_) 
 {
 	assert(path.length() != 0);
 	if (path.length() >= _MAX_FNAME || int(path.find(' ')) != -1)
@@ -120,10 +120,21 @@ void FolderIterator::GetFolders(string path, vector<string>& folders,bool is_sub
 			{
 				if (strcmp(file_info.name, ".") != 0 && strcmp(file_info.name, "..") != 0)
 				{	
-					folders.push_back(((temp.assign(path)).append("//")).append(file_info.name));
+					if (wcslen(regex_)!=0)
+					{
+						std::regex re(ToMbs(regex_));
+						if (regex_match(file_info.name, re))
+						{
+							folders.push_back(((temp.assign(path)).append("//")).append(file_info.name));
+						}
+					}
+					else
+					{
+						folders.push_back(((temp.assign(path)).append("//")).append(file_info.name));
+					}
 					if (is_subfolder)
 					{
-						GetFolders(temp.assign(path).append("//").append(file_info.name), folders, is_subfolder);
+						GetFolders(temp.assign(path).append("//").append(file_info.name), folders, is_subfolder,regex_);
 					}
 				}
 			}
