@@ -173,6 +173,15 @@ namespace Yap
 			memcpy(_data, rhs._data, total_size * sizeof(T));
 		}
 
+		DataObject(IVariableContainer * variables, ISharedObject * module) :
+			_dimensions {nullptr},
+			_variables{YapShared(variables)},
+			_module{YapShared(module)}
+		{
+			assert(variables != nullptr);
+		}
+
+
 	public:
 		virtual IDimensions * GetDimensions() override
 		{
@@ -227,9 +236,17 @@ namespace Yap
 			return _variables.get();
 		}
 
-		static SmartPtr<DataObject<T>> CreateVariableObject(ISharedObject * module)
+		static SmartPtr<DataObject<int>> CreateVariableObject(IVariableContainer * variable_space,
+			ISharedObject * module = nullptr)
 		{
-
+			try 
+			{
+				return YapShared(new DataObject<int>(variable_space, module));
+			}
+			catch (std::bad_alloc&)
+			{
+				return YapShared<DataObject<T>>(nullptr);
+			}
 		}
 
 		static SmartPtr<DataObject<T>> Create(IData * reference, T* data, const Dimensions& dimensions,

@@ -50,12 +50,10 @@ Yap::NiiReader::NiiReader(const NiiReader& rhs):
 	{
 		_dimensions[i] = rhs._dimensions[i];
 	}
-	LOG_TRACE(L"NiiReader copy constructor", L"PythonRecon");
 }
 
 NiiReader::~NiiReader()
 {
-	LOG_TRACE(L"NiiReader destructor", L"PythonRecon");
 }
 
 int NiiReader::GetFileVersion(const wchar_t * file_path)
@@ -81,35 +79,25 @@ bool Yap::NiiReader::Input(const wchar_t * name, IData * data)
 	if (wstring(name) != L"Input")
 		return false;
 
-	string nii_path;
-	if (data != nullptr)
+	wstring nii_path;
+	if (data != nullptr && data->GetVariables() != nullptr)
 	{
-		if (data->GetDataType() != DataTypeChar)
-			return false;
-		nii_path = GetDataArray<char>(data);
-	}
-	const wchar_t * nii_dir = GetProperty<const wchar_t* const>(L"FilePath");
-	if (wcslen(nii_dir) != 0)
-	{
-		nii_path = ToMbs(nii_dir);
+		VariableSpace variables(data->GetVariables());
+		nii_path = variables.Get<const wchar_t *>(L"FilePath");
 	}
 
-	auto nii_data = ReadFile(nii_path);
+	if (nii_path.empty())
+	{
+		nii_path = GetProperty<const wchar_t* const>(L"FilePath");
+	}
+
+	auto nii_data = ReadFile("nii_path"); // BUG
 	if (nii_data == nullptr)
 		return false;
+
 	//decode data to output port
 	Dimensions dimensions;
 	DataHelper helper(data);
-	auto dim1 = helper.GetDimension(DimensionUser1);
-	auto dim2 = helper.GetDimension(DimensionUser2);
-	if (dim1.type != DimensionInvalid)
-	{
-		dimensions(dim1.type, dim1.start_index, dim1.length);
-	}
-	if (dim2.type != DimensionInvalid)
-	{
-		dimensions(dim2.type, dim2.start_index, dim2.length);
-	}
 
 	switch (_dimension_size)
 	{
@@ -141,73 +129,73 @@ bool Yap::NiiReader::Input(const wchar_t * name, IData * data)
 	{	
 		auto out_data = CreateData<bool>(nullptr, reinterpret_cast<bool*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
-	break;
+		break;
 	}
 	case Yap::TYPE_UNSIGNEDCHAR:
 	{
 		auto out_data = CreateData<uint_least8_t>(nullptr, reinterpret_cast<uint_least8_t*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
-	break;
+		break;
 	}
 	case Yap::TYPE_SHORT:
 	{
 		auto out_data = CreateData<short>(nullptr, reinterpret_cast<short*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
-	break;
+		break;
 	}
 	case Yap::TYPE_INT:
 	{
 		auto out_data = CreateData<int>(nullptr, reinterpret_cast<int*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
-	break;
+		break;
 	}
 	case Yap::TYPE_FLOAT:
 	{
 		auto out_data = CreateData<float>(nullptr, reinterpret_cast<float*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
-	break;
+		break;
 	}
 	case Yap::TYPE_COMPLEX:
 	{
 		auto out_data = CreateData<complex<float>>(nullptr, reinterpret_cast<complex<float>*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
-	break;
+		break;
 	}
 	case Yap::TYPE_DOUBLE:
 	{
 		auto out_data = CreateData<double>(nullptr, reinterpret_cast<double*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
-	break;
+		break;
 	}
 	case Yap::TYPE_CHAR:
 	{
 		auto out_data = CreateData<char>(nullptr, reinterpret_cast<char*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
-	break;
+		break;
 	}
 	case Yap::TYPE_UNSIGNEDSHORT:
 	{	
 		auto out_data = CreateData<unsigned short>(nullptr, reinterpret_cast<unsigned short*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
-	break;
+		break;
 	}
 	case Yap::TYPE_UNSIGNEDINT:
 	{	
 		auto out_data = CreateData<unsigned int>(nullptr, reinterpret_cast<unsigned int*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
-	break;
+		break;
 	}
 	case Yap::TYPE_LONGLONG:
 	{
 		auto out_data = CreateData<long long>(nullptr, reinterpret_cast<long long*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
-	break;
+		break;
 	}
 	case Yap::TYPE_UNSIGNEDLONGLONG:
 	{	
 		auto out_data = CreateData<unsigned long long>(nullptr, reinterpret_cast<unsigned long long*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
-	break;
+		break;
 	}
 	case Yap::TYPE_RGB:
 	case Yap::TYPE_RGBA:

@@ -32,129 +32,102 @@ FilesIterator::FilesIterator():
 	AddProperty<const wchar_t* const>(L"FileRegex", L"", L"文件名查找正则表达式");
 	AddProperty<bool>(L"SearchSubDir", false, L"是否搜索子目录文件下的文件");
 	AddProperty<const wchar_t* const>(L"ReferenceRegex", L"", L"选择参考图像的正则表达式(仅只能获得到一个参考图像).");
-
-	/* THIS PROPERTY CAN NOT BE SETTED AT PIPELINE!!!*/
-	AddProperty<bool>(L"FilesIteratorFinished", false,
-		L"Mark FilesIterator has send patients' all modalities data or not. FORBIDEN SETTED IN PIPELINE!!!");
-
-	LOG_TRACE(L"FilesIterator constructor", L"PythonRecon");
 }
 
 FilesIterator::FilesIterator(const FilesIterator & rhs) : 
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"FilesIterator copy constructor", L"PythonRecon");
 }
 
 FilesIterator::~FilesIterator()
 {
-	LOG_TRACE(L"FilesIterator destructor", L"PythonRecon");
 }
 
 bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 {
-	const wchar_t * file_dir = GetProperty<const wchar_t* const>(L"FileDir");
-	const wchar_t * file_regex = GetProperty<const wchar_t * const>(L"FileRegex");
-	const wchar_t * reference_regex = GetProperty<const wchar_t * const>(L"ReferenceRegex");
+	wstring folder_path;
+	wstring file_regex;
+	wstring reference_regex;
+
+	assert(data != nullptr);
+
+	if (data->GetVariables() != nullptr)
+	{
+		VariableSpace variables(data->GetVariables());
+		folder_path = variables.Get<const wchar_t *>(L"FolderPath");
+		file_regex = variables.Get<const wchar_t *>(L"FileRegEx");
+		reference_regex = variables.Get<const wchar_t *>(L"ReferenceRegEx");
+	}
+
+	if (folder_path.empty())
+	{
+		folder_path = GetProperty<const wchar_t* const>(L"FileDir");
+	}
+	if (file_regex.empty())
+	{
+		file_regex = GetProperty<const wchar_t * const>(L"FileRegex");
+	}
+	if (reference_regex.empty())
+	{
+		reference_regex = GetProperty<const wchar_t * const>(L"ReferenceRegex");
+	}
+
 	bool is_subdir = GetProperty<bool>(L"SearchSubDir");
-	
-	std::string file_path;
-	if (wcslen(file_dir) == 0)
-	{
-		if (data == nullptr)
-			return false;
 
-		if (data->GetDataType() != DataTypeChar)
-			return false;
-		file_path = GetDataArray<char>(data);
-	}
-	else
-	{
-		file_path = ToMbs(file_dir);
-	}
-	
+	std::wstring file_path;
+
 	std::vector<string> file_container;
-	GetFiles(file_path, file_container, is_subdir);
+// 	GetFiles(file_path, file_container, is_subdir);
+// 
+// 	if (file_container.empty())
+// 	{
+// 		return false;
+// 	}
+// 
+// 	if (!reference_regex.empty())
+// 	{
+// 		auto reg = regex(ToMbs(reference_regex.c_str()).data());
+// 		for (auto iter = file_container.begin(); iter != file_container.end(); ++iter)
+// 		{
+// 			if (regex_match(*iter, reg))
+// 			{
+// 				VariableSpace variables;
+// 				variables.Add(L"string", L"FilePath", L"Full path of one sub-folder in the current folder");
+// 				// YG: variables.Set(L"FilePath", iter.c_str());
+// 
+// 				auto output = DataObject<int>::CreateVariableObject(variables.Variables(), _module.get());
+// 				Feed(L"Reference", output.get());
+// 				file_container.erase(iter);
+// 				break;
+// 			}
+// 		}
+// 	}
+// 
+// 	for (auto& file_path : file_container)
+// 	{
+// 		VariableSpace variables;
+// 		variables.Add(L"string", L"FilePath", L"Full path of one sub-folder in the current folder");
+// 		variables.Set(L"FilePath", file_path.c_str());
+// 		variables.Add(L"bool", L"Finished", L"Iteration finished.");
+// 		variables.Set(L"Finished", false);
+// 
+// 		auto output = DataObject<int>::CreateVariableObject(variables.Variables(), _module.get());
+// 		Feed(L"Output", output.get());
+// 	}
 
-	if (file_container.size() == 0)
-		return false;
+	NotifyIterationFinished();
 
-	DataHelper helper(data);
-	auto dim = helper.GetDimension(DimensionUser1);
-	
-	SetProperty<bool>(L"FilesIteratorFinished", false);
-	if (wcslen(reference_regex)==0)
-	{
-		unsigned int count = 0;
-		for (auto iter:file_container)
-		{
-			Dimensions dimension;
-			if (dim.type != DimensionInvalid)
-			{
-				dimension(dim.type, dim.start_index, dim.length)
-					(DimensionUser2, count, unsigned(file_container.size()))
-					(DimensionUser3, 0U, unsigned(iter.length() + 1));
-			}
-			else
-			{
-				dimension(DimensionUser2, count, unsigned(file_container.size()))
-					(DimensionUser3, 0U, unsigned(iter.length() + 1));
-			}
-			++count;
-			char * tempt = new char[iter.length()+1];
-			strcpy(tempt, iter.c_str());
-			auto out_data = CreateData<char>(nullptr, tempt, dimension);
-			Feed(L"Output", out_data.get());
-		}
-		SetProperty<bool>(L"FilesIteratorFinished", true);
-	}
-	else
-	{
-		unsigned int count = 0;
-		auto reg = regex(ToMbs(reference_regex).data());
-		for (auto iter : file_container)
-		{
-			if (regex_match(iter,reg))
-			{
-				Dimensions dimension;
-				if(dim.type != DimensionInvalid)
-					dimension(dim.type,dim.start_index, dim.length)
-						(DimensionUser2, count, unsigned(file_container.size() - 1))
-						(DimensionUser3, 0U, unsigned(iter.length()+1));
-				else
-					dimension(DimensionUser2, count, unsigned(file_container.size() - 1))
-						(DimensionUser3, 0U, unsigned(iter.length() + 1));
-				++count;
-				char * my_char = new char[iter.length()+1];
-				strcpy(my_char, iter.c_str());
-				auto out_data = CreateData<char>(nullptr, my_char, dimension);
-				Feed(L"Reference", out_data.get());
-				break;
-			}
-		}
-
-		for (auto iter : file_container)
-		{
-			if (!regex_match(iter, regex(ToMbs(reference_regex))))
-			{
-				Dimensions dimension;
-				if (dim.type != DimensionInvalid)
-					dimension(dim.type, dim.start_index, dim.length)
-					(DimensionUser2, count, unsigned(file_container.size() - 1))
-					(DimensionUser3, 0U, unsigned(iter.length() + 1));
-				else
-					dimension(DimensionUser2, count, unsigned(file_container.size() - 1))
-					(DimensionUser3, 0U, unsigned(iter.length() + 1));
-				++count;
-				char * my_char = new char[iter.length() + 1];
-				strcpy(my_char, iter.c_str());
-				auto out_data = CreateData<char>(nullptr, my_char, dimension);
-				Feed(L"Output", out_data.get());
-			}
-		}
-		SetProperty<bool>(L"FilesIteratorFinished", true);
-	}
 	return true;
+}
+
+void Yap::FilesIterator::NotifyIterationFinished()
+{
+	VariableSpace variables;
+	variables.Add(L"bool", L"Finished", L"Iteration finished.");
+	variables.Set(L"Finished", true);
+
+	auto output = DataObject<int>::CreateVariableObject(variables.Variables(), _module.get());
+	Feed(L"Output", output.get());
 }
 
 void Yap::FilesIterator::GetFiles(std::string file_path, std::vector<std::string>& folders, bool is_subfolder)

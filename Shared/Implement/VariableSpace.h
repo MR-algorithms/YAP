@@ -58,7 +58,8 @@ namespace Yap {
 			static_assert(std::is_same<T, int>::value || 
 				std::is_same<T, double>::value || 
 				std::is_same<T, bool>::value || 
-				std::is_same<T, const wchar_t * const>::value,
+				std::is_same<T, const wchar_t * const>::value ||
+				std::is_same<T, const wchar_t *>::value,
 				"You can only use one of the following types: int, double, bool, const wchar_t * const");
 
 			std::wstring variable_id{ id };
