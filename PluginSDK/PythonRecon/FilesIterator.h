@@ -19,7 +19,7 @@ namespace Yap
 
 	private:
 		~FilesIterator();
-
+		void NotifyIterationFinished();
 		void GetFiles(std::string path, std::vector<std::string>& folders, bool is_subfolder);
 
 		std::string ToMbs(const wchar_t * wcs);

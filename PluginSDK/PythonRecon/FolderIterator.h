@@ -24,11 +24,12 @@ namespace Yap
 		FolderIterator(const FolderIterator&);
 
 		virtual bool Input(const wchar_t * name, IData * data) override;
+		bool InputObsolete(const wchar_t * name, IData * data) ;
 
 	private:
 		~FolderIterator();
 
-		void GetFolders(std::string path, std::vector<std::string>& folders, bool is_subfolder, const wchar_t * regex_);
+		std::vector<std::wstring> GetFolders(const wchar_t * path, bool recursive, const wchar_t * regex);
 
 		std::string ToMbs(const wchar_t * wcs);
 	};

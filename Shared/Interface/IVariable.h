@@ -167,6 +167,7 @@ namespace Yap
 			std::is_same<T, double>::value ||
 			std::is_same<T, bool>::value ||
 			std::is_same<T, const wchar_t * const>::value ||
+			std::is_same<T, const wchar_t *>::value ||
 			std::is_same<T, typename SmartPtr<IVariable>>::value ||
 			std::is_base_of<IVariable, typename std::remove_pointer<T>::type>::value,
 			"You can only use one of the following types: int, double, bool, const wchar_t * const, IVariable*");
