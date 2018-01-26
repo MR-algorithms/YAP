@@ -33,8 +33,8 @@ public:
     void Start(int scan_id, int channel_count);
     void Go();
     void End();
-    bool CanbeFinished(){return _current_phase_index >= 10;}//static_cast<int>( GetPhaseCount());}
-
+    bool CanbeFinished(){return _current_phase_index >= static_cast<int>( GetPhaseCount());}
+    bool Stoped(){return _ended;}
 
 
 

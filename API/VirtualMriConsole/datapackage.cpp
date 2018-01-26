@@ -27,7 +27,7 @@ void DataPackage::AddItem(uint16_t data_type, uint16_t second_type, const char* 
 
 }
 
-int DataPackage::BytesFromHeaditem()
+int DataPackage::BytesFromHeaditem() const
 {
     int bytes = 0;
     for(int i = 0; i < static_cast< int >( head.size()); i ++)
@@ -37,7 +37,7 @@ int DataPackage::BytesFromHeaditem()
     return bytes;
 }
 
-int DataPackage::BytesFromDataitem()
+int DataPackage::BytesFromDataitem() const
 {
     int bytes = 0;
     for(int i = 0; i < static_cast<int>( data.size() ); i ++)

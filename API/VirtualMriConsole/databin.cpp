@@ -230,6 +230,7 @@ void Databin::Start(int scan_id, int channel_count)
     MessageProcess::Unpack(dataPackage, start2);
     assert(start == start2);
     //
+
     _communicator.get()->Send(dataPackage);
 
     _current_phase_index = 0;

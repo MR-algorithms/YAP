@@ -31,7 +31,83 @@ DataManager& DataManager::GetHandle()
     return s_instance;
 
 }
+bool DataManager::RecieveData(DataPackage &package, int cmd_id)
+{
+    switch(cmd_id)
+    {
+    case SAMPLE_DATA_START:
+    {
+        SampleDataStart start;
+        MessageProcess::Unpack(package, start);
+        NewScan(start);
 
+    }
+        break;
+    case SAMPLE_DATA_DATA:
+    {
+        SampleDataData data;
+        MessageProcess::Unpack(package, data);
+        Go(data);
+
+    }
+        break;
+    case SAMPLE_DATA_END:
+    {
+        SampleDataEnd end;
+        MessageProcess::Unpack(package, end);
+        End(end);
+
+    }
+        break;
+    default:
+        break;
+
+    }
+
+    return true;
+}
+
+bool DataManager::NewScan(SampleDataStart &start)
+{
+    return true;
+}
+
+bool DataManager::Go(SampleDataData &data)
+{
+    try
+    {
+        Yap::PipelineConstructor constructor;
+        constructor.Reset(true);
+        constructor.LoadModule(L"BasicRecon.dll");
+
+        constructor.CreateProcessor(L"RecieveData", L"recieve_data");
+
+        constructor.CreateProcessor(L"NiuMriDisplay1D", L"Plot1D");
+
+
+        constructor.Link(L"recieve_data", L"Plot1D");
+        constructor.MapInput(L"Input", L"recieve_data", L"Input");
+
+        SmartPtr<IProcessor> pipeline = constructor.GetPipeline();
+        if (pipeline)
+        {
+
+            auto output_data = CreateIData1D(data);
+            pipeline->Input(L"Input", output_data.get());
+        }
+    }
+    catch (ConstructError& e)
+    {
+        //wcout << e.GetErrorMessage() << std::endl;
+    }
+
+    return true;
+}
+
+bool DataManager::End(SampleDataEnd &end)
+{
+    return true;
+}
 bool DataManager::Load(const QString& file_path)
 {
     auto extension = make_lower(file_path.toStdWString().substr(file_path.toStdWString().size() - 4, 4));
@@ -258,20 +334,9 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData1D()
 
 
     const double PI = 3.1415926;
-    //float * data_vector(222);
-
     int data_vector2_size = 314;
     std::complex<float> * data_vector2 = new std::complex<float>[data_vector2_size];
 
-
-
-    //double dw = 4*PI / data_vector.size();
-
-    //for(unsigned int i = 0; i < data_vector.size(); i ++)
-    //{
-      //data_vector[i] = 10* sin(i * dw + 30 * PI/ 180);
-
-    //}
 
     double dw = 4*PI / data_vector2_size;
     for(unsigned int i = 0; i < data_vector2_size; i ++)
@@ -280,8 +345,6 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData1D()
       double temp = data_vector2_size + 10 - i;
       data_vector2[i].real( temp* 10* sin(i * dw + 30 * PI/ 180) );
       data_vector2[i].imag( temp* 10* cos(i * dw + 30 * PI/ 180) );
-
-
     }
 
     //
@@ -290,8 +353,6 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData1D()
         (Yap::DimensionPhaseEncoding, 0U, 1)
         (Yap::DimensionSlice, 0U, 1);
 
-
-
     auto output_data1 = Yap::YapShared(
                 new Yap::DataObject<std::complex<float>>(nullptr, data_vector2, dimensions, nullptr, nullptr));
 
@@ -299,6 +360,31 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData1D()
     return output_data1;
 
 }
+
+Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
+{
+
+    //暂时仅实现收到数据后的一维显示。
+    int data_size = data.data.size();
+    std::complex<float> * data_vector2 = new std::complex<float>[data_size];
+
+    for(unsigned int i = 0; i < data_size; i ++)
+    {
+      data_vector2[i] = data.data[i];
+    }
+
+    Yap::Dimensions dimensions;
+    dimensions(Yap::DimensionReadout, 0U, data_size)
+        (Yap::DimensionPhaseEncoding, 0U, 1)
+        (Yap::DimensionSlice, 0U, 1);
+
+    auto output_data1 = Yap::YapShared(
+                new Yap::DataObject<std::complex<float>>(nullptr, data_vector2, dimensions, nullptr, nullptr));
+
+    return output_data1;
+
+}
+
 
 /*
 bool DataManager::ViewPrescan(const std::wstring& pipe)

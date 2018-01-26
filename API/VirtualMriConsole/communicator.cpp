@@ -63,6 +63,8 @@ bool Communicator::Disconnect()
 
 bool Communicator::Send(const DataPackage &data)
 {
+
+
     QByteArray byteArray1 =
             QByteArray::fromRawData((char*)(&data.magic_anditem_count[0]), sizeof(uint32_t));
 
@@ -96,7 +98,16 @@ bool Communicator::Send(const DataPackage &data)
     }
 
 
-    this->write(byteArray1 + byteArray2);
-    bool succedd = this->waitForBytesWritten();
-    return succedd;
+    this->write(byteArray1 + byteArray1b + byteArray1c + byteArray2);
+
+    int bytesA = data.BytesFromDataitem();
+    int bytesB = data.BytesFromHeaditem();
+    int bytesC = byteArray2.size();
+    assert( bytesA == bytesB && bytesA == bytesC);
+
+    int bytesTotal = QByteArray(byteArray1 + byteArray1b + byteArray1c + byteArray2).size();
+    qDebug()<<"Send "<< bytesTotal <<" bytes";
+
+    bool succeed = this->waitForBytesWritten();
+    return succeed;
 }

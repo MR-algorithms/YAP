@@ -12,7 +12,7 @@ namespace Scan {
     struct Mask;
     struct ScanTask;
 }
-
+enum EThreadState{ idle, scanning, paused, stopped};
 class VirtualConsole
 {
 public:

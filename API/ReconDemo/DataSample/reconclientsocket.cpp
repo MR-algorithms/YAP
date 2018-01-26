@@ -1,5 +1,6 @@
 #include "reconclientsocket.h"
 #include "SampleDataProtocol.h"
+#include "datamanager.h"
 #include <QDebug>
 #include <cassert>
 
@@ -14,12 +15,12 @@ void ReconClientSocket::slotDataReceived()
 {
     int lengthx = bytesAvailable();
 
-    qDebug()<< "Enter client::slotRecieved():  "<< lengthx<<" bytes";
+    qDebug()<< "Enter client::slotRecieved():  "<< lengthx<<" bytes available";
 
     while (true)
     {
 
-        if( !Read(_bufferInfo.Next) )
+        if( !Read(_bufferInfo.Next) )//长度不够。
         {
             return;
         }
@@ -30,7 +31,7 @@ void ReconClientSocket::slotDataReceived()
             if(_bufferInfo.Next == ReadinfoType::rtFinished)
             {
                 //process the package.
-
+                DataManager::GetHandle().RecieveData(this->_package, this->_bufferInfo.cmd_id);
                 //
                 _bufferInfo.Reset();
 
@@ -63,6 +64,7 @@ bool ReconClientSocket::Read(ReadinfoType rt)
         }
         default:
         {
+            assert(0);
             return false;
         }
     }
@@ -73,7 +75,10 @@ bool ReconClientSocket::ReadFlag()
 {
     QByteArray byteArray;
 
-    if( bytesAvailable() < 2 * sizeof(uint32_t) )
+    int bytesLeft = bytesAvailable();
+
+    qDebug()<< "Enter client::ReadFlag():  "<< bytesLeft<<" bytes available";
+    if( bytesLeft < 2 * sizeof(uint32_t) )
     {
         return false;
     }
@@ -87,7 +92,17 @@ bool ReconClientSocket::ReadFlag()
         _package.magic_anditem_count[0] = first;
         _package.magic_anditem_count[1] = second;
         _bufferInfo.headitem_count = second;
-        return true;
+        if(first == 0xFFFFFFFF &&
+                (second == 11 ||second == 6 || second == 2 ) )
+        {
+            return true;
+        }
+        else
+        {
+            assert(0);
+            return false;
+        }
+
     }
 
 }
@@ -97,7 +112,11 @@ bool ReconClientSocket::ReadHeaditem()
 
     int headitem_count = _bufferInfo.headitem_count;
     int headitem_bytes = _bufferInfo.headitem_count * sizeof(HeadItem);
-    if( bytesAvailable() < headitem_bytes)
+
+    int bytesLeft = bytesAvailable();
+    qDebug()<< "Enter client::ReadHeaditem():  "<< bytesLeft<<" bytes available";
+
+    if( bytesLeft < headitem_bytes)
     {
         return false;
     }
@@ -124,7 +143,11 @@ bool ReconClientSocket::ReadValue()
 {
 
     int bytesToRead = _package.BytesFromHeaditem();
-    if(bytesAvailable() < bytesToRead)
+
+    int bytesLeft = bytesAvailable();
+    qDebug()<< "Enter client::ReadValue():  "<< bytesLeft<<" bytes available";
+
+    if(bytesLeft < bytesToRead)
     {
         return false;
     }
@@ -134,7 +157,10 @@ bool ReconClientSocket::ReadValue()
     {
         int dataitem_bytes = _package.head[i].size;
         QByteArray byteArray = read( dataitem_bytes );
-        memcpy( _package.data[i].data.data(), byteArray.data(), dataitem_bytes );
+        assert(byteArray.size() == dataitem_bytes);
+
+        _package.data[i].data.resize(dataitem_bytes);
+        memcpy( _package.data[i].data.data(), byteArray.data(), dataitem_bytes );//有问题。
 
     }
 

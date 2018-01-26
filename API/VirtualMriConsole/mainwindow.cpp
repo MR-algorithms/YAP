@@ -25,6 +25,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->editMaskFile->setValidator(pReg);
 
+    //int test2 =99;
+    //ui->editInfo->appendPlainText(QString("%1").arg(test2));
+
 }
 
 MainWindow::~MainWindow()
@@ -47,11 +50,15 @@ void MainWindow::on_connectButton_clicked()
 void MainWindow::on_scanButton_clicked()
 {
 
+    //QEvent evt(QEvent::Type(QEvent::User + 1));
+    //QApplication::sendEvent(this, &evt);
+    //return;
 
 
     //参考scantask赋值
 
     Scan::ScanTask reference_task;
+    reference_task.pWnd = this;
     reference_task.trMs = ui->editTR->text().toInt();
 
     QString ip_address = ui->editReconHost->text();
@@ -93,6 +100,40 @@ void MainWindow::on_stopButton_clicked()
 
     VirtualConsole::GetHandle().Stop();
     //qDebug()<<"Scan stopped!";
+}
+
+
+bool MainWindow::event(QEvent *event)
+{
+    switch (event->type()) {
+    case QEvent::User+scanning:
+    {
+        //int test2 =342;
+
+        //ui->editInfo->appendPlainText(QString("%1").arg(test2));
+        ui->editInfo->appendPlainText(QString("scanning"));
+
+    }
+        break;
+
+    case QEvent::User + stopped:
+    {
+        //ui->editInfo->appendPlainText(QString("stopped"));
+
+        ui->editInfo->appendPlainText(QString("Stoped!"));
+        ui->scanButton->setEnabled(true);
+        ui->stopButton->setEnabled(false);
+        VirtualConsole::GetHandle().Stop();
+
+
+
+    }
+        break;
+
+    default:
+        break;
+    }
+    return QMainWindow::event(event);
 }
 
 //void MainWindow::on_testButton_clicked()

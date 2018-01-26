@@ -4,6 +4,9 @@
 #include <complex>
 #include "mask.h"
 #include <boost/shared_array.hpp>
+
+#include <QtWidgets/qwidget.h>
+
 using namespace std;
 
 namespace Scan
@@ -15,7 +18,8 @@ namespace Scan
         std::wstring ip_address;
         int port;
         int trMs;
-        ScanTask():trMs(-1), dataPath(L""), port(-1), ip_address(L""){}
+        QWidget* pWnd;
+        ScanTask():trMs(-1), dataPath(L""), port(-1), ip_address(L""), pWnd(nullptr){}
 
         ScanTask& operator = (const ScanTask& rhs){
             mask = rhs.mask;
@@ -23,6 +27,7 @@ namespace Scan
             ip_address = rhs.ip_address;
             port = rhs.port;
             trMs = rhs.trMs;
+            pWnd = rhs.pWnd;
 
             return *this;
         }
