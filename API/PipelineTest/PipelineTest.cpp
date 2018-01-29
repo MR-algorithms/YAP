@@ -88,7 +88,7 @@ void PipelineTest()
 
 	{
 		PipelineCompiler compiler;
-		auto pipeline = compiler.CompileFile(L"Pipelines\\Radiomics_test.pipeline");
+		auto pipeline = compiler.CompileFile(L"Pipelines\\test1.pipeline");
 		if (pipeline.get() == nullptr)
 		{
 			return;
@@ -203,7 +203,7 @@ int main()
 	time_t start = clock();
 
 //	ConstructorTest();
-  PipelineTest();
+	PipelineTest();
 //	VdfParserTest();
 //	FFT3DTest();
 //	PartialFFTTest();

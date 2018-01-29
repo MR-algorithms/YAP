@@ -123,7 +123,7 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 void Yap::FilesIterator::NotifyIterationFinished()
 {
 	VariableSpace variables;
-	variables.Add(L"bool", L"Finished", L"Iteration finished.");
+	variables.AddVariable(L"bool", L"Finished", L"Iteration finished.");
 	variables.Set(L"Finished", true);
 
 	auto output = DataObject<int>::CreateVariableObject(variables.Variables(), _module.get());

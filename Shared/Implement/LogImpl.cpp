@@ -103,6 +103,12 @@ bool Yap::LogImpl::Init()
 	return true;
 }
 
+void Yap::LogImpl::Release()
+{
+	if (s_instance)
+		s_instance.reset();
+}
+
 void Yap::LogImpl::AddUser(ILogUser * user)
 {
 	assert(user != nullptr);

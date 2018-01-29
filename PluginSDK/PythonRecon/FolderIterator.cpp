@@ -58,7 +58,7 @@ bool FolderIterator::Input(const wchar_t * name, IData * data)
 	for (auto iter : folders)
 	{
 		VariableSpace variables;
-		variables.Add(L"string", L"FolderPath", L"Full path of one sub-folder in the current folder");
+		variables.AddVariable(L"string", L"FolderPath", L"Full path of one sub-folder in the current folder");
 		variables.Set(L"FolderPath", iter.c_str());
 
 		auto output = DataObject<int>::CreateVariableObject(variables.Variables(), _module.get());

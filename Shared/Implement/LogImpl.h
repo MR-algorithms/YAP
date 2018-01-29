@@ -22,7 +22,7 @@ namespace Yap
 		virtual void RemoveUser(ILogUser * user) override;
 
 		static LogImpl& GetInstance();
-
+		static void Release();
 	protected:
 		LogImpl();
 		static bool Init();
