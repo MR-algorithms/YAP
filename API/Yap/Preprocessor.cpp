@@ -89,7 +89,7 @@ void Tokens::Next()
 
 	if (_iter == _tokens.end())
 	{
-		throw (CompileError(*_iter, CompileErrorUnexpectedEndOfStatement, L"Unexpected end of statement."));
+		throw (CompileError(*(--_iter), CompileErrorUnexpectedEndOfStatement, L"Unexpected end of statement after token."));
 	}
 }
 
@@ -104,7 +104,7 @@ void Tokens::AssertToken(TokenType type, bool move_next)
 {
 	if (_iter == _tokens.end())
 	{
-		throw (CompileError(*_iter, CompileErrorUnexpectedEndOfStatement, L"Unexpected end of statement."));
+		throw (CompileError(*(--_iter), CompileErrorUnexpectedEndOfStatement, L"Unexpected end of statement after token."));
 	}
 
 	if ((_iter->type != type) &&
@@ -131,7 +131,7 @@ bool Tokens::IsNextTokenOfType(TokenType type)
 {
 	if (_iter == _tokens.end())
 	{
-		throw (CompileError(*_iter, CompileErrorUnexpectedEndOfStatement, L"Unexpected end of file."));
+		throw (CompileError(*(--_iter), CompileErrorUnexpectedEndOfStatement, L"Unexpected end of file after token."));
 	}
 
 	return (((_iter + 1)->type == type) ||
