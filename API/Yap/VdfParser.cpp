@@ -190,13 +190,12 @@ bool VdfParser::ProcessSimpleDeclaration(Tokens& tokens)
 
 	if (!tokens.IsTokenOfType(TokenSharp, true))
 	{
-		auto variable = _types->CreateInstance(fq_type_id.c_str());
+		auto variable = _types->CreateInstance(fq_type_id.c_str(), GetFqId(id.c_str()).c_str());
 		if (variable == nullptr)
 		{
 			throw CompileError(tokens.GetCurrentToken(), CompileErrorTypeNotFound,
 				L"Failed to create variable instance.");
 		}
-		variable->SetId(GetFqId(id.c_str()).c_str());
 		_variables->Add(variable);
 	}
 	else
@@ -213,13 +212,12 @@ bool VdfParser::ProcessSimpleDeclaration(Tokens& tokens)
 			wostringstream output;
 			output << id << i;
 			wstring variable_id = GetFqId(output.str().c_str());
-			auto variable = _types->CreateInstance(fq_type_id.c_str());
+			auto variable = _types->CreateInstance(fq_type_id.c_str(), variable_id.c_str());
 			if (variable == nullptr)
 			{
 				throw CompileError(tokens.GetCurrentToken(), CompileErrorTypeNotFound,
 					L"Failed to create variable instance.");
 			}
-			variable->SetId(variable_id.c_str());
 			_variables->Add(variable);
 		}
 	}
@@ -333,7 +331,7 @@ std::wstring VdfParser::GetFqId(const wchar_t * const id) const
 	return (_current_namespace.empty()) ? id : (_current_namespace + L"::" + id);
 }
 
-bool VdfParser::ProcessArrayDeclaration(Tokens& tokens, VariableSpace& variables)
+bool VdfParser::ProcessArrayDeclaration(Tokens& tokens, VariableTable& variables)
 {
 	static map<TokenType, int> token_to_array_property{
 		{TokenKeywordFloat, VariableFloatArray},
@@ -361,7 +359,13 @@ bool VdfParser::ProcessArrayDeclaration(Tokens& tokens, VariableSpace& variables
 
 	if (!tokens.IsTokenOfType(TokenSharp, true))
 	{
-		variables.AddArray(fq_type_id.c_str(), id.c_str(), L"");
+		auto variable = _types->CreateArray(fq_type_id.c_str(), id.c_str(), 1);
+		if (variable == nullptr)
+		{
+			throw CompileError(tokens.GetCurrentToken(), CompileErrorInvalidArrayType,
+				wstring(L"Failed to create array."));
+		}
+		variables.Add(variable);
 	}
 	else
 	{
@@ -377,9 +381,17 @@ bool VdfParser::ProcessArrayDeclaration(Tokens& tokens, VariableSpace& variables
 			output << id << i;
 			auto variable_id = (&variables == _variables.get()) ?
 				GetFqId(output.str().c_str()) : output.str();
-			variables.AddArray(fq_type_id.c_str(), variable_id.c_str(), L"");
+
+			auto variable = _types->CreateArray(fq_type_id.c_str(), variable_id.c_str(), 1);
+			if (variable == nullptr)
+			{
+				throw CompileError(tokens.GetCurrentToken(), CompileErrorInvalidArrayType,
+					wstring(L"Failed to create array."));
+			}
+			variables.Add(variable);
 		}
 	}
+
 	tokens.AssertToken(TokenSemiColon, true);
 
 	return true;
@@ -413,7 +425,7 @@ bool VdfParser::ProcessStructDeclaration(Tokens& tokens)
 
 	tokens.AssertToken(TokenLeftBrace, true);
 
-	VariableSpace struct_variables;
+	VariableTable struct_variables;
 	static std::set<TokenType> s_allowed_types = {
 		TokenKeywordBool, TokenKeywordFloat, TokenKeywordInt, TokenKeywordString,
 		TokenKeywordArray, TokenId };
@@ -453,9 +465,8 @@ bool VdfParser::ProcessStructDeclaration(Tokens& tokens)
 			auto type_manager = _variables->GetTypes();
 			assert(type_manager);
 
-			auto member = type_manager->CreateInstance(type_id.c_str());
+			auto member = type_manager->CreateInstance(type_id.c_str(), member_token.text.c_str());
 			assert(member != nullptr);
-			member->SetId(member_token.text.c_str());
 			struct_variables.Add(member);
 
 			tokens.Next();

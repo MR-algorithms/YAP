@@ -4,6 +4,9 @@
 #include "details/arrayVariable.h"
 #include "details/structVariable.h"
 #include <vcruntime_exception.h>
+#include <string>
+
+using namespace std;
 
 namespace Yap
 {
@@ -74,12 +77,34 @@ namespace Yap
 		return _types.find(type) != _types.end();
 	}
 
-	IVariable * TypeManager::CreateInstance(const wchar_t * type) const
+	IVariable * TypeManager::CreateInstance(const wchar_t * type, const wchar_t * id) const
 	{
 		auto iter = _types.find(type);
-		return (iter != _types.end()) ? 
-			dynamic_cast<IVariable*>(iter->second->Clone()) : nullptr;
+		if (iter == _types.end())
+			return nullptr;
+		
+		auto variable = dynamic_cast<IVariable*>(iter->second->Clone());
+		if (variable != nullptr)
+		{
+			variable->SetId(id);
+		}
+		return variable;
 	}
 
+	IVariable * TypeManager::CreateArray(const wchar_t * element_type_id, const wchar_t * id, size_t size)
+	{
+		wstring type_id = wstring(L"array<") + element_type_id + L">";
+		IVariable * variable = CreateInstance(type_id.c_str(), id);
+		if (variable == nullptr)
+		{
+			auto template_element = CreateInstance(element_type_id, (wstring(id) + L"[0]").c_str());
+			if (template_element == nullptr)
+				return nullptr;
+
+			variable = new ReferenceArray<SmartPtr<IVariable>>(size, YapShared(template_element), id);
+		}
+
+		return variable;
+	}
 }
 

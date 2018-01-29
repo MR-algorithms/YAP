@@ -19,7 +19,8 @@ namespace Yap
 		bool AddType(const wchar_t * type_id, IVariable * type);
 		bool AddType(const wchar_t * type_id, IVariableContainer * variables);
 		bool TypeExists(const wchar_t * type) const;
-		IVariable * CreateInstance(const wchar_t * type) const;
+		IVariable * CreateInstance(const wchar_t * type, const wchar_t * id) const;
+		IVariable * CreateArray(const wchar_t * element_type_id, const wchar_t * id, size_t size);
 	protected:
 		bool InitTypes();
 

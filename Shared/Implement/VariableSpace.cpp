@@ -78,11 +78,10 @@ bool VariableSpace::AddVariable(const wchar_t * type,
 						const wchar_t * id,
 						const wchar_t * description)
 {
-	auto variable = _types->CreateInstance(type);
+	auto variable = _types->CreateInstance(type, id);
 	if (variable == nullptr)
 		return false;
 
-	variable->SetId(id);
 	variable->SetDescription(description);
 	return _variables->Add(id, variable);
 }
@@ -91,21 +90,9 @@ bool VariableSpace::AddArray(const wchar_t * element_type_id,
 	const wchar_t * id, 
 	const wchar_t * description)
 {
-	wstring type_id = wstring(L"array<") + element_type_id + L">";
-	IVariable * variable = _types->CreateInstance(type_id.c_str());
-	if (variable != nullptr)
-	{
-		variable->SetId(id);
-	}
-	else
-	{
-		auto template_element = _types->CreateInstance(element_type_id);
-		if (template_element == nullptr)
-			return false;
-
-		variable = new ReferenceArray<SmartPtr<IVariable>>(1, 
-			YapShared(template_element), id);
-	}
+	auto variable = _types->CreateArray(element_type_id, id, 1);
+	if (variable == nullptr)
+		return false;
 
 	variable->SetDescription(description);
 	return _variables->Add(id, variable);
