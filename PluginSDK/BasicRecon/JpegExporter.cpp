@@ -140,7 +140,6 @@ using namespace Yap::details;
 JpegExporter::JpegExporter() :
 	ProcessorImpl(L"JpegExporter")
 {
-	LOG_TRACE(L"JepgExporter constructor called.", L"BasicRecon");
 	_impl = shared_ptr<JpegExporterImp>(new JpegExporterImp);
 	AddInput(L"Input", 2, DataTypeFloat | DataTypeUnsignedShort | DataTypeShort);
 	AddProperty<const wchar_t * const>(L"ExportFolder", L"", L"Set folder used to hold exported images.");
@@ -150,7 +149,6 @@ JpegExporter::JpegExporter() :
 JpegExporter::JpegExporter(const JpegExporter& rhs)
 	: ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"JepgExporter copy constructor called.", L"BasicRecon");
 	_impl = std::shared_ptr<JpegExporterImp>(new JpegExporterImp(*rhs._impl));
 }
 

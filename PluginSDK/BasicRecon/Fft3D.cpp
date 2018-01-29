@@ -17,7 +17,6 @@ Fft3D::Fft3D() :
 	_plan_in_place(false),
 	_fft_plan(nullptr)
 {
-	LOG_TRACE(L"Fft3D constructor called.", L"BasicRecon");
 	AddProperty<bool>(L"Inverse", false, L"The direction of FFT3D.");
 	AddProperty<bool>(L"InPlace", true, L"The position of FFT3D.");
 
@@ -35,7 +34,6 @@ Fft3D::Fft3D(const Fft3D& rhs)
 	_plan_in_place(rhs._plan_in_place),
 	_fft_plan(rhs._fft_plan)
 {
-	LOG_TRACE(L"Fft3D copy constructor called.", L"BasicRecon");
 }
 
 

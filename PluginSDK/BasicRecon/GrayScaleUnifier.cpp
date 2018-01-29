@@ -11,7 +11,6 @@ using namespace std;
 Yap::GrayScaleUnifier::GrayScaleUnifier():
 	ProcessorImpl(L"GrayScaleUnifier")
 {
-	LOG_TRACE(L"GrayScaleUnifier constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeFloat);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeFloat);
 }
@@ -19,7 +18,6 @@ Yap::GrayScaleUnifier::GrayScaleUnifier():
 Yap::GrayScaleUnifier::GrayScaleUnifier(const GrayScaleUnifier& rhs) :
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"GrayScaleUnifier copy constructor called.", L"BasicRecon");
 }
 
 Yap::GrayScaleUnifier::~GrayScaleUnifier()

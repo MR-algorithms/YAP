@@ -7,7 +7,6 @@ using namespace Yap;
 ComplexSplitter::ComplexSplitter() :
 	ProcessorImpl(L"ComplexSplitter")
 {
-	LOG_TRACE(L"ComplexSplitter constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble);
 	AddOutput(L"Real", YAP_ANY_DIMENSION, DataTypeDouble);
 	AddOutput(L"Imaginary", YAP_ANY_DIMENSION, DataTypeDouble);
@@ -76,7 +75,6 @@ void Yap::ComplexSplitter::Split(std::complex<double> * data,
 Yap::ComplexSplitter::ComplexSplitter(const ComplexSplitter& rhs)
 	:ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"ComplexSplitter copy constructor called.", L"BasicRecon");
 }
 
 void ComplexSplitter::ExtractReal(std::complex<double> * data, double * real, size_t size)

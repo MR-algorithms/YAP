@@ -14,7 +14,6 @@ using namespace std;
 NiuMriImageWriter::NiuMriImageWriter(void) :
 	ProcessorImpl(L"NiuMriImageWriter")
 {
-	LOG_TRACE(L"NiuMriImageWriter constructor called.", L"BasicRecon");
 	AddInput(L"Input", 3, DataTypeUnsignedShort);
 	AddProperty<const wchar_t * const>(L"ExportFolder", L"", L"Set folder used to write images.");
 	AddProperty<const wchar_t * const>(L"FileName", L"", L"Set file name.");
@@ -23,7 +22,6 @@ NiuMriImageWriter::NiuMriImageWriter(void) :
 NiuMriImageWriter::NiuMriImageWriter(const NiuMriImageWriter& rhs) :
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"NiuMriImageWriter copy constructor called.", L"BasicRecon");
 }
 
 NiuMriImageWriter::~NiuMriImageWriter()

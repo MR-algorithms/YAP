@@ -182,7 +182,6 @@ bool VdfParserTest()
 
 int main()
 {
-
 	auto complex_slices = std::shared_ptr<std::complex<float>>(new std::complex<float>[10]);
 
 	complex_slices.get()[0].imag(1.2f);
@@ -195,11 +194,6 @@ int main()
 
 	memcpy(test2, test, sizeof(std::complex<float>) *10);
 	
-
-
-
-	log4cplus::Initializer initializer;
-
 	time_t start = clock();
 
 //	ConstructorTest();

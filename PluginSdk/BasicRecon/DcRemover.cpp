@@ -59,7 +59,6 @@ void RemoveDC(T * input_data,
 DcRemover::DcRemover() :
 	ProcessorImpl(L"DcRemover")
 {
-	LOG_TRACE(L"DcRemover constructor called.", L"BasicRecon");
 	AddInput(L"Input", 2, DataTypeComplexDouble | DataTypeComplexFloat);
 	
 	AddProperty<bool>(L"Inplace", true, L"If the processed data will be stored in place.");
@@ -71,7 +70,6 @@ DcRemover::DcRemover() :
 Yap::DcRemover::DcRemover(const DcRemover& rhs)
 	:ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"DcRemover copy constructor called.", L"BasicRecon");
 }
 
 DcRemover::~DcRemover()

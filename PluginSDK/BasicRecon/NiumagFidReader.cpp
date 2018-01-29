@@ -31,7 +31,6 @@ namespace Yap
 NiumagFidReader::NiumagFidReader(void):
 	ProcessorImpl(L"NiumagFidReader")
 {
-	LOG_TRACE(L"NiumagFidReader constructor called.", L"BasicRecon");
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
@@ -41,7 +40,6 @@ NiumagFidReader::NiumagFidReader(void):
 NiumagFidReader::NiumagFidReader(const NiumagFidReader& rhs):
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"NiumagFidReader copy constructor called.", L"BasicRecon");
 }
 
 NiumagFidReader::~NiumagFidReader()

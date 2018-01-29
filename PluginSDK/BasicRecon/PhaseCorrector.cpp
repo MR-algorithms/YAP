@@ -26,7 +26,6 @@ void PhaseCorrect(complex<float> * input,
 Yap::PhaseCorrector::PhaseCorrector():
 	ProcessorImpl(L"PhaseCorrector")
 {
-	LOG_TRACE(L"PhaseCorrector constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddInput(L"Phase", YAP_ANY_DIMENSION, DataTypeFloat);
 
@@ -37,7 +36,6 @@ Yap::PhaseCorrector::PhaseCorrector(const PhaseCorrector& rhs):
 	ProcessorImpl(rhs),
 	_phase{rhs._phase}
 {
-	LOG_TRACE(L"PhaseCorrector copy constructor called.", L"BasicRecon");
 }
 
 Yap::PhaseCorrector::~PhaseCorrector()

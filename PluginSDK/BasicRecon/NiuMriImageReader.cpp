@@ -35,7 +35,6 @@ namespace Yap
 NiuMriImageReader::NiuMriImageReader(void) :
 	ProcessorImpl(L"NiuMriImageReader")
 {
-	LOG_TRACE(L"NiuMriImageReader constructor called.", L"BasicRecon");
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
 
@@ -45,7 +44,6 @@ NiuMriImageReader::NiuMriImageReader(void) :
 Yap::NiuMriImageReader::NiuMriImageReader(const NiuMriImageReader& rhs) :
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"NiuMriImageReader copy constructor called.", L"BasicRecon");
 }
 
 Yap::NiuMriImageReader::~NiuMriImageReader()

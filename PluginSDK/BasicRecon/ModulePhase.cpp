@@ -43,7 +43,6 @@ bool GetPhase(complex<T>* input, T* phase,
 ModulePhase::ModulePhase(void) :
 	ProcessorImpl(L"ModulePhase")
 {
-	LOG_TRACE(L"ModulePhase constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 	AddOutput(L"Module", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
 	AddOutput(L"Phase", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
@@ -52,7 +51,6 @@ ModulePhase::ModulePhase(void) :
 Yap::ModulePhase::ModulePhase(const ModulePhase& rhs):
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"ModulePhase copy constructor called.", L"BasicRecon");
 }
 
 ModulePhase::~ModulePhase()

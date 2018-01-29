@@ -10,7 +10,6 @@ using namespace Yap;
 SliceSelector::SliceSelector(void):
 	ProcessorImpl(L"SliceSelector")
 {
-	LOG_TRACE(L"SliceSelector constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
@@ -20,7 +19,6 @@ SliceSelector::SliceSelector(void):
 Yap::SliceSelector::SliceSelector(const SliceSelector & rhs)
 	: ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"SliceSelector copy constructor called.", L"BasicRecon");
 }
 
 SliceSelector::~SliceSelector()

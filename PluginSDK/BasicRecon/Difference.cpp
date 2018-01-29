@@ -23,7 +23,6 @@ void calc_difference(T * input_data,
 
 Difference::Difference() : ProcessorImpl(L"Difference")
 {
-	LOG_TRACE(L"Difference constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
 	AddInput(L"Reference", YAP_ANY_DIMENSION, DataTypeAll);
 
@@ -34,7 +33,6 @@ Difference::Difference(const Difference& rhs)
 	:ProcessorImpl(rhs),
 	_reference_data{rhs._reference_data}
 {
-	LOG_TRACE(L"Difference copy constructor called.", L"BasicRecon");
 }
 
 Difference::~Difference()

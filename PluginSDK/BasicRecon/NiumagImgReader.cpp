@@ -35,7 +35,6 @@ namespace Yap
 NiumagImgReader::NiumagImgReader():
 	ProcessorImpl(L"NiumagImgReader")
 {
-	LOG_TRACE(L"NiumagImgReader constructor called.", L"BasicRecon");
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
 
@@ -45,7 +44,6 @@ NiumagImgReader::NiumagImgReader():
 Yap::NiumagImgReader::NiumagImgReader(const NiumagImgReader& rhs):
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"NiumagImgReader copy constructor called.", L"BasicRecon");
 }
 
 NiumagImgReader::~NiumagImgReader()
