@@ -11,7 +11,6 @@ using namespace std;
 SliceIterator::SliceIterator(void) :
 	ProcessorImpl(L"SliceIterator")
 {
-	LOG_TRACE(L"SliceIterator constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat | DataTypeUnsignedShort);
 	AddOutput(L"Output", 2, DataTypeComplexFloat | DataTypeUnsignedShort);
 }
@@ -19,7 +18,6 @@ SliceIterator::SliceIterator(void) :
 SliceIterator::SliceIterator( const SliceIterator& rhs)
 	: ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"SliceIterator copy constructor called.", L"BasicRecon");
 
 }
 

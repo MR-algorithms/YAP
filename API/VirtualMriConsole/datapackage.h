@@ -39,8 +39,8 @@ struct DataPackage
     std::vector<DataItem> data;
 
     void AddItem(uint16_t data_type, uint16_t second_type, const char* value, int size);
-    int BytesFromHeaditem();
-    int BytesFromDataitem();
+    int BytesFromHeaditem() const;
+    int BytesFromDataitem() const;
     void CheckSelf(bool checkHead = true, bool checkCmdid = true, bool checkData = true);
 };
 

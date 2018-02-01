@@ -10,7 +10,6 @@ using namespace  Yap;
 ChannelIterator::ChannelIterator():
 	ProcessorImpl(L"ChannelIterator")
 {
-	LOG_TRACE(L"ChannelIterator constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddOutput(L"Output", 2, DataTypeComplexFloat);
 
@@ -20,7 +19,6 @@ ChannelIterator::ChannelIterator():
 ChannelIterator::ChannelIterator(const ChannelIterator& rhs)
 	: ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"ChannelIterator copy constructor called.", L"BasicRecon");
 }
 
 ChannelIterator::~ChannelIterator()

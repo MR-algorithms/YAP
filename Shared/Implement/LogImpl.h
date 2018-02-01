@@ -6,6 +6,7 @@
 
 #include <map>
 #include <vector>
+#include <log4cplus/initializer.h>
 
 namespace log4cplus { class Logger; }
 
@@ -21,13 +22,14 @@ namespace Yap
 		virtual void AddUser(ILogUser * user) override;
 		virtual void RemoveUser(ILogUser * user) override;
 
-		static LogImpl& GetInstance();
 
+		static LogImpl& GetInstance();
 	protected:
 		LogImpl();
 		static bool Init();
 		static std::shared_ptr<LogImpl> s_instance;
 
+		log4cplus::Initializer initializer;
 		std::map<std::wstring, log4cplus::Logger> _loggers;
 		std::vector<ILogUser*> _users;
 	};

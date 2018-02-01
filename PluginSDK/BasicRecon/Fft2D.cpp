@@ -16,7 +16,6 @@ Fft2D::Fft2D():
 	_plan_in_place(false),
 	_fft_plan(nullptr)
 {
-	LOG_TRACE(L"Fft2D constructor called.", L"BasicRecon");
 	AddProperty<bool>( L"Inverse", false, L"The direction of FFT2D.");
 	AddProperty<bool>( L"InPlace", true, L"The position of FFT2D.");
 
@@ -33,7 +32,6 @@ Fft2D::Fft2D(const Fft2D& rhs)
 	_plan_in_place(rhs._plan_in_place),
 	_fft_plan(rhs._fft_plan)
 {
-	LOG_TRACE(L"Fft2D copy constructor called.", L"BasicRecon");
 }
 
 

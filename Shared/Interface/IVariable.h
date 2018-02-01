@@ -161,7 +161,7 @@ namespace Yap
 	};
 
 	template <typename T>
-	struct IValueArrayVariable : public IArrayBase
+	struct IValueArray : public IArrayBase
 	{
 		static_assert(std::is_same<T, int>::value ||
 			std::is_same<T, double>::value ||
@@ -198,14 +198,14 @@ namespace Yap
 		virtual T * Data() = 0;
 	};
 
-	struct IStructVariable : public IVariable
-	{
-		virtual IPtrContainer<IVariable> * Members() = 0;
-	};
-
 	typedef IPtrContainer<IVariable> IVariableContainer;
 	typedef IVariableContainer::Iterator IVariableIter;
 
+	struct IStructVariable : public IVariable
+	{
+		virtual IVariableContainer * Members() = 0;
+		virtual IStructVariable* Clone() const = 0;
+	};
 }
 
 #endif // IVariable_h__

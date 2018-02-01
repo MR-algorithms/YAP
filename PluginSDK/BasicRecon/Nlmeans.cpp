@@ -10,7 +10,6 @@ using namespace arma;
 Nlmeans::Nlmeans(void):
 	ProcessorImpl(L"Nlmeans")
 {
-	LOG_TRACE(L"Nlmeans constructor called.", L"BasicRecon");
 	AddInput(L"Input", 2, DataTypeFloat);
 	AddOutput(L"Output", 2, DataTypeFloat);
 }
@@ -18,7 +17,6 @@ Nlmeans::Nlmeans(void):
 Yap::Nlmeans::Nlmeans(const Nlmeans & rhs) :
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"Nlmeans copy constructor called.", L"BasicRecon");
 }
 
 Nlmeans::~Nlmeans()

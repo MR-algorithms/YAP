@@ -9,18 +9,15 @@ Yap::CaseCollector::CaseCollector() : ProcessorImpl(L"CaseCollector")
 {
 	AddInput(L"Input", 2, DataTypeFloat);
 	AddOutput(L"Output", 2, DataTypeFloat);
-	LOG_TRACE(L"CaseCollector constructor", L"PythonRecon");
 }
 
 Yap::CaseCollector::CaseCollector(const CaseCollector& rhs):
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"CaseCollector copy constructor", L"PythonRecon");
 }
 
 Yap::CaseCollector::~CaseCollector()
 {
-	LOG_TRACE(L"CaseCollector destructor", L"PythonRecon");
 }
 
 bool Yap::CaseCollector::Input(const wchar_t * name, IData * data)

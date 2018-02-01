@@ -313,9 +313,14 @@ SmartPtr<TYPE> YapClone(TYPE * object)
 
 }; // namespace YAP
 
-#define IMPLEMENT_CLONE(class_name) private:\
+#define IMPLEMENT_CLONE(my_class) private:\
 virtual ISharedObject * Clone() const override {\
-	return new (std::nothrow) class_name(*this);}
+	return new (std::nothrow) my_class(*this);}
+
+#define IMPLEMENT_CLONE2(my_class, my_interface) private:\
+virtual my_interface * Clone() const override {\
+	return new (std::nothrow) my_class(*this);}
+
 
 #define IMPLEMENT_LOCK_RELEASE private:\
 virtual void Release() override{\
@@ -326,7 +331,10 @@ virtual void Lock() override{\
 	++_use_count;}\
 unsigned int _use_count = 0;
 
-#define IMPLEMENT_SHARED(class_name) IMPLEMENT_LOCK_RELEASE \
-IMPLEMENT_CLONE(class_name)
+#define IMPLEMENT_SHARED(my_class) IMPLEMENT_LOCK_RELEASE \
+IMPLEMENT_CLONE(my_class)
+
+#define IMPLEMENT_SHARED2(my_class, my_interface) IMPLEMENT_LOCK_RELEASE \
+IMPLEMENT_CLONE2(my_class, my_interface)
 
 #endif

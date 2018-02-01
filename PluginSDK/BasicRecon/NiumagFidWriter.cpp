@@ -14,7 +14,6 @@ using namespace std;
 NiumagFidWriter::NiumagFidWriter(void) :
 	ProcessorImpl(L"NiumagFidWriter")
 {
-	LOG_TRACE(L"NiumagFidWriter constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
@@ -26,7 +25,6 @@ NiumagFidWriter::NiumagFidWriter(void) :
 NiumagFidWriter::NiumagFidWriter(const NiumagFidWriter& rhs) :
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"NiumagFidWriter copy constructor called.", L"BasicRecon");
 }
 
 NiumagFidWriter::~NiumagFidWriter()

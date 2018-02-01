@@ -12,18 +12,15 @@ Yap::RFeaturesCollector::RFeaturesCollector():
 {
 	AddInput(L"Input", 3U, DataTypeFloat );
 	AddOutput(L"Output", 2U, DataTypeFloat );
-	LOG_TRACE(L"RadiomicsFeaturesCollector constructor", L"PythonRecon");
 }
 
 Yap::RFeaturesCollector::RFeaturesCollector(const RFeaturesCollector& rhs):
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"RadiomicsFeaturesCollector copy constructor", L"PythonRecon");
 }
 
 Yap::RFeaturesCollector::~RFeaturesCollector()
 {
-	LOG_TRACE(L"RadiomicsFeaturesCollector destructor", L"PythonRecon");
 }
 
 bool Yap::RFeaturesCollector::Input(const wchar_t * name, IData * data)

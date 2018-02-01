@@ -112,7 +112,6 @@ namespace Yap
 
 	protected:
 		~Algorithm2DInPlaceWrapper() {
-			LOG_TRACE(L"Algorithm2DInPlaceWrapper destructor", L"Algorithm2DInPlaceWrapper");
 		}
 
 		ProcessingFunc _func;

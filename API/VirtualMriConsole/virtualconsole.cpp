@@ -7,6 +7,9 @@
 #include "databin.h"
 #include <future>
 #include <utility>
+#include "QEvent"
+#include "QApplication"
+#include "QThread"
 
 
 VirtualConsole VirtualConsole::s_instance;
@@ -14,10 +17,6 @@ using namespace Scan;
 
 
 namespace _details{
-
-enum EThreadState{ idle, scanning, paused, };
-
-
 
 class VirtualConsoleImpl
 {
@@ -47,7 +46,7 @@ public:
     std::thread _thread;
 
     std::timed_mutex _timeMutex1;
-    int _timeIndex;
+    int _sendIndex;
 
 };
 
@@ -109,7 +108,7 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
         {
             This->_threadState = scanning;
             This->_timeMutex1.lock();
-            This->_timeIndex = 0;
+            This->_sendIndex = 0;
             int scan_id = 180106;
 
             databin.Start(scan_id, scantask.mask.channelCount);
@@ -129,18 +128,18 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
                 if(databin.CanbeFinished())
                 {
                     This->_timeMutex1.unlock();
-                    databin.End();
-                    This->_timeIndex = 0;
-                    This->_threadState = idle;
-                    qDebug()<<"finish scan.";
-                    //通知主线程:更新状态，回收扫描线程。
-                   // return 1;
+                    This->_sendIndex = 0;
+                    qDebug()<<"Apply for stopped.";
+                    QApplication::postEvent(scantask.pWnd, new QEvent(QEvent::Type(QEvent::User + stopped)));
                 }
                 else
                 {
                     //end of doing
-                    This->_timeIndex ++;
-                    qDebug() << "time: "<< This->_timeIndex;
+                    This->_sendIndex ++;
+                    qDebug() << "send: "<< This->_sendIndex << "times";
+
+                    //QEvent evt(QEvent::Type(QEvent::User + scanning));
+                    QApplication::postEvent(scantask.pWnd, new QEvent(QEvent::Type(QEvent::User + scanning)));
                 }
             }
         }
@@ -152,13 +151,15 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
 
             databin.End();
 
-            This->_timeIndex = 0;
+            This->_sendIndex = 0;
             This->_threadState = idle;
 
             databin.GetCommunicator().get()->Disconnect();
-            return 1;
+
 
             qDebug()<<"stop Event";
+
+            return 1;
         }
             break;
 

@@ -88,7 +88,7 @@ void PipelineTest()
 
 	{
 		PipelineCompiler compiler;
-		auto pipeline = compiler.CompileFile(L"Pipelines\\Radiomics_test.pipeline");
+		auto pipeline = compiler.CompileFile(L"Pipelines\\test1.pipeline");
 		if (pipeline.get() == nullptr)
 		{
 			return;
@@ -182,7 +182,6 @@ bool VdfParserTest()
 
 int main()
 {
-
 	auto complex_slices = std::shared_ptr<std::complex<float>>(new std::complex<float>[10]);
 
 	complex_slices.get()[0].imag(1.2f);
@@ -195,15 +194,10 @@ int main()
 
 	memcpy(test2, test, sizeof(std::complex<float>) *10);
 	
-
-
-
-	log4cplus::Initializer initializer;
-
 	time_t start = clock();
 
 //	ConstructorTest();
-  PipelineTest();
+	PipelineTest();
 //	VdfParserTest();
 //	FFT3DTest();
 //	PartialFFTTest();

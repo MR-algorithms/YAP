@@ -5,6 +5,7 @@
 #include <vector>
 #include <complex>
 #include "Interface/Interfaces.h"
+#include "DataSample/datapackage.h"
 
 namespace Yap{struct IData; }
 
@@ -15,6 +16,7 @@ public:
     bool Load(const QString& image_path);
     bool Demo1D();
     bool Demo2D();
+    bool RecieveData(DataPackage &package, int cmd_id);
 /*
 
     bool ViewPrescan(const std::wstring& pipe);
@@ -34,6 +36,11 @@ private:
 
     Yap::SmartPtr<Yap::IData> CreateDemoIData2D();
     Yap::SmartPtr<Yap::IData> CreateDemoIData1D();
+    Yap::SmartPtr<Yap::IData> CreateIData1D(SampleDataData &data);
+
+    bool NewScan(SampleDataStart &start);
+    bool Go(SampleDataData &data);
+    bool End(SampleDataEnd &end);
 
     /*
     bool LoadImage(const std::wstring& file_path);

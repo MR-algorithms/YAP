@@ -60,7 +60,7 @@ bool FolderIterator::Input(const wchar_t * name, IData * data)
 	for (auto iter : folders)
 	{
 		VariableSpace variables;
-		variables.Add(L"string", L"FolderPath", L"Full path of one sub-folder in the current folder");
+		variables.AddVariable(L"string", L"FolderPath", L"Full path of one sub-folder in the current folder");
 		variables.Set(L"FolderPath", iter.c_str());
 		variables.Add(L"bool", L"Finished", L"Iteration finished.");
 		variables.Set(L"Finished", false);

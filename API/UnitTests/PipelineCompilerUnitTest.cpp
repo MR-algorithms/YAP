@@ -551,7 +551,9 @@ BOOST_AUTO_TEST_CASE(processor_JpegExporter)
 	BOOST_CHECK(inputs != nullptr);
 	auto input_port = inputs->Find(L"Input");
 	BOOST_CHECK(input_port != nullptr);
-	BOOST_CHECK(input_port->GetDataType() == (DataTypeFloat | DataTypeUnsignedShort));
+	BOOST_CHECK((input_port->GetDataType() & DataTypeFloat) == DataTypeFloat);
+	BOOST_CHECK((input_port->GetDataType() & DataTypeUnsignedShort) == DataTypeUnsignedShort);
+	BOOST_CHECK((input_port->GetDataType() & DataTypeShort) == DataTypeShort);
 	BOOST_CHECK(input_port->GetDimensionCount() == 2);
 
 	auto properties = processor->GetProperties();

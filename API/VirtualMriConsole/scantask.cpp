@@ -8,6 +8,8 @@ ScanTask ScantaskGenerator::Create(ScanTask ref_scantask, Mask ref_mask)
 {
     ScanTask scantask;
 
+    scantask.pWnd = ref_scantask.pWnd;
+
     scantask.trMs = ref_scantask.trMs;
     scantask.dataPath = ref_scantask.dataPath;
     scantask.ip_address = ref_scantask.ip_address;

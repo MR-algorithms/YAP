@@ -12,7 +12,6 @@ using namespace Yap;
 FineCF::FineCF()
 	: ProcessorImpl(L"FineCF")
 {
-	LOG_TRACE(L"FineCF constructor called.", L"BasicRecon");
 	AddInput(L"Input", 1, DataTypeDouble | DataTypeFloat);
 	AddProperty<double>(L"O1", 0, L"ÖÐÐÄÆµÂÊ");
 	AddProperty<double>(L"SW", 0, L"Æ×¿í");
@@ -23,7 +22,6 @@ FineCF::FineCF()
 Yap::FineCF::FineCF(const FineCF& rhs) :
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"FineCF copy constructor called.", L"BasicRecon");
 }
 
 

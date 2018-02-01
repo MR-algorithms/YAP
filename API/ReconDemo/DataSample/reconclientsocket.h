@@ -10,7 +10,6 @@ enum ReadinfoType
     rtFlag = 0,
     rtHeadItem,
     rtValue,
-    rtEnd,
     rtFinished
 };
 
@@ -46,9 +45,9 @@ protected slots:
     void slotDataReceived();
     void slotDisconnected();
 private:
-    SampleDataStart _startStruct;
-    SampleDataData  _dataStruct;
-    SampleDataEnd   _endStruct;
+    //SampleDataStart _startStruct;
+    //SampleDataData  _dataStruct;
+    //SampleDataEnd   _endStruct;
 
     DataPackage _package;
     BufferInfo _bufferInfo;

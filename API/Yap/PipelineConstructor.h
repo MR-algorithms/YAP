@@ -77,10 +77,10 @@ namespace Yap
 
 		bool InstanceIdExists(const wchar_t * id);
 
-        Yap::SmartPtr<Pipeline> GetPipeline();
+		Yap::SmartPtr<Pipeline> GetPipeline();
 
 	protected:
-        Yap::SmartPtr<Pipeline> _pipeline;
+		Yap::SmartPtr<Pipeline> _pipeline;
 		std::wstring _plugin_folder;
 	};
 

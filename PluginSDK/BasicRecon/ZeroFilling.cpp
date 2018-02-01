@@ -32,7 +32,6 @@ bool zero_filling(T* dest,
 
 ZeroFilling::ZeroFilling() : ProcessorImpl(L"ZeroFilling")
 {
-	LOG_TRACE(L"ZeroFilling constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 
@@ -47,7 +46,6 @@ ZeroFilling::ZeroFilling() : ProcessorImpl(L"ZeroFilling")
 ZeroFilling::ZeroFilling(const ZeroFilling& rhs)
 	:ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"ZeroFilling copy constructor called.", L"BasicRecon");
 }
 
 ZeroFilling::~ZeroFilling()

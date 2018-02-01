@@ -33,7 +33,6 @@ namespace Yap
 CmrDataReader::CmrDataReader(void) :
 	ProcessorImpl(L"CmrDataReader")
 {
-	LOG_TRACE(L"CmrDataReader constructor called.", L"BasicRecon");
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
@@ -46,7 +45,6 @@ CmrDataReader::CmrDataReader(void) :
 CmrDataReader::CmrDataReader(const CmrDataReader& rhs)
 	: ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"CmrDataReader copy constructor called.", L"BasicRecon");
 }
 
 CmrDataReader::~CmrDataReader()

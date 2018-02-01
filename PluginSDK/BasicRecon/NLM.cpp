@@ -10,7 +10,6 @@ using namespace arma;
 NLM::NLM(void):
 	ProcessorImpl(L"NLM")
 {
-	LOG_TRACE(L"NLM constructor called.", L"BasicRecon");
 	AddInput(L"Input", 2, DataTypeFloat);
 	AddOutput(L"Output", 2, DataTypeFloat);
 }
@@ -18,7 +17,6 @@ NLM::NLM(void):
 NLM::NLM(const NLM& rhs)
 	:ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"NLM copy constructor called.", L"BasicRecon");
 }
 
 NLM::~NLM()

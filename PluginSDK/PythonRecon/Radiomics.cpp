@@ -8,8 +8,6 @@ Yap::Radiomics::Radiomics() :
 	_ref_data( YapShared<ISharedObject>(nullptr) ),
 	ProcessorImpl( L"Radiomics" )
 {
-	LOG_TRACE(L"Radiomics constructor called.", L"PythonRecon");
-
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
 	AddInput(L"Reference", YAP_ANY_DIMENSION, DataTypeAll);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
@@ -22,13 +20,11 @@ Yap::Radiomics::Radiomics() :
 Yap::Radiomics::Radiomics(const Radiomics& rhs) :
 	_ref_data(rhs._ref_data), ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"Radiomics copy constructor.", L"PythonRecon");
 }
 
 Yap::Radiomics::~Radiomics()
 {
 	PYTHON_DELETE_REF_DATA();
-	LOG_TRACE(L"Radiomics destructor called.", L"PythonRecon");
 }
 
 bool Yap::Radiomics::Input(const wchar_t * port, IData * data)

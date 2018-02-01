@@ -10,8 +10,6 @@ using namespace std;
 ChannelDataCollector::ChannelDataCollector(void):
 	ProcessorImpl(L"ChannelDataCollector")
 {
-	LOG_TRACE(L"ChannelDataCollector constructor called.", L"BasicRecon");
-
 	AddInput(L"Input", 2, DataTypeComplexFloat);
 	AddOutput(L"Output", 3, DataTypeComplexFloat);
 	AddProperty<int>(L"ChannelCount", 4, L"The total channel count.");
@@ -21,7 +19,6 @@ ChannelDataCollector::ChannelDataCollector(void):
 Yap::ChannelDataCollector::ChannelDataCollector(const ChannelDataCollector& rhs):
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"ChannelDataCollector copy constructor called.", L"BasicRecon");
 }
 
 

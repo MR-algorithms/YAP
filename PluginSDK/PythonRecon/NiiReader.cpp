@@ -25,8 +25,6 @@ NiiReader::NiiReader()
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeAll);
 	AddProperty<const wchar_t * const>(L"FilePath", L"", L"ÎÄ¼þÂ·¾¶");
-
-	LOG_TRACE(L"NiiReader constructor", L"PythonRecon");
 }
 
 Yap::NiiReader::NiiReader(const NiiReader& rhs):

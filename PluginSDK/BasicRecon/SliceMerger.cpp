@@ -11,7 +11,6 @@ using namespace std;
 SliceMerger::SliceMerger(void) :
 	ProcessorImpl(L"SliceMerger")
 {
-	LOG_TRACE(L"SliceMerger constructor called.", L"BasicRecon");
 	AddInput(L"Input", 2, DataTypeAll);
 	AddOutput(L"Output", 3, DataTypeAll);
 
@@ -21,7 +20,6 @@ SliceMerger::SliceMerger(void) :
 SliceMerger::SliceMerger(const SliceMerger& rhs)
 	: ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"SliceMerger copy constructor called.", L"BasicRecon");
 }
 
 SliceMerger::~SliceMerger()

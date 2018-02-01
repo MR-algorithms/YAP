@@ -109,7 +109,6 @@ Yap::SmartPtr<IData> DataTypeConvertor::Convert<complex<float>>(IData * input, i
 DataTypeConvertor::DataTypeConvertor(void):
 	ProcessorImpl(L"DataTypeConvertor")
 {
-	LOG_TRACE(L"DataTypeConvertor constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
 
 	AddOutput(L"Bool", YAP_ANY_DIMENSION, DataTypeBool);
@@ -127,7 +126,6 @@ DataTypeConvertor::DataTypeConvertor(void):
 DataTypeConvertor::DataTypeConvertor(const DataTypeConvertor& rhs) :
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"DataTypeConvertor copy constructor called.", L"BasicRecon");
 }
 
 DataTypeConvertor::~DataTypeConvertor()

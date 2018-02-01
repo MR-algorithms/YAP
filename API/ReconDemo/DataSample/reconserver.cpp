@@ -42,6 +42,7 @@ void ReconServer::incomingConnection(qintptr socketDescriptor)
     connect(clientSocket, &ReconClientSocket::signalDataReceived, this, &ReconServer::slotDataReceived);
 
     clientSocket->setSocketDescriptor(socketDescriptor);
+    this->addPendingConnection(clientSocket);//?
 }
 
 

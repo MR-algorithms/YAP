@@ -10,7 +10,6 @@ using namespace Yap;
 CalcuArea::CalcuArea() :
 	ProcessorImpl(L"CalcuArea")
 {
-	LOG_TRACE(L"CalcuArea constructor called.", L"BasicRecon");
 	AddInput(L"Input", 1, DataTypeDouble);
 	AddProperty<double>(L"Area", 0, L"Area of function or sum of data");
 }
@@ -18,12 +17,10 @@ CalcuArea::CalcuArea() :
 CalcuArea::CalcuArea(const CalcuArea& rhs) :
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"CalcuArea copy constructor called.", L"BasicRecon");
 }
 
 CalcuArea::~CalcuArea()
 {
-	LOG_TRACE(L"CalcuArea destructor called.", L"BasicRecon");
 }
 
 bool Yap::CalcuArea::Input(const wchar_t * name, IData * data)
