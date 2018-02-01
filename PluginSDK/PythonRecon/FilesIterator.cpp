@@ -87,9 +87,9 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
  			if (regex_match(*iter, reg))
  			{
  				VariableSpace variables(data->GetVariables());
- 				variables.Add(L"string", L"FilePath", L"Full path of one sub-folder in the current folder");
+ 				variables.AddVariable(L"string", L"FilePath", L"Full path of one sub-folder in the current folder");
  				variables.Set(L"FilePath", (*iter).c_str());
-				variables.Add(L"bool", L"FilesIteratorFinished", L"Iteration finished.");
+				variables.AddVariable(L"bool", L"FilesIteratorFinished", L"Iteration finished.");
 				variables.Set(L"FilesIteratorFinished", false);
 
  				auto output = DataObject<int>::CreateVariableObject(variables.Variables(), _module.get());
@@ -103,9 +103,9 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
  	for (auto& file_path : file_container)
  	{
  		VariableSpace variables(data->GetVariables());
- 		variables.Add(L"string", L"FilePath", L"Full path of one sub-folder in the current folder");
+ 		variables.AddVariable(L"string", L"FilePath", L"Full path of one sub-folder in the current folder");
  		variables.Set(L"FilePath", file_path.c_str());
- 		variables.Add(L"bool", L"FilesIteratorFinished", L"Iteration finished.");
+ 		variables.AddVariable(L"bool", L"FilesIteratorFinished", L"Iteration finished.");
  		variables.Set(L"FilesIteratorFinished", false);
  
  		auto output = DataObject<int>::CreateVariableObject(variables.Variables(), _module.get());

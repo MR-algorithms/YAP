@@ -88,7 +88,7 @@ void PipelineTest()
 
 	{
 		PipelineCompiler compiler;
-		auto pipeline = compiler.CompileFile(L"Pipelines\\test1.pipeline");
+		auto pipeline = compiler.CompileFile(L"Pipelines\\Radiomics_test.pipeline");
 		if (pipeline.get() == nullptr)
 		{
 			return;

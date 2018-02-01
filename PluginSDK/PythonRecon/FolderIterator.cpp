@@ -62,7 +62,7 @@ bool FolderIterator::Input(const wchar_t * name, IData * data)
 		VariableSpace variables;
 		variables.AddVariable(L"string", L"FolderPath", L"Full path of one sub-folder in the current folder");
 		variables.Set(L"FolderPath", iter.c_str());
-		variables.Add(L"bool", L"Finished", L"Iteration finished.");
+		variables.AddVariable(L"bool", L"Finished", L"Iteration finished.");
 		variables.Set(L"Finished", false);
 
 		auto output = DataObject<int>::CreateVariableObject(variables.Variables(), _module.get());
@@ -78,7 +78,7 @@ bool FolderIterator::Input(const wchar_t * name, IData * data)
 void Yap::FolderIterator::NotifyIterationFinished()
 {
 	VariableSpace variables;
-	variables.Add(L"bool", L"Finished", L"Iteration finished.");
+	variables.AddVariable(L"bool", L"Finished", L"Iteration finished.");
 	variables.Set(L"Finished", true);
 
 	auto output = DataObject<int>::CreateVariableObject(variables.Variables(), _module.get());

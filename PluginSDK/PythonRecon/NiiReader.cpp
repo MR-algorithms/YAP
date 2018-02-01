@@ -648,7 +648,7 @@ void * NiiReader::LoadData(ifstream & file, size_t byte_count, size_t data_size)
 void NiiReader::NotifyIterationFinished(IData * data)
 {
 	VariableSpace variables(data->GetVariables());
-	variables.Add(L"bool", L"NiiReaderFinished", L"finished.");
+	variables.AddVariable(L"bool", L"NiiReaderFinished", L"finished.");
 	variables.Set(L"FilesIteratorFinished", true);
 
 	auto output = DataObject<int>::CreateVariableObject(variables.Variables(), _module.get());
