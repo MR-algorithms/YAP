@@ -72,7 +72,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(YAP_ROOT)\Lib\</OutDir>
     <TargetName>$(ProjectName)d</TargetName>
-    <IncludePath>$(PYTHON_ROOT)\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(PYTHON_ROOT)\include;$(IncludePath);$(PYTHON_ROOT)\envs\tensorflow\include;$(PYTHON_ROOT)\Lib\site-packages\numpy\core\include</IncludePath>
+    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;C:\Program Files (x86)\BCGSoft\BCGControlBarPro\bin;D:\ThirdParty\boost\lib32-msvc-14.0;D:\ThirdParty\LEADTOOLS 15\Lib\API\Win32;D:\ThirdParty\log4cplus\Lib\Win32;D:\ThirdParty\SQUIRREL\lib;C:\Program Files %28x86%29\Microsoft DirectX SDK\Lib\x86;C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.10150.0\ucrt\x86;$(WindowsSDK_LibraryPath_x86);D:\ThirdParty\Fftw\fftw-3.3.4-dll32;D:\ThirdParty\Armadillo\Lib;C:\Program Files %28x86%29\Microsoft SDKs\Windows\v7.1A\Lib;$(PYTHON_ROOT)\envs\tensorflow\include;$(PYTHON_ROOT)\Lib\site-packages\numpy\core\include</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(YAP_ROOT)\Lib\</OutDir>
@@ -80,6 +81,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(YAP_ROOT)\Lib\</OutDir>
     <TargetName>$(ProjectName)64d</TargetName>
+    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;C:\Program Files (x86)\BCGSoft\BCGControlBarPro\BCGCBPro;D:\ThirdParty\boost;D:\ThirdParty\Fftw\fftw-3.3.4-dll64;D:\ThirdParty\log4cplus\include;D:\ThirdParty\Armadillo\include;D:\ThirdParty\LEADTOOLS 15\Include;D:\ThirdParty\SQUIRREL\include;C:\Program Files %28x86%29\Visual Leak Detector\include;C:\Program Files %28x86%29\Microsoft DirectX SDK\Include;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.14393.0\ucrt;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.14393.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\um;$(PYTHON_ROOT)\envs\tensorflow\include;$(PYTHON_ROOT)\Lib\site-packages\numpy\core\include</IncludePath>
+    <LibraryPath>$(LibraryPath);C:\Program Files (x86)\BCGSoft\BCGControlBarPro\bin;D:\ThirdParty\boost\lib64-msvc-14.0;D:\ThirdParty\LEADTOOLS 15\Lib\API\x64;D:\ThirdParty\Log4CPlus\lib;D:\ThirdParty\SQUIRREL\lib;C:\Program Files (x86)\Microsoft DirectX SDK\lib\x64;C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.14393.0\ucrt\x64;$(WindowsSDK_LibraryPath_x64);D:\ThirdParty\Fftw\fftw-3.3.4-dll64;D:\ThirdParty\Armadillo\Lib;C:\Program Files %28x86%29\Microsoft SDKs\Windows\v7.1A\Lib\x64;$(PYTHON_ROOT)\envs\tensorflow\libs</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(YAP_ROOT)\Lib\</OutDir>

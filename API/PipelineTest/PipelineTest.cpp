@@ -16,7 +16,6 @@
 #include "Yap/VdfParser.h"
 #include "Implement/LogImpl.h"
 #include "Implement/LogUserImpl.h"
-#include <log4cplus/initializer.h>
 #include "Yap/ModuleManager.h"
 
 using namespace std;
