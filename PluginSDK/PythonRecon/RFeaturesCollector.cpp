@@ -27,26 +27,22 @@ bool Yap::RFeaturesCollector::Input(const wchar_t * name, IData * data)
 {
 	assert(data != nullptr);
 	assert(Inputs()->Find(name) != nullptr);
-
-	DataHelper helper(data);
-	auto dim1 = helper.GetDimension(DimensionUser1);
-	auto dim2 = helper.GetDimension(DimensionUser2);
-	assert(dim1.type != DimensionInvalid && dim2.type != DimensionInvalid);
-	assert(helper.GetDataType() == DataTypeFloat);
-
-	_collector.insert(make_pair(_count++, CreateData<float>(data)));
-	if (_count == dim2.length)
+	assert(data->GetDataType() == DataTypeFloat);
+	VariableSpace variable(data->GetVariables());
+	if (!variable.Get<bool>(L"Finished"))
 	{
-		unsigned int total_length = 0;
-		for (unsigned int i = 0; i < _count; ++i)
-		{
-			DataHelper h(_collector[i].get());
-			auto dim = h.GetDimension(DimensionReadout);
-			total_length += dim.length;
-		}
+		_collector.insert(make_pair(_count++, CreateData<float>(data)));
+	}
+	else
+	{
+		DataHelper helper(_collector[0].get());
+		auto dim = helper.GetDimension(DimensionReadout);
+		unsigned int total_length = dim.length * _count;
+
 		Dimensions dimension;
-		dimension(dim1.type, dim1.start_index, dim1.length)
-			(DimensionReadout, 0U, total_length);
+		dimension(DimensionReadout, 0U, dim.length)
+			(DimensionPhaseEncoding, 0U, _count);
+
 		float * collect_data;
 		try
 		{
@@ -54,22 +50,22 @@ bool Yap::RFeaturesCollector::Input(const wchar_t * name, IData * data)
 		}
 		catch (const std::bad_alloc&)
 		{
+			LOG_ERROR(L"allocate space error.", L"RFeaturesCollector--PythonRecon");
 			return false;
 		}
 		size_t count = 0;
 		for (unsigned int i = 0; i < _count; ++i)
 		{
-			DataHelper h(_collector[i].get());
-			auto dim = h.GetDimension(DimensionReadout);
 			memcpy(collect_data + count, GetDataArray<float>(_collector[i].get()), (dim.length) * sizeof(float));
 			count += dim.length;
 		}
 
 		auto out_data = CreateData<float>(nullptr, collect_data, dimension, nullptr);
-			Feed(L"Output", out_data.get());
+		Feed(L"Output", out_data.get());
 		_count = 0;
 		_collector.clear();
 	}
+
 	return true;
 
 }

@@ -24,22 +24,20 @@ bool Yap::CaseCollector::Input(const wchar_t * name, IData * data)
 {
 	assert(data != nullptr);
 	assert(Inputs()->Find(name) != nullptr);
+	assert(data->GetDataType() == DataTypeFloat);
 
-	DataHelper helper(data);
-	auto dim1 = helper.GetDimension(DimensionUser1);
-	assert(dim1.type != DimensionInvalid);
-	assert(helper.GetDataType() == DataTypeFloat);
-
-	_collector.insert(make_pair(_count++, CreateData<float>(data)));
-	std::cout << _count << " (/" << dim1.length << ")" << std::endl;
-	if (_count == dim1.length)
+	VariableSpace variable(data->GetVariables());
+	if (!variable.Get<bool>(L"FilesIteratorFinished"))
 	{
+		_collector.insert(make_pair(_count++, CreateData<float>(data)));
+	}
+	else
+	{
+		DataHelper helper(data);
 		auto dim = helper.GetDimension(DimensionReadout);
+		unsigned int total_length = dim.length * _collector.size();
 		Dimensions dimension;
-		dimension(DimensionReadout, 0U, dim.length)
-			(DimensionPhaseEncoding, 0U, dim1.length);
-		unsigned int total_length = dim.length * dim1.length;
-
+		dimension(DimensionReadout, 0U, total_length);
 		float * collect_data;
 		try
 		{
@@ -56,11 +54,12 @@ bool Yap::CaseCollector::Input(const wchar_t * name, IData * data)
 			count += dim.length;
 		}
 
-		auto out_data = CreateData<float>(nullptr, collect_data, dimension, nullptr);
+		auto out_data = CreateData<float>(data, collect_data, dimension, nullptr);
 		Feed(L"Output", out_data.get());
 		_count = 0;
 		_collector.clear();
 	}
+
 	return true;
 
 }

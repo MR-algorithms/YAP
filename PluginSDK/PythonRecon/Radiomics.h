@@ -23,7 +23,7 @@ namespace Yap
 
 		void CreateDimension(Dimensions& dimensions, size_t output_dims, size_t * output_size);
 
-		bool FeedOut(void* out_data, Dimensions dimensions, int data_type, size_t size);
+		bool FeedOut(IData * data, void* out_data, Dimensions dimensions, int data_type, size_t size);
 
 		size_t GetTotalSize(size_t dimension_count, size_t size[]);
 
