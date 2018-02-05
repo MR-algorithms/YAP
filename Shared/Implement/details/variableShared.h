@@ -27,30 +27,3 @@ public: \
 protected: \
 	bool _enabled;
 
-namespace Yap {
-	namespace _details {
-		template<typename T> struct variable_store_type
-		{
-			typedef T type;
-			typedef std::vector<T> vector_type;
-		};
-
-		template <> struct variable_store_type<bool>
-		{
-			typedef bool type;
-			typedef std::vector<unsigned char> vector_type;
-		};
-
-		template <> struct variable_store_type<const wchar_t * const>
-		{
-			typedef std::wstring type;
-			typedef std::vector<std::wstring> vector_type;
-		};
-
-		template <> struct variable_store_type<IVariable*>
-		{
-			typedef SmartPtr<IVariable> type;
-			typedef std::vector<type> vector_type;
-		};
-	}
-}

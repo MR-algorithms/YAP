@@ -14,12 +14,9 @@ namespace Yap
 			static_assert(std::is_same<T, int>::value ||
 				std::is_same<T, double>::value ||
 				std::is_same<T, bool>::value ||
-				std::is_same<T, const wchar_t * const>::value ||
+				std::is_same<T, std::wstring>::value ||
 				std::is_same<T, typename SmartPtr<IVariable>>::value,
-				"You can only use one of the following types: int, double, bool, const wchar_t * const, SmartPtr<IVariable>");
-
-			typedef typename variable_store_type<T>::vector_type vector_type;
-			typedef typename variable_store_type<T>::type type;
+				"You can only use one of the following types: int, double, bool, std::wstring, SmartPtr<IVariable>");
 
 			IMPLEMENT_SHARED(ValueArray<T>)
 			IMPLEMENT_VARIABLE
@@ -68,7 +65,7 @@ namespace Yap
 				}
 			}
 
-			virtual T GetElementTemplate() const
+			virtual type GetElementTemplate() const
 			{
 				return _element_template;
 			}
@@ -83,14 +80,14 @@ namespace Yap
 				_elements.resize(size);
 			}
 
-			virtual T Get(size_t index) const override
+			virtual get_type Get(size_t index) const override
 			{
 				assert(index < _elements.size());
 #pragma warning(disable:4800)	// casting from unsigned char to bool
 				return _elements[index];
 			}
 
-			virtual void Set(size_t index, T value) override
+			virtual void Set(size_t index, set_type value) override
 			{
 				assert(index < _elements.size());
 				_elements[index] = value;
@@ -190,21 +187,21 @@ namespace Yap
 		// Specialization for ValueArrayVariable<wchar_t *>.
 
 		template <>
-		const wchar_t * const ValueArray<const wchar_t * const>::Get(size_t index) const
+		ValueArray<std::wstring>::get_type ValueArray<std::wstring>::Get(size_t index) const
 		{
 			assert(index < _elements.size());
 			return _elements[index].c_str();
 		}
 
 		template <>
-		void ValueArray<const wchar_t * const>::Set(size_t index, const wchar_t * const value)
+		void ValueArray<std::wstring>::Set(size_t index, ValueArray<std::wstring>::set_type value)
 		{
 			assert(index < _elements.size());
 			_elements[index] = value;
 		}
 
 		template <>
-		const wchar_t * const ValueArray<const wchar_t * const>::GetElementTemplate() const
+		ValueArray<std::wstring>::type ValueArray<std::wstring>::GetElementTemplate() const
 		{
 			return _element_template.c_str();
 		}

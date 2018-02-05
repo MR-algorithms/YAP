@@ -7,6 +7,8 @@
 #include "IContainer.h"
 
 #include <type_traits>
+#include <string>
+#include <vector>
 
 namespace Yap
 {
@@ -30,43 +32,53 @@ namespace Yap
 	{
 		static const int type_id;
 		static const int array_type_id;
+		typedef T type;
+		typedef T set_type;
+		typedef T get_type;
+		typedef std::vector<T> vector_type;
 	};
 
 	template <> struct variable_type_id<bool>
 	{
 		static const int type_id = VariableBool;
 		static const int array_type_id = VariableBoolArray;
+		typedef bool type;
+		typedef bool set_type;
+		typedef bool get_type;
+		typedef std::vector<unsigned char> vector_type;
 	};
 
 	template <> struct variable_type_id<int>
 	{
 		static const int type_id = VariableInt;
 		static const int array_type_id = VariableIntArray;
+		typedef int set_type;
+		typedef int get_type;
+		typedef int type;
+		typedef std::vector<int> vector_type;
 	};
 
 	template <> struct variable_type_id<double>
 	{
 		static const int type_id = VariableFloat;
 		static const int array_type_id = VariableFloatArray;
+		typedef double set_type;
+		typedef double get_type;
+		typedef double type;
+		typedef std::vector<double> vector_type;
 	};
 
-	template <> struct variable_type_id<const wchar_t * const>
+	template <> struct variable_type_id<std::wstring>
 	{
 		static const int type_id = VariableString;
 		static const int array_type_id = VariableStringArray;
+
+		typedef std::wstring type;
+		typedef const wchar_t * const set_type;
+		typedef const wchar_t * const get_type;
+		typedef std::vector<std::wstring> vector_type;
 	};
 
-	template <> struct variable_type_id<wchar_t *>
-	{
-		static const int type_id = VariableString;
-		static const int array_type_id = VariableStringArray;
-	};
-
-	template <> struct variable_type_id<wchar_t const *>
-	{
-		static const int type_id = VariableString;
-		static const int array_type_id = VariableStringArray;
-	};
 
 	/**
 	@brief Interface for a variable.
@@ -120,16 +132,22 @@ namespace Yap
 		virtual size_t FromString(const wchar_t * value_string) = 0;
 	};
 
-	template <> struct variable_type_id <IVariable*> {
+	template <> struct variable_type_id <IVariable*> 
+	{
 		static const int type_id = VariableInvalid;
 		static const int array_type_id = VariableStructArray;
+		typedef SmartPtr<IVariable> type;
+		typedef std::vector<type> vector_type;
 	};
 
 	template<typename VALUE_TYPE>
 	struct ISimpleVariable : public IVariable
 	{
-		virtual VALUE_TYPE Get() const = 0;
-		virtual void Set(VALUE_TYPE value) = 0;
+		typedef typename variable_type_id<VALUE_TYPE>::get_type get_type;
+		typedef typename variable_type_id<VALUE_TYPE>::set_type set_type;
+
+		virtual get_type Get() const = 0;
+		virtual void Set(set_type value) = 0;
 	};
 
 	struct IEnumItem
@@ -163,18 +181,22 @@ namespace Yap
 	template <typename T>
 	struct IValueArray : public IArrayBase
 	{
+		typedef typename variable_type_id<T>::vector_type vector_type;
+		typedef typename variable_type_id<T>::type type;
+		typedef typename variable_type_id<T>::get_type get_type;
+		typedef typename variable_type_id<T>::set_type set_type;
+
 		static_assert(std::is_same<T, int>::value ||
 			std::is_same<T, double>::value ||
 			std::is_same<T, bool>::value ||
-			std::is_same<T, const wchar_t * const>::value ||
-			std::is_same<T, const wchar_t *>::value ||
+			std::is_same<T, std::wstring>::value ||
 			std::is_same<T, typename SmartPtr<IVariable>>::value ||
 			std::is_base_of<IVariable, typename std::remove_pointer<T>::type>::value,
-			"You can only use one of the following types: int, double, bool, const wchar_t * const, IVariable*");
+			"You can only use one of the following types: int, double, bool, std::wstring, IVariable*");
 
-		virtual T Get(size_t index) const = 0;
-		virtual void Set(size_t index, T value) = 0;
-		virtual T GetElementTemplate() const = 0;
+		virtual get_type Get(size_t index) const = 0;
+		virtual void Set(size_t index, set_type value) = 0;
+		virtual type GetElementTemplate() const = 0;
 	};
 
 	template <typename T>

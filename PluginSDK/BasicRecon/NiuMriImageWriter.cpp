@@ -15,8 +15,8 @@ NiuMriImageWriter::NiuMriImageWriter(void) :
 	ProcessorImpl(L"NiuMriImageWriter")
 {
 	AddInput(L"Input", 3, DataTypeUnsignedShort);
-	AddProperty<const wchar_t * const>(L"ExportFolder", L"", L"Set folder used to write images.");
-	AddProperty<const wchar_t * const>(L"FileName", L"", L"Set file name.");
+	AddProperty<std::wstring>(L"ExportFolder", L"", L"Set folder used to write images.");
+	AddProperty<std::wstring>(L"FileName", L"", L"Set file name.");
 }
 
 NiuMriImageWriter::NiuMriImageWriter(const NiuMriImageWriter& rhs) :
@@ -32,9 +32,9 @@ bool Yap::NiuMriImageWriter::Input(const wchar_t * name, IData * data)
 {
 	assert((data != nullptr) && (GetDataArray<unsigned short>(data) != nullptr));
 
-	auto output_folder = GetProperty<const wchar_t * const>(L"ExportFolder");
-	auto output_name = GetProperty<const wchar_t * const>(L"FileName");
-	auto file_path = GetFilePath(output_folder, output_name);
+	auto output_folder = GetProperty<wstring>(L"ExportFolder");
+	auto output_name = GetProperty<wstring>(L"FileName");
+	auto file_path = GetFilePath(output_folder.c_str(), output_name.c_str());
 
 	//write data
 	int file_version = 1;
