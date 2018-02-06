@@ -142,7 +142,7 @@ JpegExporter::JpegExporter() :
 {
 	_impl = shared_ptr<JpegExporterImp>(new JpegExporterImp);
 	AddInput(L"Input", 2, DataTypeFloat | DataTypeUnsignedShort | DataTypeShort);
-	AddProperty<const wchar_t * const>(L"ExportFolder", L"", L"Set folder used to hold exported images.");
+	AddProperty<wstring>(L"ExportFolder", L"", L"Set folder used to hold exported images.");
 	AddProperty<bool>(L"StretchPixelData", true, L"Stretch pixel value from 0 to 255");
 }
 
@@ -174,19 +174,19 @@ bool JpegExporter::Input( const wchar_t * name, IData * data)
 	case DataTypeFloat:
 		_impl->ExportImage(GetDataArray<float>(data),
 			data_helper.GetWidth(), data_helper.GetHeight(),
-			GetProperty<const wchar_t * const>(L"ExportFolder"),
+			GetProperty<wstring>(L"ExportFolder").c_str(),
 			stretch_pixel_data);
 		break;
 	case DataTypeUnsignedShort:
 		_impl->ExportImage(GetDataArray<unsigned short>(data),
 			data_helper.GetWidth(), data_helper.GetHeight(),
-			GetProperty<const wchar_t* const>(L"ExportFolder"),
+			GetProperty<wstring>(L"ExportFolder").c_str(),
 			stretch_pixel_data);
 		break;
 	case DataTypeShort:
 		_impl->ExportImage(GetDataArray<short>(data),
 			data_helper.GetWidth(), data_helper.GetHeight(),
-			GetProperty<const wchar_t* const>(L"ExportFolder"),
+			GetProperty<wstring>(L"ExportFolder").c_str(),
 			stretch_pixel_data);
 		break;
 	case DataTypeUnsignedInt:

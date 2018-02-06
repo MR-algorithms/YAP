@@ -110,8 +110,8 @@ BOOST_AUTO_TEST_CASE(vdf_test_array)
 	BOOST_CHECK_EQUAL(variables->Get<int>(L"i[0]"), 1);
 	variables->Set<double>(L"f[0]", 1.0);
 	BOOST_CHECK_EQUAL(variables->Get<double>(L"f[0]"), 1.0);
-	variables->Set<const wchar_t * const>(L"s[0]", L"Test");
-	BOOST_CHECK_EQUAL(variables->Get<const wchar_t * const>(L"s[0]"), L"Test");
+	variables->Set<std::wstring>(L"s[0]", L"Test");
+	BOOST_CHECK_EQUAL(variables->Get<std::wstring>(L"s[0]").c_str(), L"Test");
 
 	variables->Set<bool>(L"b[0]", true);
 	BOOST_CHECK_EQUAL(variables->Get<bool>(L"b[0]"), true);
@@ -134,8 +134,8 @@ BOOST_AUTO_TEST_CASE(vdf_test_array)
 	BOOST_CHECK_EQUAL(variables->Get<int>(L"n::i[0]"), 1);
 	variables->Set<double>(L"n::f[0]", 1.0);
 	BOOST_CHECK_EQUAL(variables->Get<double>(L"n::f[0]"), 1.0);
-	variables->Set<const wchar_t * const>(L"n::s[0]", L"Test");
-	BOOST_CHECK_EQUAL(variables->Get<const wchar_t * const>(L"n::s[0]"), L"Test");
+	variables->Set<std::wstring>(L"n::s[0]", L"Test");
+	BOOST_CHECK_EQUAL(variables->Get<std::wstring>(L"n::s[0]").c_str(), L"Test");
 
 	variables->Set<bool>(L"n::b[0]", true);
 	BOOST_CHECK_EQUAL(variables->Get<bool>(L"n::b[0]"), true);

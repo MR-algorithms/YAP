@@ -4,6 +4,7 @@
 #include <vector>
 #include <sstream>
 #include <boost/lexical_cast.hpp>
+#include "Utilities/macros.h"
 
 using namespace Yap;
 using namespace std;
@@ -127,8 +128,9 @@ IVariable * VariableTable::GetVariable(IVariableContainer * variables,
 	else
 	{
 		auto variable = variables->Find(id);
-//		if (variable == nullptr)
-//			throw VariableException(id, VariableException::VariableNotFound);
+		//BUG('How to handle variable is nullptr?');
+		//if (variable == nullptr)
+		//		return nullptr; // throw VariableException(id, VariableException::VariableNotFound);
 
 		if (type != VariableAllTypes && ((variable->GetType() | type) != type))
 			throw VariableException(id, VariableException::TypeNotMatch);

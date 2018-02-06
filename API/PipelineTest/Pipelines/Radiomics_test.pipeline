@@ -3,7 +3,7 @@ import "PythonRecon.dll";
 
 FolderIterator folders(Path = "D:\\test_data\\MICCAI_BraTS17_Data_Training_for_TGuo_2017modified\\Brats17TrainingData\\HGG",
 	RecursiveSearch = false);
-FilesIterator files(FileRegEx = "nii",RecursiveSearch = false, ReferenceRegEx = ".*seg.nii");
+FilesIterator files(FileRegEx = "*.nii", RecursiveSearch = false, ReferenceRegEx = ".*seg.nii");
 NiiReader ref_reader;
 NiiReader img_reader;
 Radiomics radiomicshandle(ScriptPath = 

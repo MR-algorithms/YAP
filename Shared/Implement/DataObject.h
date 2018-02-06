@@ -174,7 +174,7 @@ namespace Yap
 		}
 
 		DataObject(IVariableContainer * variables, ISharedObject * module) :
-			_dimensions {nullptr},
+			_dimensions {},
 			_variables{YapShared(variables)},
 			_module{YapShared(module)}
 		{

@@ -16,10 +16,10 @@ namespace Yap
 			static_assert(std::is_same<TYPE, int>::value ||
 				std::is_same<TYPE, double>::value ||
 				std::is_same<TYPE, bool>::value ||
-				std::is_same<TYPE, const wchar_t * const>::value,
-				"You can only use one of the following types: int, double, bool, const wchar_t * const");
+				std::is_same<TYPE, std::wstring>::value,
+				"You can only use one of the following types: int, double, bool, std::wstring");
 
-			typedef typename variable_store_type<TYPE>::type type;
+			typedef typename variable_type_id<TYPE>::type type;
 
 			IMPLEMENT_SHARED(SimpleVariable<TYPE>)
 			IMPLEMENT_VARIABLE
@@ -38,7 +38,8 @@ namespace Yap
 				_id{ rhs._id },
 				_description{ rhs._description },
 				_type{ rhs._type },
-				_value{ rhs._value }
+				_value{ rhs._value },
+				_enabled{rhs._enabled}
 			{
 			}
 
@@ -46,16 +47,17 @@ namespace Yap
 				_id{ rhs.GetId() },
 				_description{ rhs.GetDescription() },
 				_type{ rhs.GetType() },
-				_value{ rhs.Get() }
+				_value{ rhs.Get() }, 
+				_enabled{rhs.IsEnabled()}
 			{
 			}
 
-			virtual TYPE Get() const override
+			virtual get_type Get() const override
 			{
 				return _value;
 			}
 
-			virtual void Set(TYPE value) override
+			virtual void Set(set_type value) override
 			{
 				_value = value;
 			}
@@ -81,9 +83,9 @@ namespace Yap
 
 		// Begin specialization for string type.
 		template <>
-		class SimpleVariable<const wchar_t* const> : public ISimpleVariable<const wchar_t* const>
+		class SimpleVariable<std::wstring> : public ISimpleVariable<std::wstring>
 		{
-			IMPLEMENT_SHARED(SimpleVariable<const wchar_t* const>)
+			IMPLEMENT_SHARED(SimpleVariable<std::wstring>)
 			IMPLEMENT_VARIABLE
 		public:
 			SimpleVariable(
@@ -96,15 +98,16 @@ namespace Yap
 			{
 			}
 
-			SimpleVariable(const SimpleVariable<const wchar_t* const>& rhs) :
+			SimpleVariable(const SimpleVariable<std::wstring>& rhs) :
 				_id{ rhs._id },
 				_description{ rhs._description },
 				_type{ rhs._type },
-				_value{ rhs._value }
+				_value{ rhs._value },
+				_enabled{rhs._enabled}
 			{
 			}
 
-			SimpleVariable(ISimpleVariable<const wchar_t* const> & rhs) :
+			SimpleVariable(ISimpleVariable<std::wstring> & rhs) :
 				_id{ rhs.GetId() },
 				_description{ rhs.GetDescription() },
 				_type{ rhs.GetType() },

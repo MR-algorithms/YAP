@@ -51,9 +51,8 @@ namespace Yap {
 			static_assert(std::is_same<T, int>::value ||
 				std::is_same<T, double>::value ||
 				std::is_same<T, bool>::value ||
-				std::is_same<T, const wchar_t * const>::value ||
-				std::is_same<T, const wchar_t *>::value,
-				"You can only use one of the following types: int, double, bool, const wchar_t * const");
+				std::is_same<T, std::wstring>::value,
+				"You can only use one of the following types: int, double, bool, std::wstring");
 
 			std::wstring variable_id{ id };
 
@@ -77,10 +76,32 @@ namespace Yap {
 		{
 			static_assert(std::is_same<T, int>::value ||
 				std::is_same<T, double>::value ||
-				std::is_same<T, bool>::value ||
-				std::is_same<T, const wchar_t * const>::value ||
-				std::is_same<T, const wchar_t *>::value,
-				"You can only use one of the following types: int, double, bool, const wchar_t * const");
+				std::is_same<T, bool>::value,
+				"You can only use one of the following types: int, double, bool, std::wstring");
+
+			std::wstring variable_id{ id };
+
+			if (variable_id[variable_id.size() - 1] == L']')
+			{
+				auto element = Element<T>(variable_id);
+				element.first->Set(element.second, value);
+			}
+			else
+			{
+				auto variable = GetVariable(id, variable_type_id<T>::type_id);
+				assert(variable != nullptr && "If parameter not found, GetProperty() should throw an PropertyException.");
+				auto simple_variable = dynamic_cast<ISimpleVariable<T>*>(variable);
+				assert(simple_variable != nullptr);
+				simple_variable->Set(value);
+			}
+		}
+
+		template<typename T>
+		void Set(const wchar_t * id, const wchar_t * value)
+		{
+			typedef typename variable_type_id<T>::get_type get_type;
+			static_assert(std::is_same<T, std::wstring>::value ,
+				"You can only use one of the following types: int, double, bool, std::wstring");
 
 			std::wstring variable_id{ id };
 
@@ -130,10 +151,9 @@ namespace Yap {
 			static_assert(std::is_same<T, int>::value ||
 				std::is_same<T, double>::value ||
 				std::is_same<T, bool>::value ||
-				std::is_same<T, const wchar_t * const>::value ||
-				std::is_same<T, const wchar_t *>::value ||
+				std::is_same<T, std::wstring>::value ||
 				std::is_same<T, IVariable* >::value,
-				"You can only use one of the following types: int, double, bool, const wchar_t * const");
+				"You can only use one of the following types: int, double, bool, std::wstring");
 
 			auto left_square_pos = id.find_last_of(L'[');
 			assert(left_square_pos != std::wstring::npos);

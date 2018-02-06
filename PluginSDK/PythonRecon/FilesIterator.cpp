@@ -52,10 +52,13 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 			Feed(L"Output", data);
 			return true;
 		}
-		folder_path = variables.Get<const wchar_t *>(L"FolderPath");
-		file_regex = variables.Get<const wchar_t *>(L"FileRegEx");
-		reference_regex = variables.Get<const wchar_t *>(L"ReferenceRegEx");
-		is_recursive = variables.Get<bool>(L"RecursiveSearch");
+		try{
+			folder_path = variables.Get<const wchar_t * const>(L"FolderPath");
+		}catch (VariableException &){}
+
+		//file_regex = variables.Get<const wchar_t * const>(L"FileRegEx");
+		//reference_regex = variables.Get<const wchar_t * const>(L"ReferenceRegEx");
+		//is_recursive = variables.Get<bool>(L"RecursiveSearch");
 	}
 
 	if (folder_path.empty())
@@ -70,7 +73,8 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 	{
 		reference_regex = GetProperty<const wchar_t * const>(L"ReferenceRegEx");
 	}
-	
+	is_recursive = GetProperty<bool>(L"RecursiveSearch");
+
 	std::vector<std::wstring> file_container;
  	GetFiles(file_container, folder_path, is_recursive, file_regex);
  
@@ -88,7 +92,7 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
  			{
  				VariableSpace variables(data->GetVariables());
  				variables.AddVariable(L"string", L"FilePath", L"Full path of one sub-folder in the current folder");
- 				variables.Set(L"FilePath", (*iter).c_str());
+ 				variables.Set<const wchar_t* const>(L"FilePath", (*iter).c_str());
 				variables.AddVariable(L"bool", L"FilesIteratorFinished", L"Iteration finished.");
 				variables.Set(L"FilesIteratorFinished", false);
 
@@ -104,7 +108,7 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
  	{
  		VariableSpace variables(data->GetVariables());
  		variables.AddVariable(L"string", L"FilePath", L"Full path of one sub-folder in the current folder");
- 		variables.Set(L"FilePath", file_path.c_str());
+ 		variables.Set<const wchar_t * const>(L"FilePath", file_path.c_str());
  		variables.AddVariable(L"bool", L"FilesIteratorFinished", L"Iteration finished.");
  		variables.Set(L"FilesIteratorFinished", false);
  

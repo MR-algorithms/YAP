@@ -26,13 +26,13 @@ namespace Yap
 	{
 		_types.emplace(L"int", YapShared(new SimpleVariable<int>(L"int", nullptr)));
 		_types.emplace(L"float", YapShared(new SimpleVariable<double>(L"float", nullptr)));
-		_types.emplace(L"string", YapShared(new SimpleVariable<const wchar_t * const>(L"string", nullptr)));
+		_types.emplace(L"string", YapShared(new SimpleVariable<std::wstring>(L"string", nullptr)));
 		_types.emplace(L"bool", YapShared(new SimpleVariable<bool>(L"bool", nullptr)));
 		
 		_types.emplace(L"array<int>", YapShared(new RawArray<int>(1, 0, L"array<int>")));
 		_types.emplace(L"array<float>", YapShared(new RawArray<double>(1, 0.0, L"array<float>", nullptr)));
 		_types.emplace(L"array<bool>", YapShared(new ValueArray<bool>(1, false, L"array<bool>", nullptr)));
-		_types.emplace(L"array<string>", YapShared(new ValueArray<const wchar_t * const>(1, L"", L"array<string>", nullptr)));
+		_types.emplace(L"array<string>", YapShared(new ValueArray<std::wstring>(1, L"", L"array<string>", nullptr)));
 
 		return true;
 	}
