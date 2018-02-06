@@ -24,7 +24,7 @@ NiiReader::NiiReader()
 {
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeAll);
-	AddProperty<const wchar_t * const>(L"FilePath", L"", L"文件路径");
+	AddProperty<wstring>(L"FilePath", L"", L"文件路径");
 }
 
 Yap::NiiReader::NiiReader(const NiiReader& rhs):
@@ -75,12 +75,12 @@ bool Yap::NiiReader::Input(const wchar_t * name, IData * data)
 			Feed(L"Output", data);
 			return true;
 		}
-		nii_path = variables.Get<const wchar_t *>(L"FilePath");
+		nii_path = variables.Get<wstring>(L"FilePath");
 	}
 
 	if (nii_path.empty())
 	{
-		nii_path = GetProperty<const wchar_t* const>(L"FilePath");
+		nii_path = GetProperty<wstring>(L"FilePath");
 	}
 	if (nii_path.empty())
 	{

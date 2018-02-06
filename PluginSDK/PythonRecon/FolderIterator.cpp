@@ -25,9 +25,9 @@ FolderIterator::FolderIterator() :
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeAll);
 
-	AddProperty<const wchar_t * const>(L"Path", L"", L"文件夹目录");
+	AddProperty<std::wstring>(L"Path", L"", L"文件夹目录");
 	AddProperty<bool>(L"RecursiveSearch", false, L"搜索当前Path目录下的子目录文件夹");
-	AddProperty<const wchar_t * const>(L"RegularEx", L"", L"文件件搜索正则表达式");
+	AddProperty<std::wstring>(L"RegularEx", L"", L"文件件搜索正则表达式");
 }
 
 FolderIterator::~FolderIterator()
@@ -43,10 +43,10 @@ bool FolderIterator::Input(const wchar_t * name, IData * data)
 {
 	assert(data == nullptr || (Inputs()->Find(name) != nullptr));
 
-	auto path = GetProperty<const wchar_t * const>(L"Path");
+	auto path = GetProperty<std::wstring>(L"Path");
 	bool recursive = GetProperty<bool>(L"RecursiveSearch");
 	/* regular expression */
-	auto c_reg = GetProperty<const wchar_t* const>(L"RegularEx");
+	auto c_reg = GetProperty<std::wstring>(L"RegularEx");
 	//
 	std::vector<std::wstring> folders;
 	GetFolders(folders, path, recursive, c_reg);
@@ -57,12 +57,11 @@ bool FolderIterator::Input(const wchar_t * name, IData * data)
 		return false;
 	}
 
-	for (auto iter : folders)
+	for (auto& iter : folders)
 	{
 		VariableSpace variables;
 		variables.AddVariable(L"string", L"FolderPath", L"Full path of one sub-folder in the current folder");
-		const wchar_t * const it = iter.c_str();
-		variables.Set<const wchar_t * const>(L"FolderPath", iter.c_str());
+		variables.Set<std::wstring>(L"FolderPath", iter.c_str());
 		variables.AddVariable(L"bool", L"Finished", L"Iteration finished.");
 		variables.Set(L"Finished", false); 
 
@@ -138,7 +137,7 @@ void FolderIterator::GetFolders(std::vector<std::wstring> & folders, std::wstrin
 			LOG_ERROR(L"there is not an valid path!", L"FolderIterator");
 		}
 	}
-	catch (const filesystem_error& ex)
+	catch (const filesystem_error& )
 	{
 		LOG_ERROR(L"boost filesystem read file error", L"FolderIterator");
 	}

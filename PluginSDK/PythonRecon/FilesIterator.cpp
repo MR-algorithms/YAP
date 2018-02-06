@@ -20,10 +20,10 @@ FilesIterator::FilesIterator():
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeAll);
 	AddOutput(L"Reference", YAP_ANY_DIMENSION, DataTypeAll);
 	
-	AddProperty<const wchar_t* const>(L"FolderPath", L"", L"文件的指定目录，该属性启用，则抑制从输入端口传入文件目录.");
-	AddProperty<const wchar_t* const>(L"FileRegEx", L"", L"文件名查找正则表达式");
+	AddProperty<std::wstring>(L"FolderPath", L"", L"文件的指定目录，该属性启用，则抑制从输入端口传入文件目录.");
+	AddProperty<std::wstring>(L"FileRegEx", L"", L"文件名查找正则表达式");
 	AddProperty<bool>(L"RecursiveSearch", false, L"是否搜索子目录文件下的文件");
-	AddProperty<const wchar_t* const>(L"ReferenceRegEx", L"", L"选择参考图像的正则表达式(仅只能获得到一个参考图像).");
+	AddProperty<std::wstring>(L"ReferenceRegEx", L"", L"选择参考图像的正则表达式(仅只能获得到一个参考图像).");
 }
 
 FilesIterator::FilesIterator(const FilesIterator & rhs) : 
@@ -53,7 +53,7 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 			return true;
 		}
 		try{
-			folder_path = variables.Get<const wchar_t * const>(L"FolderPath");
+			folder_path = variables.Get<std::wstring>(L"FolderPath");
 		}catch (VariableException &){}
 
 		//file_regex = variables.Get<const wchar_t * const>(L"FileRegEx");
@@ -63,15 +63,15 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 
 	if (folder_path.empty())
 	{
-		folder_path = GetProperty<const wchar_t* const>(L"FolderPath");
+		folder_path = GetProperty<std::wstring>(L"FolderPath");
 	}
 	if (file_regex.empty())
 	{
-		file_regex = GetProperty<const wchar_t * const>(L"FileRegEx");
+		file_regex = GetProperty<std::wstring>(L"FileRegEx");
 	}
 	if (reference_regex.empty())
 	{
-		reference_regex = GetProperty<const wchar_t * const>(L"ReferenceRegEx");
+		reference_regex = GetProperty<std::wstring>(L"ReferenceRegEx");
 	}
 	is_recursive = GetProperty<bool>(L"RecursiveSearch");
 
@@ -92,7 +92,7 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
  			{
  				VariableSpace variables(data->GetVariables());
  				variables.AddVariable(L"string", L"FilePath", L"Full path of one sub-folder in the current folder");
- 				variables.Set<const wchar_t* const>(L"FilePath", (*iter).c_str());
+ 				variables.Set<std::wstring>(L"FilePath", iter->c_str());
 				variables.AddVariable(L"bool", L"FilesIteratorFinished", L"Iteration finished.");
 				variables.Set(L"FilesIteratorFinished", false);
 
@@ -108,7 +108,7 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
  	{
  		VariableSpace variables(data->GetVariables());
  		variables.AddVariable(L"string", L"FilePath", L"Full path of one sub-folder in the current folder");
- 		variables.Set<const wchar_t * const>(L"FilePath", file_path.c_str());
+ 		variables.Set<std::wstring>(L"FilePath", file_path.c_str());
  		variables.AddVariable(L"bool", L"FilesIteratorFinished", L"Iteration finished.");
  		variables.Set(L"FilesIteratorFinished", false);
  
@@ -186,7 +186,7 @@ void Yap::FilesIterator::GetFiles(std::vector<std::wstring>& folders,
 			LOG_ERROR(L"there is not an valid path!", L"FolderIterator");
 		}
 	}
-	catch (const filesystem_error& ex)
+	catch (const filesystem_error& )
 	{
 		LOG_ERROR(L"boost filesystem read file error", L"FolderIterator");
 	}

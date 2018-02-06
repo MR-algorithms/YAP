@@ -12,8 +12,8 @@ Yap::Radiomics::Radiomics() :
 	AddInput(L"Reference", YAP_ANY_DIMENSION, DataTypeAll);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
 
-	AddProperty<const wchar_t * const>(L"ScriptPath", L"", L"包含Python脚本文件的文件夹。");
-	AddProperty<const wchar_t * const>(L"MethodName", L"", L"脚本文件中需要使用的方法名");
+	AddProperty<std::wstring>(L"ScriptPath", L"", L"包含Python脚本文件的文件夹。");
+	AddProperty<std::wstring>(L"MethodName", L"", L"脚本文件中需要使用的方法名");
 	AddProperty<int>(L"ReturnDataType", DataTypeDouble, L"从Radiomics脚本返回的数据类型");
 }
 
@@ -78,8 +78,8 @@ bool Yap::Radiomics::Input(const wchar_t * port, IData * data)
 void* Yap::Radiomics::PythonRunScript(IData * data, OUT int & output_type, Dimensions& dimensions, 
 	OUT size_t & output_dims, size_t output_size[])
 {
-	auto script = GetProperty<const wchar_t * const>(L"ScriptPath");
-	auto method = GetProperty<const wchar_t * const>(L"MethodName");
+	auto script = GetProperty<std::wstring>(L"ScriptPath").c_str();
+	auto method = GetProperty<std::wstring>(L"MethodName").c_str();
 	auto data_type = data->GetDataType();
 
 	assert(wcslen(script) != 0 && wcslen(method) != 0);
