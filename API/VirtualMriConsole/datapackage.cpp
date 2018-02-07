@@ -83,7 +83,10 @@ void DataPackage::CheckSelf(bool checkHead, bool checkCmdid, bool checkData)
     }
 
     //
-    assert( BytesFromDataitem() == BytesFromHeaditem());
+    if(checkData)
+    {
+        assert( BytesFromDataitem() == BytesFromHeaditem());
+    }
 
 }
 

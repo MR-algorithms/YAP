@@ -16,7 +16,10 @@ void ReconServer::slotDataReceived(QByteArray dataArray, int length)
 void ReconServer::slotDisconnected(int socketDescriptor)
 {
     clientSocket->close();
-    delete clientSocket;
+    //..clientSocket->disconnectFromHost();
+
+    //..clientSocket->waitForDisconnected();
+    //delete clientSocket;
     clientSocket = nullptr;
 }
 
@@ -42,7 +45,7 @@ void ReconServer::incomingConnection(qintptr socketDescriptor)
     connect(clientSocket, &ReconClientSocket::signalDataReceived, this, &ReconServer::slotDataReceived);
 
     clientSocket->setSocketDescriptor(socketDescriptor);
-    this->addPendingConnection(clientSocket);//?
+    //this->addPendingConnection(clientSocket);//?
 }
 
 

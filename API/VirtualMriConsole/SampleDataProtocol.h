@@ -79,7 +79,7 @@ struct SampleDataData
 	uint32_t cmd_id;
 	uint32_t rp_id;
 	uint32_t dim23456_index;
-	uint32_t rec;
+    uint32_t rec;//channel Index;
 	float coeff;
 	std::vector<std::complex<float>> data;
 

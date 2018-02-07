@@ -4,6 +4,8 @@
 #include <complex>
 #include "RawDataReader.h"
 //#include "communicator.h"
+#include "SampleDataProtocol.h"
+
 class Communicator;
 using namespace std;
 
@@ -23,6 +25,7 @@ private:
     int _current_phase_index;
     std::shared_ptr<Communicator> _communicator;
     bool _ended;
+    SampleDataStart _start;
 
 public:
 

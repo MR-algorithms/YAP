@@ -71,7 +71,8 @@ void MainWindow::on_scanButton_clicked()
     float rate = ui->editMaskFile->text().toFloat();
     Scan::Mask::MaskType type = static_cast<Scan::Mask::MaskType>( ui->maskComboBox->currentIndex() );
 
-    //Hardcode: dataPath, channeleCount, phaseCount,
+    //Hardcode: dataPath, channelCount, phaseCount,
+    qDebug()<<"Hard code: dataPath, channelCount, phaseCount";
     auto scantask = Scan::ScantaskGenerator::Create(reference_task, Scan::Mask(rate, type, 256, 4));
 
     qDebug()<<"MainWidow: onScanButton_clicked";

@@ -47,7 +47,8 @@ bool DataManager::RecieveData(DataPackage &package, int cmd_id)
     {
         SampleDataData data;
         MessageProcess::Unpack(package, data);
-        Go(data);
+        InputToPipeline(data);
+        DrawData1D(data);
 
     }
         break;
@@ -67,12 +68,33 @@ bool DataManager::RecieveData(DataPackage &package, int cmd_id)
     return true;
 }
 
+bool DataManager::InputToPipeline(SampleDataData &data)
+{
+    //不断把接收到的数据送入装配号的处理流水线。
+
+    auto output_data = CreateIData1D(data);
+    if(_rt_pipeline)
+        _rt_pipeline->Input(L"Input", output_data.get());
+    return true;
+
+}
 bool DataManager::NewScan(SampleDataStart &start)
 {
-    return true;
+    _sample_start = start;
+    _rt_pipeline = this->CreatePipeline(QString("config//pipelines//realtime_recon.pipeline"));
+
+    if(_rt_pipeline)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+
 }
 
-bool DataManager::Go(SampleDataData &data)
+bool DataManager::DrawData1D(SampleDataData &data)
 {
     try
     {
@@ -80,13 +102,8 @@ bool DataManager::Go(SampleDataData &data)
         constructor.Reset(true);
         constructor.LoadModule(L"BasicRecon.dll");
 
-        constructor.CreateProcessor(L"RecieveData", L"recieve_data");
-
         constructor.CreateProcessor(L"NiuMriDisplay1D", L"Plot1D");
-
-
-        constructor.Link(L"recieve_data", L"Plot1D");
-        constructor.MapInput(L"Input", L"recieve_data", L"Input");
+        constructor.MapInput(L"Input", L"Plot1D", L"Input");
 
         SmartPtr<IProcessor> pipeline = constructor.GetPipeline();
         if (pipeline)
@@ -104,10 +121,7 @@ bool DataManager::Go(SampleDataData &data)
     return true;
 }
 
-bool DataManager::End(SampleDataEnd &end)
-{
-    return true;
-}
+
 bool DataManager::Load(const QString& file_path)
 {
     auto extension = make_lower(file_path.toStdWString().substr(file_path.toStdWString().size() - 4, 4));
@@ -143,23 +157,23 @@ bool DataManager::Load(const QString& file_path)
 bool DataManager::LoadFidRecon(const QString& file_path)
 {
     QFileInfo file_info(file_path);
-    auto file_name = file_info.baseName();
+    //auto file_name = file_info.baseName();
     auto path = file_info.path();
 
-    if (!DoPipeline(file_path, QString("config//pipelines//niumag_recon.pipeline")))
+    if (!ProcessFidfile(file_path, QString("config//pipelines//niumag_recon.pipeline")))
         return false;
 
     return true;
 }
 
 
-bool DataManager::DoPipeline(const QString &file_path, const QString &pipe)
+bool DataManager::ProcessFidfile(const QString &file_path, const QString &pipelineFile)
 {
 
    Yap::PipelineCompiler compiler;
-   auto pipeline = compiler.CompileFile(pipe.toStdWString().c_str());
+   auto pipeline = compiler.CompileFile(pipelineFile.toStdWString().c_str());
 
-    QFileInfo info(pipe);
+    QFileInfo info(pipelineFile);
     if (!pipeline)
     {
         QMessageBox::critical(nullptr, QString("Error"), QString("Error compliling the pipeline: ") + info.baseName());
@@ -181,42 +195,36 @@ bool DataManager::DoPipeline(const QString &file_path, const QString &pipe)
 
 
 }
+//智能指针作为返回值可能有问题。
+Yap::SmartPtr<IProcessor> DataManager::CreatePipeline(const QString& pipelineFile)
+{
 
 
+    Yap::PipelineCompiler compiler;
+    auto pipeline = compiler.CompileFile(pipelineFile.toStdWString().c_str());
+
+    QFileInfo info(pipelineFile);
+    if (!pipeline)
+    {
+        QMessageBox::critical(nullptr, QString("Error"), QString("Error compliling the pipeline: ") + info.baseName());
+        return Yap::SmartPtr<IProcessor>();
+    }
+
+     return pipeline;
+}
 bool DataManager::Demo2D()
 {
-/*
-    RecieveData recieve_data;
-    ModulePhase module_phase;
-    DataTypeConvertor convertor;
-    NiuMriDisplay2D display2d;
 
-    recieve_data->module_phase;
-    module_phase.Module->convertor;
-    convertor.UnsignedShort->display2d;
-
-    self.Input->reader.Input;
-*/
     try
     {
         Yap::PipelineConstructor constructor;
         constructor.Reset(true);
         constructor.LoadModule(L"BasicRecon.dll");
 
-        constructor.CreateProcessor(L"RecieveData", L"recieve_data");
-        constructor.CreateProcessor(L"ModulePhase", L"module_phase");
-
-        constructor.CreateProcessor(L"DataTypeConvertor",L"datatype_convertor");
         constructor.CreateProcessor(L"NiuMriDisplay2D", L"display2D");
 
 
-        //constructor.Link(L"recieve_data", L"module_phase");
-
-        //constructor.Link(L"module_phase", L"Module", L"datatype_convertor", L"Input");
-        //constructor.Link("datatype_convertor", L"UnsignedShort", L"display2D", L"Input");
-
-        constructor.Link(L"recieve_data", L"display2D");
-        constructor.MapInput(L"Input", L"recieve_data", L"Input");
+        constructor.MapInput(L"Input", L"display2D", L"Input");
 
         SmartPtr<IProcessor> pipeline = constructor.GetPipeline();
         if (pipeline)
@@ -304,13 +312,9 @@ bool DataManager::Demo1D()
         constructor.Reset(true);
         constructor.LoadModule(L"BasicRecon.dll");
 
-        constructor.CreateProcessor(L"RecieveData", L"recieve_data");
-
         constructor.CreateProcessor(L"NiuMriDisplay1D", L"Plot1D");
 
-
-        constructor.Link(L"recieve_data", L"Plot1D");
-        constructor.MapInput(L"Input", L"recieve_data", L"Input");
+        constructor.MapInput(L"Input", L"Plot1D", L"Input");
 
         SmartPtr<IProcessor> pipeline = constructor.GetPipeline();
         if (pipeline)
@@ -339,7 +343,7 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData1D()
 
 
     double dw = 4*PI / data_vector2_size;
-    for(unsigned int i = 0; i < data_vector2_size; i ++)
+    for(int i = 0; i < data_vector2_size; i ++)
     {
 
       double temp = data_vector2_size + 10 - i;
@@ -361,6 +365,19 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData1D()
 
 }
 
+
+bool DataManager::End(SampleDataEnd &end)
+{
+    VariableSpace variables;
+    variables.Add(L"bool", L"Finished", L"Iteration finished.");
+    variables.Set(L"Finished", true);
+
+    auto output = DataObject<int>::CreateVariableObject(variables.Variables(), nullptr);
+
+    _rt_pipeline->Input(L"Input", output.get());
+    return true;
+}
+
 Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
 {
 
@@ -368,7 +385,7 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
     int data_size = data.data.size();
     std::complex<float> * data_vector2 = new std::complex<float>[data_size];
 
-    for(unsigned int i = 0; i < data_size; i ++)
+    for(int i = 0; i < data_size; i ++)
     {
       data_vector2[i] = data.data[i];
     }
@@ -378,201 +395,83 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
         (Yap::DimensionPhaseEncoding, 0U, 1)
         (Yap::DimensionSlice, 0U, 1);
 
+
+
+
     auto output_data1 = Yap::YapShared(
                 new Yap::DataObject<std::complex<float>>(nullptr, data_vector2, dimensions, nullptr, nullptr));
+
+    Yap::VariableSpace variables;
+    //IVariableContainer *
+    output_data1.get()->SetVariables(variables.Variables());
+
+    if (output_data1->GetVariables() != nullptr)
+    {
+        VariableSpace variables(output_data1->GetVariables());
+        int channel_mask = _sample_start.channel_mask;
+
+        int slice_count = _sample_start.dim3_size;
+        int phase_count = _sample_start.dim2_size;
+        int freq_count = _sample_start.dim1_size;
+        int dim4 = _sample_start.dim4_size;
+        int dim5 = _sample_start.dim5_size;
+        int dim6 = _sample_start.dim6_size;
+
+        int channel_index = data.rec;
+        int phase_index, slice_index;
+
+        calculate_dimindex(_sample_start, data.dim23456_index, phase_index, slice_index);
+
+        variables.Set(L"Finished", false);
+        variables.Add(L"bool", L"Finished", L"The end of sample data.");
+        variables.Add(L"int",  L"channel_mask", L"channel mask.");
+        variables.Add(L"int",  L"channel_index", L"channel index.");
+        variables.Add(L"int",  L"slice_count", L"slice count.");
+        variables.Add(L"int",  L"slice_index", L"slice index.");
+        variables.Add(L"int",  L"phase_count", L"phase count.");
+        variables.Add(L"int",  L"phase_index", L"phase index.");
+        variables.Add(L"int",  L"freq_count",  L"frequency count.");
+        variables.Add(L"int",  L"dim4",  L"dim4.");
+        variables.Add(L"int",  L"dim5",  L"dim5.");
+        variables.Add(L"int",  L"dim6",  L"dim6.");
+
+
+        variables.Set(L"channel_mask", channel_mask);
+        variables.Set(L"channel_index", channel_index);
+        variables.Set(L"slice_count", slice_count);
+        variables.Set(L"slice_index", slice_index);
+        variables.Set(L"phase_count", phase_count);
+        variables.Set(L"phase_index", phase_index);
+        variables.Set(L"freq_count", freq_count);
+
+
+    }
 
     return output_data1;
 
 }
 
-
-/*
-bool DataManager::ViewPrescan(const std::wstring& pipe)
+void DataManager::calculate_dimindex(SampleDataStart &start, int dim23456_index, int &dim2_index, int &dim3_index)
 {
-    PipelineCompiler compiler;
-    auto pipeline = compiler.CompileFile(pipe.c_str());
 
-    if (!pipeline)
-    {
-        QMessageBox::critical(nullptr, QString("Error"), QString("Error compliling the pipeline."));
-        return false;
-    }
+    int dim2_size = start.dim2_size;
+    int dim3_size = start.dim3_size;
+    int dim4_size = start.dim4_size;
+    int dim5_size = start.dim5_size;
+    int dim6_size = start.dim6_size;
+    int dim23456_size = start.dim23456_size;
 
-    return pipeline->Input(L"Input", nullptr);
+    assert(dim4_size == 1);
+    assert(dim5_size == 1);
+    assert(dim6_size == 1);
+
+    assert( dim2_size * dim3_size == dim23456_size);
+    assert(dim23456_index < dim23456_size);
+
+    dim3_index = dim23456_index / dim2_size;
+    assert(dim3_index < dim3_size);
+
+    dim2_index = dim23456_index - dim3_index * dim2_size;
+
 }
 
-bool DataManager::Save(const QString &raw_data_path, bool save_param)
-{
-    int is_existence = access(raw_data_path.toStdString().c_str(), 0);
-    if (is_existence != 0)
-    {
-        if (mkdir(raw_data_path.toStdString().c_str()) == -1)
-            return false;
-    }
-
-    if (!CheckFiles())
-        return false;
-
-    QFileInfo file_info(raw_data_path);
-    auto file_name = file_info.baseName();
-
-    QString o1_file_path = raw_data_path + "/" + file_name + ".sf";
-    if (!CopyFile(QString("config//TempResults//temp_o1.sf"), o1_file_path))
-        return false;
-
-    QString shimming_file_path = raw_data_path + "/" + file_name + ".shm";
-    if (!CopyFile(QString("config//TempResults//temp_shimming.shm"), shimming_file_path))
-        return false;
-
-    QString rfa_file_path = raw_data_path + "/" + file_name + ".rfa";
-    if (!CopyFile(QString("config//TempResults//temp_rfamp.rfa"), rfa_file_path))
-        return false;
-
-    QString scout_file_path = raw_data_path + "/" + file_name + ".scout";
-    if (!CopyFile(QString("config//TempResults//temp_scout.scout"), scout_file_path))
-        return false;
-
-    QString fid_file_path = raw_data_path + "/" + file_name + ".fid";
-    if (!CopyFile(QString("config//TempResults//temp.fid"), fid_file_path))
-        return false;
-
-    if (save_param)
-    {
-        QString params_file_path = raw_data_path + "/" + file_name + ".scan";
-        if (!CopyFile(QString("config//TempResults//params.scan"), params_file_path))
-            return false;
-    }
-
-    return true;
-}
-
-bool DataManager::ExportJpeg(Yap::SmartPtr<IData> data, const QString &jpeg_path)
-{
-    PipelineCompiler compiler;
-    auto pipeline = compiler.CompileFile(L"config\\pipelines\\ExportJpeg.pipeline");
-
-    if (!pipeline)
-    {
-        QMessageBox::critical(nullptr, QString("Error"), QString("Error compliling the ExportJpeg.pipeline."));
-        return false;
-    }
-
-    auto exporter = pipeline->Find(L"jpeg_exporter");
-    if (exporter == nullptr)
-        return false;
-
-    auto reader_agent = ProcessorAgent(exporter);
-    reader_agent.SetString(L"ExportFolder", jpeg_path.toStdWString().c_str());
-
-    return pipeline->Input(L"Input", data.get());
-}
-
-bool DataManager::SetImage(IData* data)
-{
-    if (!data)
-        return false;
-
-    _images.push_back(make_pair(Yap::YapShared(data), YapShared<IVariableContainer>(nullptr)));
-    return true;
-}
-
-bool DataManager::LoadImage(const std::wstring& file_path)
-{
-    PipelineCompiler compiler;
-    auto pipeline = compiler.CompileFile(L"config\\pipelines\\LoadImage.pipeline");
-
-    if (!pipeline)
-    {
-        QMessageBox::critical(nullptr, QString("Error"), QString("Error compliling the LoadImage.pipeline."));
-        return false;
-    }
-
-    auto reader = pipeline->Find(L"reader");
-    if (reader == nullptr)
-        return false;
-
-    auto reader_agent = ProcessorAgent(reader);
-    reader_agent.SetString(L"DataPath", file_path.c_str());
-
-    return pipeline->Input(L"Input", nullptr);
-}
-
-bool DataManager::LoadNiuImage(const wstring &file_path)
-{
-    PipelineCompiler compiler;
-    auto pipeline = compiler.CompileFile(L"config\\pipelines\\LoadNiuMriImage.pipeline");
-
-    if (!pipeline)
-    {
-        QMessageBox::critical(nullptr, QString("Error"), QString("Error compliling the LoadNiuMriImage.pipeline."));
-        return false;
-    }
-
-    auto reader = pipeline->Find(L"reader");
-    if (reader == nullptr)
-        return false;
-
-    auto reader_agent = ProcessorAgent(reader);
-    reader_agent.SetString(L"DataPath", file_path.c_str());
-
-    return pipeline->Input(L"Input", nullptr);
-}
-
-
-
-
-void DataManager::ToModule(unsigned short * dest,
-                           std::complex<float> *data,
-                           size_t size)
-{
-    vector<float> module(size);
-    for (size_t i = 0; i < size; ++i)
-    {
-        module[i] = abs(data[i]); //sqrt(data[i].real() * data[i].real() + data[i].imag() * data[i].imag());
-    }
-    auto max_iter = max_element(module.begin(), module.end());
-    for (size_t i = 0; i < size; ++i)
-    {
-        dest[i] = (unsigned short)(module[i] / *max_iter * 65535);
-    }
-}
-
-bool DataManager::CheckFiles()
-{
-    QFileInfo o1_info("config//TempResults//temp_o1.sf");
-    QFileInfo shimming_info("config//TempResults//temp_shimming.shm");
-    QFileInfo rfa_info("config//TempResults//temp_rfamp.rfa");
-    QFileInfo scout_info("config//TempResults//temp_scout.scout");
-    QFileInfo fid_info("config//TempResults//temp.fid");
-
-    if (fid_info.lastModified() < o1_info.lastModified() ||
-            fid_info.lastModified() < shimming_info.lastModified() ||
-            fid_info.lastModified() < rfa_info.lastModified() ||
-            fid_info.lastModified() < scout_info.lastModified())
-    {
-        QMessageBox::warning(nullptr, QString("Warning"), QString("Please do prescan and scout before scan!"),
-                             QMessageBox::Yes, QMessageBox::Yes);
-        return false;
-    }
-
-    return true;
-}
-
-bool DataManager::CopyFile(const QString& in_file_path, const QString& out_file_path)
-{
-    QFileInfo in_info(in_file_path);
-    if (!in_info.isFile())
-    {
-        QMessageBox::warning(nullptr, QString("Warning"), QString("No file: ") + in_file_path,
-                             QMessageBox::Yes, QMessageBox::Yes);
-        return false;
-    }
-
-    std::ifstream in(in_file_path.toStdWString(), ios::binary);
-    std::ofstream out(out_file_path.toStdWString(), ios::binary);
-    out << in.rdbuf();
-
-    return true;
-}
-
-*/

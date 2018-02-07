@@ -135,6 +135,26 @@ BOOST_AUTO_TEST_CASE(processors_in_pipeline)
 	processor = pipe->Find(L"zero_filling");
 	CheckProcessor(processor);
 }
+BOOST_AUTO_TEST_CASE(processor_functions)
+{
+	VariableSpace variables;
+	variables.Add(L"bool", L"var1", L"var1.");
+	//variables.Add(L"float", L"var2", L"var2.");
+	variables.Set(L"var1", true);
+	//variables.Set(L"var2", 3.14f);
+	
+	auto data = DataObject<int>::CreateVariableObject(variables.Variables(), nullptr);
+	
+	BOOST_CHECK(data->GetVariables() != nullptr);
+	
+	VariableSpace variables2(data->GetVariables());
+	bool var1 = variables2.Get<bool>(L"var1");
+	//float var2 = variables2.Get<float>(L"var2");
+	
+	BOOST_CHECK(var1 == true);
+	//BOOST_CHECK(var2 == 3.14f);
+
+}
 
 BOOST_AUTO_TEST_CASE(processor_CalcuArea)
 {

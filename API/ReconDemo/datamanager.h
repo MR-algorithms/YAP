@@ -6,8 +6,10 @@
 #include <complex>
 #include "Interface/Interfaces.h"
 #include "DataSample/datapackage.h"
+#include "Interface/IProcessor.h"
 
 namespace Yap{struct IData; }
+
 
 class DataManager
 {
@@ -17,29 +19,28 @@ public:
     bool Demo1D();
     bool Demo2D();
     bool RecieveData(DataPackage &package, int cmd_id);
-/*
 
-    bool ViewPrescan(const std::wstring& pipe);
-
-    bool Save(const QString &raw_data_path, bool save_param = true);
-    bool ExportJpeg(Yap::SmartPtr<Yap::IData> data, const QString &jpeg_path);
-
-    bool SetImage(Yap::IData* data);
-*/
 private:
     DataManager();
     static DataManager s_instance;
+    SampleDataStart _sample_start;
+
+    Yap::SmartPtr<Yap::IProcessor> _rt_pipeline;
+
+    Yap::SmartPtr<Yap::IProcessor> CreatePipeline(const QString& pipelineFile);
 
     bool LoadFidRecon(const QString& file_path);
 
-    bool DoPipeline(const QString& file_path, const QString& pipe);
+    bool ProcessFidfile(const QString& file_path, const QString& pipelineFile);
 
     Yap::SmartPtr<Yap::IData> CreateDemoIData2D();
     Yap::SmartPtr<Yap::IData> CreateDemoIData1D();
     Yap::SmartPtr<Yap::IData> CreateIData1D(SampleDataData &data);
+    void calculate_dimindex(SampleDataStart &start, int dim23456, int &dim2_index, int &dim3_index);
 
     bool NewScan(SampleDataStart &start);
-    bool Go(SampleDataData &data);
+    bool InputToPipeline(SampleDataData &data);
+    bool DrawData1D(SampleDataData &data);
     bool End(SampleDataEnd &end);
 
     /*

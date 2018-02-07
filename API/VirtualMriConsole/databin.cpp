@@ -207,18 +207,20 @@ void Databin::Start(int scan_id, int channel_count)
     start.scan_id = scan_id;
     start.dim1_size = _dataInfo.freq_point_count;
     start.dim2_size = _dataInfo.phase_point_count;
-    start.dim3_size = _dataInfo.slice_count;
+    start.dim3_size = 1;//_dataInfo.slice_count;
     start.dim4_size = _dataInfo.dim4;
     start.dim5_size = _dataInfo.dim5;
     start.dim6_size = _dataInfo.dim6;
 
-    start.channel_mask = AllChannel(channel_count);
+    start.channel_mask = 1;//AllChannel(channel_count);
 
     start.dim23456_size = start.dim2_size
             * start.dim3_size
             * start.dim4_size
             * start.dim5_size
             * start.dim6_size;
+
+    _start = start;
 
     DataPackage dataPackage;
     MessageProcess::Pack(dataPackage, start);
@@ -248,46 +250,50 @@ void Databin::Go()
     int lines_image = _dataInfo.phase_point_count;
     int lines_channel = _dataInfo.phase_point_count * _dataInfo.slice_count;
 
-    //_dataInfo.channel_count
-    //_dataInfo.slice_count
-    for(int channel_index = 0; channel_index < static_cast<int>(1 ); channel_index ++)
+
+    for(int channel_index = 0; channel_index < static_cast<int>(16 ); channel_index ++)
     {
-        for(int image_index = 0; image_index < static_cast<int>(1 ); image_index ++)
+
+        if (_start.channel_mask & (1 << channel_index))
         {
-            //
-            SampleDataData data;
 
-            data.coeff = 3.45f;
-            data.rec   = 45;
-            data.rp_id = 824;
+            for(int image_index = 0; image_index < static_cast<int>(_start.dim3_size ); image_index ++)
+            {
+                //
+                SampleDataData data;
 
-            data.dim23456_index
-                    = channel_index * lines_channel
-                    + image_index   * lines_image
-                    + _current_phase_index;
+                data.coeff = 3.45f;
+                data.rec   = 1;
+                data.rp_id = 824;
 
-            boost::shared_array<complex<float>> aline
-                    = GetRawData(channel_index, image_index, _current_phase_index);
+                data.dim23456_index
+                        = channel_index * lines_channel
+                        + image_index   * lines_image
+                        + _current_phase_index;
 
-            //
-            std::vector<complex<float>> destline;
-            destline.resize(_dataInfo.freq_point_count);
-            memcpy(destline.data(), aline.get(), sizeof(std::complex<float>) * _dataInfo.freq_point_count);
-            //
+                boost::shared_array<complex<float>> aline
+                        = GetRawData(channel_index, image_index, _current_phase_index);
 
-            data.data.resize( _dataInfo.freq_point_count);
+                //
+                std::vector<complex<float>> destline;
+                destline.resize(_dataInfo.freq_point_count);
+                memcpy(destline.data(), aline.get(), sizeof(std::complex<float>) * _dataInfo.freq_point_count);
+                //
 
-            memcpy(data.data.data(), aline.get(), sizeof(std::complex<float>) * _dataInfo.freq_point_count);
+                data.data.resize( _dataInfo.freq_point_count);
 
-            DataPackage dataPackage;
-            MessageProcess::Pack(dataPackage, data);
-            //
-            dataPackage.CheckSelf();
-            SampleDataData data2;
-            MessageProcess::Unpack(dataPackage, data2);
-            assert(data == data2);
-            //
-            _communicator.get()->Send(dataPackage);
+                memcpy(data.data.data(), aline.get(), sizeof(std::complex<float>) * _dataInfo.freq_point_count);
+
+                DataPackage dataPackage;
+                MessageProcess::Pack(dataPackage, data);
+                //
+                dataPackage.CheckSelf();
+                SampleDataData data2;
+                MessageProcess::Unpack(dataPackage, data2);
+                assert(data == data2);
+                //
+                _communicator.get()->Send(dataPackage);
+            }
         }
     }
 
