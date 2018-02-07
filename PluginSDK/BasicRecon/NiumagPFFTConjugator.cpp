@@ -63,7 +63,6 @@ void FftShift(std::complex<float>* data, size_t  width, size_t height)
 Yap::NiumagPFFTConjugator::NiumagPFFTConjugator():
 	ProcessorImpl(L"NiumagPFFTConjugator")
 {
-	LOG_TRACE(L"NiumagPFFTConjugator constructor called.", L"BasicRecon");
 	AddInput(L"Input", 2, DataTypeComplexFloat);
 	AddOutput(L"Output", 2, DataTypeComplexFloat);
 
@@ -73,7 +72,6 @@ Yap::NiumagPFFTConjugator::NiumagPFFTConjugator():
 Yap::NiumagPFFTConjugator::NiumagPFFTConjugator(const NiumagPFFTConjugator& rhs):
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"NiumagPFFTConjugator copy constructor called.", L"BasicRecon");
 }
 
 Yap::NiumagPFFTConjugator::~NiumagPFFTConjugator()

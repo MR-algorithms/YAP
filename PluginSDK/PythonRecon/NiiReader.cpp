@@ -15,18 +15,6 @@
 using namespace std;
 using namespace Yap;
 
-
-std::string NiiReader::ToMbs(const wchar_t * wcs)
-{
-	assert(wcslen(wcs) < 500 && "The string cannot contain more than 500 characters.");
-
-	static char buffer[1024];
-	size_t size;
-	wcstombs_s(&size, buffer, (size_t)1024, wcs, (size_t)1024);
-
-	return std::string(buffer);
-}
-
 NiiReader::NiiReader()
 	: _dimensions{1,1,1,1,1,1,1,1},
 	_dimension_size(0),
@@ -34,10 +22,9 @@ NiiReader::NiiReader()
 	_data_version( 0 ),
 	_current_type(TYPE_UNKNOWN ), ProcessorImpl(L"NiiReader")
 {
-	AddInput(L"Input", 1, DataTypeChar);
+	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeAll);
-	AddProperty<const wchar_t * const>(L"FilePath", L"", L"文件路径");
-	LOG_TRACE(L"NiiReader constructor", L"PythonRecon");
+	AddProperty<wstring>(L"FilePath", L"", L"文件路径");
 }
 
 Yap::NiiReader::NiiReader(const NiiReader& rhs):
@@ -83,15 +70,24 @@ bool Yap::NiiReader::Input(const wchar_t * name, IData * data)
 	if (data != nullptr && data->GetVariables() != nullptr)
 	{
 		VariableSpace variables(data->GetVariables());
-		nii_path = variables.Get<const wchar_t *>(L"FilePath");
+		if (variables.Get<bool>(L"FilesIteratorFinished"))
+		{
+			Feed(L"Output", data);
+			return true;
+		}
+		nii_path = variables.Get<wstring>(L"FilePath");
 	}
 
 	if (nii_path.empty())
 	{
-		nii_path = GetProperty<const wchar_t* const>(L"FilePath");
+		nii_path = GetProperty<wstring>(L"FilePath");
+	}
+	if (nii_path.empty())
+	{
+		return false;
 	}
 
-	auto nii_data = ReadFile("nii_path"); // BUG
+	auto nii_data = ReadFile(nii_path); // BUG
 	if (nii_data == nullptr)
 		return false;
 
@@ -126,7 +122,7 @@ bool Yap::NiiReader::Input(const wchar_t * name, IData * data)
 	switch (_current_type) 
 	{
 	case Yap::TYPE_BOOL:
-	{	
+	{
 		auto out_data = CreateData<bool>(nullptr, reinterpret_cast<bool*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
 		break;
@@ -210,11 +206,11 @@ bool Yap::NiiReader::Input(const wchar_t * name, IData * data)
 	return true;
 }
 
-void* NiiReader::ReadFile(std::string nii_path)
+void* NiiReader::ReadFile(std::wstring nii_path)
 {
-	string path = nii_path;
+	wstring path = nii_path;
 	auto suffix = path.substr(path.length() - 4, 4);
-	if (strcmp(suffix.c_str(), ".nii"))
+	if (wcscmp(suffix.c_str(), L".nii"))
 		return nullptr;
 
 	void * data = nullptr;
@@ -647,4 +643,14 @@ void * NiiReader::LoadData(ifstream & file, size_t byte_count, size_t data_size)
 		}
 		return data;
 	}
+}
+
+void NiiReader::NotifyIterationFinished(IData * data)
+{
+	VariableSpace variables(data->GetVariables());
+	variables.AddVariable(L"bool", L"NiiReaderFinished", L"finished.");
+	variables.Set(L"FilesIteratorFinished", true);
+
+	auto output = DataObject<int>::CreateVariableObject(variables.Variables(), _module.get());
+	Feed(L"Output", output.get());
 }

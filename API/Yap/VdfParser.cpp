@@ -14,8 +14,7 @@ using namespace Yap;
 using namespace std;
 
 VdfParser::VdfParser() :
-	_preprocessor{make_shared<Preprocessor>(PreprocessVariableDefinition)},
-	_variables{shared_ptr<VariableSpace>()}
+	_preprocessor{make_shared<Preprocessor>(PreprocessVariableDefinition)}
 {
 }
 
@@ -52,9 +51,14 @@ shared_ptr<VariableSpace> VdfParser::DoCompile(std::wistream& input)
 
 	if (!_variables)
 	{
-		_variables = shared_ptr<VariableSpace>(new VariableSpace());
+		_variables = make_shared<VariableSpace>();
 	}
-	_variables->Reset();
+	else
+	{
+		_variables->Reset();
+	}
+	_types = _variables->GetTypes();
+	_types->Reset();
 
 	try
 	{
@@ -72,7 +76,7 @@ shared_ptr<VariableSpace> VdfParser::DoCompile(std::wistream& input)
 			<< ": Error code " << e.GetErrorNumber()
 			<< " " << e.GetErrorMessage();
 
-        wstring erorr_messge = output.str();
+		wstring erorr_messge = output.str();
 		wcerr << output.str();
 	}
 
@@ -93,21 +97,21 @@ bool VdfParser::ProcessStatement(Tokens& tokens)
 	{
 		switch (tokens.GetCurrentToken().type)
 		{
-        case TokenKeywordBool:
-        case TokenKeywordInt:
-        case TokenKeywordFloat:
-        case TokenKeywordString:
+		case TokenKeywordBool:
+		case TokenKeywordInt:
+		case TokenKeywordFloat:
+		case TokenKeywordString:
 			ProcessSimpleDeclaration(tokens);
 			break;
-        case TokenId:
-            ProcessSimpleDeclaration(tokens);
-            break;
-        case TokenKeywordArray:
-            ProcessArrayDeclaration(tokens, *_variables);
-            break;
-        case TokenKeywordStruct:
-            ProcessStructDeclaration(tokens);
-            break;
+		case TokenId:
+			ProcessSimpleDeclaration(tokens);
+			break;
+		case TokenKeywordArray:
+			ProcessArrayDeclaration(tokens, *_variables);
+			break;
+		case TokenKeywordStruct:
+			ProcessStructDeclaration(tokens);
+			break;
 		case TokenKeywordEnum:
 			ProcessEnumDeclaration(tokens);
 			break;
@@ -117,9 +121,9 @@ bool VdfParser::ProcessStatement(Tokens& tokens)
 		case TokenKeywordUsing:
 			ProcessUsing(tokens);
 			break;
-        case TokenSemiColon:
-            tokens.FinishProcessingStatement();
-            break;
+		case TokenSemiColon:
+			tokens.FinishProcessingStatement();
+			break;
 		case TokenRightBrace:
 			// This function maybe called when the processing iterator is pointing to 
 			// the beginning of a tokens, which maybe hosted in a namespace.
@@ -132,9 +136,9 @@ bool VdfParser::ProcessStatement(Tokens& tokens)
 			}
 			else
 				return true;
-        default:
+		default:
 			throw(CompileError(tokens.GetCurrentToken(),
-                  CompileErrorTypeExpected, L"Expected one of float, int, string, bool, array, struct."));
+				  CompileErrorTypeExpected, L"Expected one of float, int, string, bool, array, struct."));
 		}
 	}
 
@@ -171,14 +175,14 @@ bool VdfParser::ProcessUsing(Tokens& tokens)
 
 bool VdfParser::ProcessSimpleDeclaration(Tokens& tokens)
 {
-    assert(_variables);
+	assert(_variables);
 
 	auto type = tokens.GetCurrentToken().type;
-    auto type_id = tokens.GetCurrentToken().text;
+	auto type_id = tokens.GetCurrentToken().text;
 
 	assert(type == TokenKeywordFloat || type == TokenKeywordInt ||
-           type == TokenKeywordBool || type == TokenKeywordString ||
-           type == TokenId);
+		   type == TokenKeywordBool || type == TokenKeywordString ||
+		   type == TokenId);
 
 	tokens.Next();
 	auto id = tokens.GetId();
@@ -186,7 +190,13 @@ bool VdfParser::ProcessSimpleDeclaration(Tokens& tokens)
 
 	if (!tokens.IsTokenOfType(TokenSharp, true))
 	{
-        _variables->Add(fq_type_id.c_str(), GetFqId(id.c_str()).c_str(), L"");
+		auto variable = _types->CreateInstance(fq_type_id.c_str(), GetFqId(id.c_str()).c_str());
+		if (variable == nullptr)
+		{
+			throw CompileError(tokens.GetCurrentToken(), CompileErrorTypeNotFound,
+				L"Failed to create variable instance.");
+		}
+		_variables->Add(variable);
 	}
 	else
 	{
@@ -202,8 +212,13 @@ bool VdfParser::ProcessSimpleDeclaration(Tokens& tokens)
 			wostringstream output;
 			output << id << i;
 			wstring variable_id = GetFqId(output.str().c_str());
-			
-            _variables->Add(fq_type_id.c_str(), variable_id.c_str(), L"");
+			auto variable = _types->CreateInstance(fq_type_id.c_str(), variable_id.c_str());
+			if (variable == nullptr)
+			{
+				throw CompileError(tokens.GetCurrentToken(), CompileErrorTypeNotFound,
+					L"Failed to create variable instance.");
+			}
+			_variables->Add(variable);
 		}
 	}
 	tokens.AssertToken(TokenSemiColon, true);
@@ -213,7 +228,7 @@ bool VdfParser::ProcessSimpleDeclaration(Tokens& tokens)
 
 bool VdfParser::IdExists(const wchar_t * const id, bool is_type_id) const
 {
-	return is_type_id ? _variables->TypeExists(id) : _variables->VariableExists(id);
+	return is_type_id ? _types->TypeExists(id) : _variables->VariableExists(id);
 }
 
 /**
@@ -316,15 +331,15 @@ std::wstring VdfParser::GetFqId(const wchar_t * const id) const
 	return (_current_namespace.empty()) ? id : (_current_namespace + L"::" + id);
 }
 
-bool VdfParser::ProcessArrayDeclaration(Tokens& tokens, VariableSpace& variables)
+bool VdfParser::ProcessArrayDeclaration(Tokens& tokens, VariableTable& variables)
 {
-    static map<TokenType, int> token_to_array_property{
-        {TokenKeywordFloat, VariableFloatArray},
-        {TokenKeywordInt, VariableIntArray},
-        {TokenKeywordString, VariableStringArray},
-        {TokenKeywordBool, VariableBoolArray},
+	static map<TokenType, int> token_to_array_property{
+		{TokenKeywordFloat, VariableFloatArray},
+		{TokenKeywordInt, VariableIntArray},
+		{TokenKeywordString, VariableStringArray},
+		{TokenKeywordBool, VariableBoolArray},
 		{TokenId, VariableStructArray},
-    };
+	};
 
 	tokens.AssertToken(TokenKeywordArray, true);
 	tokens.AssertToken(TokenLessThan, true);
@@ -344,7 +359,13 @@ bool VdfParser::ProcessArrayDeclaration(Tokens& tokens, VariableSpace& variables
 
 	if (!tokens.IsTokenOfType(TokenSharp, true))
 	{
-		variables.AddArray(fq_type_id.c_str(), id.c_str(), L"");
+		auto variable = _types->CreateArray(fq_type_id.c_str(), id.c_str(), 1);
+		if (variable == nullptr)
+		{
+			throw CompileError(tokens.GetCurrentToken(), CompileErrorInvalidArrayType,
+				wstring(L"Failed to create array."));
+		}
+		variables.Add(variable);
 	}
 	else
 	{
@@ -360,9 +381,17 @@ bool VdfParser::ProcessArrayDeclaration(Tokens& tokens, VariableSpace& variables
 			output << id << i;
 			auto variable_id = (&variables == _variables.get()) ?
 				GetFqId(output.str().c_str()) : output.str();
-			variables.AddArray(fq_type_id.c_str(), variable_id.c_str(), L"");
+
+			auto variable = _types->CreateArray(fq_type_id.c_str(), variable_id.c_str(), 1);
+			if (variable == nullptr)
+			{
+				throw CompileError(tokens.GetCurrentToken(), CompileErrorInvalidArrayType,
+					wstring(L"Failed to create array."));
+			}
+			variables.Add(variable);
 		}
 	}
+
 	tokens.AssertToken(TokenSemiColon, true);
 
 	return true;
@@ -391,23 +420,23 @@ bool VdfParser::ProcessEnumDeclaration(Tokens& tokens)
 
 bool VdfParser::ProcessStructDeclaration(Tokens& tokens)
 {
-    tokens.AssertToken(TokenKeywordStruct, true);
-    auto struct_id = GetFqId(tokens.GetId().c_str());
+	tokens.AssertToken(TokenKeywordStruct, true);
+	auto struct_id = GetFqId(tokens.GetId().c_str());
 
-    tokens.AssertToken(TokenLeftBrace, true);
+	tokens.AssertToken(TokenLeftBrace, true);
 
-    VariableSpace struct_variables;
+	VariableTable struct_variables;
 	static std::set<TokenType> s_allowed_types = {
 		TokenKeywordBool, TokenKeywordFloat, TokenKeywordInt, TokenKeywordString,
 		TokenKeywordArray, TokenId };
-    do
-    {
-        auto& type_token = tokens.GetCurrentToken();
-        if (s_allowed_types.find(type_token.type) == s_allowed_types.end())
-        {
-            throw(CompileError(type_token, CompileErrorTypeExpected,
-                               L"Expected either one of float, int, string, bool, array, or a struct name."));
-        }
+	do
+	{
+		auto& type_token = tokens.GetCurrentToken();
+		if (s_allowed_types.find(type_token.type) == s_allowed_types.end())
+		{
+			throw(CompileError(type_token, CompileErrorTypeExpected,
+							   L"Expected either one of float, int, string, bool, array, or a struct name."));
+		}
 
 		if (type_token.type == TokenKeywordArray)
 		{
@@ -418,7 +447,7 @@ bool VdfParser::ProcessStructDeclaration(Tokens& tokens)
 			auto type_id = ResolveFqId(type_token.text.c_str(), true, tokens);
 			if (type_token.type == TokenId)
 			{
-				if (!_variables->TypeExists(type_id.c_str()))
+				if (!_types->TypeExists(type_id.c_str()))
 					throw CompileError(type_token, CompileErrorTypeNotFound, L"Type not found.");
 
 				if (type_token.text == struct_id)
@@ -433,25 +462,23 @@ bool VdfParser::ProcessStructDeclaration(Tokens& tokens)
 				throw CompileError(type_token, CompileErrorMemeberExists, L"Duplicated struct member ids.");
 
 
-			auto prototype = _variables->GetType(type_id.c_str());
-			if (prototype == nullptr)
-				throw CompileError(type_token, CompileErrorTypeNotFound, L"Type not found.");
+			auto type_manager = _variables->GetTypes();
+			assert(type_manager);
 
-			auto member = dynamic_cast<IVariable*>(prototype->Clone());
+			auto member = type_manager->CreateInstance(type_id.c_str(), member_token.text.c_str());
 			assert(member != nullptr);
-			member->SetId(member_token.text.c_str());
 			struct_variables.Add(member);
 
 			tokens.Next();
 			tokens.AssertToken(TokenSemiColon, true);
 		}
-    } while (!tokens.IsTokenOfType(TokenRightBrace, false));
+	} while (!tokens.IsTokenOfType(TokenRightBrace, false));
 
 	tokens.Next();
 	tokens.AssertToken(TokenSemiColon, true);
 
-    _variables->AddType(struct_id.c_str(), struct_variables.Variables());
+	_types->AddType(struct_id.c_str(), struct_variables.Variables());
 
-    return true;
+	return true;
 }
 

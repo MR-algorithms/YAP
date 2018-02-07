@@ -152,7 +152,7 @@ namespace Yap {
 
 		std::pair<void *, Nii_v2_FileHeaderInfo*> ReadNiiV2(const wchar_t * file_path);
 
-		virtual void * ReadFile(std::string file_path);
+		virtual void * ReadFile(std::wstring file_path);
 
 		virtual int * GetDimensions();
 
@@ -176,7 +176,7 @@ namespace Yap {
 		template<typename T>
 		void * LoadData(std::ifstream & file, size_t byte_count, size_t data_size);
 
-		std::string ToMbs(const wchar_t * wcs);
+		void NotifyIterationFinished(IData * data);
 
 		int _dimensions[8];
 		int _dimension_size;

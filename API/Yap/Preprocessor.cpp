@@ -89,7 +89,7 @@ void Tokens::Next()
 
 	if (_iter == _tokens.end())
 	{
-		throw (CompileError(*_iter, CompileErrorUnexpectedEndOfStatement, L"Unexpected end of statement."));
+		throw (CompileError(*(--_iter), CompileErrorUnexpectedEndOfStatement, L"Unexpected end of statement after token."));
 	}
 }
 
@@ -104,7 +104,7 @@ void Tokens::AssertToken(TokenType type, bool move_next)
 {
 	if (_iter == _tokens.end())
 	{
-		throw (CompileError(*_iter, CompileErrorUnexpectedEndOfStatement, L"Unexpected end of statement."));
+		throw (CompileError(*(--_iter), CompileErrorUnexpectedEndOfStatement, L"Unexpected end of statement after token."));
 	}
 
 	if ((_iter->type != type) &&
@@ -131,7 +131,7 @@ bool Tokens::IsNextTokenOfType(TokenType type)
 {
 	if (_iter == _tokens.end())
 	{
-		throw (CompileError(*_iter, CompileErrorUnexpectedEndOfStatement, L"Unexpected end of file."));
+		throw (CompileError(*(--_iter), CompileErrorUnexpectedEndOfStatement, L"Unexpected end of file after token."));
 	}
 
 	return (((_iter + 1)->type == type) ||
@@ -247,7 +247,7 @@ std::wstring Tokens::GetParamId()
 }
 
 /** Try to extract namespace qualifier from the statement and move to next token.
-    The final double colon is extracted from the statement but not included in the 
+	The final double colon is extracted from the statement but not included in the 
 	return value.
 */
 std::wstring Yap::Tokens::GetNamespaceQualifier()
@@ -718,7 +718,7 @@ int Yap::Preprocessor::CheckBraceMatching(wchar_t c, int line_number, int pos)
 		case ']':
 		case '}':
 		{
-            Token token = MakeToken(line_number, pos, 1, token_type_from_char[c]);
+			Token token = MakeToken(line_number, pos, 1, token_type_from_char[c]);
 			if (_matching_check.empty())
 			{
 				throw CompileError(token, CompileErrorNoMatchingLeftBracket, 

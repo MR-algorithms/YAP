@@ -174,3 +174,5 @@ float MIN_DURATION;
 int selected_sequence;
 float SW_MHz;
 
+// metadata SEMinTE
+

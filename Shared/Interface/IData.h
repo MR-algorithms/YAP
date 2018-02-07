@@ -34,6 +34,7 @@ namespace Yap
 	const int DataTypeBool = 0x00000400;			///< bool (1 bytes)
 	const int DataTypeLongLong = 0x00000800;		///< long long (8 bytes) == int64_t
 	const int DataTypeUnsignedLongLong = 0x00001000;///< unsigned long long (8 bytes) == uint64_t
+	const int DataTypeVoid = 0x00002000;			///< !!!Attention: void type use carefully for no type information in data.
 	const int DataTypeAll = 0xFFFFFFFF;				///< all types accepted
 
 	/**
@@ -59,6 +60,7 @@ namespace Yap
 	template <> struct data_type_id<bool> { static const int type = DataTypeBool; };
 	template <> struct data_type_id<long long> { static const int type = DataTypeLongLong; };
 	template <> struct data_type_id<unsigned long long> { static const int type = DataTypeUnsignedLongLong; };
+	template <> struct data_type_id<void> { static const int type = DataTypeVoid; };
 	/** @} */
 
 

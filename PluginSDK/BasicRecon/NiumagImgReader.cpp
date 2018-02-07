@@ -35,17 +35,15 @@ namespace Yap
 NiumagImgReader::NiumagImgReader():
 	ProcessorImpl(L"NiumagImgReader")
 {
-	LOG_TRACE(L"NiumagImgReader constructor called.", L"BasicRecon");
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
 
-	AddProperty<const wchar_t * const>(L"DataPath", L"",  L"数据文件夹和文件名。");
+	AddProperty<std::wstring>(L"DataPath", L"",  L"数据文件夹和文件名。");
 }
 
 Yap::NiumagImgReader::NiumagImgReader(const NiumagImgReader& rhs):
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"NiumagImgReader copy constructor called.", L"BasicRecon");
 }
 
 NiumagImgReader::~NiumagImgReader()
@@ -65,7 +63,7 @@ bool Yap::NiumagImgReader::Input(const wchar_t * name, IData * data)
 
 bool Yap::NiumagImgReader::ReadNiumagImgData()
 {
-	std::wostringstream output(GetProperty<const wchar_t * const>(L"DataPath"));
+	std::wostringstream output(GetProperty<wstring>(L"DataPath"));
 	wstring data_path = output.str();
 
 	try

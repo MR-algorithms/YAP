@@ -16,7 +16,6 @@
 #include "Yap/VdfParser.h"
 #include "Implement/LogImpl.h"
 #include "Implement/LogUserImpl.h"
-#include <log4cplus/initializer.h>
 #include "Yap/ModuleManager.h"
 
 using namespace std;
@@ -155,8 +154,8 @@ bool VdfParserTest()
 	variable_manager->Set<int>(L"TD", 256);
 	auto v4 = variable_manager->Get<int>(L"TD");
 
-	variable_manager->Set<const wchar_t* const>(L"Sequence", L"FID1");
-	auto v5 = variable_manager->Get<const wchar_t * const>(L"Sequence");
+	variable_manager->Set<std::wstring>(L"Sequence", L"FID1");
+	auto v5 = variable_manager->Get<wstring>(L"Sequence");
 
 	variable_manager->ResizeArray(L"VDL1", 5);
 	variable_manager->Set<double>(L"VDL1[0]", 1.0);
@@ -182,7 +181,6 @@ bool VdfParserTest()
 
 int main()
 {
-
 	auto complex_slices = std::shared_ptr<std::complex<float>>(new std::complex<float>[10]);
 
 	complex_slices.get()[0].imag(1.2f);
@@ -195,15 +193,10 @@ int main()
 
 	memcpy(test2, test, sizeof(std::complex<float>) *10);
 	
-
-
-
-	log4cplus::Initializer initializer;
-
 	time_t start = clock();
 
 //	ConstructorTest();
-  PipelineTest();
+	PipelineTest();
 //	VdfParserTest();
 //	FFT3DTest();
 //	PartialFFTTest();

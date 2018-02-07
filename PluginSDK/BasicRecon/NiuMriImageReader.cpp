@@ -35,17 +35,15 @@ namespace Yap
 NiuMriImageReader::NiuMriImageReader(void) :
 	ProcessorImpl(L"NiuMriImageReader")
 {
-	LOG_TRACE(L"NiuMriImageReader constructor called.", L"BasicRecon");
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeUnsignedShort);
 
-	AddProperty<const wchar_t * const>(L"DataPath", L"", L"数据文件夹和文件名。");
+	AddProperty<std::wstring>(L"DataPath", L"", L"数据文件夹和文件名。");
 }
 
 Yap::NiuMriImageReader::NiuMriImageReader(const NiuMriImageReader& rhs) :
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"NiuMriImageReader copy constructor called.", L"BasicRecon");
 }
 
 Yap::NiuMriImageReader::~NiuMriImageReader()
@@ -65,7 +63,7 @@ bool Yap::NiuMriImageReader::Input(const wchar_t * name, IData * data)
 
 bool Yap::NiuMriImageReader::ReadNiuMriImageData()
 {
-	std::wostringstream output(GetProperty<const wchar_t * const>(L"DataPath"));
+	std::wostringstream output(GetProperty<wstring>(L"DataPath"));
 	wstring data_path = output.str();
 
 	try

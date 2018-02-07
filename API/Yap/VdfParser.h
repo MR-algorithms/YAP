@@ -15,6 +15,7 @@ namespace Yap
 {
 	class VariableSpace;
 	class NamespaceManager;
+	class TypeManager;
 
 	/// Variable definition file.
 	class VdfParser
@@ -32,7 +33,7 @@ namespace Yap
 		bool ProcessStatement(Tokens& tokens);
 		bool ProcessSimpleDeclaration(Tokens& tokens);
 		bool ProcessEnumDeclaration(Tokens& tokens);
-		bool ProcessArrayDeclaration(Tokens& tokens, VariableSpace& variables);
+		bool ProcessArrayDeclaration(Tokens& tokens, VariableTable& variables);
 		bool ProcessStructDeclaration(Tokens& tokens);
 		bool ProcessNamespace(Tokens& tokens);
 		bool ProcessUsing(Tokens& tokens);
@@ -45,6 +46,7 @@ namespace Yap
 
 		std::shared_ptr<Preprocessor> _preprocessor;
 		std::shared_ptr<VariableSpace> _variables;
+		std::shared_ptr<TypeManager> _types;
 
 		std::wstring _current_namespace;
 		std::set <std::wstring> _namespace_in_use;

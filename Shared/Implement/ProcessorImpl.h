@@ -91,9 +91,15 @@ namespace Yap
 		bool Feed(const wchar_t * name, IData * data);
 
 		template <typename T>
-		bool AddProperty(const wchar_t * property_id, T value, const wchar_t * description)
+		bool AddProperty(const wchar_t * property_id, typename variable_type_id<T>::set_type value, const wchar_t * description)
 		{
-			if (_properties->Add(variable_type_id<T>::type_id, property_id, description))
+			static_assert(std::is_same<T, int>::value ||
+				std::is_same<T, double>::value ||
+				std::is_same<T, bool>::value ||
+				std::is_same<T, std::wstring>::value,
+				"You can only use one of the following types: int, double, bool, std::wstring");
+
+			if (_properties->AddVariable(variable_type_id<T>::type_id, property_id, description))
 			{
 				_properties->Set<T>(property_id, value);
 				return true;

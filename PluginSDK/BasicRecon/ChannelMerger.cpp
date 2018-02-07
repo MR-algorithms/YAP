@@ -11,7 +11,6 @@ using namespace std;
 ChannelMerger::ChannelMerger(void) :
 	ProcessorImpl(L"ChannelMerger")
 {
-	LOG_TRACE(L"ChannelMerger constructor called.", L"BasicRecon");
 	AddOutput(L"Output", 2, DataTypeFloat);
 	AddInput(L"Input", 2, DataTypeFloat);
 
@@ -22,7 +21,6 @@ ChannelMerger::ChannelMerger(void) :
 ChannelMerger::ChannelMerger( const ChannelMerger& rhs )
 	: ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"ChannelMerger copy constructor called.", L"BasicRecon");
 }
 
 ChannelMerger::~ChannelMerger(void)

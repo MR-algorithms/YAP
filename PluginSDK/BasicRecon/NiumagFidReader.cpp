@@ -31,17 +31,15 @@ namespace Yap
 NiumagFidReader::NiumagFidReader(void):
 	ProcessorImpl(L"NiumagFidReader")
 {
-	LOG_TRACE(L"NiumagFidReader constructor called.", L"BasicRecon");
 	AddInput(L"Input", 0, DataTypeUnknown);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
-	AddProperty<const wchar_t * const>(L"DataPath", L"", L"数据文件夹和文件名。");
+	AddProperty<std::wstring>(L"DataPath", L"", L"数据文件夹和文件名。");
 }
 
 NiumagFidReader::NiumagFidReader(const NiumagFidReader& rhs):
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"NiumagFidReader copy constructor called.", L"BasicRecon");
 }
 
 NiumagFidReader::~NiumagFidReader()
@@ -61,7 +59,7 @@ bool Yap::NiumagFidReader::Input(const wchar_t * name, IData * data)
 
 bool Yap::NiumagFidReader::ReadNiumagFidData()
 {
-	std::wostringstream output(GetProperty<const wchar_t * const>(L"DataPath"));
+	std::wostringstream output(GetProperty<wstring>(L"DataPath"));
 	wstring data_path = output.str();
 
 	try

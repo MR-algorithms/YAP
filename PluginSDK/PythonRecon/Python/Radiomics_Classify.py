@@ -10,13 +10,15 @@ from sklearn.svm import SVR, SVC
 from sklearn.model_selection import StratifiedKFold
 import time
 
-# def isNum(value):
-#     try:
-#         value +1
-#     except TypeError:
-#         return False
-#     else:
-#         return True
+
+def isNum(value):
+    try:
+        value +1
+    except TypeError:
+        return False
+    else:
+        return True
+
 
 def ExtractFeaturesByPath(file_path):
     bk_train = xlrd.open_workbook(file_path)
@@ -52,6 +54,7 @@ def ExtractFeaturesByPath(file_path):
 training_data, training_label = ExtractFeaturesByPath(r'D:\RadiomicsProject\new new data train all features .xlsx')
 validation_data, validation_label = ExtractFeaturesByPath(r'D:\RadiomicsProject\new new data val all features .xlsx')
 
+
 def MaxMinNormalization(data):
     for i in range(data.shape[1]):
          for j in range(data.shape[0]):
@@ -68,6 +71,7 @@ def Z_normalization(data):
             new_data[j][i] = (data[j][i]-mu[i])/sigma[i]
     new_data = np.nan_to_num(new_data)
     return new_data
+
 
 training_data = Z_normalization(training_data)
 validation_data = Z_normalization(validation_data)
@@ -134,7 +138,8 @@ validation_data = Z_normalization(validation_data)
 # print('train accuracy2: %f' % (np.mean(label_train == clf2.predict(new_data_train))))
 # print('test accuracy2: %f' % (np.mean(label_test == clf2.predict(new_data_test))))
 
-#REF-Val
+
+# REF-Val
 start = time.time()
 svc = SVC()
 rfecv = RFECV(estimator=svc, step=1, cv=StratifiedKFold(2), scoring="accuracy", verbose=1)

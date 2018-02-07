@@ -9,7 +9,6 @@ using namespace Yap;
 Yap::LinesSelector::LinesSelector():
 	ProcessorImpl(L"LinesSelector")
 {
-	LOG_TRACE(L"LinesSelector constructor called.", L"BasicRecon");
 	AddInput(L"Input", 2, DataTypeComplexFloat);
 	AddOutput(L"Output", 2, DataTypeComplexFloat);
 
@@ -20,7 +19,6 @@ Yap::LinesSelector::LinesSelector():
 Yap::LinesSelector::LinesSelector(const LinesSelector& rhs):
 	ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"LinesSelector copy constructor called.", L"BasicRecon");
 }
 
 Yap::LinesSelector::~LinesSelector()

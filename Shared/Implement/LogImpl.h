@@ -4,8 +4,14 @@
 
 #include "Interface/Interfaces.h"
 
+#define USE_LOG4CPLUS_V1
+
 #include <map>
 #include <vector>
+
+#ifndef USE_LOG4CPLUS_V1
+#include <log4cplus/initializer.h>
+#endif 
 
 namespace log4cplus { class Logger; }
 
@@ -21,13 +27,15 @@ namespace Yap
 		virtual void AddUser(ILogUser * user) override;
 		virtual void RemoveUser(ILogUser * user) override;
 
-		static LogImpl& GetInstance();
 
+		static LogImpl& GetInstance();
 	protected:
 		LogImpl();
 		static bool Init();
 		static std::shared_ptr<LogImpl> s_instance;
-
+#ifndef USE_LOG4CPLUS_V1
+		log4cplus::Initializer initializer;
+#endif
 		std::map<std::wstring, log4cplus::Logger> _loggers;
 		std::vector<ILogUser*> _users;
 	};

@@ -15,7 +15,6 @@ SamplingMaskCreator::SamplingMaskCreator():
 	_try_count(10),
 	_tolerance(3)
 {
-	LOG_TRACE(L"SamplingMaskCreator constructor called.", L"BasicRecon");
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeFloat);
 
@@ -33,11 +32,9 @@ SamplingMaskCreator::SamplingMaskCreator():
 SamplingMaskCreator::SamplingMaskCreator(const SamplingMaskCreator& rhs)
 	:ProcessorImpl(rhs)
 {
-	LOG_TRACE(L"SampleingMaskCreator copy constructor called.", L"BasicRecon");
 }
 SamplingMaskCreator::~SamplingMaskCreator()
 {
-	LOG_TRACE(L"SampleingMaskCreator destructor called.", L"BasicRecon");
 }
 
 bool Yap::SamplingMaskCreator::Input(const wchar_t * port, IData * data)

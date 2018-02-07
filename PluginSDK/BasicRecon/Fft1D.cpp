@@ -18,7 +18,6 @@ Fft1D::Fft1D() :
 	_plan_inverse(false),
 	_plan_in_place(false)
 {
-	LOG_TRACE(L"Fft1D constructor called.", L"BasicRecon");
 	AddProperty<bool>(L"Inverse", false, L"The direction of FFT1D.");
 	AddProperty<bool>(L"InPlace", true, L"The position of FFT1D.");
 
@@ -33,7 +32,6 @@ Fft1D::Fft1D(const Fft1D& rhs)
 	_plan_inverse(rhs._plan_inverse),
 	_plan_in_place(rhs._plan_in_place)
 {
-	LOG_TRACE(L"Fft1D copy constructor called.", L"BasicRecon");
 }
 
 Fft1D::~Fft1D()

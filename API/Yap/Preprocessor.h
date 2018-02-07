@@ -135,6 +135,7 @@ namespace Yap
     const int CompileErrorNestStruct                = 1038;
     const int CompileErrorMemeberExists             = 1039;
 	const int CompileErrorAmbiguousId               = 1040;
+	const int CompileErrorInvalidArrayType			= 1041;
 
 	class CompileError
 	{
