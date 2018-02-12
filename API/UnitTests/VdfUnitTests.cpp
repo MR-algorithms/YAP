@@ -252,3 +252,45 @@ BOOST_AUTO_TEST_CASE(vdf_test_array_of_struct)
 
 	arr->FromString(L"[{\"a\" : 0.1, \"b\" : 0.2}]");
 }
+
+BOOST_AUTO_TEST_CASE(vdf_test_system_params)
+{
+	VdfParser parser;
+	auto variables = parser.CompileFile(L"sysParams_yap.txt");
+
+	variables->Set<double>(L"Rotation.GReadX", 7.77);
+	BOOST_CHECK_EQUAL(variables->Get<double>(L"Rotation.GReadX"), 7.77);
+
+	variables->Set<double>(L"Gx.A1", 1.00);
+	BOOST_CHECK_EQUAL(variables->Get<double>(L"Gx.A1"), 1.00);
+
+	variables->Set<bool>(L"Form", false);
+	BOOST_CHECK_EQUAL(variables->Get<bool>(L"Form"), false);
+
+	variables->Set<int>(L"TD", 256);
+	BOOST_CHECK_EQUAL(variables->Get<int>(L"TD"), 256);
+
+	variables->Set<std::wstring>(L"Sequence", L"FID1");
+	BOOST_TEST(variables->Get<std::wstring>(L"Sequence").c_str() == L"FID1");
+
+	variables->ResizeArray(L"VDL1", 5);
+	variables->Set<double>(L"VDL1[0]", 1.0);
+	variables->Set<double>(L"VDL1[1]", 2.0);
+	BOOST_CHECK_EQUAL(variables->Get<double>(L"VDL1[0]"), 1.0);
+	BOOST_CHECK_EQUAL(variables->Get<double>(L"VDL1[1]"), 2.0);
+	BOOST_CHECK_EQUAL(variables->GetArrayWithSize<double>(L"VDL1").second, 5);
+
+	variables->ResizeArray(L"GradMatrixList", 7);
+	variables->Set<double>(L"GradMatrixList[0].GReadX", 1.00);
+	variables->Set<double>(L"GradMatrixList[1].GReadX", 2.00);
+	BOOST_CHECK_EQUAL(variables->Get<double>(L"GradMatrixList[0].GReadX"), 1.0);
+	BOOST_CHECK_EQUAL(variables->Get<double>(L"GradMatrixList[1].GReadX"), 2.0);
+	BOOST_TEST(variables->GetArraySize(L"GradMatrixList") == (size_t)7);
+
+	// 错误的参数输入测试
+	//	variable_manager->Set<int>(L"abc", 4); // 无此变量名
+	//	auto v = variable_manager->Get<int>(L"abc"); // 无此变量名
+	//	variable_manager->Set<double>(L"TD", 6); // 名字和类型不匹配
+	//	variable_manager->Set<double>(L"VDL1[6]", 6.0); // 数组越界
+	//	auto v = variable_manager->Get<double>(L"VDL1[6]"); // 数组越界
+}

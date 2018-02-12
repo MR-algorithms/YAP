@@ -19,7 +19,7 @@ namespace Yap
 	{
 	public:
 		ScanFileParser();
-		~ScanFileParser();
+		~ScanFileParser() = default;
 
 		void SetVariableSpace(std::shared_ptr<VariableSpace> variables);
 		std::shared_ptr<VariableSpace> GetVariableSpace();

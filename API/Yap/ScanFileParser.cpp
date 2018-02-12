@@ -13,14 +13,10 @@ using namespace Yap;
 using namespace std;
 
 ScanFileParser::ScanFileParser() :
-	_preprocessor {	make_shared<Preprocessor>(PreprocessScan)},
-	_variables{ make_shared<VariableSpace>() }
-{}
-
-
-ScanFileParser::~ScanFileParser()
+	_preprocessor {	make_shared<Preprocessor>(PreprocessScan)}
 {
 }
+
 
 void ScanFileParser::SetVariableSpace(std::shared_ptr<VariableSpace> variables)
 {
@@ -75,32 +71,31 @@ bool ScanFileParser::Process()
 		statement.Next();
 
 		if (statement.GetCurrentToken().type == TokenOperatorDot)
-        {// struct
+		{// struct
 			statement.Next();
 			auto member_type = statement.GetCurrentToken().type;
 			auto member_id = statement.GetCurrentToken().text;
-            assert(member_type == TokenId);
+			assert(member_type == TokenId);
 			statement.Next();
 
 			variable_id = variable_id + L"." + member_id;
-        }
-        else if (statement.GetCurrentToken().type == TokenDoubleColon)
-        {// namespace
-            statement.Next();
-            variable_id = variable_id + wstring(L"::") + statement.GetCurrentToken().text;
-            statement.Next();
+		}
+		else if (statement.GetCurrentToken().type == TokenDoubleColon)
+		{// namespace
+			statement.Next();
+			variable_id = variable_id + wstring(L"::") + statement.GetCurrentToken().text;
+			statement.Next();
 
 			if (statement.GetCurrentToken().type == TokenOperatorDot)
 			{
 				statement.Next();
-				auto member_type = statement.GetCurrentToken().type;
+				assert(statement.GetCurrentToken().type == TokenId);
 				auto member_id = statement.GetCurrentToken().text;
-				assert(member_type == TokenId);
 				statement.Next();
 
 				variable_id = variable_id + L"." + member_id;
 			}
-        }
+		}
 
 		statement.AssertToken(TokenOperatorAssign, true);
 		wstring value_string;

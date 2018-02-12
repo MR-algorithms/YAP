@@ -137,48 +137,6 @@ bool PartialFFTTest()
 	return false;
 }
 
-bool VdfParserTest()
-{
-	VdfParser parser;
-	auto variable_manager = parser.CompileFile(L"sysParams_yap.txt");
-
-	variable_manager->Set<double>(L"Rotation.GReadX", 7.77);
-	auto v1 = variable_manager->Get<double>(L"Rotation.GReadX");
-
-	variable_manager->Set<double>(L"Gx.A1", 1.00);
-	auto v2 = variable_manager->Get<double>(L"Gx.A1");
-
-	variable_manager->Set<bool>(L"Form", false);
-	auto v3 = variable_manager->Get<bool>(L"Form");
-
-	variable_manager->Set<int>(L"TD", 256);
-	auto v4 = variable_manager->Get<int>(L"TD");
-
-	variable_manager->Set<std::wstring>(L"Sequence", L"FID1");
-	auto v5 = variable_manager->Get<wstring>(L"Sequence");
-
-	variable_manager->ResizeArray(L"VDL1", 5);
-	variable_manager->Set<double>(L"VDL1[0]", 1.0);
-	variable_manager->Set<double>(L"VDL1[1]", 2.0);
-	auto v6 = variable_manager->Get<double>(L"VDL1[1]");
-	auto vdl1 = variable_manager->GetArrayWithSize<double>(L"VDL1");
-
-	variable_manager->ResizeArray(L"GradMatrixList", 7);
-	variable_manager->Set<double>(L"GradMatrixList[1].GReadX", 1.00);
-	variable_manager->Set<double>(L"GradMatrixList[2].GReadX", 2.00);
-	auto v7 = variable_manager->Get<double>(L"GradMatrixList[1].GReadX");
-	auto gml = variable_manager->GetArrayWithSize<double>(L"GradMatrixList");
-
-	// 错误的参数输入测试
-//	variable_manager->Set<int>(L"abc", 4); // 无此变量名
-//	auto v = variable_manager->Get<int>(L"abc"); // 无此变量名
-//	variable_manager->Set<double>(L"TD", 6); // 名字和类型不匹配
-//	variable_manager->Set<double>(L"VDL1[6]", 6.0); // 数组越界
-//	auto v = variable_manager->Get<double>(L"VDL1[6]"); // 数组越界
-
-	return variable_manager.get() != nullptr;
-}
-
 int main()
 {
 	auto complex_slices = std::shared_ptr<std::complex<float>>(new std::complex<float>[10]);
@@ -197,7 +155,6 @@ int main()
 
 //	ConstructorTest();
 	PipelineTest();
-//	VdfParserTest();
 //	FFT3DTest();
 //	PartialFFTTest();
 
