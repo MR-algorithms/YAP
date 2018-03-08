@@ -124,7 +124,7 @@ namespace Yap {
 		size_t GetArraySize(const wchar_t * id);
 
 		template<typename T>
-		std::pair<T*, size_t> GetArrayWithSize(const wchar_t * id)
+		std::pair<T*, size_t> GetRawArray(const wchar_t * id)
 		{
 			auto array = GetVariable(id, variable_type_id<T>::array_type_id);
 			if (array == nullptr)

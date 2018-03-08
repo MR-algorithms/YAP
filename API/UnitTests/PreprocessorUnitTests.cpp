@@ -5,6 +5,10 @@
 #define BOOST_TEST_MODULE MyTest
 #include <boost/test/unit_test.hpp>
 
+
+using namespace boost::unit_test::decorator;
+namespace tt = boost::test_tools;
+
 #include "Yap/Preprocessor.h"
 
 using namespace Yap;
@@ -78,7 +82,7 @@ BOOST_AUTO_TEST_CASE(preprocessor_test)
 	auto tokens = GetTokens(L"test = 3.14");
 	BOOST_CHECK(tokens.GetVariableId() == L"test");
 	tokens.AssertToken(TokenOperatorAssign, true);
-	BOOST_CHECK(tokens.GetLiteralValue() == L"3.14");
+	BOOST_TEST(tokens.GetLiteralValue().c_str() == L"3.14");
 
 	tokens = GetTokens(L"name = \"test\";");
 	BOOST_CHECK(tokens.GetVariableId() == L"name");
