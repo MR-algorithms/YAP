@@ -73,7 +73,7 @@
     <OutDir>$(YAP_ROOT)\Lib\</OutDir>
     <TargetName>$(ProjectName)d</TargetName>
     <IncludePath>$(PYTHON_ROOT)\include;$(IncludePath);$(PYTHON_ROOT)\envs\tensorflow\include;$(PYTHON_ROOT)\Lib\site-packages\numpy\core\include</IncludePath>
-    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;C:\Program Files (x86)\BCGSoft\BCGControlBarPro\bin;D:\ThirdParty\boost\lib32-msvc-14.0;D:\ThirdParty\LEADTOOLS 15\Lib\API\Win32;D:\ThirdParty\log4cplus\Lib\Win32;D:\ThirdParty\SQUIRREL\lib;C:\Program Files %28x86%29\Microsoft DirectX SDK\Lib\x86;C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.10150.0\ucrt\x86;$(WindowsSDK_LibraryPath_x86);D:\ThirdParty\Fftw\fftw-3.3.4-dll32;D:\ThirdParty\Armadillo\Lib;C:\Program Files %28x86%29\Microsoft SDKs\Windows\v7.1A\Lib;$(PYTHON_ROOT)\envs\tensorflow\include;$(PYTHON_ROOT)\Lib\site-packages\numpy\core\include</LibraryPath>
+    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;C:\Program Files (x86)\BCGSoft\BCGControlBarPro\bin;D:\ThirdParty\boost\lib32-msvc-14.0;D:\ThirdParty\LEADTOOLS 15\Lib\API\Win32;D:\ThirdParty\log4cplus-1.2.1\Lib\Win32;D:\ThirdParty\SQUIRREL\lib;C:\Program Files %28x86%29\Microsoft DirectX SDK\Lib\x86;C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.10150.0\ucrt\x86;$(WindowsSDK_LibraryPath_x86);D:\ThirdParty\Fftw\fftw-3.3.4-dll32;D:\ThirdParty\Armadillo\Lib;C:\Program Files %28x86%29\Microsoft SDKs\Windows\v7.1A\Lib;$(PYTHON_ROOT)\envs\tensorflow\include;$(PYTHON_ROOT)\Lib\site-packages\numpy\core\include</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(YAP_ROOT)\Lib\</OutDir>

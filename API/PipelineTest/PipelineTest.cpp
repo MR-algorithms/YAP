@@ -17,6 +17,7 @@
 #include "Implement/LogImpl.h"
 #include "Implement/LogUserImpl.h"
 #include "Yap/ModuleManager.h"
+#include "Yap/ProcessorAgent.h"
 
 using namespace std;
 using namespace Yap;
@@ -87,7 +88,19 @@ void PipelineTest()
 
 	{
 		PipelineCompiler compiler;
-		auto pipeline = compiler.CompileFile(L"Pipelines\\Radiomics_test.pipeline");
+		//auto pipeline = compiler.CompileFile(L"Pipelines\\Radiomics_test.pipeline");
+		auto pipeline = compiler.CompileFile(L"Pipelines\\test2.pipeline");
+		//xhb
+		
+		auto reader = pipeline->Find(L"reader");
+
+		if (reader != nullptr)
+		{
+			auto reader_agent = ProcessorAgent(reader);
+			reader_agent.SetString(L"DataPath", L"D:\\test_data\\RawData_256\\RawData");
+		}
+		
+		//end of xhb
 		if (pipeline.get() == nullptr)
 		{
 			return;

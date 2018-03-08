@@ -38,9 +38,11 @@ private:
     Yap::SmartPtr<Yap::IData> CreateIData1D(SampleDataData &data);
     void calculate_dimindex(SampleDataStart &start, int dim23456, int &dim2_index, int &dim3_index);
 
-    bool NewScan(SampleDataStart &start);
-    bool InputToPipeline(SampleDataData &data);
-    bool DrawData1D(SampleDataData &data);
+    bool Pineline2DforNewScan(SampleDataStart &start);
+    bool Pipeline1DforNewScan(SampleDataStart &start);
+
+    bool InputToPipeline2D(SampleDataData &data);
+    bool InputToPipeline1D(SampleDataData &data);
     bool End(SampleDataEnd &end);
 
     /*

@@ -81,7 +81,7 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
     Databin databin;
     databin.GetCommunicator().get()->SetRemoteHost(scantask.ip_address.c_str(), scantask.port);
     bool succeed = databin.GetCommunicator().get()->Connect();
-    succeed = true;
+    succeed = true;//hard code. set true for debugging.
     if(!succeed)
     {
         promiseObj.set_value(false);

@@ -72,7 +72,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(YAP_ROOT)\$(Platform)\$(Configuration)\</OutDir>
-    <LibraryPath>$(YAP_ROOT)\$(Platform)\$(Configuration);D:\ThirdParty\log4cplus-2.0.0-rc1\lib;D:\ThirdParty\boost_1_61_0\lib64-msvc-14.0;D:\ThirdParty\FFTW-64\lib;$(PYTHON_ROOT)\libs;D:\ThirdParty\Armadillo\Armadillo-7200.2\lib_debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(YAP_ROOT)\$(Platform)\$(Configuration);D:\ThirdParty\log4cplus-1.2.1\Lib;D:\ThirdParty\boost_1_61_0\lib64-msvc-14.0;D:\ThirdParty\FFTW-64\lib;$(PYTHON_ROOT)\libs;D:\ThirdParty\Armadillo\Armadillo-7200.2\lib_debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -104,6 +104,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>Yapd.lib;Clientd.lib;Implementd.lib;PythonEngined.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win32_MTd.lib;lapack_win32_MTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(YAP_ROOT)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

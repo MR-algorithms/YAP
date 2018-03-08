@@ -39,7 +39,8 @@ bool DataManager::RecieveData(DataPackage &package, int cmd_id)
     {
         SampleDataStart start;
         MessageProcess::Unpack(package, start);
-        NewScan(start);
+        //Pipeline2DforNewScan(start);
+        Pipeline1DforNewScan(start);
 
     }
         break;
@@ -47,8 +48,8 @@ bool DataManager::RecieveData(DataPackage &package, int cmd_id)
     {
         SampleDataData data;
         MessageProcess::Unpack(package, data);
-        InputToPipeline(data);
-        DrawData1D(data);
+        //InputToPipeline2D(data);
+        InputToPipeline1D(data);
 
     }
         break;
@@ -68,17 +69,12 @@ bool DataManager::RecieveData(DataPackage &package, int cmd_id)
     return true;
 }
 
-bool DataManager::InputToPipeline(SampleDataData &data)
+bool DataManager::Pipeline1DforNewScan(SampleDataStart &start)
 {
-    //不断把接收到的数据送入装配号的处理流水线。
-
-    auto output_data = CreateIData1D(data);
-    if(_rt_pipeline)
-        _rt_pipeline->Input(L"Input", output_data.get());
+    _sample_start = start;
     return true;
-
 }
-bool DataManager::NewScan(SampleDataStart &start)
+bool DataManager::Pineline2DforNewScan(SampleDataStart &start)
 {
     _sample_start = start;
     _rt_pipeline = this->CreatePipeline(QString("config//pipelines//realtime_recon.pipeline"));
@@ -94,7 +90,7 @@ bool DataManager::NewScan(SampleDataStart &start)
 
 }
 
-bool DataManager::DrawData1D(SampleDataData &data)
+bool DataManager::InputToPipeline1D(SampleDataData &data)
 {
     try
     {
@@ -121,6 +117,17 @@ bool DataManager::DrawData1D(SampleDataData &data)
     return true;
 }
 
+
+bool DataManager::InputToPipeline2D(SampleDataData &data)
+{
+    //Put the recieved data into the pipeline.
+
+    auto output_data = CreateIData1D(data);
+    if(_rt_pipeline)
+        _rt_pipeline->Input(L"Input", output_data.get());
+    return true;
+
+}
 
 bool DataManager::Load(const QString& file_path)
 {
@@ -368,8 +375,8 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData1D()
 
 bool DataManager::End(SampleDataEnd &end)
 {
-    VariableSpace variables;
-    variables.Add(L"bool", L"Finished", L"Iteration finished.");
+    Yap::VariableSpace variables;
+    variables.AddVariable(L"bool", L"Finished", L"Iteration finished.");
     variables.Set(L"Finished", true);
 
     auto output = DataObject<int>::CreateVariableObject(variables.Variables(), nullptr);
@@ -422,18 +429,19 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
 
         calculate_dimindex(_sample_start, data.dim23456_index, phase_index, slice_index);
 
+        /*
         variables.Set(L"Finished", false);
-        variables.Add(L"bool", L"Finished", L"The end of sample data.");
-        variables.Add(L"int",  L"channel_mask", L"channel mask.");
-        variables.Add(L"int",  L"channel_index", L"channel index.");
-        variables.Add(L"int",  L"slice_count", L"slice count.");
-        variables.Add(L"int",  L"slice_index", L"slice index.");
-        variables.Add(L"int",  L"phase_count", L"phase count.");
-        variables.Add(L"int",  L"phase_index", L"phase index.");
-        variables.Add(L"int",  L"freq_count",  L"frequency count.");
-        variables.Add(L"int",  L"dim4",  L"dim4.");
-        variables.Add(L"int",  L"dim5",  L"dim5.");
-        variables.Add(L"int",  L"dim6",  L"dim6.");
+        variables.AddVariable(L"bool", L"Finished", L"The end of sample data.");
+        variables.AddVariable(L"int",  L"channel_mask", L"channel mask.");
+        variables.AddVariable(L"int",  L"channel_index", L"channel index.");
+        variables.AddVariable(L"int",  L"slice_count", L"slice count.");
+        variables.AddVariable(L"int",  L"slice_index", L"slice index.");
+        variables.AddVariable(L"int",  L"phase_count", L"phase count.");
+        variables.AddVariable(L"int",  L"phase_index", L"phase index.");
+        variables.AddVariable(L"int",  L"freq_count",  L"frequency count.");
+        variables.AddVariable(L"int",  L"dim4",  L"dim4.");
+        variables.AddVariable(L"int",  L"dim5",  L"dim5.");
+        variables.AddVariable(L"int",  L"dim6",  L"dim6.");
 
 
         variables.Set(L"channel_mask", channel_mask);
@@ -443,7 +451,7 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
         variables.Set(L"phase_count", phase_count);
         variables.Set(L"phase_index", phase_index);
         variables.Set(L"freq_count", freq_count);
-
+*/
 
     }
 
