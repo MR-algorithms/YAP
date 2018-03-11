@@ -307,8 +307,8 @@ template <typename TYPE>
 SmartPtr<TYPE> YapClone(TYPE * object)
 {
 	assert(object != nullptr);
-	assert(dynamic<IClonable*>(object) != nullptr && "The object must implement IClonable.");
-	assert(dynamic<ISharedObject*>(object) != nullptr && "The object must implement ISharedObject.");
+	assert(dynamic_cast<IClonable*>(object) != nullptr && "The object must implement IClonable.");
+	assert(dynamic_cast<ISharedObject*>(object) != nullptr && "The object must implement ISharedObject.");
 }
 
 }; // namespace YAP
