@@ -25,6 +25,8 @@ namespace Yap
 		std::shared_ptr<VariableSpace> GetVariableSpace();
 
 		bool Load(const wchar_t * scan_file_path);
+		bool Compile(const wchar_t * text);
+
 	protected:
 		bool Process();
 		bool ProcessAssignment();

@@ -18,9 +18,9 @@ ScanFileParser::ScanFileParser() :
 {}
 
 
-ScanFileParser::~ScanFileParser()
-{
-}
+// ScanFileParser::~ScanFileParser()
+// {
+// }
 
 void ScanFileParser::SetVariableSpace(std::shared_ptr<VariableSpace> variables)
 {
@@ -57,6 +57,24 @@ bool ScanFileParser::Load(const wchar_t * scan_file_path)
 
 	// return _preprocessor->Preprocess(scan_file) && Process();
 	return _preprocessor->Preprocess(scan_file) && ProcessAssignment();
+}
+
+bool ScanFileParser::Compile(const wchar_t * text)
+{
+	try
+	{
+		if (!_preprocessor)
+		{
+			_preprocessor = make_shared<Preprocessor>(PreprocessScan);
+		}
+	}
+	catch (bad_alloc&)
+	{
+		return false;
+	}
+
+	// return _preprocessor->Preprocess(scan_file) && Process();
+	return _preprocessor->Preprocess(text) && ProcessAssignment();
 }
 
 bool ScanFileParser::OperatorAssignment(IVariable* variable, Tokens& tokens)
@@ -97,33 +115,40 @@ bool ScanFileParser::ProcessSimpleAssignment(const wchar_t* variable_id, Tokens&
 
 bool ScanFileParser::ProcessStructAssignment(const wchar_t* variable_id, Tokens& tokens)
 {
-	tokens.AssertToken(TokenOperatorDot, true);
-	assert(tokens.GetCurrentToken().type == TokenId);
-	wstring variable_id_str = variable_id + wstring(L".") + tokens.GetCurrentToken().text;
-	auto type = _variables->GetVariable(variable_id_str.c_str())->GetType();
-	tokens.Next();
-	switch (type)
+	if (tokens.GetCurrentToken().type == TokenOperatorAssign)
 	{
-	case VariableBool:
-	case VariableInt:
-	case VariableFloat:
-	case VariableString:
-		ProcessSimpleAssignment(variable_id_str.c_str(), tokens);
-		break;
-	case VariableStruct:
-		ProcessStructAssignment(variable_id_str.c_str(), tokens);
-		break;
-	case VariableIntArray:
-	case VariableFloatArray:
-	case VariableStringArray:
-		ProcessArrayAssignment(variable_id_str.c_str(), tokens);
-		break;
-	default:
-		throw(CompileError(tokens.GetCurrentToken(),
-			CompileErrorTypeExpected, L"Expected one of float, int, string, bool, array, struct."));
-		break;
+		return OperatorAssignment(_variables->GetVariable(variable_id), tokens);
 	}
-	return true;
+	else
+	{
+		tokens.AssertToken(TokenOperatorDot, true);
+		assert(tokens.GetCurrentToken().type == TokenId);
+		wstring variable_id_str = variable_id + wstring(L".") + tokens.GetCurrentToken().text;
+		auto type = _variables->GetVariable(variable_id_str.c_str())->GetType();
+		tokens.Next();
+		switch (type)
+		{
+		case VariableBool:
+		case VariableInt:
+		case VariableFloat:
+		case VariableString:
+			ProcessSimpleAssignment(variable_id_str.c_str(), tokens);
+			break;
+		case VariableStruct:
+			ProcessStructAssignment(variable_id_str.c_str(), tokens);
+			break;
+		case VariableIntArray:
+		case VariableFloatArray:
+		case VariableStringArray:
+			ProcessArrayAssignment(variable_id_str.c_str(), tokens);
+			break;
+		default:
+			throw(CompileError(tokens.GetCurrentToken(),
+				CompileErrorTypeExpected, L"Expected one of float, int, string, bool, array, struct."));
+			break;
+		}
+		return true;
+	}
 }
 
 bool ScanFileParser::ProcessArrayResizeOperator(const wchar_t* variable_id, Tokens& tokens)
@@ -188,6 +213,13 @@ bool ScanFileParser::ProcessArrayElementAssignment(const wchar_t* variable_id, T
 	assert(variable != nullptr);
 	tokens.Next();
 	wstring variable_id_str = variable_id + wstring(L"[") + tokens.GetCurrentToken().text + wstring(L"]");
+	
+	size_t index = (size_t)std::stoi(tokens.GetCurrentToken().text);
+	if (index >= _variables->GetArraySize(variable_id))
+	{
+		_variables->ResizeArray(variable_id, index + 1);
+	}
+	
 	tokens.Next();
 	tokens.AssertToken(TokenRightSquareBracket, true);
 	switch (variable->GetType())
@@ -210,18 +242,24 @@ bool ScanFileParser::ProcessArrayElementAssignment(const wchar_t* variable_id, T
 	return true;
 }
 
-// 支持所有元素赋初值,仅限简单类型 scanarray = {0， 1， 2， 3， }
+// 支持所有元素赋初值,仅限简单类型 scanarray = [0, 1, 2, 3]
 bool ScanFileParser::ProcessAllSimpleArrayElementAssighment(const wchar_t* variable_id, Tokens& tokens)
 {
 	auto variable = _variables->GetVariable(variable_id);
 	assert(variable != nullptr);
 	tokens.AssertToken(TokenOperatorAssign, true);
-	tokens.AssertToken(TokenLeftBrace, true);
+	tokens.AssertToken(TokenLeftSquareBracket, true);
+
 	unsigned int index = 0;
 	while (tokens.GetCurrentToken().type != TokenSemiColon)
 	{
+		if (index >= _variables->GetArraySize(variable_id))
+		{
+			_variables->ResizeArray(variable_id, index + 1);
+		}
+
 		wstring value_string;
-		while (tokens.GetCurrentToken().type != TokenComma || tokens.GetCurrentToken().type != TokenRightBrace)
+		while (tokens.GetCurrentToken().type != TokenComma && tokens.GetCurrentToken().type != TokenRightSquareBracket)
 		{
 			if (tokens.GetCurrentToken().type == TokenStringLiteral)
 			{
@@ -314,6 +352,7 @@ bool ScanFileParser::ProcessAssignment()
 		case VariableInt:
 		case VariableFloat:
 		case VariableString:
+		case VariableStructArray:
 			ProcessSimpleAssignment(variable_id.c_str(), tokens);
 			break;
 		case VariableStruct:
@@ -323,7 +362,6 @@ bool ScanFileParser::ProcessAssignment()
 		case VariableFloatArray:
 		case VariableStringArray:
 		case VariableBoolArray:
-		case VariableStructArray:
 			ProcessArrayAssignment(variable_id.c_str(), tokens);
 			break;
 		default:

@@ -278,7 +278,7 @@ BOOST_AUTO_TEST_CASE(vdf_test_system_params)
 	variables->Set<double>(L"VDL1[1]", 2.0);
 	BOOST_CHECK_EQUAL(variables->Get<double>(L"VDL1[0]"), 1.0);
 	BOOST_CHECK_EQUAL(variables->Get<double>(L"VDL1[1]"), 2.0);
-	BOOST_CHECK_EQUAL(variables->GetArrayWithSize<double>(L"VDL1").second, 5);
+	BOOST_CHECK_EQUAL(variables->GetRawArray<double>(L"VDL1").second, 5);
 
 	variables->ResizeArray(L"GradMatrixList", 7);
 	variables->Set<double>(L"GradMatrixList[0].GReadX", 1.00);
