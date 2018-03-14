@@ -33,6 +33,7 @@ namespace Yap
 		bool ProcessSimpleAssignment(const wchar_t* variable_id, Tokens& tokens);
 		bool ProcessStructAssignment(const wchar_t* variable_id, Tokens& tokens);
 		bool ProcessArrayAssignment(const wchar_t* variable_id, Tokens& tokens);
+		bool ProcessStructArrayAssignment(const wchar_t* variable_id, Tokens& tokens);
 		bool ProcessArrayResizeOperator(const wchar_t* variable_id, Tokens& tokens);
 		bool ProcessArrayElementAssignment(const wchar_t* variable_id, Tokens& tokens);
 		bool ProcessSimpleArrayElementAssignment(const wchar_t* variable_id, int type, Tokens& tokens);

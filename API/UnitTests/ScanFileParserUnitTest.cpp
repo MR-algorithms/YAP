@@ -100,10 +100,22 @@ BOOST_AUTO_TEST_CASE(sfp_test_basic)
 // 	BOOST_CHECK(variables->Get<bool>(L"ba[2]") == true);
 
 	variables = CompileSF(
-		L"st = {\"si\" : 1, \"sf\" : 1.1};");
+		L"st = {\"si\" : 1, \"sf\" : 1.1};"
+		L"st.ss = \"abc\";");
 	BOOST_CHECK(variables != nullptr);
+	BOOST_CHECK(variables->Get<int>(L"st.si") == 1);
+	BOOST_CHECK(variables->Get<double>(L"st.sf") == 1.1);
+	BOOST_CHECK(variables->Get<wstring>(L"st.ss") == wstring(L"abc"));
 
 	variables = CompileSF(
-		L"sta = [{\"si\" : 1, \"sf\" : 1.1}];");
+		L"sta = [{\"si\" : 1, \"sf\" : 1.1}];"
+		L"sta[0].ss = \"abc\";"
+		L"sta.resize(2);"
+		L"sta[1] = {\"si\" : 2, \"sf\" : 2.2};");
 	BOOST_CHECK(variables != nullptr);
+	BOOST_CHECK(variables->Get<int>(L"sta[0].si") == 1);
+	BOOST_CHECK(variables->Get<double>(L"sta[0].sf") == 1.1);
+	BOOST_CHECK(variables->Get<wstring>(L"sta[0].ss") == wstring(L"abc"));
+	BOOST_CHECK(variables->Get<int>(L"sta[1].si") == 2);
+	BOOST_CHECK(variables->Get<double>(L"sta[1].sf") == 2.2);
 }

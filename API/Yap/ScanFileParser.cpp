@@ -352,7 +352,6 @@ bool ScanFileParser::ProcessAssignment()
 		case VariableInt:
 		case VariableFloat:
 		case VariableString:
-		case VariableStructArray:
 			ProcessSimpleAssignment(variable_id.c_str(), tokens);
 			break;
 		case VariableStruct:
@@ -364,6 +363,9 @@ bool ScanFileParser::ProcessAssignment()
 		case VariableBoolArray:
 			ProcessArrayAssignment(variable_id.c_str(), tokens);
 			break;
+		case VariableStructArray:
+			ProcessStructArrayAssignment(variable_id.c_str(), tokens);
+			break;
 		default:
 			throw(CompileError(tokens.GetCurrentToken(),
 				CompileErrorTypeExpected, L"Expected one of float, int, string, bool, array, struct."));
@@ -371,6 +373,28 @@ bool ScanFileParser::ProcessAssignment()
 		}
 	}
 	return true;
+}
+
+bool Yap::ScanFileParser::ProcessStructArrayAssignment(const wchar_t* variable_id, Tokens& tokens)
+{
+	auto variable = _variables->GetVariable(variable_id);
+	if (variable == nullptr)
+	{
+		return false;
+	}
+
+	if (tokens.GetCurrentToken().type == TokenOperatorDot) // 支持设置array大小
+	{
+		return ProcessArrayResizeOperator(variable_id, tokens);
+	}
+	else if (tokens.GetCurrentToken().type == TokenLeftSquareBracket) // 支持设置某个元素的值*[0];
+	{
+		return ProcessArrayElementAssignment(variable_id, tokens);
+	}
+	else
+	{
+		return ProcessStructAssignment(variable_id, tokens);
+	}
 }
 
 bool ScanFileParser::Process()
