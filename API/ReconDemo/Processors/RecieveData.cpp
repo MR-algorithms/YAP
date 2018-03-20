@@ -11,6 +11,7 @@ RecieveData::RecieveData() : ProcessorImpl(L"RecieveData"),_data(nullptr)
 
     AddInput(L"Input",   YAP_ANY_DIMENSION, DataTypeFloat | DataTypeComplexFloat);
     AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeFloat | DataTypeComplexFloat);
+    //_datav.clear();
     TestWhatcanbeTested();
 }
 
@@ -38,6 +39,7 @@ void RecieveData::TestWhatcanbeTested()
 }
 bool RecieveData::Input(const wchar_t * port, IData *data)
 {
+
     if (wstring(port) != L"Input")
         return false;
 
@@ -45,24 +47,30 @@ bool RecieveData::Input(const wchar_t * port, IData *data)
     if(!IsFinished(data))
     {
         if(_data.get() == nullptr)
+        //if(_datav.size() == 0)
         {
             InitScanData(data);
+            InsertPhasedata(data);
         }
         else
         {
             InsertPhasedata(data);
         }
 
-        auto output = CreateOutData();
+        CreateOutData();
 
-        return Feed(L"Output", output.get());
+
 
     }
     else
     {
-        return Feed(L"Output", data);
+        //return Feed(L"Output", data);
+        //_datav.clear();
+
+        _data.reset();
     }
 
+    return true;
 
 }
 
@@ -88,6 +96,7 @@ bool RecieveData::IsFinished(Yap::IData *data)
      VariableSpace variables(data->GetVariables());
 
      if(_data.get() == nullptr)
+     //if(_datav.size() == 0)
      {
          _dataInfo.freq_count = variables.Get<int>(L"freq_count");
          _dataInfo.phase_count = variables.Get<int>(L"phase_count");
@@ -96,11 +105,13 @@ bool RecieveData::IsFinished(Yap::IData *data)
          _dataInfo.dim5 = variables.Get<int>(L"dim5");
          _dataInfo.dim6 = variables.Get<int>(L"dim6");
          _dataInfo.channel_mask = variables.Get<int>(L"channel_mask");
-         _dataInfo.channel_index = variables.Get<int>(L"channel_index");
 
           int channel_count = GetChannelCountInMask(_dataInfo.channel_mask);
+
+          int temp = _dataInfo.freq_count * _dataInfo.phase_count * _dataInfo.slice_count * channel_count;
          _data = std::shared_ptr< std::complex<float> >(
                      new std::complex<float>[_dataInfo.freq_count * _dataInfo.phase_count * _dataInfo.slice_count * channel_count]);
+         //_datav.resize(_dataInfo.freq_count * _dataInfo.phase_count * _dataInfo.slice_count * channel_count);
 
      }
      return true;
@@ -155,6 +166,8 @@ int RecieveData::GetChannelCountInMask(unsigned int channelMask)
 bool RecieveData::InsertPhasedata(Yap::IData *data)
 {
 
+
+
     assert(data->GetVariables() != nullptr);
 
     VariableSpace variables(data->GetVariables());
@@ -168,50 +181,89 @@ bool RecieveData::InsertPhasedata(Yap::IData *data)
     DataHelper input_data(data);
     assert(input_data.GetActualDimensionCount() == 1);
     assert(_dataInfo.freq_count == input_data.GetWidth() );
+    assert(input_data.GetDataType() == DataTypeComplexFloat);
 
+    auto phase_data = GetDataArray<std::complex<float>>(data);
+    auto temp1 = LookintoPtr(phase_data, 256, 0, 256);
 
-    auto phase_data = std::shared_ptr< std::complex<float>> (
-                                      GetDataArray<std::complex<float>>(data) );
-    InsertPhasedata(phase_data.get(), channelIndexInMask, slice_index, phase_index);
+    auto temp2 = LookintoPtr(_data.get(), 65536, 0, 512);
+    InsertPhasedata(phase_data, channelIndexInMask, slice_index, phase_index);
+    auto temp3 = LookintoPtr(_data.get(), 65536, 0, 512);
 
     return true;
+
+
 }
 bool RecieveData::InsertPhasedata(std::complex<float> *data, int channel_index, int slice_index, int phase_index)
 {
     int freqCount  = _dataInfo.freq_count;
     int phaseCount = _dataInfo.phase_count;
     int sliceCount = _dataInfo.slice_count;
-    int channelCount = GetChannelCountInMask(_dataInfo.channel_mask);
 
     int channelSize = freqCount * phaseCount * sliceCount;
     int sliceSize = freqCount * phaseCount;
 
-    memcpy(_data.get() + channelSize * channel_index + sliceSize * slice_index + freqCount * phase_index,
+
+    int temp =  channelSize * channel_index
+              + sliceSize   * slice_index
+              + freqCount   * phase_index;
+    memcpy(_data.get() + channelSize * channel_index
+                       + sliceSize   * slice_index
+                       + freqCount   * phase_index,
            data, freqCount * sizeof(std::complex<float>));
+
+
     return true;
 
 }
 
+//end is not included.
+std::vector<std::complex<float>> RecieveData::LookintoPtr(std::complex<float> *data, int size, int start, int end)
+{
+    std::vector<std::complex<float>> view_data;
+    int view_size = end - start;
 
-Yap::SmartPtr<Yap::IData> RecieveData::CreateOutData()
+    assert(start < end);
+    assert(end <= size);
+
+    view_data.resize(view_size);
+    memcpy(view_data.data(), data + start, view_size * sizeof(std::complex<float>));
+    return view_data;
+}
+
+bool RecieveData::CreateOutData()
 {
     unsigned int width = _dataInfo.freq_count;
     unsigned int height = _dataInfo.phase_count;
     unsigned int slice_count = _dataInfo.slice_count;
     unsigned int dim4 = _dataInfo.dim4;
-    unsigned int channel_index = this->GetChannelIndexInMask(_dataInfo.channel_mask, _dataInfo.channel_index);
+    unsigned int channel_count = this->GetChannelCountInMask(_dataInfo.channel_mask);
 
-    Dimensions dimensions;
-    dimensions(DimensionReadout, 0U, width)
-        (DimensionPhaseEncoding, 0U, height)
-        (DimensionSlice, 0U, slice_count)
-        (Dimension4, 0U, dim4)
-        (DimensionChannel, channel_index, 1);
+    for(unsigned int channel_index = 0; channel_index < channel_count; channel_index++)
+    {
+        unsigned int indexInMask = this->GetChannelIndexInMask(_dataInfo.channel_mask, channel_index);
 
-    complex<float> * raw_data_buffer = _data.get() + width * height * slice_count * channel_index;
-    auto output_data = CreateData<complex<float>>(nullptr, raw_data_buffer, dimensions);
+        Dimensions dimensions;
+        dimensions(DimensionReadout, 0U, width)
+            (DimensionPhaseEncoding, 0U, height)
+            (DimensionSlice, 0U, slice_count)
+            (Dimension4, 0U, dim4)
+            (DimensionChannel, indexInMask, 1);
 
-    return output_data;
+
+        complex<float> *channel_buffer = new std::complex<float>[width * height * slice_count];
+
+        complex<float> * raw_data_buffer = _data.get() + width * height * slice_count * channel_index;
+        memcpy( channel_buffer, raw_data_buffer, width * height * slice_count * sizeof(std::complex<float>));
+
+        auto output = CreateData<complex<float>>(nullptr, channel_buffer, dimensions);
+
+        Feed(L"Output", output.get());
+
+
+    }
+
+    return true;
 }
 RecieveData::~RecieveData()
 {

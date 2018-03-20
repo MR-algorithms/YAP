@@ -129,8 +129,8 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
                 {
                     This->_timeMutex1.unlock();
                     This->_sendIndex = 0;
-                    qDebug()<<"Apply for stopped.";
-                    QApplication::postEvent(scantask.pWnd, new QEvent(QEvent::Type(QEvent::User + stopped)));
+                    qDebug()<<"Apply for finished.";
+                    QApplication::postEvent(scantask.pWnd, new QEvent(QEvent::Type(QEvent::User + finished)));
                 }
                 else
                 {

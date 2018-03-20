@@ -12,6 +12,7 @@
 
 using namespace std;
 
+const int ChannelMaxSize = 32;//sieof(unsigned int) * 8;
 //copied from mri2/PrescanManager.cpp
 struct DstRawDataName
 {
@@ -24,7 +25,7 @@ struct DstRawDataName
 
 
         std::vector<std::wstring> output;
-        for (size_t channel_index = 0; channel_index < sizeof(channel_mask) * 8; ++channel_index)
+        for (size_t channel_index = 0; channel_index < ChannelMaxSize; ++channel_index)
         {
             if (channel_mask & (1 << channel_index))
             {
@@ -251,7 +252,8 @@ void Databin::Go()
     int lines_channel = _dataInfo.phase_point_count * _dataInfo.slice_count;
 
 
-    for(int channel_index = 0; channel_index < static_cast<int>(16 ); channel_index ++)
+
+    for(int channel_index = 0; channel_index < ChannelMaxSize; channel_index ++)
     {
 
         if (_start.channel_mask & (1 << channel_index))
@@ -263,7 +265,7 @@ void Databin::Go()
                 SampleDataData data;
 
                 data.coeff = 3.45f;
-                data.rec   = 1;
+                data.rec   = channel_index;
                 data.rp_id = 824;
 
                 data.dim23456_index

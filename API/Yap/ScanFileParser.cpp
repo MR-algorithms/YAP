@@ -18,9 +18,6 @@ ScanFileParser::ScanFileParser() :
 {}
 
 
-ScanFileParser::~ScanFileParser()
-{
-}
 
 void ScanFileParser::SetVariableSpace(std::shared_ptr<VariableSpace> variables)
 {

@@ -117,11 +117,11 @@ bool MainWindow::event(QEvent *event)
     }
         break;
 
-    case QEvent::User + stopped:
+    case QEvent::User + finished:
     {
         //ui->editInfo->appendPlainText(QString("stopped"));
 
-        ui->editInfo->appendPlainText(QString("Stoped!"));
+        ui->editInfo->appendPlainText(QString("Finished!"));
         ui->scanButton->setEnabled(true);
         ui->stopButton->setEnabled(false);
         VirtualConsole::GetHandle().Stop();

@@ -26,6 +26,7 @@ private:
     SampleDataStart _sample_start;
 
     Yap::SmartPtr<Yap::IProcessor> _rt_pipeline;
+    Yap::SmartPtr<Yap::IProcessor> _rt_pipeline1D;
 
     Yap::SmartPtr<Yap::IProcessor> CreatePipeline(const QString& pipelineFile);
 
@@ -38,7 +39,7 @@ private:
     Yap::SmartPtr<Yap::IData> CreateIData1D(SampleDataData &data);
     void calculate_dimindex(SampleDataStart &start, int dim23456, int &dim2_index, int &dim3_index);
 
-    bool Pineline2DforNewScan(SampleDataStart &start);
+    bool Pipeline2DforNewScan(SampleDataStart &start);
     bool Pipeline1DforNewScan(SampleDataStart &start);
 
     bool InputToPipeline2D(SampleDataData &data);

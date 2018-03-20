@@ -14,7 +14,6 @@ struct RawDataInfoB
     unsigned int dim5;
     unsigned int dim6;
     unsigned int channel_mask;
-    unsigned int channel_index;
     //unsigned int dim23456;
 
     RawDataInfoB() : freq_count(0), phase_count(0), slice_count(0), dim4(0), dim5(0), dim6(0), channel_mask(0) {}
@@ -45,13 +44,16 @@ private:
 
     bool InsertPhasedata(Yap::IData *data);
     bool InsertPhasedata(std::complex<float> *data, int channel_index, int slice_index, int phase_index);
-    Yap::SmartPtr<Yap::IData> CreateOutData();
+    bool CreateOutData();
     int GetChannelCountInMask(unsigned int channelMask);
     int GetChannelIndexInMask(unsigned int channelMask, int channelIndex);
     void TestWhatcanbeTested();
     std::shared_ptr<std::complex<float>> _data;
+    //std::vector<std::complex<float>> _datav;
     RawDataInfoB _dataInfo;
     //bool _init;
+
+    std::vector<std::complex<float>> LookintoPtr(std::complex<float> *data, int size, int start, int end);
 };
 
 #endif // RECIEVEDATA_H

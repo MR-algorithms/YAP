@@ -39,7 +39,7 @@ bool DataManager::RecieveData(DataPackage &package, int cmd_id)
     {
         SampleDataStart start;
         MessageProcess::Unpack(package, start);
-        //Pipeline2DforNewScan(start);
+        Pipeline2DforNewScan(start);
         Pipeline1DforNewScan(start);
 
     }
@@ -48,7 +48,7 @@ bool DataManager::RecieveData(DataPackage &package, int cmd_id)
     {
         SampleDataData data;
         MessageProcess::Unpack(package, data);
-        //InputToPipeline2D(data);
+        InputToPipeline2D(data);
         InputToPipeline1D(data);
 
     }
@@ -72,9 +72,36 @@ bool DataManager::RecieveData(DataPackage &package, int cmd_id)
 bool DataManager::Pipeline1DforNewScan(SampleDataStart &start)
 {
     _sample_start = start;
+
+    try
+    {
+        Yap::PipelineConstructor constructor;
+        constructor.Reset(true);
+        constructor.LoadModule(L"BasicRecon.dll");
+
+        constructor.CreateProcessor(L"NiuMriDisplay1D", L"Plot1D");
+        constructor.MapInput(L"Input", L"Plot1D", L"Input");
+
+        _rt_pipeline1D = constructor.GetPipeline();
+        if (_rt_pipeline1D)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    catch (ConstructError& e)
+    {
+        //wcout << e.GetErrorMessage() << std::endl;
+    }
+
+    return true;
+
     return true;
 }
-bool DataManager::Pineline2DforNewScan(SampleDataStart &start)
+bool DataManager::Pipeline2DforNewScan(SampleDataStart &start)
 {
     _sample_start = start;
     _rt_pipeline = this->CreatePipeline(QString("config//pipelines//realtime_recon.pipeline"));
@@ -92,36 +119,18 @@ bool DataManager::Pineline2DforNewScan(SampleDataStart &start)
 
 bool DataManager::InputToPipeline1D(SampleDataData &data)
 {
-    try
-    {
-        Yap::PipelineConstructor constructor;
-        constructor.Reset(true);
-        constructor.LoadModule(L"BasicRecon.dll");
 
-        constructor.CreateProcessor(L"NiuMriDisplay1D", L"Plot1D");
-        constructor.MapInput(L"Input", L"Plot1D", L"Input");
-
-        SmartPtr<IProcessor> pipeline = constructor.GetPipeline();
-        if (pipeline)
-        {
-
-            auto output_data = CreateIData1D(data);
-            pipeline->Input(L"Input", output_data.get());
-        }
-    }
-    catch (ConstructError& e)
-    {
-        //wcout << e.GetErrorMessage() << std::endl;
-    }
-
+    auto output_data = CreateIData1D(data);
+    if(_rt_pipeline1D)
+        _rt_pipeline1D->Input(L"Input", output_data.get());
     return true;
+
 }
 
 
 bool DataManager::InputToPipeline2D(SampleDataData &data)
 {
     //Put the recieved data into the pipeline.
-
     auto output_data = CreateIData1D(data);
     if(_rt_pipeline)
         _rt_pipeline->Input(L"Input", output_data.get());
@@ -388,7 +397,6 @@ bool DataManager::End(SampleDataEnd &end)
 Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
 {
 
-    //暂时仅实现收到数据后的一维显示。
     int data_size = data.data.size();
     std::complex<float> * data_vector2 = new std::complex<float>[data_size];
 
@@ -429,8 +437,7 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
 
         calculate_dimindex(_sample_start, data.dim23456_index, phase_index, slice_index);
 
-        /*
-        variables.Set(L"Finished", false);
+
         variables.AddVariable(L"bool", L"Finished", L"The end of sample data.");
         variables.AddVariable(L"int",  L"channel_mask", L"channel mask.");
         variables.AddVariable(L"int",  L"channel_index", L"channel index.");
@@ -444,6 +451,7 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
         variables.AddVariable(L"int",  L"dim6",  L"dim6.");
 
 
+        variables.Set(L"Finished", false);
         variables.Set(L"channel_mask", channel_mask);
         variables.Set(L"channel_index", channel_index);
         variables.Set(L"slice_count", slice_count);
@@ -451,7 +459,9 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
         variables.Set(L"phase_count", phase_count);
         variables.Set(L"phase_index", phase_index);
         variables.Set(L"freq_count", freq_count);
-*/
+        variables.Set(L"dim4", dim4);
+        variables.Set(L"dim5", dim5);
+        variables.Set(L"dim6", dim6);
 
     }
 

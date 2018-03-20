@@ -11,7 +11,7 @@ void DataPackage::AddItem(uint16_t data_type, uint16_t second_type, const char* 
     headitem.second_type  = second_type;
     headitem.size = size;
 
-    head.push_back(headitem);//值拷贝？
+    head.push_back(headitem);
 
     //
     DataItem dataitem;
