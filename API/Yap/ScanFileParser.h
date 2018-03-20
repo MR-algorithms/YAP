@@ -25,12 +25,15 @@ namespace Yap
 		std::shared_ptr<VariableSpace> GetVariableSpace();
 
 		bool Load(const wchar_t * scan_file_path);
+		bool Compile(const wchar_t * text);
+
 	protected:
 		bool Process();
 		bool ProcessAssignment();
 		bool ProcessSimpleAssignment(const wchar_t* variable_id, Tokens& tokens);
 		bool ProcessStructAssignment(const wchar_t* variable_id, Tokens& tokens);
 		bool ProcessArrayAssignment(const wchar_t* variable_id, Tokens& tokens);
+		bool ProcessStructArrayAssignment(const wchar_t* variable_id, Tokens& tokens);
 		bool ProcessArrayResizeOperator(const wchar_t* variable_id, Tokens& tokens);
 		bool ProcessArrayElementAssignment(const wchar_t* variable_id, Tokens& tokens);
 		bool ProcessSimpleArrayElementAssignment(const wchar_t* variable_id, int type, Tokens& tokens);
