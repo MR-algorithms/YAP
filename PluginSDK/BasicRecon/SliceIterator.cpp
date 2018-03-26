@@ -42,6 +42,12 @@ bool SliceIterator::Input(const wchar_t * name, IData * data)
 	{
 		Dimensions slice_data_dimensions(data->GetDimensions());
 		slice_data_dimensions.SetDimension(DimensionSlice, 1, i);
+		//Add variable "slice_index" to the variable space.
+
+		VariableSpace variables(data->GetVariables());
+		variables.AddVariable(L"int", L"slice_index", L"slice index.");
+		variables.Set(L"slice_index", static_cast<int>(i) );
+		//
 
 		if (helper.GetDataType() == DataTypeComplexFloat)
 		{

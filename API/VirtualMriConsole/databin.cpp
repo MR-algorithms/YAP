@@ -208,7 +208,7 @@ void Databin::Start(int scan_id, int channel_count)
     start.scan_id = scan_id;
     start.dim1_size = _dataInfo.freq_point_count;
     start.dim2_size = _dataInfo.phase_point_count;
-    start.dim3_size = 1;//_dataInfo.slice_count;
+    start.dim3_size = 4;//_dataInfo.slice_count;
     start.dim4_size = _dataInfo.dim4;
     start.dim5_size = _dataInfo.dim5;
     start.dim6_size = _dataInfo.dim6;
@@ -259,7 +259,7 @@ void Databin::Go()
         if (_start.channel_mask & (1 << channel_index))
         {
 
-            for(int image_index = 0; image_index < static_cast<int>(_start.dim3_size ); image_index ++)
+            for(int slice_index = 0; slice_index < static_cast<int>(_start.dim3_size ); slice_index ++)
             {
                 //
                 SampleDataData data;
@@ -270,11 +270,11 @@ void Databin::Go()
 
                 data.dim23456_index
                         = channel_index * lines_channel
-                        + image_index   * lines_image
+                        + slice_index   * lines_image
                         + _current_phase_index;
 
                 boost::shared_array<complex<float>> aline
-                        = GetRawData(channel_index, image_index, _current_phase_index);
+                        = GetRawData(channel_index, slice_index, _current_phase_index);
 
                 //
                 std::vector<complex<float>> destline;

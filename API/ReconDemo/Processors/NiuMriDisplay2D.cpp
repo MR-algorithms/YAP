@@ -1,8 +1,9 @@
-﻿#include "NiuMriDisplay2D.h"
+#include "NiuMriDisplay2D.h"
 
 #include "datamanager.h"
 #include "imagelayoutwidget.h"
 #include "Implement/LogUserImpl.h"
+#include "Client/DataHelper.h"
 
 using namespace Yap;
 using namespace std;
@@ -26,6 +27,20 @@ bool NiuMriDisplay2D::Input(const wchar_t * port, IData *data)
 {
     if (wstring(port) != L"Input")
         return false;
+
+    //
+    VariableSpace variables(data->GetVariables());
+
+    int freq_count = variables.Get<int>(L"freq_count");
+    int phase_count = variables.Get<int>(L"phase_count");
+    int slice_count = variables.Get<int>(L"slice_count");
+    int channel_mask = variables.Get<int>(L"channel_mask");
+    bool test_data = variables.Get<bool>(L"test_data");
+
+    int slice_index = variables.Get<int>(L"slice_index");
+
+
+
 
     return _display_window.AddImage(data, nullptr);
 }

@@ -57,7 +57,7 @@ bool RecieveData::Input(const wchar_t * port, IData *data)
             InsertPhasedata(data);
         }
 
-        CreateOutData();
+        CreateOutData(data);
 
 
 
@@ -231,7 +231,7 @@ std::vector<std::complex<float>> RecieveData::LookintoPtr(std::complex<float> *d
     return view_data;
 }
 
-bool RecieveData::CreateOutData()
+bool RecieveData::CreateOutData(Yap::IData *data)
 {
     unsigned int width = _dataInfo.freq_count;
     unsigned int height = _dataInfo.phase_count;
@@ -256,7 +256,14 @@ bool RecieveData::CreateOutData()
         complex<float> * raw_data_buffer = _data.get() + width * height * slice_count * channel_index;
         memcpy( channel_buffer, raw_data_buffer, width * height * slice_count * sizeof(std::complex<float>));
 
-        auto output = CreateData<complex<float>>(nullptr, channel_buffer, dimensions);
+        //
+        VariableSpace variables(data->GetVariables());
+        variables.AddVariable(L"bool", L"test_data", L"test.");
+        variables.Set(L"test_data", false);
+
+        //
+
+        auto output = CreateData<complex<float>>(data, channel_buffer, dimensions);
 
         Feed(L"Output", output.get());
 

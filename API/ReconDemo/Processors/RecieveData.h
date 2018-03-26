@@ -44,7 +44,7 @@ private:
 
     bool InsertPhasedata(Yap::IData *data);
     bool InsertPhasedata(std::complex<float> *data, int channel_index, int slice_index, int phase_index);
-    bool CreateOutData();
+    bool CreateOutData(Yap::IData *data);
     int GetChannelCountInMask(unsigned int channelMask);
     int GetChannelIndexInMask(unsigned int channelMask, int channelIndex);
     void TestWhatcanbeTested();
