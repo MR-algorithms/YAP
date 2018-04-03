@@ -9,7 +9,6 @@
 #include "Implement/CompositeProcessor.h"
 #include "Implement/DataObject.h"
 
-
 #include <iostream>
 #include <string>
 #include <vector>
