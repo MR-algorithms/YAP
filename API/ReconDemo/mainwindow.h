@@ -9,6 +9,7 @@ class ReconServer;
 
 namespace Ui {
 class MainWindow;
+
 }
 
 class MainWindow : public QMainWindow
@@ -23,7 +24,9 @@ private slots:
     //void on_loadpushButton_clicked();
 
     void on_actionOpen_triggered();
-    void slotDataReceived(QByteArray dataArray);
+    //void slotDataReceived(QByteArray dataArray);
+    void slotDataReceived(int length);
+    void slotDisconnected(int);
     void on_buttonStart_clicked();
 
 private:

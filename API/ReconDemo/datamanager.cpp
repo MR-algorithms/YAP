@@ -31,7 +31,7 @@ DataManager& DataManager::GetHandle()
     return s_instance;
 
 }
-bool DataManager::RecieveData(DataPackage &package, int cmd_id)
+bool DataManager::ReceiveData(DataPackage &package, int cmd_id)
 {
     switch(cmd_id)
     {
@@ -40,7 +40,7 @@ bool DataManager::RecieveData(DataPackage &package, int cmd_id)
         SampleDataStart start;
         MessageProcess::Unpack(package, start);
         Pipeline2DforNewScan(start);
-        Pipeline1DforNewScan(start);
+        //Pipeline1DforNewScan(start);
 
     }
         break;
@@ -48,8 +48,25 @@ bool DataManager::RecieveData(DataPackage &package, int cmd_id)
     {
         SampleDataData data;
         MessageProcess::Unpack(package, data);
+        //
+        std::vector<std::complex<float>> receive_line;
+        receive_line.resize(data.data.size());
+        memcpy(receive_line.data(),data.data.data(),sizeof(std::complex<float>)*data.data.size());
+        //
+
+
+        /*
+        receive_phases.insert(receive_phases.end(),receive_line.begin(),receive_line.end());
+        if(receive_phases.size()>=_start_phases.dim1_size*_start_phases.dim3_size)
+        {
+           InputToPipeline2D(data);
+           receive_phases.clear();
+        }
+
+        */
         InputToPipeline2D(data);
-        InputToPipeline1D(data);
+
+        //InputToPipeline1D(data);
 
     }
         break;
@@ -131,9 +148,42 @@ bool DataManager::InputToPipeline1D(SampleDataData &data)
 bool DataManager::InputToPipeline2D(SampleDataData &data)
 {
     //Put the recieved data into the pipeline.
+
     auto output_data = CreateIData1D(data);
-    if(_rt_pipeline)
-        _rt_pipeline->Input(L"Input", output_data.get());
+
+/*///
+    VariableSpace variables1(output_data->GetVariables());
+    int channel_index=variables1.Get<int>(L"channel_index");
+    int slice_index = variables1.Get<int>(L"slice_index");
+    int phase_index=variables1.Get<int>(L"phase_index");
+
+    receive_phases.insert(receive_phases.end(),data.data.begin(),data.data.end());
+    if(receive_phases.size()>=_sample_start.dim1_size*_sample_start.dim3_size)
+    {
+        //receive_phases怎么转换成SampleDataData，然后调用CreateIData1D(SampleDataData)创建IData来驱动流水线
+
+        int data_size = receive_phases.size();
+        std::complex<float> * data_vector1 = new std::complex<float>[data_size];
+
+        for(int i = 0; i < data_size; i ++)
+        {
+          data_vector1[i] = receive_phases[i];
+        }
+        Yap::Dimensions dimensions;
+        dimensions(Yap::DimensionReadout, 0U, 256)
+            (Yap::DimensionPhaseEncoding,phase_index, 1)
+            (Yap::DimensionSlice, 0U, 3);
+        auto output_data1 = Yap::YapShared(
+                    new Yap::DataObject<std::complex<float>>(nullptr, data_vector1, dimensions, nullptr, nullptr));
+        if(_rt_pipeline)
+            _rt_pipeline->Input(L"Input", output_data1.get());
+
+       receive_phases.clear();
+    }
+///*/
+
+   if(_rt_pipeline)
+    _rt_pipeline->Input(L"Input", output_data.get());
     return true;
 
 }
@@ -176,9 +226,11 @@ bool DataManager::LoadFidRecon(const QString& file_path)
     //auto file_name = file_info.baseName();
     auto path = file_info.path();
 
-    if (!ProcessFidfile(file_path, QString("config//pipelines//niumag_recon.pipeline")))
+    /*  if (!ProcessFidfile(file_path, QString("config//pipelines//realtime_recon.pipeline")))
         return false;
-
+    */
+    if (!ProcessFidfile(file_path, QString("config//pipelines//niumag_recon.pipeline")))
+         return false;
     return true;
 }
 
@@ -211,7 +263,9 @@ bool DataManager::ProcessFidfile(const QString &file_path, const QString &pipeli
 
 
 }
+
 //智能指针作为返回值可能有问题。
+
 Yap::SmartPtr<IProcessor> DataManager::CreatePipeline(const QString& pipelineFile)
 {
 
@@ -407,10 +461,10 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
 
     Yap::Dimensions dimensions;
     dimensions(Yap::DimensionReadout, 0U, data_size)
-        (Yap::DimensionPhaseEncoding, 0U, 1)
+        (Yap::DimensionPhaseEncoding, 0U, 1)//
         (Yap::DimensionSlice, 0U, 1);
-
-
+        //(Yap::Dimension4, 0U, dim4)
+        //(Yap::DimensionChannel, data.rec, 1);
 
 
     auto output_data1 = Yap::YapShared(
@@ -465,6 +519,13 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
 
     }
 
+    //检查接收到的数据output_data1的维度信息
+
+    VariableSpace variables1(output_data1->GetVariables());
+    int channel_index=variables1.Get<int>(L"channel_index");
+    int slice_index = variables1.Get<int>(L"slice_index");
+    int phase_index=variables1.Get<int>(L"phase_index");
+    //
     return output_data1;
 
 }

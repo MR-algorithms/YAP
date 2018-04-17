@@ -37,12 +37,15 @@ bool NiuMriDisplay2D::Input(const wchar_t * port, IData *data)
     int channel_mask = variables.Get<int>(L"channel_mask");
     bool test_data = variables.Get<bool>(L"test_data");
 
+    int channel_index=variables.Get<int>(L"channel_index");
     int slice_index = variables.Get<int>(L"slice_index");
+    int phase_index=variables.Get<int>(L"phase_index");
 
 
 
 
-    return _display_window.AddImage(data, nullptr);
+    //return _display_window.AddImage(data, nullptr);
+    return _display_window.UpdateImage(data,nullptr,slice_index);
 }
 
 NiuMriDisplay2D::~NiuMriDisplay2D()

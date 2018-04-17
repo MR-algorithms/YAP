@@ -8,19 +8,21 @@ ReconClientSocket::ReconClientSocket(QObject *parent) : QTcpSocket(parent)
 {
     connect(this, &QTcpSocket::readyRead, this, &ReconClientSocket::slotDataReceived);
     connect(this, &QTcpSocket::disconnected, this, &ReconClientSocket::slotDisconnected);
-
 }
 
-void ReconClientSocket::slotDataReceived()
+void ReconClientSocket:: slotDataReceived()
 {
     int lengthx = bytesAvailable();
 
-    qDebug()<< "Enter client::slotRecieved():  "<< lengthx<<" bytes available";
+    emit signalDataReceived(lengthx);
+
+    qDebug()<< "Enter ReconClientSocket:: slotDataReceived():  "<< lengthx<<" bytes available";
 
     while (true)
     {
 
         if( !Read(_bufferInfo.Next) )//长度不够。
+
         {
             return;
         }
@@ -31,7 +33,7 @@ void ReconClientSocket::slotDataReceived()
             if(_bufferInfo.Next == ReadinfoType::rtFinished)
             {
                 //process the package.
-                DataManager::GetHandle().RecieveData(this->_package, this->_bufferInfo.cmd_id);
+                DataManager::GetHandle().ReceiveData(this->_package, this->_bufferInfo.cmd_id);
                 //
                 _bufferInfo.Reset();
 
@@ -64,7 +66,7 @@ bool ReconClientSocket::Read(ReadinfoType rt)
         }
         default:
         {
-            assert(0);
+           // assert(0);
             return false;
         }
     }
@@ -77,7 +79,7 @@ bool ReconClientSocket::ReadFlag()
 
     int bytesLeft = bytesAvailable();
 
-    qDebug()<< "Enter client::ReadFlag():  "<< bytesLeft<<" bytes available";
+    qDebug()<< "Enter ReconClientSocket::ReadFlag():  "<< bytesLeft<<" bytes available";
     if( bytesLeft < 2 * sizeof(uint32_t) )
     {
         return false;
@@ -99,7 +101,7 @@ bool ReconClientSocket::ReadFlag()
         }
         else
         {
-            assert(0);
+            //assert(0);
             return false;
         }
 
@@ -114,7 +116,7 @@ bool ReconClientSocket::ReadHeaditem()
     int headitem_bytes = _bufferInfo.headitem_count * sizeof(HeadItem);
 
     int bytesLeft = bytesAvailable();
-    qDebug()<< "Enter client::ReadHeaditem():  "<< bytesLeft<<" bytes available";
+    qDebug()<< "Enter ReconClientSocket::ReadHeaditem():  "<< bytesLeft<<" bytes available";
 
     if( bytesLeft < headitem_bytes)
     {
@@ -145,7 +147,7 @@ bool ReconClientSocket::ReadValue()
     int bytesToRead = _package.BytesFromHeaditem();
 
     int bytesLeft = bytesAvailable();
-    qDebug()<< "Enter client::ReadValue():  "<< bytesLeft<<" bytes available";
+    qDebug()<< "Enter ReconClientSocket::ReadValue():  "<< bytesLeft<<" bytes available";
 
     if(bytesLeft < bytesToRead)
     {
@@ -174,7 +176,7 @@ bool ReconClientSocket::ReadValue()
 
 void ReconClientSocket::slotDisconnected()
 {
-    qDebug()<<"ClientSocket: Recieving disconnected message.";
+    qDebug()<<"ReconClientSocket: Recieving disconnected message.";
     emit signalDisconnected(this->socketDescriptor());
 
 }

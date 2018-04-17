@@ -18,7 +18,7 @@ public:
     bool Load(const QString& image_path);
     bool Demo1D();
     bool Demo2D();
-    bool RecieveData(DataPackage &package, int cmd_id);
+    bool ReceiveData(DataPackage &package, int cmd_id);
 
 private:
     DataManager();
@@ -45,7 +45,12 @@ private:
     bool InputToPipeline2D(SampleDataData &data);
     bool InputToPipeline1D(SampleDataData &data);
     bool End(SampleDataEnd &end);
+    ////
+        std::vector<std::complex<float>> receive_phases;
+        //SampleDataStart _start_phases;
+        int last_phase_index=0;
 
+    ////
     /*
     bool LoadImage(const std::wstring& file_path);
     bool LoadNiuImage(const std::wstring& file_path);

@@ -8,19 +8,21 @@
 
 #include "Client/DataHelper.h"
 
+#include "Processors/NiuMriDisplay2D.h"
+
+
+
 using namespace std;
 using namespace Yap;
 
 ImageLayoutWidget::ImageLayoutWidget(QWidget *parent) :
     QWidget(parent),
-    _layout(4, 2),
+    _layout(4,4),
     _max_layout(8,4),
     _first_visible_image_index(0),
     _current_image_index(0)
 {
     SetLayout(_layout);
-
-
 }
 
 bool ImageLayoutWidget::AddImage(IData* data,
@@ -30,25 +32,71 @@ bool ImageLayoutWidget::AddImage(IData* data,
         return false;
 
     //xhb1111
-    unsigned short test[512*2];
-    unsigned short * image_data = Yap::GetDataArray<unsigned short>(data);
-    memcpy(test, image_data + 255*512, sizeof(unsigned short)* 512*2);
+    //unsigned short test[512*2];
+    //unsigned short * image_data = Yap::GetDataArray<unsigned short>(data);
+    //memcpy(test, image_data + 255*512, sizeof(unsigned short)* 512*2);
     //end of xhb1111
+
     _images.push_back(YapShared<IData>(data));
 
     auto images_size = _images.size();
     assert(images_size - 1 >= _first_visible_image_index);
 
-    auto widget_index = images_size - 1 - _first_visible_image_index;
+    //auto widget_index = images_size - 1 - _first_visible_image_index;
+    VariableSpace variables(data->GetVariables());
+    int channel_index=variables.Get<int>(L"channel_index");
+    int slice_index = variables.Get<int>(L"slice_index");
+    int phase_index=variables.Get<int>(L"phase_index");
+    //auto widget_index=(images_size-1)%4;
 
+    // _image_widgets[0]->SetImage(data, properties);测试
+    //_image_widgets[0]->update();
 
+    //QSize layou1=GetLayout();
+    QSize layout2(4,4);
+    SetLayout(layout2);
 
+    auto widget_index=slice_index;
+    unsigned int widgetCount=_image_widgets.size();
+    _image_widgets.resize(16);
     if (widget_index < _image_widgets.size())
     {
         _image_widgets[widget_index]->SetImage(data, properties);
         _image_widgets[widget_index]->update();
     }
 
+    return true;
+}
+
+bool ImageLayoutWidget::UpdateImage(Yap::IData* data, Yap::IVariableContainer *properties,unsigned int image_index)
+{
+    if (data == nullptr)
+        return false;
+    _images.push_back(YapShared<IData>(data));
+
+    auto images_size = _images.size();
+
+
+    assert(images_size - 1 >= _first_visible_image_index);
+
+    unsigned int imagesCount=_image_widgets.size();
+    assert(image_index<imagesCount);
+    //auto _index = images_size - 1 - _first_visible_image_index;
+
+    auto widget_index=image_index-_first_visible_image_index;
+
+    _image_widgets[widget_index]->SetImage(data, properties);
+    _image_widgets[widget_index]->update();
+    /*assert(_myIndex>-1);
+    if (_index < _image_widgets.size())
+    {
+        if(_myIndex<_image_widgets.size())
+        {
+        _image_widgets[_myIndex]->SetImage(data, properties);
+        _image_widgets[_myIndex]->update();
+        }
+    }
+*/
     return true;
 }
 
@@ -460,6 +508,7 @@ void ImageLayoutWidget::OnFocusChange(ImageWidget *sender)
         }
     }
     HighlightCurrentWidget();
+
 }
 
  std::vector<ImageWidget*>& ImageLayoutWidget::GetImageWidgets()

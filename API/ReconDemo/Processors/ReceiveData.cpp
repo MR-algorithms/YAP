@@ -1,4 +1,4 @@
-#include "RecieveData.h"
+#include "ReceiveData.h"
 
 #include "Implement/DataObject.h"
 #include "Client/DataHelper.h"
@@ -6,7 +6,7 @@
 using namespace Yap;
 using namespace std;
 
-RecieveData::RecieveData() : ProcessorImpl(L"RecieveData"),_data(nullptr)
+ReceiveData::ReceiveData() : ProcessorImpl(L"ReceiveData"),_data(nullptr)
 {
 
     AddInput(L"Input",   YAP_ANY_DIMENSION, DataTypeFloat | DataTypeComplexFloat);
@@ -15,14 +15,15 @@ RecieveData::RecieveData() : ProcessorImpl(L"RecieveData"),_data(nullptr)
     TestWhatcanbeTested();
 }
 
-RecieveData::RecieveData(const RecieveData &rhs) :  ProcessorImpl(rhs)
+ReceiveData::ReceiveData(const ReceiveData &rhs) :  ProcessorImpl(rhs)
 {
     //LOG_TRACE(L"NiuMriDisplay2D constructor called.", L"NiuMri");
 }
 
-void RecieveData::TestWhatcanbeTested()
+void ReceiveData::TestWhatcanbeTested()
 {
     //通道数跟mask的关系
+
     unsigned int mask1 = 0x35;//4个通道；0011,0101
     unsigned int mask2 = 0xa1;//3个通道；1010,0001
     assert(this->GetChannelCountInMask(mask1) == 4);
@@ -37,7 +38,7 @@ void RecieveData::TestWhatcanbeTested()
 
 
 }
-bool RecieveData::Input(const wchar_t * port, IData *data)
+bool ReceiveData::Input(const wchar_t * port, IData *data)
 {
 
     if (wstring(port) != L"Input")
@@ -75,7 +76,7 @@ bool RecieveData::Input(const wchar_t * port, IData *data)
 }
 
 
-bool RecieveData::IsFinished(Yap::IData *data)
+bool ReceiveData::IsFinished(Yap::IData *data)
 {
     //
     assert(data->GetVariables() != nullptr);
@@ -88,7 +89,7 @@ bool RecieveData::IsFinished(Yap::IData *data)
 }
 
 
- bool RecieveData::InitScanData(Yap::IData *data)
+ bool ReceiveData::InitScanData(Yap::IData *data)
  {
 
      assert(data->GetVariables() != nullptr);
@@ -117,7 +118,7 @@ bool RecieveData::IsFinished(Yap::IData *data)
      return true;
  }
 
-int RecieveData::GetChannelIndexInMask(unsigned int channelMask, int channelIndex)
+int ReceiveData::GetChannelIndexInMask(unsigned int channelMask, int channelIndex)
 {
 
     int channelIndexInMask = -1;
@@ -147,7 +148,7 @@ int RecieveData::GetChannelIndexInMask(unsigned int channelMask, int channelInde
     return channelIndexInMask;
 
 }
-int RecieveData::GetChannelCountInMask(unsigned int channelMask)
+int ReceiveData::GetChannelCountInMask(unsigned int channelMask)
 {
     int count_max = sizeof(unsigned int) * 8;
     int countInMask = 0;
@@ -163,7 +164,7 @@ int RecieveData::GetChannelCountInMask(unsigned int channelMask)
     return countInMask;
 }
 
-bool RecieveData::InsertPhasedata(Yap::IData *data)
+bool ReceiveData::InsertPhasedata(Yap::IData *data)
 {
 
 
@@ -184,17 +185,16 @@ bool RecieveData::InsertPhasedata(Yap::IData *data)
     assert(input_data.GetDataType() == DataTypeComplexFloat);
 
     auto phase_data = GetDataArray<std::complex<float>>(data);
-    auto temp1 = LookintoPtr(phase_data, 256, 0, 256);
 
-    auto temp2 = LookintoPtr(_data.get(), 65536, 0, 512);
-    InsertPhasedata(phase_data, channelIndexInMask, slice_index, phase_index);
-    auto temp3 = LookintoPtr(_data.get(), 65536, 0, 512);
+    if (!InsertPhasedata(phase_data, channelIndexInMask, slice_index, phase_index))
+        return false;
+    // auto temp3 = LookintoPtr(_data.get(), 65536, 0, 512);
 
     return true;
 
 
 }
-bool RecieveData::InsertPhasedata(std::complex<float> *data, int channel_index, int slice_index, int phase_index)
+bool ReceiveData::InsertPhasedata(std::complex<float> *data, int channel_index, int slice_index, int phase_index)
 {
     int freqCount  = _dataInfo.freq_count;
     int phaseCount = _dataInfo.phase_count;
@@ -218,7 +218,7 @@ bool RecieveData::InsertPhasedata(std::complex<float> *data, int channel_index, 
 }
 
 //end is not included.
-std::vector<std::complex<float>> RecieveData::LookintoPtr(std::complex<float> *data, int size, int start, int end)
+std::vector<std::complex<float>> ReceiveData::LookintoPtr(std::complex<float> *data, int size, int start, int end)
 {
     std::vector<std::complex<float>> view_data;
     int view_size = end - start;
@@ -231,7 +231,7 @@ std::vector<std::complex<float>> RecieveData::LookintoPtr(std::complex<float> *d
     return view_data;
 }
 
-bool RecieveData::CreateOutData(Yap::IData *data)
+bool ReceiveData::CreateOutData(Yap::IData *data)
 {
     unsigned int width = _dataInfo.freq_count;
     unsigned int height = _dataInfo.phase_count;
@@ -239,40 +239,64 @@ bool RecieveData::CreateOutData(Yap::IData *data)
     unsigned int dim4 = _dataInfo.dim4;
     unsigned int channel_count = this->GetChannelCountInMask(_dataInfo.channel_mask);
 
-    for(unsigned int channel_index = 0; channel_index < channel_count; channel_index++)
-    {
-        unsigned int indexInMask = this->GetChannelIndexInMask(_dataInfo.channel_mask, channel_index);
+   // for(unsigned int channel_index = 0; channel_index < channel_count; channel_index++)
+   //{
+        //unsigned int indexInMask = this->GetChannelIndexInMask(_dataInfo.channel_mask, channel_index);
 
-        Dimensions dimensions;
-        dimensions(DimensionReadout, 0U, width)
-            (DimensionPhaseEncoding, 0U, height)
-            (DimensionSlice, 0U, slice_count)
-            (Dimension4, 0U, dim4)
-            (DimensionChannel, indexInMask, 1);
+        VariableSpace variables1(data->GetVariables());
 
+        int current_phase_index = variables1.Get<int>(L"phase_index");
+        if(current_phase_index!=_last_phase_index)
+        {
+            _received_phase_count++;
+            _last_phase_index=current_phase_index;
+        }
 
-        complex<float> *channel_buffer = new std::complex<float>[width * height * slice_count];
-
-        complex<float> * raw_data_buffer = _data.get() + width * height * slice_count * channel_index;
-        memcpy( channel_buffer, raw_data_buffer, width * height * slice_count * sizeof(std::complex<float>));
-
-        //
-        VariableSpace variables(data->GetVariables());
-        variables.AddVariable(L"bool", L"test_data", L"test.");
-        variables.Set(L"test_data", false);
-
-        //
-
-        auto output = CreateData<complex<float>>(data, channel_buffer, dimensions);
-
-        Feed(L"Output", output.get());
+        //complex<float> *channel_buffer = new std::complex<float>[width * height * slice_count];
 
 
-    }
+        //if(_received_phase_count==height)
+        if((_received_phase_count%1==0)||(_received_phase_count==height))
+       {
+
+            int slice_index1 = variables1.Get<int>(L"slice_index");
+            int channel_index1 = variables1.Get<int>(L"channel_index");
+            unsigned int indexInMask = this->GetChannelIndexInMask(_dataInfo.channel_mask, channel_index1);
+            complex<float> *slice_buffer = new std::complex<float>[width * height];
+            complex<float> * raw_data_buffer =_data.get()
+                        + channel_index1 * width * height * slice_count
+                        + slice_index1 * width * height;//+phase_index1*width;
+
+            //complex<float> * raw_data_buffer = _data.get() + width * height * slice_count * channel_index;
+            //memcpy( channel_buffer, raw_data_buffer, width * height * slice_count * sizeof(std::complex<float>));
+            memcpy( slice_buffer, raw_data_buffer, width * height  * sizeof(std::complex<float>));
+            //std::vector<std::complex<float>> view_buffeer_data=LookintoPtr(slice_buffer,width*height,0,width*height);
+            //view_buffeer_data.resize(width*height);
+           // memcpy(view_buffeer_data,slice_buffer,width*height*sizeof(std::complex<float>));
+
+            VariableSpace variables(data->GetVariables());
+            variables.AddVariable(L"bool", L"test_data", L"test.");
+            variables.Set(L"test_data", false);
+
+    //
+
+            Dimensions dimensions;
+            dimensions(DimensionReadout, 0U, width)
+                (DimensionPhaseEncoding, 0U, height)
+                (DimensionSlice, 0U, 1)//(DimensionSlice, 0U, slice_count)
+                (Dimension4, 0U, dim4)
+                (DimensionChannel, indexInMask, 1);
+            auto output = CreateData<complex<float>>(data, slice_buffer, dimensions);
+
+            Feed(L"Output", output.get());
+        }
+
+
+    //}
 
     return true;
 }
-RecieveData::~RecieveData()
+ReceiveData::~ReceiveData()
 {
 //    LOG_TRACE(L"NiuMriDisplay2D destructor called.", L"NiuMri");
 }

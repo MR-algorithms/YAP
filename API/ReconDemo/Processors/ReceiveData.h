@@ -28,15 +28,15 @@ struct RawDataInfoB
     }
 };
 
-class RecieveData : public Yap::ProcessorImpl
+class ReceiveData : public Yap::ProcessorImpl
 {
-    IMPLEMENT_SHARED(RecieveData)
+    IMPLEMENT_SHARED(ReceiveData)
 public:
-    explicit RecieveData();
-    RecieveData(const RecieveData &rhs);
+    explicit ReceiveData();
+    ReceiveData(const ReceiveData &rhs);
 
 private:
-    virtual ~RecieveData();
+    virtual ~ReceiveData();
 
     virtual bool Input(const wchar_t *name, Yap::IData *data) override;
     bool IsFinished(Yap::IData *data);
@@ -51,6 +51,8 @@ private:
     std::shared_ptr<std::complex<float>> _data;
     //std::vector<std::complex<float>> _datav;
     RawDataInfoB _dataInfo;
+    unsigned int _last_phase_index=-1;
+    unsigned int _received_phase_count=0;
     //bool _init;
 
     std::vector<std::complex<float>> LookintoPtr(std::complex<float> *data, int size, int start, int end);

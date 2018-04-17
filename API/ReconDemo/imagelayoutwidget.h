@@ -17,6 +17,9 @@ public:
     explicit ImageLayoutWidget(QWidget *parent = 0);
 
     bool AddImage(Yap::IData* data, Yap::IVariableContainer *properties = nullptr);
+
+    bool UpdateImage(Yap::IData* data, Yap::IVariableContainer *properties = nullptr,unsigned int widget_index=0);
+
     const std::vector<Yap::SmartPtr<Yap::IData>> GetImages() const;
     void ClearImages();
     void ClearSingleImage();

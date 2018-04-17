@@ -37,8 +37,9 @@ public:
     explicit ReconClientSocket(QObject *parent = 0);
 
 signals:
-    void signalDataReceived(QByteArray, int);
-    void signalDisconnected(int);
+    //void signalDataReceived(QByteArray, int);
+    void signalDataReceived(int);
+    void signalDisconnected(int);//?
 
 public slots:
 protected slots:
