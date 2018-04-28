@@ -1,30 +1,52 @@
 import "BasicRecon.dll";
 
+
 CmrDataReader reader(DataPath = "D:\\test_data\\RawData_256\\RawData",
-	ChannelCount = 4, ChannelSwitch = 15);
+	ChannelCount = 1, ChannelSwitch = 1);
+
 // property mapping can also be used in named property initialization. such as:
+
 // CmrRawDataReader reader(DataPath <== data_path,
+
 //	ChannelCount = 4, ChannelSwitch = 15);
+
 // where data_path is the variable id in global variable space, reference a variable holding the data file path.
 
-SliceSelector slice_selector(SliceIndex = 3);
+
+SliceSelector slice_selector;
+
 DcRemover dc_remover;
+
 ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);
 
-//zero_filling.DestWidth <== ImageWidth;		// from variable space to property
-// zero_filling.DestWidth ==> ImageWidth;	// from property to variable space. Only for demo, meaning-less in this context.
-// zero_filling.DestWidth <=> ImageWidth;	// bi-directional
+
+//zero_filling.DestWidth <== ImageWidth;		
+// from variable space to property
+// zero_filling.DestWidth ==> ImageWidth;	
+// from property to variable space. Only for demo, meaning-less in this context.
+
+// zero_filling.DestWidth <=> ImageWidth;	
+// bi-directional
 
 Fft2D fft;
+
 ModulePhase module_phase;
+
 JpegExporter jpeg_exporter(ExportFolder = "d:\\Output\\test_pipeline");
 	
+
 reader->slice_selector;
+
 slice_selector->dc_remover;
+
 dc_remover->zero_filling;
+
 zero_filling->fft;
+
 fft->module_phase;
+
 module_phase.Module->jpeg_exporter;
+
 
 
 self.Input->reader.Input;
