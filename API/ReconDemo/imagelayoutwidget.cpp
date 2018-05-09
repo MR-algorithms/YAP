@@ -72,6 +72,9 @@ bool ImageLayoutWidget::UpdateImage(Yap::IData* data, Yap::IVariableContainer *p
 {
     if (data == nullptr)
         return false;
+
+   // if(_images.size()>16){ClearImages();}
+
     _images.push_back(YapShared<IData>(data));
 
     auto images_size = _images.size();
@@ -80,10 +83,12 @@ bool ImageLayoutWidget::UpdateImage(Yap::IData* data, Yap::IVariableContainer *p
     assert(images_size - 1 >= _first_visible_image_index);
 
     unsigned int imagesCount=_image_widgets.size();
+    _image_widgets.resize(imagesCount);
     assert(image_index<imagesCount);
     //auto _index = images_size - 1 - _first_visible_image_index;
 
     auto widget_index=image_index-_first_visible_image_index;
+    //auto widget_index=image_index;
 
     _image_widgets[widget_index]->SetImage(data, properties);
     _image_widgets[widget_index]->update();

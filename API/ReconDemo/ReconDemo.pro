@@ -49,7 +49,8 @@ SOURCES += \
     DataSample/reconclientsocket.cpp \
     DataSample/reconserver.cpp \
     DataSample/datapackage.cpp \
-    Processors/ReceiveData.cpp
+    Processors/ReceiveData.cpp \
+    globalvariable.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -83,7 +84,8 @@ HEADERS += \
     DataSample/CmrPackItemTypeHelper.h \
     DataSample/CmrPackType.h \
     DataSample/datapackage.h \
-    Processors/ReceiveData.h
+    Processors/ReceiveData.h \
+    globalvariable.h
 
 FORMS += \
         mainwindow.ui

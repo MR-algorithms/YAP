@@ -1,5 +1,6 @@
 #include "reconserver.h"
 #include "reconclientsocket.h"
+#include<QThread>
 
 ReconServer::ReconServer(QObject * parent, int port) :
     QTcpServer(parent),
@@ -19,13 +20,15 @@ void ReconServer::slotDisconnected(int socketDescriptor)
     //..clientSocket->disconnectFromHost();
 
     //..clientSocket->waitForDisconnected();
-    //delete clientSocket;
+    //delete clientSocket;   
+    clientSocket->deleteLater();
     clientSocket = nullptr;
     emit signalDisconnected(socketDescriptor);
 }
 
 void ReconServer::incomingConnection(qintptr socketDescriptor)
 {
+    //qDebug()<<"thread2:"<<this->thread()->currentThreadId();
     if (clientSocket != nullptr)
     {
         // output error message: only one connection allowed

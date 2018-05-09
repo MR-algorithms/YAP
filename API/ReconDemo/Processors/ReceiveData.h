@@ -3,7 +3,13 @@
 
 #include "Implement/ProcessorImpl.h"
 
-
+#include <future>
+#include<thread>
+#include<QDebug>
+#include<utility>
+#include<functional>
+#include<chrono>
+#include"globalvariable.h"
 
 struct RawDataInfoB
 {

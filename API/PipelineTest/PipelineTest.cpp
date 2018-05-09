@@ -9,7 +9,6 @@
 #include "Implement/CompositeProcessor.h"
 #include "Implement/DataObject.h"
 
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -88,8 +87,8 @@ void PipelineTest()
 
 	{
 		PipelineCompiler compiler;
-		//auto pipeline = compiler.CompileFile(L"Pipelines\\Radiomics_test.pipeline");
-		auto pipeline = compiler.CompileFile(L"Pipelines\\test2.pipeline");
+		//auto pipeline = compiler.CompileFile(L"Pipelines\\Radiomics_test.pipeline"); // PengJinFa test for push
+		auto pipeline = compiler.CompileFile(L"Pipelines\\test1.pipeline");
 
 		if (pipeline.get() == nullptr)
 		{

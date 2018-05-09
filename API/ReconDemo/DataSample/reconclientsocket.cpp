@@ -3,12 +3,17 @@
 #include "datamanager.h"
 #include <QDebug>
 #include <cassert>
+#include <thread>
+#include "globalvariable.h"
+#include<functional>
+#include<utility>
 
 ReconClientSocket::ReconClientSocket(QObject *parent) : QTcpSocket(parent)
 {
     connect(this, &QTcpSocket::readyRead, this, &ReconClientSocket::slotDataReceived);
     connect(this, &QTcpSocket::disconnected, this, &ReconClientSocket::slotDisconnected);
 }
+
 
 void ReconClientSocket:: slotDataReceived()
 {
@@ -32,21 +37,25 @@ void ReconClientSocket:: slotDataReceived()
                         static_cast<int>(_bufferInfo.Next) + 1 );
             if(_bufferInfo.Next == ReadinfoType::rtFinished)
             {
+
                 //process the package.
+
+                qDebug()<<"gv_ready============"<<gv_data_repopsitory.gv_ready;
+                //std::thread thread1(DataManager::GetHandle().ReceiveData,std::ref(this->_package),this->_bufferInfo);
                 DataManager::GetHandle().ReceiveData(this->_package, this->_bufferInfo.cmd_id);
                 //
                 _bufferInfo.Reset();
+               // thread1.join();
 
             }
 
         }
-
-
-
     }
 
 
 }
+
+
 bool ReconClientSocket::Read(ReadinfoType rt)
 {
     switch(rt)
@@ -176,6 +185,7 @@ bool ReconClientSocket::ReadValue()
 
 void ReconClientSocket::slotDisconnected()
 {
+    //gv_data_repopsitory.gv_is_finished=true;
     qDebug()<<"ReconClientSocket: Recieving disconnected message.";
     emit signalDisconnected(this->socketDescriptor());
 

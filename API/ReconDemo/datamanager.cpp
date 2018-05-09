@@ -15,6 +15,10 @@
 #include <QDateTime>
 
 #include <QFileInfo>
+
+#include"globalvariable.h"
+#include "Client/DataHelper.h"
+#include <QThread>
 using namespace std;
 using namespace Yap;
 
@@ -31,6 +35,11 @@ DataManager& DataManager::GetHandle()
     return s_instance;
 
 }
+
+DataManager::~DataManager()
+{
+    _mythread.join();
+}
 bool DataManager::ReceiveData(DataPackage &package, int cmd_id)
 {
     switch(cmd_id)
@@ -39,9 +48,22 @@ bool DataManager::ReceiveData(DataPackage &package, int cmd_id)
     {
         SampleDataStart start;
         MessageProcess::Unpack(package, start);
-        Pipeline2DforNewScan(start);
+        //
+        SetSampleStart(start);
+        //Pipeline2DforNewScan(start);
         //Pipeline1DforNewScan(start);
+        std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+        gv_data_repopsitory._gv_sample_start=start;//
+        gv_data_repopsitory.gv_channel_count=GetChannelCountInMask(start.channel_mask);
+        gv_data_repopsitory._all_data.resize(start.dim1_size * start.dim2_size * start.dim3_size * gv_data_repopsitory.gv_channel_count);       
+        gv_data_repopsitory.gv_is_finished=false;
+        lck.unlock();
+        if(_mythread.joinable())
+        {
+             _mythread.join();
+        }
 
+        _mythread=std::thread(reconstruction_thread,this,std::ref(promiseObj));
     }
         break;
     case SAMPLE_DATA_DATA:
@@ -64,8 +86,49 @@ bool DataManager::ReceiveData(DataPackage &package, int cmd_id)
         }
 
         */
-        InputToPipeline2D(data);
 
+         //auto output_data = CreateIData1D(data);
+         output_data = CreateIData1D(data);
+
+         if(!IsFinished(output_data.get()))
+         {
+             InSertPhasedata(output_data.get());
+
+         }
+         else
+         {
+             //_mythread.join();
+             //数据发送完了，要立即重置全局结构体变量吗
+             std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+             gv_data_repopsitory.gv_is_finished=true;
+             lck.unlock();
+
+             if( futureObj.get() )//接收数据与重建图像结束，结束线程并将一些参数重置
+
+             {
+                 qDebug() << "all finished";
+                 _mythread.join();
+
+             }
+            //std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+
+            //lck.unlock();
+         }
+         if(datacount==0)
+          {
+           std::unique_lock <std::mutex> lck(gv_data_repopsitory.gv_mtx);
+           gv_data_repopsitory.gv_ready = true; // 设置全局标志位为 true.
+           gv_data_repopsitory.gv_cv.notify_all(); // 唤醒所有线程.
+           lck.unlock();
+         }
+         datacount++;
+
+
+        //InputToPipeline2D(data);
+
+        /* if(_rt_pipeline)
+             _rt_pipeline->Input(L"Input", output_data.get());
+        */
         //InputToPipeline1D(data);
 
     }
@@ -75,7 +138,6 @@ bool DataManager::ReceiveData(DataPackage &package, int cmd_id)
         SampleDataEnd end;
         MessageProcess::Unpack(package, end);
         End(end);
-
     }
         break;
     default:
@@ -84,6 +146,11 @@ bool DataManager::ReceiveData(DataPackage &package, int cmd_id)
     }
 
     return true;
+}
+
+void DataManager::setPipelinPath(const QString &pipeline_path)
+{
+    _pipeline_path=pipeline_path;
 }
 
 bool DataManager::Pipeline1DforNewScan(SampleDataStart &start)
@@ -118,13 +185,24 @@ bool DataManager::Pipeline1DforNewScan(SampleDataStart &start)
 
     return true;
 }
-bool DataManager::Pipeline2DforNewScan(SampleDataStart &start)
+
+bool DataManager::SetSampleStart(SampleDataStart &start)
 {
-    _sample_start = start;
-    _rt_pipeline = this->CreatePipeline(QString("config//pipelines//realtime_recon.pipeline"));
+    _sample_start=start;
+    return true;
+}
+
+
+bool DataManager::Pipeline2DforNewScan()
+{
+    //_sample_start = start;
+    //_rt_pipeline = this->CreatePipeline(QString("config//pipelines//realtime_recon.pipeline"));
+    _rt_pipeline=this->CreatePipeline(_pipeline_path);
 
     if(_rt_pipeline)
     {
+        gv_data_repopsitory._rt_pipeline=_rt_pipeline;//按下start按钮，创建流水线并保存到全局变量
+
         return true;
     }
     else
@@ -134,6 +212,139 @@ bool DataManager::Pipeline2DforNewScan(SampleDataStart &start)
 
 }
 
+int DataManager::GetChannelCountInMask(unsigned int channelMask)
+{
+    int count_max = sizeof(unsigned int) * 8;
+        int countInMask = 0;
+        for(int channel_index = 0; channel_index < count_max; channel_index ++)
+        {
+            if (channelMask & (1 << channel_index))
+            {
+                countInMask ++;
+            }
+
+        }
+
+        return countInMask;
+}
+
+bool DataManager::InSertPhasedata(IData *data)
+{
+    std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+    assert(data->GetVariables() != nullptr);
+
+    VariableSpace variables(data->GetVariables());
+
+    int channel_index = variables.Get<int>(L"channel_index");
+    int slice_index = variables.Get<int>(L"slice_index");
+    int phase_index = variables.Get<int>(L"phase_index");
+
+    int channelIndexInMask = GetChannelIndexInMask(_sample_start.channel_mask, channel_index);
+
+
+    auto phase_data = GetDataArray<std::complex<float>>(data);
+
+    int freqCount  = _sample_start.dim1_size;
+    int phaseCount = _sample_start.dim2_size;
+    int sliceCount = _sample_start.dim3_size;
+
+    int channelSize = freqCount * phaseCount * sliceCount;
+    int sliceSize = freqCount * phaseCount;
+
+    memcpy(gv_data_repopsitory._all_data.data() + channelSize * channelIndexInMask
+                       + sliceSize   * slice_index
+                       + freqCount   * phase_index,
+           phase_data, freqCount * sizeof(std::complex<float>));
+    auto temp3 = LookintoPtr(gv_data_repopsitory._all_data.data(), 655360, 65530, 65540);
+    lck.unlock();
+    return true;
+}
+
+
+int DataManager::GetChannelIndexInMask(unsigned int channelMask, int channelIndex)
+{
+
+    int channelIndexInMask = -1;
+    bool used = false;
+    if (channelMask & (1 << channelIndex))
+    {
+        used = true;
+    }
+
+    if(!used)
+    {
+
+    }
+    else
+    {
+        for(int i = 0; i <= channelIndex; i ++)
+        {
+            if (channelMask & (1 << i))
+            {
+                channelIndexInMask ++;
+            }
+
+        }
+
+    }
+
+    return channelIndexInMask;
+
+}
+
+std::vector<std::complex<float> > DataManager::LookintoPtr(std::complex<float> *data, int size, int start, int end)
+{
+        std::vector<std::complex<float>> view_data;
+        int view_size = end - start;
+
+        assert(start < end);
+        assert(end <= size);
+
+        view_data.resize(view_size);
+        memcpy(view_data.data(), data + start, view_size * sizeof(std::complex<float>));
+        return view_data;
+}
+
+bool DataManager::IsFinished(IData *data)
+{
+    assert(data->GetVariables() != nullptr);
+
+    VariableSpace variables(data->GetVariables());
+
+    bool finished = variables.Get<bool>(L"Finished");
+    return finished;
+}
+
+void DataManager::reconstruction_thread(DataManager *datamanager,std::promise<bool> &promiseObj)
+{
+    //int t=0;
+    std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+    while (!gv_data_repopsitory.gv_ready) // 如果标志位不为 true, 则等待...
+           gv_data_repopsitory.gv_cv.wait(lck);
+    lck.unlock();
+    while (1)
+    {
+        std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+        bool finish=gv_data_repopsitory.gv_is_finished;
+        lck.unlock();
+        if(!finish)
+        {
+            //应该传入CreateIData1D(data)而不是nullptr
+            datamanager->_rt_pipeline->Input(L"Input",nullptr);
+            //datamanager->_rt_pipeline->Input(L"Input",datamanager->output_data.get());
+            //qDebug()<<"t="<<t;
+            //t++;
+        }
+        else
+        {
+             datamanager->_rt_pipeline->Input(L"Input",nullptr);
+             break;
+        }
+    }
+     promiseObj.set_value(true);
+    //应该提供应该信号告知接收端需要重置了
+
+}
 bool DataManager::InputToPipeline1D(SampleDataData &data)
 {
 
@@ -181,6 +392,7 @@ bool DataManager::InputToPipeline2D(SampleDataData &data)
        receive_phases.clear();
     }
 ///*/
+
 
    if(_rt_pipeline)
     _rt_pipeline->Input(L"Input", output_data.get());
@@ -444,7 +656,7 @@ bool DataManager::End(SampleDataEnd &end)
 
     auto output = DataObject<int>::CreateVariableObject(variables.Variables(), nullptr);
 
-    _rt_pipeline->Input(L"Input", output.get());
+    _rt_pipeline->Input(L"Input", output.get());//?
     return true;
 }
 

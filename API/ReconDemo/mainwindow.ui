@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1164</width>
-    <height>811</height>
+    <width>1286</width>
+    <height>792</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -42,7 +42,11 @@
            </widget>
           </item>
           <item row="1" column="3">
-           <widget class="QLineEdit" name="editPipeline"/>
+           <widget class="QLineEdit" name="editPipeline">
+            <property name="text">
+             <string>D:/Projects/YAP/API/ReconDemo/config/pipelines/realtime_recon.pipeline</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="4">
            <widget class="QPushButton" name="buttonBrowsePipeline">
@@ -98,6 +102,13 @@
             </property>
            </widget>
           </item>
+          <item row="4" column="4">
+           <widget class="QPushButton" name="buttonStop">
+            <property name="text">
+             <string>Stop</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item>
@@ -130,8 +141,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1164</width>
-     <height>26</height>
+     <width>1286</width>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

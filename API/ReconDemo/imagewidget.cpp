@@ -1,4 +1,4 @@
-﻿#include "imagewidget.h"
+#include "imagewidget.h"
 #include "Client/DataHelper.h"
 #include "Implement/DataObject.h"
 #include "grayscalemapper.h"
@@ -61,7 +61,7 @@ bool ImageWidget::SetImage(IData* data,
         memcpy(test, image_data + 255*512, sizeof(unsigned short)* 512*2);
         //end of xhb1111
 
-        _window_width = *max_value;
+        _window_width = *max_value;//?
         _window_level = *max_value / 2;
 
        _mapper.SetWindowSize(size());
@@ -394,6 +394,7 @@ std::pair<bool, Geometry::CRect3D> ImageWidget::GetImageRect()
 void ImageWidget::SetVector(double x1, double y1, double z1, double x2, double y2, double z2)
 {
     //load一个文件的时候，由于目前文件保存的参数部分没做好，所以暂时先硬编码一个定位信息
+
     Vector3D row(x1, y1, z1);
     Vector3D column(x2, y2, z2);
     _image_rect.SetOrientation(row, column);

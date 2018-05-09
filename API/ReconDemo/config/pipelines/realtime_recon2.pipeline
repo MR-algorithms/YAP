@@ -8,9 +8,9 @@ DcRemover dc_remover;
 ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);
 Fft2D fft;
 ModulePhase module_phase;
-DataTypeConvertor convertor;
-NiuMriDisplay2D display2d;
-//JpegExporter jpeg_exporter(ExportFolder = "d:\\Output\\test1");
+//DataTypeConvertor convertor;
+//NiuMriDisplay2D display2d;
+JpegExporter jpeg_exporter(ExportFolder = "d:\\Output\\test2");
 	
 
 
@@ -19,8 +19,8 @@ slice_iterator->dc_remover;
 dc_remover->zero_filling;
 zero_filling->fft;
 fft->module_phase;
-//module_phase.Module->jpeg_exporter;
-module_phase.Module->convertor;
-convertor.UnsignedShort->display2d;
+module_phase.Module->jpeg_exporter;
+//module_phase.Module->convertor;
+//convertor.UnsignedShort->display2d;
 
 self.Input->receiver.Input;

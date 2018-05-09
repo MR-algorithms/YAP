@@ -2,6 +2,8 @@
 
 #include "Implement/DataObject.h"
 #include "Client/DataHelper.h"
+#include<thread>
+
 
 using namespace Yap;
 using namespace std;
@@ -44,7 +46,91 @@ bool ReceiveData::Input(const wchar_t * port, IData *data)
     if (wstring(port) != L"Input")
         return false;
 
-    //
+    std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+
+    unsigned int width =gv_data_repopsitory._gv_sample_start.dim1_size;
+    unsigned int height = gv_data_repopsitory._gv_sample_start.dim2_size;
+    unsigned int slice_count =gv_data_repopsitory._gv_sample_start.dim3_size;
+    unsigned int dim4 = gv_data_repopsitory._gv_sample_start.dim4_size;
+    unsigned int channel_count = gv_data_repopsitory.gv_channel_count;
+    std::vector<std::complex<float> > _myData=gv_data_repopsitory._all_data;
+
+    lck.unlock();
+
+    //unsigned int indexInMask = this->GetChannelIndexInMask(_dataInfo.channel_mask, channel_index);
+
+    //complex<float> *channel_buffer = new std::complex<float>[width * height * slice_count];
+
+    for(unsigned int channel_index = 0; channel_index < channel_count; channel_index++)
+    {
+
+        for(int slice_index=0;slice_index<slice_count;slice_index++)
+        {
+            complex<float> *slice_buffer = new std::complex<float>[width * height];
+            complex<float> * raw_data_buffer =_myData.data()
+                        + channel_index * width * height * slice_count
+                        + slice_index* width * height;
+            memcpy(slice_buffer, raw_data_buffer, width * height  * sizeof(std::complex<float>));
+
+
+            //std::vector<std::complex<float>> view_buffeer_data=LookintoPtr(slice_buffer,width*height,0,width*height);
+            Dimensions dimensions;
+            dimensions(DimensionReadout, 0U, width)
+                (DimensionPhaseEncoding, 0U, height)
+                (DimensionSlice, 0U, 1)
+                (Dimension4, 0U, dim4)
+                (DimensionChannel, channel_index, 1);
+            auto output = CreateData<complex<float>>(data, slice_buffer, dimensions);
+
+            Yap::VariableSpace variables;
+            output.get()->SetVariables(variables.Variables());
+            if (output->GetVariables() != nullptr)
+            {
+                VariableSpace variables(output->GetVariables());
+                variables.AddVariable(L"int",L"slice_index1",L"slice index1.");
+                variables.Set(L"slice_index1",slice_index);
+            }
+            VariableSpace variables1(output->GetVariables());
+            int feed_slice_index=variables1.Get<int>(L"slice_index1");
+
+
+//            VariableSpace variables(output.get()->GetVariables());
+//            variables.AddVariable(L"int",L"slice_index1",L"slice index1.");
+//            variables.Set(L"slice_index1",slice_index);
+//            int feed_slice_index=variables.Get<int>(L"slice_index1");
+
+
+             Feed(L"Output", output.get());
+        }
+    }
+
+/*按通道位置读取
+   for(unsigned int channel_index = 0; channel_index < channel_count; channel_index++)
+   {
+       complex<float> *channel_buffer = new std::complex<float>[width * height*slice_count];
+       complex<float> * raw_data_buffer =_myData.data()
+                   + channel_index * width * height * slice_count;
+
+       memcpy( channel_buffer, raw_data_buffer, width * height  *slice_count* sizeof(std::complex<float>));
+
+
+
+       Dimensions dimensions;
+       dimensions(DimensionReadout, 0U, width)
+           (DimensionPhaseEncoding, 0U, height)
+           (DimensionSlice, 0U, slice_count)
+           (Dimension4, 0U, dim4)
+           (DimensionChannel, channel_index, 1);
+
+       auto output = CreateData<complex<float>>(data,channel_buffer, dimensions);
+
+       Feed(L"Output", output.get());
+
+     }
+*/
+
+/*
+   //初始
     if(!IsFinished(data))
     {
         if(_data.get() == nullptr)
@@ -57,11 +143,9 @@ bool ReceiveData::Input(const wchar_t * port, IData *data)
         {
             InsertPhasedata(data);
         }
-
+        //std::thread t(CreateOutData,data);
+        //t.join();
         CreateOutData(data);
-
-
-
     }
     else
     {
@@ -70,7 +154,7 @@ bool ReceiveData::Input(const wchar_t * port, IData *data)
 
         _data.reset();
     }
-
+*/
     return true;
 
 }
@@ -188,7 +272,7 @@ bool ReceiveData::InsertPhasedata(Yap::IData *data)
 
     if (!InsertPhasedata(phase_data, channelIndexInMask, slice_index, phase_index))
         return false;
-    // auto temp3 = LookintoPtr(_data.get(), 65536, 0, 512);
+    //auto temp3 = LookintoPtr(_data.get(), 65536, 0, 512);
 
     return true;
 
@@ -256,7 +340,7 @@ bool ReceiveData::CreateOutData(Yap::IData *data)
 
 
         //if(_received_phase_count==height)
-        if((_received_phase_count%1==0)||(_received_phase_count==height))
+        if((_received_phase_count%10==0)||(_received_phase_count==height))
        {
 
             int slice_index1 = variables1.Get<int>(L"slice_index");
@@ -289,6 +373,7 @@ bool ReceiveData::CreateOutData(Yap::IData *data)
             auto output = CreateData<complex<float>>(data, slice_buffer, dimensions);
 
             Feed(L"Output", output.get());
+
         }
 
 
