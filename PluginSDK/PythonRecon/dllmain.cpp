@@ -4,13 +4,14 @@
 #include "Implement\LogUserImpl.h"
 #include "Implement\YapImplement.h"
 
-#include "FilesIterator.h"
+#include "FileIterator.h"
 #include "FolderIterator.h"
 #include "NiiReader.h"
-#include "Radiomics.h"
+#include "ExtractFeatures.h"
 #include "RFeaturesCollector.h"
 #include "Implement\PythonUserImpl.h"
-#include "CaseCollector.h"
+#include "FolderCollector.h"
+#include "PyClassification.h"
 
 using namespace Yap;
 extern "C" {
@@ -25,12 +26,13 @@ extern "C" {
 };
 
 BEGIN_DECL_PROCESSORS
-	ADD_PROCESSOR(CaseCollector)
-	ADD_PROCESSOR(FilesIterator)
+	ADD_PROCESSOR(FolderCollector)
+	ADD_PROCESSOR(FileIterator)
 	ADD_PROCESSOR(FolderIterator)
 	ADD_PROCESSOR(NiiReader)
-	ADD_PROCESSOR(Radiomics)
+	ADD_PROCESSOR(ExtractFeatures)
 	ADD_PROCESSOR(RFeaturesCollector)
+	ADD_PROCESSOR(PyClassification)
 END_DECL_PROCESSORS
 
 BOOL APIENTRY DllMain(HMODULE hModule,

@@ -1,24 +1,24 @@
 #pragma once
 
-#ifndef FilesIterator_h__20171228
-#define FilesIterator_h__20171228
+#ifndef FileIterator_h__20171228
+#define FileIterator_h__20171228
 
 #include "Implement\ProcessorImpl.h"
 
 namespace Yap
 {
-	class FilesIterator : public ProcessorImpl
+	class FileIterator : public ProcessorImpl
 	{
-		IMPLEMENT_SHARED(FilesIterator)
+		IMPLEMENT_SHARED(FileIterator)
 	public:
-		FilesIterator();
+		FileIterator();
 
-		FilesIterator(const FilesIterator &);
+		FileIterator(const FileIterator &);
 		
 		bool Input(const wchar_t * name, IData * data);
 
 	private:
-		~FilesIterator();
+		~FileIterator();
 
 		void NotifyIterationFinished(IData * data);
 
@@ -27,4 +27,4 @@ namespace Yap
 	};
 }
 
-#endif
+#endif // !FileIterator_h__20171228

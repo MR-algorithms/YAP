@@ -1,25 +1,25 @@
 #pragma once
-#ifndef Radiomics_h__20171223
-#define Radiomics_h__20171223
+#ifndef ExtractFeatures_h__20171223
+#define ExtractFeatures_h__20171223
 
 #include "Implement\ProcessorImpl.h"
 
 namespace Yap
 {
-	class Radiomics :
+	class ExtractFeatures :
 		public ProcessorImpl
 	{
-		IMPLEMENT_SHARED(Radiomics)
+		IMPLEMENT_SHARED(ExtractFeatures)
 	public:
 
-		explicit Radiomics();
+		explicit ExtractFeatures();
 
-		Radiomics(const Radiomics& rhs);
+		ExtractFeatures(const ExtractFeatures& rhs);
 
 		virtual bool Input(const wchar_t * port, IData * data) override;
 
 	private:
-		~Radiomics();
+		~ExtractFeatures();
 
 		void CreateDimension(Dimensions& dimensions, size_t output_dims, size_t * output_size);
 

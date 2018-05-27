@@ -25,4 +25,4 @@ namespace Yap
 
 	};
 }
-#endif // !RadiomicsFeaturesCollector_h__20171229
+#endif // !ExtractFeaturesFeaturesCollector_h__20171229

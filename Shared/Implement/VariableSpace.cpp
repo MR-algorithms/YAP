@@ -1,6 +1,6 @@
 #include "VariableSpace.h"
 #include "ContainerImpl.h"
-#include "../API/Yap/VdfParser.h"
+// #include "../API/Yap/VdfParser.h"
 
 #include <vector>
 #include <sstream>
@@ -132,11 +132,11 @@ bool VariableSpace::IsEnabled(const wchar_t * id) const
 	return (variable != nullptr) ? variable->IsEnabled() : false;
 }
 
-shared_ptr<VariableSpace> VariableSpace::Load(const wchar_t * path)
-{
-	VdfParser parser;
-	return parser.CompileFile(path);
-}
+//shared_ptr<VariableSpace> VariableSpace::Load(const wchar_t * path)
+//{
+//	VdfParser parser;
+//	return parser.CompileFile(path);
+//}
 
 void VariableSpace::Reset()
 {

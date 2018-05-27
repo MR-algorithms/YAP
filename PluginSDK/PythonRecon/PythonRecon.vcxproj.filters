@@ -18,16 +18,10 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FilesIterator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FolderIterator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NiiReader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Radiomics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RFeaturesCollector.h">
@@ -39,7 +33,16 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CaseCollector.h">
+    <ClInclude Include="ExtractFeatures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FolderCollector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileIterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PyClassification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,16 +53,10 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FilesIterator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FolderIterator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NiiReader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Radiomics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RFeaturesCollector.cpp">
@@ -68,7 +65,16 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CaseCollector.cpp">
+    <ClCompile Include="ExtractFeatures.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FolderCollector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileIterator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PyClassification.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

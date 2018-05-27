@@ -25,7 +25,8 @@ FolderIterator::FolderIterator() :
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeAll);
 
-	AddProperty<std::wstring>(L"Path", L"", L"文件夹目录");
+	AddProperty<std::wstring>(L"Path1", L"", L"文件夹目录");
+	AddProperty<std::wstring>(L"Path2", L"", L"文件夹目录");
 	AddProperty<bool>(L"RecursiveSearch", false, L"搜索当前Path目录下的子目录文件夹");
 	AddProperty<std::wstring>(L"RegularEx", L"", L"文件件搜索正则表达式");
 }
@@ -43,13 +44,18 @@ bool FolderIterator::Input(const wchar_t * name, IData * data)
 {
 	assert(data == nullptr || (Inputs()->Find(name) != nullptr));
 
-	auto path = GetProperty<std::wstring>(L"Path");
+	auto path1 = GetProperty<std::wstring>(L"Path1");
 	bool recursive = GetProperty<bool>(L"RecursiveSearch");
 	/* regular expression */
 	auto c_reg = GetProperty<std::wstring>(L"RegularEx");
 	//
+	if (path1.empty())
+	{
+		LOG_ERROR(L"there is no path1 value input.", L"PythonRecon");
+		return false;
+	}
 	std::vector<std::wstring> folders;
-	GetFolders(folders, path, recursive, c_reg);
+	GetFolders(folders, path1, recursive, c_reg);
 
 	if (folders.empty())
 	{
@@ -60,28 +66,62 @@ bool FolderIterator::Input(const wchar_t * name, IData * data)
 	for (auto& iter : folders)
 	{
 		VariableSpace variables;
+		variables.AddVariable(L"int", L"FolderLabel", L"Folder Label");
+		variables.Set<int>(L"FolderLabel", 1);
+
 		variables.AddVariable(L"string", L"FolderPath", L"Full path of one sub-folder in the current folder");
 		variables.Set<std::wstring>(L"FolderPath", iter.c_str());
-		variables.AddVariable(L"bool", L"Finished", L"Iteration finished.");
-		variables.Set(L"Finished", false); 
 
-		auto output = DataObject<int>::CreateVariableObject(variables.Variables(), _module.get());
+		variables.AddVariable(L"bool", L"FolderFinished", L"Iteration finished.");
+		variables.Set<bool>(L"FolderFinished", false); 
+
+		auto output = DataObject<float>::CreateVariableObject(variables.Variables(), _module.get());
 
 		Feed(L"Output", output.get());
 	}
 	
+	/*second time to load a folder.*/
+	auto path2 = GetProperty<std::wstring>(L"Path2");
+
+	if (!path2.empty())
+	{
+		std::vector<std::wstring> folders2;
+		GetFolders(folders2, path2, recursive, c_reg);
+
+		if (folders2.empty())
+		{
+			LOG_ERROR(L"Property [Path] is not aproperate a directories", L"PythonRecon");
+			return false;
+		}
+
+		for (auto& iter : folders2)
+		{
+			VariableSpace variables;
+			variables.AddVariable(L"int", L"FolderLabel", L"Folder Label");
+			variables.Set<int>(L"FolderLabel", 2);
+
+			variables.AddVariable(L"string", L"FolderPath", L"Full path of one sub-folder in the current folder");
+			variables.Set<std::wstring>(L"FolderPath", iter.c_str());
+			
+			variables.AddVariable(L"bool", L"FolderFinished", L"Iteration finished.");
+			variables.Set<bool>(L"FolderFinished", false);
+
+			auto output = DataObject<float>::CreateVariableObject(variables.Variables(), _module.get());
+
+			Feed(L"Output", output.get());
+		}
+	}
 	NotifyIterationFinished();
-	
 	return true;
 }
 
 void Yap::FolderIterator::NotifyIterationFinished()
 {
 	VariableSpace variables;
-	variables.AddVariable(L"bool", L"Finished", L"Iteration finished.");
-	variables.Set(L"Finished", true);
+	variables.AddVariable(L"bool", L"FolderFinished", L"Iteration finished.");
+	variables.Set<bool>(L"FolderFinished", true);
 
-	auto output = DataObject<int>::CreateVariableObject(variables.Variables(), _module.get());
+	auto output = DataObject<float>::CreateVariableObject(variables.Variables(), _module.get());
 	Feed(L"Output", output.get());
 }
 

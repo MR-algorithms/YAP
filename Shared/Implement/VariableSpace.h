@@ -30,7 +30,7 @@ namespace Yap {
 			const wchar_t * id,
 			const wchar_t * description);
 
-		static std::shared_ptr<VariableSpace> Load(const wchar_t * path);
+		// static std::shared_ptr<VariableSpace> Load(const wchar_t * path);
 
 		void Reset();
 		std::shared_ptr<TypeManager> GetTypes() {

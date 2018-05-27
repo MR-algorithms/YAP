@@ -191,19 +191,10 @@ bpy::list PythonImpl::DoCArray2Pylist(const T*& data, size_t dimension_count, si
 	bpy::list result;
 	if (dimension_count == 1)
 	{
-		/*std::vector<T> v(size[0]);
-		v.assign(data, data + size[0]);
-
-		// bpy::object iter = bpy::iterator<std::vector<T>, std::vector<T>::iterator()>(v);
-
-		bpy::object get_iter = bpy::iterator<std::vector<T> >();
-		bpy::object iter = get_iter(v);
-		bpy::list li(iter);
-		result(iter);
-		data += size[0];*/
 		for (size_t i = 0; i < size[0]; ++i)
 		{
-			result.append(*data++);
+			result.append(*data);
+			data++;
 		}
 	}
 	else
