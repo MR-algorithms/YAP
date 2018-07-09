@@ -18,6 +18,7 @@
 namespace Yap{struct IData; }
 
 
+enum EThreadState{ idle, scanning, paused, finished};
 class DataManager
 {
 public:
@@ -36,6 +37,11 @@ public:
     std::vector<std::complex<float>> LookintoPtr(std::complex<float> *data, int size, int start, int end);
     bool IsFinished(Yap::IData *data);
     static void reconstruction_thread(DataManager* datamanager,std::promise<bool> &promiseObj);
+    static void reconstruction_thread2();
+    void SetPwnd( QWidget* pwnd);
+    QWidget* GetPwnd(){return _pwnd;}
+    void JoinThread();
+    void SetSampleDataDataCount(const int& sampleDataData_count){_sampleDataData_count=sampleDataData_count;}
 //
 private:
     DataManager();
@@ -72,11 +78,15 @@ private:
         //SampleDataStart _start_phases;
         int last_phase_index=0;
         std::thread _mythread;
+        std::thread _mythread2;//第二条子线程
         std::promise<bool> promiseObj;
         std::future<bool> futureObj = promiseObj.get_future();
 
-        Yap::SmartPtr<Yap::IData> output_data;//
-        int datacount;
+        Yap::SmartPtr<Yap::IData> output_data;
+
+        int _sampleDataData_count;//表示接受到的SAMPLE_DATA_DATA的次数，一次计数为一通道一层一相位编码的数据
+
+        QWidget* _pwnd;
 
     ////
     /*

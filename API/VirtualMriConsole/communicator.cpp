@@ -49,8 +49,10 @@ void Communicator::slotDisconnected()
 
 bool Communicator::Connect()
 {
-    connectToHost(*_reconHost, _port);
 
+    abort();//取消已有的连接
+
+    connectToHost(*_reconHost, _port);
 
     return  waitForConnected();
 }
@@ -58,7 +60,8 @@ bool Communicator::Connect()
 bool Communicator::Disconnect()
 {
     disconnectFromHost();
-    return true;
+    //return true;
+    return waitForDisconnected();
 }
 
 bool Communicator::Send(const DataPackage &data)

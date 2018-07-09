@@ -103,9 +103,9 @@
            </widget>
           </item>
           <item row="4" column="4">
-           <widget class="QPushButton" name="buttonStop">
+           <widget class="QPushButton" name="buttonFinish">
             <property name="text">
-             <string>Stop</string>
+             <string>Finish</string>
             </property>
            </widget>
           </item>

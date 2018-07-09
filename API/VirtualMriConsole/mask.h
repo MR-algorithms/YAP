@@ -14,6 +14,7 @@ namespace Scan
             mtFromSide,
             mtEqualSampling,
             mtCustom,
+            mtRandom,
             mtNone
         };
 
@@ -26,7 +27,11 @@ namespace Scan
 
         Mask(): rate(0), type(mtNone),phaseCount(0), channelCount(0){ data.resize(0);}
         Mask(float rate, MaskType type, int phases, int channels ):
-            rate(rate), type(type),phaseCount(phases), channelCount(channels) { data.resize(0);}
+            rate(rate), type(type),phaseCount(phases), channelCount(channels)
+            {
+                int toSendPhaseCount=phaseCount*rate;
+                data.resize(toSendPhaseCount);
+            }
         Mask& operator = (const Mask& rhs){
             rate = rhs.rate;
             type = rhs.type;

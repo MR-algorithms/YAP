@@ -19,6 +19,9 @@
 #include"globalvariable.h"
 #include "Client/DataHelper.h"
 #include <QThread>
+#include <QEvent>
+#include <QApplication>
+
 using namespace std;
 using namespace Yap;
 
@@ -38,7 +41,7 @@ DataManager& DataManager::GetHandle()
 
 DataManager::~DataManager()
 {
-    _mythread.join();
+    //_mythread.join();
 }
 bool DataManager::ReceiveData(DataPackage &package, int cmd_id)
 {
@@ -64,6 +67,8 @@ bool DataManager::ReceiveData(DataPackage &package, int cmd_id)
         }
 
         _mythread=std::thread(reconstruction_thread,this,std::ref(promiseObj));
+        //_mythread=std::thread(reconstruction_thread2);
+        //_mythread2=std::thread(reconstruction_thread2);
     }
         break;
     case SAMPLE_DATA_DATA:
@@ -99,11 +104,11 @@ bool DataManager::ReceiveData(DataPackage &package, int cmd_id)
          {
              //_mythread.join();
              //数据发送完了，要立即重置全局结构体变量吗
-             std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
-             gv_data_repopsitory.gv_is_finished=true;
-             lck.unlock();
+//             std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+//             gv_data_repopsitory.gv_is_finished=true;
+//             lck.unlock();
 
-             if( futureObj.get() )//接收数据与重建图像结束，结束线程并将一些参数重置
+             if( futureObj.get() )//接收数据与重建图像结束，结束线程并将一些参数重置（这里用futureObj.get()导致最后一次重建时界面会出现短暂冻结）
 
              {
                  qDebug() << "all finished";
@@ -114,14 +119,14 @@ bool DataManager::ReceiveData(DataPackage &package, int cmd_id)
 
             //lck.unlock();
          }
-         if(datacount==0)
+         if(_sampleDataData_count==0)
           {
            std::unique_lock <std::mutex> lck(gv_data_repopsitory.gv_mtx);
            gv_data_repopsitory.gv_ready = true; // 设置全局标志位为 true.
-           gv_data_repopsitory.gv_cv.notify_all(); // 唤醒所有线程.
+           gv_data_repopsitory.gv_cv.notify_all(); // 唤醒子线程.
            lck.unlock();
          }
-         datacount++;
+         _sampleDataData_count++;
 
 
         //InputToPipeline2D(data);
@@ -129,15 +134,28 @@ bool DataManager::ReceiveData(DataPackage &package, int cmd_id)
         /* if(_rt_pipeline)
              _rt_pipeline->Input(L"Input", output_data.get());
         */
-        //InputToPipeline1D(data);
+        //InputToPipeline1D(data);//将接收到的一行数据进行一维显示（主线程）
 
     }
         break;
-    case SAMPLE_DATA_END:
+    case SAMPLE_DATA_END://目前只有发送端发送完数据或者点击发送端的Stop按钮才会发送SAMPLE_DATA_END
     {
         SampleDataEnd end;
         MessageProcess::Unpack(package, end);
         End(end);
+        /*
+        std::unique_lock <std::mutex> lck(gv_data_repopsitory.gv_mtx);
+        gv_data_repopsitory.gv_is_finished=true;
+        lck.unlock();
+        _sampleDataData_count=0;
+        */
+//        if( futureObj.get() )//接收数据与重建图像结束，结束线程并将一些参数重置（这里用futureObj.get()导致最后一次重建时界面会出现短暂冻结）
+
+//        {
+//            qDebug() << "all finished";
+//            //_mythread.join();
+
+//        }
     }
         break;
     default:
@@ -163,7 +181,7 @@ bool DataManager::Pipeline1DforNewScan(SampleDataStart &start)
         constructor.Reset(true);
         constructor.LoadModule(L"BasicRecon.dll");
 
-        constructor.CreateProcessor(L"NiuMriDisplay1D", L"Plot1D");
+        constructor.CreateProcessor(L"Display1D", L"Plot1D");
         constructor.MapInput(L"Input", L"Plot1D", L"Input");
 
         _rt_pipeline1D = constructor.GetPipeline();
@@ -307,6 +325,13 @@ std::vector<std::complex<float> > DataManager::LookintoPtr(std::complex<float> *
 
 bool DataManager::IsFinished(IData *data)
 {
+    std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+    if(gv_data_repopsitory.gv_is_finished)
+    {
+         lck.unlock();
+         return true;
+    }
+
     assert(data->GetVariables() != nullptr);
 
     VariableSpace variables(data->GetVariables());
@@ -330,20 +355,75 @@ void DataManager::reconstruction_thread(DataManager *datamanager,std::promise<bo
         if(!finish)
         {
             //应该传入CreateIData1D(data)而不是nullptr
-            datamanager->_rt_pipeline->Input(L"Input",nullptr);
+            //qDebug()<<"重建中*************";
+            datamanager->_rt_pipeline->Input(L"Input",nullptr);           
             //datamanager->_rt_pipeline->Input(L"Input",datamanager->output_data.get());
             //qDebug()<<"t="<<t;
             //t++;
         }
         else
         {
+             //std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+             //int t=gv_data_repopsitory.gv_channel_count;
+             //lck.unlock();
+             qDebug()<<"最后一次重建中*************";
              datamanager->_rt_pipeline->Input(L"Input",nullptr);
              break;
         }
     }
-     promiseObj.set_value(true);
+     //promiseObj.set_value(true);
+     QApplication::postEvent(datamanager->_pwnd, new QEvent(QEvent::Type(QEvent::User + finished)));
     //应该提供应该信号告知接收端需要重置了
 
+}
+
+void DataManager::reconstruction_thread2()
+{
+    std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+    while (!gv_data_repopsitory.gv_ready) // 如果标志位不为 true, 则等待...
+           gv_data_repopsitory.gv_cv.wait(lck);
+    lck.unlock();
+    while (1)
+    {
+        std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+        bool finish=gv_data_repopsitory.gv_is_finished;
+        Yap::SmartPtr<Yap::IProcessor> _rt_pipeline=gv_data_repopsitory._rt_pipeline;
+        lck.unlock();
+        if(!finish)
+        {
+            _rt_pipeline->Input(L"Input",nullptr);
+        }
+        else
+        {
+            _rt_pipeline->Input(L"Input",nullptr);
+            break;
+        }
+    }
+     std::unique_lock<std::mutex> lock(gv_data_repopsitory.gv_mtx);
+     QWidget* _pwnd=gv_data_repopsitory._pwnd;
+     lock.unlock();
+     QApplication::postEvent(_pwnd, new QEvent(QEvent::Type(QEvent::User + finished)));
+
+}
+
+void DataManager::SetPwnd(QWidget *pwnd)
+{
+    _pwnd=pwnd;
+    std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+    gv_data_repopsitory._pwnd=pwnd;
+    lck.unlock();
+}
+
+void DataManager::JoinThread()
+{
+    if(_mythread.joinable())
+    {
+        _mythread.join();
+    }
+    if(_mythread2.joinable())
+    {
+        _mythread2.join();
+    }
 }
 bool DataManager::InputToPipeline1D(SampleDataData &data)
 {
@@ -503,7 +583,7 @@ bool DataManager::Demo2D()
         constructor.Reset(true);
         constructor.LoadModule(L"BasicRecon.dll");
 
-        constructor.CreateProcessor(L"NiuMriDisplay2D", L"display2D");
+        constructor.CreateProcessor(L"Display2D", L"display2D");
 
 
         constructor.MapInput(L"Input", L"display2D", L"Input");
@@ -594,7 +674,7 @@ bool DataManager::Demo1D()
         constructor.Reset(true);
         constructor.LoadModule(L"BasicRecon.dll");
 
-        constructor.CreateProcessor(L"NiuMriDisplay1D", L"Plot1D");
+        constructor.CreateProcessor(L"Display1D", L"Plot1D");
 
         constructor.MapInput(L"Input", L"Plot1D", L"Input");
 
@@ -654,9 +734,9 @@ bool DataManager::End(SampleDataEnd &end)
     variables.AddVariable(L"bool", L"Finished", L"Iteration finished.");
     variables.Set(L"Finished", true);
 
-    auto output = DataObject<int>::CreateVariableObject(variables.Variables(), nullptr);
+    //auto output = DataObject<int>::CreateVariableObject(variables.Variables(), nullptr);
 
-    _rt_pipeline->Input(L"Input", output.get());//?
+    //_rt_pipeline->Input(L"Input", output.get());//当接收到SAMPLE_DATA_END时在主线程进行最后一次重建显示，这会导致最后一次重建显示时界面短暂冻结问题
     return true;
 }
 

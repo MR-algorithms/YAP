@@ -215,7 +215,7 @@ void Databin::Start(int scan_id, int channel_count)
     start.scan_id = scan_id;
     start.dim1_size = _dataInfo.freq_point_count;
     start.dim2_size = _dataInfo.phase_point_count;
-    start.dim3_size =1;//_dataInfo.slice_count;
+    start.dim3_size =_dataInfo.slice_count;
     start.dim4_size = _dataInfo.dim4;
     start.dim5_size = _dataInfo.dim5;
     start.dim6_size = _dataInfo.dim6;
@@ -249,7 +249,7 @@ void Databin::Start(int scan_id, int channel_count)
 
 
 }
-void Databin::Go()
+bool Databin::Go(const vector<int>& mask_vector)
 {
 
     //go
@@ -271,6 +271,8 @@ void Databin::Go()
                 //
                 SampleDataData data;
 
+                int real_phase_index=mask_vector.at(_current_phase_index);
+
                 data.coeff = 3.45f;
                 data.rec   = channel_index;
                 data.rp_id = 824;
@@ -278,7 +280,8 @@ void Databin::Go()
                 data.dim23456_index
                         = //channel_index * lines_channel+
                          slice_index   * lines_image
-                         + _current_phase_index;
+                         //+ _current_phase_index;
+                         +real_phase_index;
 
                 /*///
                 boost::shared_array<complex<float>> aslice
@@ -289,7 +292,8 @@ void Databin::Go()
                 ///*/
 
                 boost::shared_array<complex<float>> aline
-                        = GetRawData(channel_index, slice_index, _current_phase_index);
+                        //= GetRawData(channel_index, slice_index, _current_phase_index);
+                         = GetRawData(channel_index, slice_index,real_phase_index);
 
                 //
                 std::vector<complex<float>> destline;
@@ -311,19 +315,22 @@ void Databin::Go()
 
                 if(_communicator.get()->Send(dataPackage))
                 {
-                    qDebug()<<"send channel_index="<<channel_index<<"slice_index="<<slice_index<<"_current_phase_index="<<_current_phase_index<<"success";
+                    qDebug()<<"send channel_index="<<channel_index<<"slice_index="<<slice_index<<"_current_phase_index="<<real_phase_index<<"success";
 
                 }
                 else
                 {
-                    qDebug()<<"send channel_index="<<channel_index<<"slice_index="<<slice_index<<"_current_phase_index="<<_current_phase_index<<"false";
-                    slice_index=slice_index-1;//如果发送失败则重新发送
+                    qDebug()<<"send channel_index="<<channel_index<<"slice_index="<<slice_index<<"_current_phase_index="<<real_phase_index<<"false";
+                    //slice_index=slice_index-1;//如果发送失败则重新发送
+                    return false;
                 }
             }
         }
     }
     qDebug()<<"send all phase of"<<_current_phase_index;
+
     _current_phase_index ++;
+    return true;
 }
 void Databin::End()
 {

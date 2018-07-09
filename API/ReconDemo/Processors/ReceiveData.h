@@ -40,6 +40,8 @@ class ReceiveData : public Yap::ProcessorImpl
 public:
     explicit ReceiveData();
     ReceiveData(const ReceiveData &rhs);
+    static void read_thread(ReceiveData* receiveData,Yap::IData *data,int channel_index);
+    static void read_thread0(int channel_index);
 
 private:
     virtual ~ReceiveData();
@@ -60,7 +62,7 @@ private:
     unsigned int _last_phase_index=-1;
     unsigned int _received_phase_count=0;
     //bool _init;
-
+    std::vector<std::complex<float> > read_data;
     std::vector<std::complex<float>> LookintoPtr(std::complex<float> *data, int size, int start, int end);
 };
 

@@ -12,6 +12,7 @@
 #include<functional>
 #include<chrono>
 
+class ReconClientSocket;
 class ReconServer;
 
 namespace Ui {
@@ -41,11 +42,12 @@ private slots:
 
     void on_buttonBrowsePipeline_clicked();
 
-    void on_buttonStop_clicked();
+    void on_buttonFinish_clicked();
 
 private:
     Ui::MainWindow *ui;
 
+    virtual bool event(QEvent *event);
     void SetImportedProcessors();
     std::shared_ptr<ReconServer> reconServer;
     //ReconServer* reconServer;

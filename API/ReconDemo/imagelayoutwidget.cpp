@@ -8,7 +8,7 @@
 
 #include "Client/DataHelper.h"
 
-#include "Processors/NiuMriDisplay2D.h"
+#include "Processors/Display2D.h"
 
 
 

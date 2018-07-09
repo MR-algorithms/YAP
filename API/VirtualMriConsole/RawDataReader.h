@@ -32,7 +32,7 @@ namespace Hardware
     class CRawDataReader
 	{
 	public:
-		CRawDataReader(void){};
+        CRawDataReader(void){};
 		virtual ~CRawDataReader(void){};
 
         virtual bool Prepare(const std::string& info) = 0;

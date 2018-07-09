@@ -27,6 +27,7 @@ public:
     bool PrepareScantask(const ScanTask& task);
     bool Scan();
     void Stop();
+    unsigned int GetSendIndex(){return _sendIndex;}
 
 private:
 
@@ -46,7 +47,8 @@ public:
     std::thread _thread;
 
     std::timed_mutex _timeMutex1;
-    int _sendIndex;
+
+    int _sendIndex;//表示已经发送了几条k空间数据（所有通道所有层的一行算一条）
 
 };
 
@@ -81,6 +83,11 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
     Databin databin;
     databin.GetCommunicator().get()->SetRemoteHost(scantask.ip_address.c_str(), scantask.port);
     bool succeed = databin.GetCommunicator().get()->Connect();
+
+    vector<int> mask_vec=scantask.mask.data;
+    int temp=scantask.mask.data.size();
+    databin.SetSendPhaseCount(temp);
+
     //succeed = true;//hard code. set true for debugging.
     if(!succeed)
     {
@@ -124,12 +131,30 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
 
             if(!databin.CanbeFinished())
             {
-                databin.Go();
+                /*
+                vector<int> mask_vec=scantask.mask.data;
+                int temp=scantask.mask.data.size();
+                databin.SetSendPhaseCount(temp);
+                */
+                if(!databin.Go(mask_vec))
+                {
+//                    This->_timeMutex1.unlock();
+//                    This->_sendIndex = 0;
+                    qDebug()<<"Apply for unusual finished.";
+                    //QApplication::postEvent(scantask.pWnd, new QEvent(QEvent::Type(QEvent::User + finished)));
+                    databin.SetCurrentPhaseIndex(temp);
+                }
                 if(databin.CanbeFinished())
                 {
                     This->_timeMutex1.unlock();
                     This->_sendIndex = 0;
                     qDebug()<<"Apply for finished.";
+
+                    //其中，scantask.pWnd存储的是创建该线程的窗口，也就是该线程的父线程，主要用于该子线程向父线程发送特定事件，以便进行线程间通信。
+                    //然后在任何你想要和父线程进行通信的地方，通过：
+                    //QApplication::postEvent(scantask.pWnd, new QEvent(MyEvent));
+                    //将该事件发送出去。const QEvent::Type MyEvent = (QEvent::Type)5001;建议用5000以上唯一的标识
+
                     QApplication::postEvent(scantask.pWnd, new QEvent(QEvent::Type(QEvent::User + finished)));
                 }
                 else
@@ -137,6 +162,7 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
                     //end of doing
                     This->_sendIndex ++;
                     qDebug() << "send: "<< This->_sendIndex << "times";
+
 
                     //QEvent evt(QEvent::Type(QEvent::User + scanning));
                     QApplication::postEvent(scantask.pWnd, new QEvent(QEvent::Type(QEvent::User + scanning)));
@@ -188,7 +214,6 @@ bool VirtualConsoleImpl::PrepareScantask(const ScanTask& scan_task)
 
 bool VirtualConsoleImpl::Scan()
 {
-
 
     std::promise<bool> promiseObj;
     std::future<bool> futureObj = promiseObj.get_future();
@@ -261,4 +286,10 @@ void VirtualConsole::Stop()
 {
     assert(_impl);
     _impl->Stop();
+}
+
+unsigned int VirtualConsole::GetSendIndex()
+{
+    assert(_impl);
+    return _impl->GetSendIndex();
 }

@@ -29,10 +29,14 @@ private slots:
 
     //void on_testButton_clicked();
 
+    void on_browsedatabutton_clicked();
+
 private:
     Ui::MainWindow *ui;
 
     virtual bool event(QEvent *event);
+
+    unsigned int _scan_count=0;
 
 };
 

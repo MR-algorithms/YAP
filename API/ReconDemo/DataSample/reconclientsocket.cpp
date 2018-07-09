@@ -40,7 +40,7 @@ void ReconClientSocket:: slotDataReceived()
 
                 //process the package.
 
-                qDebug()<<"gv_ready============"<<gv_data_repopsitory.gv_ready;
+                //qDebug()<<"gv_ready============"<<gv_data_repopsitory.gv_ready;
                 //std::thread thread1(DataManager::GetHandle().ReceiveData,std::ref(this->_package),this->_bufferInfo);
                 DataManager::GetHandle().ReceiveData(this->_package, this->_bufferInfo.cmd_id);
                 //

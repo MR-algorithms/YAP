@@ -19,7 +19,7 @@ ReceiveData::ReceiveData() : ProcessorImpl(L"ReceiveData"),_data(nullptr)
 
 ReceiveData::ReceiveData(const ReceiveData &rhs) :  ProcessorImpl(rhs)
 {
-    //LOG_TRACE(L"NiuMriDisplay2D constructor called.", L"NiuMri");
+    //LOG_TRACE(L"Display2D constructor called.", L"Display2D");
 }
 
 void ReceiveData::TestWhatcanbeTested()
@@ -54,15 +54,36 @@ bool ReceiveData::Input(const wchar_t * port, IData *data)
     unsigned int dim4 = gv_data_repopsitory._gv_sample_start.dim4_size;
     unsigned int channel_count = gv_data_repopsitory.gv_channel_count;
     std::vector<std::complex<float> > _myData=gv_data_repopsitory._all_data;
+    read_data=_myData;
 
     lck.unlock();
+
+    std::unique_lock<std::mutex> lock(gv_receive_repopsitory.gv_mtx);
+    gv_receive_repopsitory.receiveData=this;
+    gv_receive_repopsitory.data=data;
+    lock.unlock();
+
+//    std::thread thread1(read_thread0,0);
+//    std::thread thread2(read_thread0,1);
+//    thread1.join();
+//    thread2.join();
+
+
+//    std::vector<std::thread> threads;
+//    channel_count=1;
+//    threads.resize(channel_count);
 
     //unsigned int indexInMask = this->GetChannelIndexInMask(_dataInfo.channel_mask, channel_index);
 
     //complex<float> *channel_buffer = new std::complex<float>[width * height * slice_count];
 
-    for(unsigned int channel_index = 0; channel_index < channel_count; channel_index++)
+
+    for(int channel_index = 0; channel_index < channel_count; channel_index++)
     {
+
+        //threads[channel_index]=std::thread(read_thread,this,data,channel_index);
+
+        //threads.at(channel_index)=std::thread(read_thread0,channel_index);
 
         for(int slice_index=0;slice_index<slice_count;slice_index++)
         {
@@ -84,11 +105,15 @@ bool ReceiveData::Input(const wchar_t * port, IData *data)
 
             Yap::VariableSpace variables;
             output.get()->SetVariables(variables.Variables());
+
             if (output->GetVariables() != nullptr)
             {
                 VariableSpace variables(output->GetVariables());
                 variables.AddVariable(L"int",L"slice_index1",L"slice index1.");
                 variables.Set(L"slice_index1",slice_index);
+
+                variables.AddVariable(L"int",L"channel_index1",L"channel index1.");
+                variables.Set(L"channel_index1",channel_index);
             }
             VariableSpace variables1(output->GetVariables());
             int feed_slice_index=variables1.Get<int>(L"slice_index1");
@@ -101,8 +126,16 @@ bool ReceiveData::Input(const wchar_t * port, IData *data)
 
 
              Feed(L"Output", output.get());
+
         }
-    }
+
+   }
+
+
+//        for(auto& t:threads)
+//        {
+//            t.join();
+//        }
 
 /*按通道位置读取
    for(unsigned int channel_index = 0; channel_index < channel_count; channel_index++)
@@ -159,6 +192,97 @@ bool ReceiveData::Input(const wchar_t * port, IData *data)
 
 }
 
+void  ReceiveData::read_thread(ReceiveData* receiveData,Yap::IData *data,int channel_index)
+{
+    std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+    unsigned int width =gv_data_repopsitory._gv_sample_start.dim1_size;
+    unsigned int height = gv_data_repopsitory._gv_sample_start.dim2_size;
+    unsigned int slice_count =gv_data_repopsitory._gv_sample_start.dim3_size;
+    unsigned int dim4 = gv_data_repopsitory._gv_sample_start.dim4_size;
+    lck.unlock();
+    std::vector<std::complex<float> > _myData=receiveData->read_data;
+    for(int slice_index=0;slice_index<slice_count;slice_index++)
+      {
+               complex<float> *slice_buffer = new std::complex<float>[width * height];
+               complex<float> * raw_data_buffer =_myData.data()
+                           + channel_index * width * height * slice_count
+                           + slice_index* width * height;
+               memcpy(slice_buffer, raw_data_buffer, width * height  * sizeof(std::complex<float>));
+
+               Dimensions dimensions;
+               dimensions(DimensionReadout, 0U, width)
+                   (DimensionPhaseEncoding, 0U, height)
+                   (DimensionSlice, 0U, 1)
+                   (Dimension4, 0U, dim4)
+                   (DimensionChannel, channel_index, 1);
+               auto output =receiveData->CreateData<complex<float>>(data, slice_buffer, dimensions);
+
+               Yap::VariableSpace variables;
+               output.get()->SetVariables(variables.Variables());
+               if (output->GetVariables() != nullptr)
+               {
+                   VariableSpace variables(output->GetVariables());
+                   variables.AddVariable(L"int",L"slice_index1",L"slice index1.");
+                   variables.Set(L"slice_index1",slice_index);
+
+                   variables.AddVariable(L"int",L"channel_index1",L"channel index1.");
+                   variables.Set(L"channel_index1",channel_index);
+               }
+               VariableSpace variables1(output->GetVariables());
+               int feed_slice_index=variables1.Get<int>(L"slice_index1");
+
+               receiveData->Feed(L"Output", output.get());
+    }
+}
+
+void ReceiveData::read_thread0(int channel_index)
+{
+    std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+    unsigned int width =gv_data_repopsitory._gv_sample_start.dim1_size;
+    unsigned int height = gv_data_repopsitory._gv_sample_start.dim2_size;
+    unsigned int slice_count =gv_data_repopsitory._gv_sample_start.dim3_size;
+    unsigned int dim4 = gv_data_repopsitory._gv_sample_start.dim4_size;
+    lck.unlock();
+
+    std::unique_lock<std::mutex> lock(gv_receive_repopsitory.gv_mtx);
+    ReceiveData* receiveData=gv_receive_repopsitory.receiveData;
+    Yap::IData* data=gv_receive_repopsitory.data;
+    lock.unlock();
+
+    std::vector<std::complex<float> > _myData=receiveData->read_data;
+    for(int slice_index=0;slice_index<slice_count;slice_index++)
+      {
+               complex<float> *slice_buffer = new std::complex<float>[width * height];
+               complex<float> * raw_data_buffer =_myData.data()
+                           + channel_index * width * height * slice_count
+                           + slice_index* width * height;
+               memcpy(slice_buffer, raw_data_buffer, width * height  * sizeof(std::complex<float>));
+
+               Dimensions dimensions;
+               dimensions(DimensionReadout, 0U, width)
+                   (DimensionPhaseEncoding, 0U, height)
+                   (DimensionSlice, 0U, 1)
+                   (Dimension4, 0U, dim4)
+                   (DimensionChannel, channel_index, 1);
+               auto output =receiveData->CreateData<complex<float>>(data, slice_buffer, dimensions);
+
+               Yap::VariableSpace variables;
+               output.get()->SetVariables(variables.Variables());
+               if (output->GetVariables() != nullptr)
+               {
+                   VariableSpace variables(output->GetVariables());
+                   variables.AddVariable(L"int",L"slice_index1",L"slice index1.");
+                   variables.Set(L"slice_index1",slice_index);
+
+                   variables.AddVariable(L"int",L"channel_index1",L"channel index1.");
+                   variables.Set(L"channel_index1",channel_index);
+               }
+               VariableSpace variables1(output->GetVariables());
+               int feed_slice_index=variables1.Get<int>(L"slice_index1");
+
+               receiveData->Feed(L"Output", output.get());
+    }
+}
 
 bool ReceiveData::IsFinished(Yap::IData *data)
 {
@@ -173,7 +297,7 @@ bool ReceiveData::IsFinished(Yap::IData *data)
 }
 
 
- bool ReceiveData::InitScanData(Yap::IData *data)
+bool ReceiveData::InitScanData(Yap::IData *data)
  {
 
      assert(data->GetVariables() != nullptr);
@@ -383,5 +507,5 @@ bool ReceiveData::CreateOutData(Yap::IData *data)
 }
 ReceiveData::~ReceiveData()
 {
-//    LOG_TRACE(L"NiuMriDisplay2D destructor called.", L"NiuMri");
+//    LOG_TRACE(L"Display2D destructor called.", L"Display2D");
 }
