@@ -362,7 +362,7 @@ PythonImpl::~PythonImpl()
 	}*/
 	Py_XDECREF(_ref_data_list.ptr());
 	DeleteCriticalSection(&g_cs);
-	Py_FinalizeEx();
+	//Py_FinalizeEx();
 };
 
 PythonImpl& PythonImpl::GetInstance()
