@@ -43,13 +43,15 @@ SOURCES += \
     rectcalc.cpp \
     imagelayoutwidget.cpp \
     datamanager.cpp \
-    Processors/NiumagSliceIterator.cpp \
-    Processors/NiuMriDisplay1D.cpp \
-    Processors/NiuMriDisplay2D.cpp \
     DataSample/reconclientsocket.cpp \
     DataSample/reconserver.cpp \
     DataSample/datapackage.cpp \
-    Processors/RecieveData.cpp
+    Processors/ReceiveData.cpp \
+    globalvariable.cpp \
+    Processors/Display1D.cpp \
+    Processors/Display2D.cpp \
+    Processors/PSliceIterator.cpp \
+    Processors/PFft2D.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -73,9 +75,6 @@ HEADERS += \
     imagelayoutwidget.h \
     datamanager.h \
     StringHelper.h \
-    Processors/NiumagSliceIterator.h \
-    Processors/NiuMriDisplay1D.h \
-	Processors/NiuMriDisplay2D.h \
     DataSample/reconclientsocket.h \
     DataSample/reconserver.h \
     DataSample/SampleDataClient.h \
@@ -83,7 +82,12 @@ HEADERS += \
     DataSample/CmrPackItemTypeHelper.h \
     DataSample/CmrPackType.h \
     DataSample/datapackage.h \
-    Processors/RecieveData.h
+    Processors/ReceiveData.h \
+    globalvariable.h \
+    Processors/Display1D.h \
+    Processors/Display2D.h \
+    Processors/PSliceIterator.h \
+    Processors/PFft2D.h
 
 FORMS += \
         mainwindow.ui
@@ -92,19 +96,28 @@ FORMS += \
 INCLUDEPATH += $$[YAP_ROOT]/shared/ \
         $$[YAP_ROOT]/ \
 		$$[THIRDPARTY]/log4cplus-1.2.1/include/ \
-        $$[THIRDPARTY]/boost/
+        $$[THIRDPARTY]/boost/\
+        $$[THIRDPARTY]/FFTW/include/
 
 DEPENDPATH += $$[THIRDPARTY]/log4cplus2/include
+
+DEPENDPATH += $$[THIRDPARTY]/FFTW/include
 
 win32:CONFIG(release, debug|release): {
 LIBS += -L$$[YAP_ROOT]/LIB/ -lClient -lImplement -lYap
 LIBS += -L$$[THIRDPARTY]/log4cplus-1.2.1/lib/win32/ -llog4cplusu
 LIBS += -L$$[THIRDPARTY]/boost/lib64-msvc-14.0/ -lboost_thread-vc140-mt-1_61
+LIBS += -L$$[THIRDPARTY]/FFTW/lib/ -llibfftw3-3
+LIBS += -L$$[THIRDPARTY]/FFTW/lib/ -llibfftw3f-3
+LIBS += -L$$[THIRDPARTY]/FFTW/lib/ -llibfftw3l-3
 }
 else:win32:CONFIG(debug, debug|release): {
 LIBS += -L$$[YAP_ROOT]/LIB/ -lYapd -lClientd -lImplementd
 LIBS += -L$$[THIRDPARTY]/log4cplus-1.2.1/lib/win32/ -llog4cplusud
 LIBS += -L$$[THIRDPARTY]/boost/lib64-msvc-14.0/ -lboost_thread-vc140-mt-gd-1_61
+LIBS += -L$$[THIRDPARTY]/FFTW/lib/ -llibfftw3-3
+LIBS += -L$$[THIRDPARTY]/FFTW/lib/ -llibfftw3f-3
+LIBS += -L$$[THIRDPARTY]/FFTW/lib/ -llibfftw3l-3
 }
 else:unix: {
 LIBS += -L$$[YAP_ROOT]/LIB/ -lClientd -lImplementd -lYapd

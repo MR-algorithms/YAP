@@ -18,7 +18,7 @@ void GrayScaleMapper::SetLevelWidth(unsigned short level, unsigned short width)
     Update();
 }
 
-void GrayScaleMapper::Update()
+void GrayScaleMapper::Update()//根据窗宽窗位将灰度值映射到0~255之间
 {
     _lut.resize(65536);
 

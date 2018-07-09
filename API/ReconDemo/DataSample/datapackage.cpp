@@ -193,6 +193,7 @@ bool MessageProcess::Pack(DataPackage &package, const SampleDataEnd &end)
 bool MessageProcess::Unpack(const DataPackage &package, SampleDataStart &start)
 {
     //包检查
+
     uint32_t info[11];
     for(int i = 0; i < static_cast<int>( package.data.size() ); i ++)
     {
@@ -250,6 +251,7 @@ bool MessageProcess::Unpack(const DataPackage &package, SampleDataData  &data)
 bool MessageProcess::Unpack(const DataPackage &package, SampleDataEnd   &end)
 {
     //包检查
+
     uint32_t info[2];
     for(int i = 0; i < static_cast<int>( package.data.size() ); i ++)
     {

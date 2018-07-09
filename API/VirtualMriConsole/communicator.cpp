@@ -49,8 +49,10 @@ void Communicator::slotDisconnected()
 
 bool Communicator::Connect()
 {
-    connectToHost(*_reconHost, _port);
 
+    abort();//取消已有的连接
+
+    connectToHost(*_reconHost, _port);
 
     return  waitForConnected();
 }
@@ -58,7 +60,8 @@ bool Communicator::Connect()
 bool Communicator::Disconnect()
 {
     disconnectFromHost();
-    return true;
+    //return true;
+    return waitForDisconnected();
 }
 
 bool Communicator::Send(const DataPackage &data)
@@ -77,7 +80,7 @@ bool Communicator::Send(const DataPackage &data)
             QByteArray::fromRawData((char*)data.head.data(), sizeof(HeadItem) * data.head.size());
 
 
-    //或者
+
     QByteArray byteArray1cc;
     for(int i = 0; i < static_cast<int>( data.head.size() ); i ++)
     {
@@ -92,7 +95,7 @@ bool Communicator::Send(const DataPackage &data)
     for(int i = 0; i < static_cast<int>( data.data.size() ); i ++)
     {
          DataItem dataitem = data.data[i];
-         //每一个item的成员又是vector。
+
          QByteArray temp = QByteArray::fromRawData((char*)dataitem.data.data(), dataitem.data.size());
          byteArray2 += temp;
     }

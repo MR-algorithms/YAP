@@ -21,22 +21,28 @@ private:
     boost::shared_array<complex<float>> GetRawData(unsigned int channelIndex, unsigned int sliceIndex);
     boost::shared_array<complex<float>> GetRawData(unsigned int channelIndex, unsigned int sliceIndex, unsigned int phaseIndex);
 
-    unsigned int GetPhaseCount();
+    //unsigned int GetPhaseCount();
     int _current_phase_index;
     std::shared_ptr<Communicator> _communicator;
     bool _ended;
     SampleDataStart _start;
 
+    int _to_send_phase_count=65536;
+
 public:
 
     Databin();
+    unsigned int GetPhaseCount();
+    void SetCurrentPhaseIndex(const int& currentPhaseIndex){_current_phase_index=currentPhaseIndex;}
+    void SetSendPhaseCount(const int& toSendPhaseCount){_to_send_phase_count=toSendPhaseCount;}
 
     std::shared_ptr<Communicator> GetCommunicator(){return _communicator;}
     void Load(std::wstring dataPath, int channelCount);
     void Start(int scan_id, int channel_count);
-    void Go();
+    bool Go(const vector<int>& mask_vector);
     void End();
-    bool CanbeFinished(){return _current_phase_index >= 1;}//static_cast<int>( GetPhaseCount());}
+    //bool CanbeFinished(){return _current_phase_index >=static_cast<int>( GetPhaseCount());}
+    bool CanbeFinished(){return _current_phase_index >=_to_send_phase_count;}
     bool Stoped(){return _ended;}
 
 

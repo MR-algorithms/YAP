@@ -10,6 +10,9 @@
 #include "virtualconsole.h"
 #include "scantask.h"
 #include "mask.h"
+#include <QFileDialog>
+
+//#include "databin.h"//test
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -65,15 +68,17 @@ void MainWindow::on_scanButton_clicked()
     reference_task.ip_address = ip_address.toStdWString();
     reference_task.port = ui->editReconPort->text().toInt();
 
-    reference_task.dataPath =L"D:\\test_data\\RawData_256\\RawData";
+    //reference_task.dataPath =L"D:\\test_data\\RawData_256\\RawData";
+    reference_task.dataPath =ui->editDataFile->text().toStdWString();
 
-    //参考mask赋值。
+
     float rate = ui->editMaskFile->text().toFloat();
     Scan::Mask::MaskType type = static_cast<Scan::Mask::MaskType>( ui->maskComboBox->currentIndex() );
 
     //Hardcode: dataPath, channelCount, phaseCount,
     qDebug()<<"Hard code: dataPath, channelCount, phaseCount";
-    auto scantask = Scan::ScantaskGenerator::Create(reference_task, Scan::Mask(rate, type, 256, 4));
+    int allPhaseCount=ui->editPhaseCount->text().toInt();
+    auto scantask = Scan::ScantaskGenerator::Create(reference_task, Scan::Mask(rate, type,allPhaseCount, 4));
 
     qDebug()<<"MainWidow: onScanButton_clicked";
 
@@ -104,6 +109,7 @@ void MainWindow::on_stopButton_clicked()
 }
 
 
+
 bool MainWindow::event(QEvent *event)
 {
     switch (event->type()) {
@@ -112,7 +118,9 @@ bool MainWindow::event(QEvent *event)
         //int test2 =342;
 
         //ui->editInfo->appendPlainText(QString("%1").arg(test2));
-        ui->editInfo->appendPlainText(QString("scanning"));
+        _scan_count=VirtualConsole::GetHandle().GetSendIndex();
+        QString message=tr("scanning:%1").arg(_scan_count);
+        ui->editInfo->appendPlainText(message);
 
     }
         break;
@@ -160,3 +168,11 @@ bool MainWindow::event(QEvent *event)
     qDebug()<< "send another "<< tempArray.length()<<" bytes";
     */
 //}
+
+//选择原始数据.fid文件路径
+
+void MainWindow::on_browsedatabutton_clicked()
+{
+    QString file_name = QFileDialog::getExistingDirectory(this,"Select the folder path","D:\\test_data");
+    ui->editDataFile->setText(file_name);
+}

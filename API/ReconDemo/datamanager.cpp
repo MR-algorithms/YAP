@@ -15,6 +15,13 @@
 #include <QDateTime>
 
 #include <QFileInfo>
+
+#include"globalvariable.h"
+#include "Client/DataHelper.h"
+#include <QThread>
+#include <QEvent>
+#include <QApplication>
+
 using namespace std;
 using namespace Yap;
 
@@ -31,7 +38,12 @@ DataManager& DataManager::GetHandle()
     return s_instance;
 
 }
-bool DataManager::RecieveData(DataPackage &package, int cmd_id)
+
+DataManager::~DataManager()
+{
+    //_mythread.join();
+}
+bool DataManager::ReceiveData(DataPackage &package, int cmd_id)
 {
     switch(cmd_id)
     {
@@ -39,17 +51,90 @@ bool DataManager::RecieveData(DataPackage &package, int cmd_id)
     {
         SampleDataStart start;
         MessageProcess::Unpack(package, start);
-        Pipeline2DforNewScan(start);
-        Pipeline1DforNewScan(start);
+        //
+        SetSampleStart(start);
+        //Pipeline2DforNewScan(start);
+        //Pipeline1DforNewScan(start);
+        std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+        gv_data_repopsitory._gv_sample_start=start;//
+        gv_data_repopsitory.gv_channel_count=GetChannelCountInMask(start.channel_mask);
+        gv_data_repopsitory._all_data.resize(start.dim1_size * start.dim2_size * start.dim3_size * gv_data_repopsitory.gv_channel_count);       
+        gv_data_repopsitory.gv_is_finished=false;
+        lck.unlock();
+        if(_mythread.joinable())
+        {
+             _mythread.join();
+        }
 
+        _mythread=std::thread(reconstruction_thread,this,std::ref(promiseObj));
+        //_mythread=std::thread(reconstruction_thread2);
+        //_mythread2=std::thread(reconstruction_thread2);
     }
         break;
     case SAMPLE_DATA_DATA:
     {
         SampleDataData data;
         MessageProcess::Unpack(package, data);
-        InputToPipeline2D(data);
-        InputToPipeline1D(data);
+        //
+        std::vector<std::complex<float>> receive_line;
+        receive_line.resize(data.data.size());
+        memcpy(receive_line.data(),data.data.data(),sizeof(std::complex<float>)*data.data.size());
+        //
+
+
+        /*
+        receive_phases.insert(receive_phases.end(),receive_line.begin(),receive_line.end());
+        if(receive_phases.size()>=_start_phases.dim1_size*_start_phases.dim3_size)
+        {
+           InputToPipeline2D(data);
+           receive_phases.clear();
+        }
+
+        */
+
+         //auto output_data = CreateIData1D(data);
+         output_data = CreateIData1D(data);
+
+         if(!IsFinished(output_data.get()))
+         {
+             InSertPhasedata(output_data.get());
+
+         }
+         else
+         {
+             //_mythread.join();
+             //数据发送完了，要立即重置全局结构体变量吗
+//             std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+//             gv_data_repopsitory.gv_is_finished=true;
+//             lck.unlock();
+
+             if( futureObj.get() )//接收数据与重建图像结束，结束线程并将一些参数重置（这里用futureObj.get()导致最后一次重建时界面会出现短暂冻结）
+
+             {
+                 qDebug() << "all finished";
+                 _mythread.join();
+
+             }
+            //std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+
+            //lck.unlock();
+         }
+         if(_sampleDataData_count==0)
+          {
+           std::unique_lock <std::mutex> lck(gv_data_repopsitory.gv_mtx);
+           gv_data_repopsitory.gv_ready = true;
+           gv_data_repopsitory.gv_cv.notify_all();
+           lck.unlock();
+         }
+         _sampleDataData_count++;
+
+
+        //InputToPipeline2D(data);
+
+        /* if(_rt_pipeline)
+             _rt_pipeline->Input(L"Input", output_data.get());
+        */
+        //InputToPipeline1D(data);
 
     }
         break;
@@ -58,7 +143,19 @@ bool DataManager::RecieveData(DataPackage &package, int cmd_id)
         SampleDataEnd end;
         MessageProcess::Unpack(package, end);
         End(end);
+        /*
+        std::unique_lock <std::mutex> lck(gv_data_repopsitory.gv_mtx);
+        gv_data_repopsitory.gv_is_finished=true;
+        lck.unlock();
+        _sampleDataData_count=0;
+        */
+//        if( futureObj.get() )
 
+//        {
+//            qDebug() << "all finished";
+//            //_mythread.join();
+
+//        }
     }
         break;
     default:
@@ -67,6 +164,11 @@ bool DataManager::RecieveData(DataPackage &package, int cmd_id)
     }
 
     return true;
+}
+
+void DataManager::setPipelinPath(const QString &pipeline_path)
+{
+    _pipeline_path=pipeline_path;
 }
 
 bool DataManager::Pipeline1DforNewScan(SampleDataStart &start)
@@ -79,7 +181,7 @@ bool DataManager::Pipeline1DforNewScan(SampleDataStart &start)
         constructor.Reset(true);
         constructor.LoadModule(L"BasicRecon.dll");
 
-        constructor.CreateProcessor(L"NiuMriDisplay1D", L"Plot1D");
+        constructor.CreateProcessor(L"Display1D", L"Plot1D");
         constructor.MapInput(L"Input", L"Plot1D", L"Input");
 
         _rt_pipeline1D = constructor.GetPipeline();
@@ -101,13 +203,24 @@ bool DataManager::Pipeline1DforNewScan(SampleDataStart &start)
 
     return true;
 }
-bool DataManager::Pipeline2DforNewScan(SampleDataStart &start)
+
+bool DataManager::SetSampleStart(SampleDataStart &start)
 {
-    _sample_start = start;
-    _rt_pipeline = this->CreatePipeline(QString("config//pipelines//realtime_recon.pipeline"));
+    _sample_start=start;
+    return true;
+}
+
+
+bool DataManager::Pipeline2DforNewScan()
+{
+    //_sample_start = start;
+    //_rt_pipeline = this->CreatePipeline(QString("config//pipelines//realtime_recon.pipeline"));
+    _rt_pipeline=this->CreatePipeline(_pipeline_path);
 
     if(_rt_pipeline)
     {
+        gv_data_repopsitory._rt_pipeline=_rt_pipeline;//按下start按钮，创建流水线并保存到全局变量
+
         return true;
     }
     else
@@ -117,6 +230,201 @@ bool DataManager::Pipeline2DforNewScan(SampleDataStart &start)
 
 }
 
+int DataManager::GetChannelCountInMask(unsigned int channelMask)
+{
+    int count_max = sizeof(unsigned int) * 8;
+        int countInMask = 0;
+        for(int channel_index = 0; channel_index < count_max; channel_index ++)
+        {
+            if (channelMask & (1 << channel_index))
+            {
+                countInMask ++;
+            }
+
+        }
+
+        return countInMask;
+}
+
+bool DataManager::InSertPhasedata(IData *data)
+{
+    std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+    assert(data->GetVariables() != nullptr);
+
+    VariableSpace variables(data->GetVariables());
+
+    int channel_index = variables.Get<int>(L"channel_index");
+    int slice_index = variables.Get<int>(L"slice_index");
+    int phase_index = variables.Get<int>(L"phase_index");
+
+    int channelIndexInMask = GetChannelIndexInMask(_sample_start.channel_mask, channel_index);
+
+
+    auto phase_data = GetDataArray<std::complex<float>>(data);
+
+    int freqCount  = _sample_start.dim1_size;
+    int phaseCount = _sample_start.dim2_size;
+    int sliceCount = _sample_start.dim3_size;
+
+    int channelSize = freqCount * phaseCount * sliceCount;
+    int sliceSize = freqCount * phaseCount;
+
+    memcpy(gv_data_repopsitory._all_data.data() + channelSize * channelIndexInMask
+                       + sliceSize   * slice_index
+                       + freqCount   * phase_index,
+           phase_data, freqCount * sizeof(std::complex<float>));
+    auto temp3 = LookintoPtr(gv_data_repopsitory._all_data.data(), 655360, 65530, 65540);
+    lck.unlock();
+    return true;
+}
+
+
+int DataManager::GetChannelIndexInMask(unsigned int channelMask, int channelIndex)
+{
+
+    int channelIndexInMask = -1;
+    bool used = false;
+    if (channelMask & (1 << channelIndex))
+    {
+        used = true;
+    }
+
+    if(!used)
+    {
+
+    }
+    else
+    {
+        for(int i = 0; i <= channelIndex; i ++)
+        {
+            if (channelMask & (1 << i))
+            {
+                channelIndexInMask ++;
+            }
+
+        }
+
+    }
+
+    return channelIndexInMask;
+
+}
+
+std::vector<std::complex<float> > DataManager::LookintoPtr(std::complex<float> *data, int size, int start, int end)
+{
+        std::vector<std::complex<float>> view_data;
+        int view_size = end - start;
+
+        assert(start < end);
+        assert(end <= size);
+
+        view_data.resize(view_size);
+        memcpy(view_data.data(), data + start, view_size * sizeof(std::complex<float>));
+        return view_data;
+}
+
+bool DataManager::IsFinished(IData *data)
+{
+    std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+    if(gv_data_repopsitory.gv_is_finished)
+    {
+         lck.unlock();
+         return true;
+    }
+
+    assert(data->GetVariables() != nullptr);
+
+    VariableSpace variables(data->GetVariables());
+
+    bool finished = variables.Get<bool>(L"Finished");
+    return finished;
+}
+
+void DataManager::reconstruction_thread(DataManager *datamanager,std::promise<bool> &promiseObj)
+{
+    //int t=0;
+    std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+    while (!gv_data_repopsitory.gv_ready) // 如果标志位不为 true, 则等待...
+           gv_data_repopsitory.gv_cv.wait(lck);
+    lck.unlock();
+    while (1)
+    {
+        std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+        bool finish=gv_data_repopsitory.gv_is_finished;
+        lck.unlock();
+        if(!finish)
+        {
+            //应该传入CreateIData1D(data)而不是nullptr
+            //qDebug()<<"重建中*************";
+            datamanager->_rt_pipeline->Input(L"Input",nullptr);           
+            //datamanager->_rt_pipeline->Input(L"Input",datamanager->output_data.get());
+            //qDebug()<<"t="<<t;
+            //t++;
+        }
+        else
+        {
+             //std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+             //int t=gv_data_repopsitory.gv_channel_count;
+             //lck.unlock();
+             qDebug()<<"最后一次重建中*************";
+             datamanager->_rt_pipeline->Input(L"Input",nullptr);
+             break;
+        }
+    }
+     //promiseObj.set_value(true);
+     QApplication::postEvent(datamanager->_pwnd, new QEvent(QEvent::Type(QEvent::User + finished)));
+    //应该提供应该信号告知接收端需要重置了
+
+}
+
+void DataManager::reconstruction_thread2()
+{
+    std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+    while (!gv_data_repopsitory.gv_ready) // 如果标志位不为 true, 则等待...
+           gv_data_repopsitory.gv_cv.wait(lck);
+    lck.unlock();
+    while (1)
+    {
+        std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+        bool finish=gv_data_repopsitory.gv_is_finished;
+        Yap::SmartPtr<Yap::IProcessor> _rt_pipeline=gv_data_repopsitory._rt_pipeline;
+        lck.unlock();
+        if(!finish)
+        {
+            _rt_pipeline->Input(L"Input",nullptr);
+        }
+        else
+        {
+            _rt_pipeline->Input(L"Input",nullptr);
+            break;
+        }
+    }
+     std::unique_lock<std::mutex> lock(gv_data_repopsitory.gv_mtx);
+     QWidget* _pwnd=gv_data_repopsitory._pwnd;
+     lock.unlock();
+     QApplication::postEvent(_pwnd, new QEvent(QEvent::Type(QEvent::User + finished)));
+
+}
+
+void DataManager::SetPwnd(QWidget *pwnd)
+{
+    _pwnd=pwnd;
+    std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
+    gv_data_repopsitory._pwnd=pwnd;
+    lck.unlock();
+}
+
+void DataManager::JoinThread()
+{
+    if(_mythread.joinable())
+    {
+        _mythread.join();
+    }
+    if(_mythread2.joinable())
+    {
+        _mythread2.join();
+    }
+}
 bool DataManager::InputToPipeline1D(SampleDataData &data)
 {
 
@@ -131,9 +439,43 @@ bool DataManager::InputToPipeline1D(SampleDataData &data)
 bool DataManager::InputToPipeline2D(SampleDataData &data)
 {
     //Put the recieved data into the pipeline.
+
     auto output_data = CreateIData1D(data);
-    if(_rt_pipeline)
-        _rt_pipeline->Input(L"Input", output_data.get());
+
+/*///
+    VariableSpace variables1(output_data->GetVariables());
+    int channel_index=variables1.Get<int>(L"channel_index");
+    int slice_index = variables1.Get<int>(L"slice_index");
+    int phase_index=variables1.Get<int>(L"phase_index");
+
+    receive_phases.insert(receive_phases.end(),data.data.begin(),data.data.end());
+    if(receive_phases.size()>=_sample_start.dim1_size*_sample_start.dim3_size)
+    {
+        //receive_phases怎么转换成SampleDataData，然后调用CreateIData1D(SampleDataData)创建IData来驱动流水线
+
+        int data_size = receive_phases.size();
+        std::complex<float> * data_vector1 = new std::complex<float>[data_size];
+
+        for(int i = 0; i < data_size; i ++)
+        {
+          data_vector1[i] = receive_phases[i];
+        }
+        Yap::Dimensions dimensions;
+        dimensions(Yap::DimensionReadout, 0U, 256)
+            (Yap::DimensionPhaseEncoding,phase_index, 1)
+            (Yap::DimensionSlice, 0U, 3);
+        auto output_data1 = Yap::YapShared(
+                    new Yap::DataObject<std::complex<float>>(nullptr, data_vector1, dimensions, nullptr, nullptr));
+        if(_rt_pipeline)
+            _rt_pipeline->Input(L"Input", output_data1.get());
+
+       receive_phases.clear();
+    }
+///*/
+
+
+   if(_rt_pipeline)
+    _rt_pipeline->Input(L"Input", output_data.get());
     return true;
 
 }
@@ -176,9 +518,11 @@ bool DataManager::LoadFidRecon(const QString& file_path)
     //auto file_name = file_info.baseName();
     auto path = file_info.path();
 
-    if (!ProcessFidfile(file_path, QString("config//pipelines//niumag_recon.pipeline")))
+    /*  if (!ProcessFidfile(file_path, QString("config//pipelines//realtime_recon.pipeline")))
         return false;
-
+    */
+    if (!ProcessFidfile(file_path, QString("config//pipelines//niumag_recon.pipeline")))
+         return false;
     return true;
 }
 
@@ -211,7 +555,9 @@ bool DataManager::ProcessFidfile(const QString &file_path, const QString &pipeli
 
 
 }
+
 //智能指针作为返回值可能有问题。
+
 Yap::SmartPtr<IProcessor> DataManager::CreatePipeline(const QString& pipelineFile)
 {
 
@@ -237,7 +583,7 @@ bool DataManager::Demo2D()
         constructor.Reset(true);
         constructor.LoadModule(L"BasicRecon.dll");
 
-        constructor.CreateProcessor(L"NiuMriDisplay2D", L"display2D");
+        constructor.CreateProcessor(L"Display2D", L"display2D");
 
 
         constructor.MapInput(L"Input", L"display2D", L"Input");
@@ -328,7 +674,7 @@ bool DataManager::Demo1D()
         constructor.Reset(true);
         constructor.LoadModule(L"BasicRecon.dll");
 
-        constructor.CreateProcessor(L"NiuMriDisplay1D", L"Plot1D");
+        constructor.CreateProcessor(L"Display1D", L"Plot1D");
 
         constructor.MapInput(L"Input", L"Plot1D", L"Input");
 
@@ -388,9 +734,9 @@ bool DataManager::End(SampleDataEnd &end)
     variables.AddVariable(L"bool", L"Finished", L"Iteration finished.");
     variables.Set(L"Finished", true);
 
-    auto output = DataObject<int>::CreateVariableObject(variables.Variables(), nullptr);
+    //auto output = DataObject<int>::CreateVariableObject(variables.Variables(), nullptr);
 
-    _rt_pipeline->Input(L"Input", output.get());
+    //_rt_pipeline->Input(L"Input", output.get());//当接收到SAMPLE_DATA_END时在主线程进行最后一次重建显示，这会导致最后一次重建显示时界面短暂冻结问题
     return true;
 }
 
@@ -407,10 +753,10 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
 
     Yap::Dimensions dimensions;
     dimensions(Yap::DimensionReadout, 0U, data_size)
-        (Yap::DimensionPhaseEncoding, 0U, 1)
+        (Yap::DimensionPhaseEncoding, 0U, 1)//
         (Yap::DimensionSlice, 0U, 1);
-
-
+        //(Yap::Dimension4, 0U, dim4)
+        //(Yap::DimensionChannel, data.rec, 1);
 
 
     auto output_data1 = Yap::YapShared(
@@ -465,6 +811,13 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
 
     }
 
+    //检查接收到的数据output_data1的维度信息
+
+    VariableSpace variables1(output_data1->GetVariables());
+    int channel_index=variables1.Get<int>(L"channel_index");
+    int slice_index = variables1.Get<int>(L"slice_index");
+    int phase_index=variables1.Get<int>(L"phase_index");
+    //
     return output_data1;
 
 }
