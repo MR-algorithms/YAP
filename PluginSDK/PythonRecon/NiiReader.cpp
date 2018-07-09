@@ -24,7 +24,7 @@ NiiReader::NiiReader()
 {
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeAll);
-	AddProperty<wstring>(L"FilePath", L"", L"文件路径");
+	AddProperty<std::wstring>(L"FilePath", L"", L"文件路径");
 }
 
 Yap::NiiReader::NiiReader(const NiiReader& rhs):
@@ -70,7 +70,7 @@ bool Yap::NiiReader::Input(const wchar_t * name, IData * data)
 	if (data != nullptr && data->GetVariables() != nullptr)
 	{
 		VariableSpace variables(data->GetVariables());
-		if (variables.Get<bool>(L"FilesIteratorFinished"))
+		if (variables.Get<bool>(L"FileFinished") || variables.Get<bool>(L"FolderFinished"))
 		{
 			Feed(L"Output", data);
 			return true;
@@ -123,73 +123,73 @@ bool Yap::NiiReader::Input(const wchar_t * name, IData * data)
 	{
 	case Yap::TYPE_BOOL:
 	{
-		auto out_data = CreateData<bool>(nullptr, reinterpret_cast<bool*>(nii_data), dimensions);
+		auto out_data = CreateData<bool>(data, reinterpret_cast<bool*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
 		break;
 	}
 	case Yap::TYPE_UNSIGNEDCHAR:
 	{
-		auto out_data = CreateData<uint_least8_t>(nullptr, reinterpret_cast<uint_least8_t*>(nii_data), dimensions);
+		auto out_data = CreateData<uint_least8_t>(data, reinterpret_cast<uint_least8_t*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
 		break;
 	}
 	case Yap::TYPE_SHORT:
 	{
-		auto out_data = CreateData<short>(nullptr, reinterpret_cast<short*>(nii_data), dimensions);
+		auto out_data = CreateData<short>(data, reinterpret_cast<short*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
 		break;
 	}
 	case Yap::TYPE_INT:
 	{
-		auto out_data = CreateData<int>(nullptr, reinterpret_cast<int*>(nii_data), dimensions);
+		auto out_data = CreateData<int>(data, reinterpret_cast<int*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
 		break;
 	}
 	case Yap::TYPE_FLOAT:
 	{
-		auto out_data = CreateData<float>(nullptr, reinterpret_cast<float*>(nii_data), dimensions);
+		auto out_data = CreateData<float>(data, reinterpret_cast<float*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
 		break;
 	}
 	case Yap::TYPE_COMPLEX:
 	{
-		auto out_data = CreateData<complex<float>>(nullptr, reinterpret_cast<complex<float>*>(nii_data), dimensions);
+		auto out_data = CreateData<complex<float>>(data, reinterpret_cast<complex<float>*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
 		break;
 	}
 	case Yap::TYPE_DOUBLE:
 	{
-		auto out_data = CreateData<double>(nullptr, reinterpret_cast<double*>(nii_data), dimensions);
+		auto out_data = CreateData<double>(data, reinterpret_cast<double*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
 		break;
 	}
 	case Yap::TYPE_CHAR:
 	{
-		auto out_data = CreateData<char>(nullptr, reinterpret_cast<char*>(nii_data), dimensions);
+		auto out_data = CreateData<char>(data, reinterpret_cast<char*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
 		break;
 	}
 	case Yap::TYPE_UNSIGNEDSHORT:
 	{	
-		auto out_data = CreateData<unsigned short>(nullptr, reinterpret_cast<unsigned short*>(nii_data), dimensions);
+		auto out_data = CreateData<unsigned short>(data, reinterpret_cast<unsigned short*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
 		break;
 	}
 	case Yap::TYPE_UNSIGNEDINT:
 	{	
-		auto out_data = CreateData<unsigned int>(nullptr, reinterpret_cast<unsigned int*>(nii_data), dimensions);
+		auto out_data = CreateData<unsigned int>(data, reinterpret_cast<unsigned int*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
 		break;
 	}
 	case Yap::TYPE_LONGLONG:
 	{
-		auto out_data = CreateData<long long>(nullptr, reinterpret_cast<long long*>(nii_data), dimensions);
+		auto out_data = CreateData<long long>(data, reinterpret_cast<long long*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
 		break;
 	}
 	case Yap::TYPE_UNSIGNEDLONGLONG:
 	{	
-		auto out_data = CreateData<unsigned long long>(nullptr, reinterpret_cast<unsigned long long*>(nii_data), dimensions);
+		auto out_data = CreateData<unsigned long long>(data, reinterpret_cast<unsigned long long*>(nii_data), dimensions);
 		Feed(L"Output", out_data.get());
 		break;
 	}
@@ -643,14 +643,4 @@ void * NiiReader::LoadData(ifstream & file, size_t byte_count, size_t data_size)
 		}
 		return data;
 	}
-}
-
-void NiiReader::NotifyIterationFinished(IData * data)
-{
-	VariableSpace variables(data->GetVariables());
-	variables.AddVariable(L"bool", L"NiiReaderFinished", L"finished.");
-	variables.Set(L"FilesIteratorFinished", true);
-
-	auto output = DataObject<int>::CreateVariableObject(variables.Variables(), _module.get());
-	Feed(L"Output", output.get());
 }

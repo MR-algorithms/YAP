@@ -1,26 +1,34 @@
 import "BasicRecon.dll";
-import "PythonRecon.dll";
+import "PythonRadiomics.dll";
 
-FolderIterator folders(Path = "D:\\test_data\\MICCAI_BraTS17_Data_Training_for_TGuo_2017modified\\Brats17TrainingData\\HGG",
+FolderIterator folders(Path1 = "D:\\test_data\\braTS17_test\\HGG", 
+	Path2 = "D:\\test_data\\braTS17_test\\LGG",
 	RecursiveSearch = false);
-FilesIterator files(FileRegEx = "*.nii", RecursiveSearch = false, ReferenceRegEx = ".*seg.nii");
+	
+FileIterator files(FileRegEx = ".*.nii", RecursiveSearch = false, ReferenceRegEx = ".*seg.nii");
+
 NiiReader ref_reader;
 NiiReader img_reader;
-Radiomics radiomicshandle(ScriptPath = 
+
+ExtractFeatures extractor(ScriptPath = 
 	"D:\\Projects\\YAP\\PluginSDK\\PythonRecon\\Python\\demo_test.py", 
-	MethodName = "test_radiomics", ReturnDataType = 16); //16-Double
+	MethodName = "extract_feature", ReturnDataType = 16); //16-Double
+	
 RFeaturesCollector rf_collector;
-CaseCollector case;
-JpegExporter jpeg_exporter(ExportFolder = "d:\\Output");
+FolderCollector foldercollect;
+PyClassification classify(ScriptPath = 
+	"D:\\Projects\\YAP\\PluginSDK\\PythonRecon\\Python\\classify.py",
+	MethodName = "classified", ReturnDataType = 16);
+// JpegExporter jpeg_exporter(ExportFolder = "d:\\Output");
 
 folders->files;
 files.Reference->ref_reader;
 files.Output->img_reader;
-ref_reader->radiomicshandle.Reference;
-img_reader->radiomicshandle.Input;
-radiomicshandle->rf_collector;
-rf_collector->case;
-case->jpeg_exporter;
+ref_reader->extractor.Reference;
+img_reader->extractor.Input;
+extractor->rf_collector;
+rf_collector->foldercollect;
+foldercollect->classify;
 
 
 self.Input->folders.Input;

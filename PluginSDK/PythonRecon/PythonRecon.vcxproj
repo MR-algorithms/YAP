@@ -23,6 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>PythonRecon</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>PythonRadiomics</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -122,7 +123,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(YAP_ROOT)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Yap64d.lib;Client64d.lib;Implement64d.lib;PythonEngine64d.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win64_MTd.lib;lapack_win64_MTd.lib</AdditionalDependencies>
+      <AdditionalDependencies>Client64d.lib;Implement64d.lib;PythonEngine64d.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win64_MTd.lib;lapack_win64_MTd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -170,17 +171,18 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CaseCollector.h" />
-    <ClInclude Include="FilesIterator.h" />
+    <ClInclude Include="FolderCollector.h" />
+    <ClInclude Include="FileIterator.h" />
     <ClInclude Include="FolderIterator.h" />
     <ClInclude Include="NiiReader.h" />
-    <ClInclude Include="Radiomics.h" />
+    <ClInclude Include="ExtractFeatures.h" />
+    <ClInclude Include="PyClassification.h" />
     <ClInclude Include="RFeaturesCollector.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CaseCollector.cpp" />
+    <ClCompile Include="FolderCollector.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -195,11 +197,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="FilesIterator.cpp" />
+    <ClCompile Include="FileIterator.cpp" />
     <ClCompile Include="FolderIterator.cpp" />
     <ClCompile Include="NiiReader.cpp" />
+    <ClCompile Include="PyClassification.cpp" />
     <ClCompile Include="PythonRecon.cpp" />
-    <ClCompile Include="Radiomics.cpp" />
+    <ClCompile Include="ExtractFeatures.cpp" />
     <ClCompile Include="RFeaturesCollector.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>

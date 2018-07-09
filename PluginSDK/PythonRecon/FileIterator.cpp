@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "FilesIterator.h"
+#include "FileIterator.h"
 #include "Implement\LogUserImpl.h"
 #include "Client\DataHelper.h"
 #include "Implement\VariableSpace.h"
@@ -13,29 +13,29 @@
 using namespace  Yap;
 using namespace std;
 
-FilesIterator::FilesIterator():
-	ProcessorImpl(L"FilesIterator")
+FileIterator::FileIterator():
+	ProcessorImpl(L"FileIterator")
 {
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeAll);
 	AddOutput(L"Reference", YAP_ANY_DIMENSION, DataTypeAll);
 	
-	AddProperty<std::wstring>(L"FolderPath", L"", L"文件的指定目录，该属性启用，则抑制从输入端口传入文件目录.");
+	AddProperty<std::wstring>(L"FolderPath", L"", L"文件的指定目录,从输入端口传入文件目录可以抑制该属性的启用.");
 	AddProperty<std::wstring>(L"FileRegEx", L"", L"文件名查找正则表达式");
 	AddProperty<bool>(L"RecursiveSearch", false, L"是否搜索子目录文件下的文件");
 	AddProperty<std::wstring>(L"ReferenceRegEx", L"", L"选择参考图像的正则表达式(仅只能获得到一个参考图像).");
 }
 
-FilesIterator::FilesIterator(const FilesIterator & rhs) : 
+FileIterator::FileIterator(const FileIterator & rhs) : 
 	ProcessorImpl(rhs)
 {
 }
 
-FilesIterator::~FilesIterator()
+FileIterator::~FileIterator()
 {
 }
 
-bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
+bool Yap::FileIterator::Input(const wchar_t * name, IData * data)
 {
 	wstring folder_path;
 	wstring file_regex;
@@ -47,9 +47,9 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 	if (data->GetVariables() != nullptr)
 	{
 		VariableSpace variables(data->GetVariables());
-		if (variables.Get<bool>(L"Finished"))
+		if (variables.Get<bool>(L"FolderFinished"))
 		{
-			Feed(L"Output", data);
+			NotifyIterationFinished(data);
 			return true;
 		}
 		try{
@@ -75,10 +75,10 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 	}
 	is_recursive = GetProperty<bool>(L"RecursiveSearch");
 
-	std::vector<std::wstring> file_container;
- 	GetFiles(file_container, folder_path, is_recursive, file_regex);
+	std::vector<std::wstring> files_vector;
+ 	GetFiles(files_vector, folder_path, is_recursive, file_regex);
  
- 	if (file_container.empty())
+ 	if (files_vector.empty())
  	{
  		return false;
  	}
@@ -86,33 +86,36 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
  	if (!reference_regex.empty())
  	{
  		auto reg = wregex(reference_regex);
- 		for (auto iter = file_container.begin(); iter != file_container.end(); ++iter)
+ 		for (auto iter = files_vector.begin(); iter != files_vector.end(); ++iter)
  		{
  			if (regex_match(*iter, reg))
  			{
  				VariableSpace variables(data->GetVariables());
  				variables.AddVariable(L"string", L"FilePath", L"Full path of one sub-folder in the current folder");
  				variables.Set<std::wstring>(L"FilePath", iter->c_str());
-				variables.AddVariable(L"bool", L"FilesIteratorFinished", L"Iteration finished.");
-				variables.Set(L"FilesIteratorFinished", false);
 
- 				auto output = DataObject<int>::CreateVariableObject(variables.Variables(), _module.get());
+				variables.AddVariable(L"bool", L"FileFinished", L"Iteration finished.");
+				variables.Set<bool>(L"FileFinished", false);
+
+ 				auto output = DataObject<float>::CreateVariableObject(variables.Variables(), _module.get());
  				Feed(L"Reference", output.get());
- 				file_container.erase(iter);
+ 				files_vector.erase(iter);
  				break;
  			}
  		}
  	}
  
- 	for (auto& file_path : file_container)
+ 	for (auto& file_path : files_vector)
  	{
  		VariableSpace variables(data->GetVariables());
  		variables.AddVariable(L"string", L"FilePath", L"Full path of one sub-folder in the current folder");
  		variables.Set<std::wstring>(L"FilePath", file_path.c_str());
- 		variables.AddVariable(L"bool", L"FilesIteratorFinished", L"Iteration finished.");
- 		variables.Set(L"FilesIteratorFinished", false);
+
+ 		variables.AddVariable(L"bool", L"FileFinished", L"Iteration finished.");
+ 		variables.Set<bool>(L"FileFinished", false);
  
- 		auto output = DataObject<int>::CreateVariableObject(variables.Variables(), _module.get());
+ 		auto output = DataObject<float>::CreateVariableObject(variables.Variables(), _module.get());
+
  		Feed(L"Output", output.get());
  	}
 
@@ -121,17 +124,17 @@ bool Yap::FilesIterator::Input(const wchar_t * name, IData * data)
 	return true;
 }
 
-void Yap::FilesIterator::NotifyIterationFinished(IData * data)
+void Yap::FileIterator::NotifyIterationFinished(IData * data)
 {
-	VariableSpace variables;
-	variables.AddVariable(L"bool", L"Finished", L"Iteration finished.");
-	variables.Set(L"Finished", true);
+	VariableSpace variables(data->GetVariables());
+	variables.AddVariable(L"bool", L"FileFinished", L"Iteration finished.");
+	variables.Set(L"FileFinished", true);
 
-	auto output = DataObject<int>::CreateVariableObject(variables.Variables(), _module.get());
+	auto output = DataObject<float>::CreateVariableObject(variables.Variables(), _module.get());
 	Feed(L"Output", output.get());
 }
 
-void Yap::FilesIterator::GetFiles(std::vector<std::wstring>& folders, 
+void Yap::FileIterator::GetFiles(std::vector<std::wstring>& folders, 
 	std::wstring file_path, 
 	bool is_recursive, 
 	std::wstring regular_exp)

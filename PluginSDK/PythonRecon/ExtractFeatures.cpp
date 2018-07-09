@@ -1,39 +1,39 @@
 #include "stdafx.h"
-#include "Radiomics.h"
+#include "ExtractFeatures.h"
 #include "Implement\LogUserImpl.h"
 #include "Client\DataHelper.h"
 #include "Implement\PythonUserImpl.h"
 
-Yap::Radiomics::Radiomics() : 
+Yap::ExtractFeatures::ExtractFeatures() : 
 	_ref_data( YapShared<ISharedObject>(nullptr) ),
-	ProcessorImpl( L"Radiomics" )
+	ProcessorImpl( L"ExtractFeatures" )
 {
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeAll);
 	AddInput(L"Reference", YAP_ANY_DIMENSION, DataTypeAll);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeDouble | DataTypeFloat);
 
-	AddProperty<std::wstring>(L"ScriptPath", L"", L"包含Python脚本文件的文件夹。");
+	AddProperty<std::wstring>(L"ScriptPath", L"", L"包含Python脚本文件的文件目录");
 	AddProperty<std::wstring>(L"MethodName", L"", L"脚本文件中需要使用的方法名");
-	AddProperty<int>(L"ReturnDataType", DataTypeDouble, L"从Radiomics脚本返回的数据类型");
+	AddProperty<int>(L"ReturnDataType", DataTypeFloat, L"从ExtractFeatures脚本返回的数据类型");
 }
 
-Yap::Radiomics::Radiomics(const Radiomics& rhs) :
+Yap::ExtractFeatures::ExtractFeatures(const ExtractFeatures& rhs) :
 	_ref_data(rhs._ref_data), ProcessorImpl(rhs)
 {
 }
 
-Yap::Radiomics::~Radiomics()
+Yap::ExtractFeatures::~ExtractFeatures()
 {
 	PYTHON_DELETE_REF_DATA();
 }
 
-bool Yap::Radiomics::Input(const wchar_t * port, IData * data)
+bool Yap::ExtractFeatures::Input(const wchar_t * port, IData * data)
 {
 	if (data == nullptr)
 		return false;
 
 	VariableSpace variable(data->GetVariables());
-	if (variable.Get<bool>(L"FilesIteratorFinished"))
+	if (variable.Get<bool>(L"FileFinished") || variable.Get<bool>(L"FolderFinished"))
 	{
 		_ref_data = YapShared<ISharedObject>(nullptr);
 		PYTHON_DELETE_REF_DATA();
@@ -49,25 +49,25 @@ bool Yap::Radiomics::Input(const wchar_t * port, IData * data)
 	{
 		if (_ref_data.get() == nullptr)
 		{
-			LOG_ERROR(L"Radiomics can not get reference data", L"Radiomics--PythonRecon");
+			LOG_ERROR(L"ExtractFeatures can not get reference data", L"ExtractFeatures--PythonRecon");
 			return false;
 		}
 	}
 	else
 	{
-		LOG_ERROR(L"Radiomics Processor Port name error",L"Radiomics--PythonRecon");
+		LOG_ERROR(L"ExtractFeatures Processor Port name error",L"ExtractFeatures--PythonRecon");
 		return false;
 	}
 
-	int output_type;
+	int output_type = DataTypeUnknown;
 	Dimensions dimensions;
-	size_t output_dims;
+	size_t output_dims = 0;
 	size_t output_size[4] = { 0,0,0,0 };
 
 	void* out_data = PythonRunScript(data, output_type, dimensions, output_dims, output_size);
 	if (out_data == nullptr)
 	{
-		LOG_ERROR(L"for some reason radiomics does not get return value from python", L"Radiomics--PythonRecon");
+		LOG_ERROR(L"for some reason ExtractFeatures does not get return value from python", L"ExtractFeatures--PythonRecon");
 		return false;
 	}
 	CreateDimension(dimensions, output_dims, output_size);
@@ -75,11 +75,13 @@ bool Yap::Radiomics::Input(const wchar_t * port, IData * data)
 	return FeedOut(data, out_data, dimensions, output_type, GetTotalSize(output_dims, output_size));
 }
 
-void* Yap::Radiomics::PythonRunScript(IData * data, OUT int & output_type, Dimensions& dimensions, 
+void* Yap::ExtractFeatures::PythonRunScript(IData * data, OUT int & output_type, Dimensions& dimensions, 
 	OUT size_t & output_dims, size_t output_size[])
 {
-	auto script = GetProperty<std::wstring>(L"ScriptPath").c_str();
-	auto method = GetProperty<std::wstring>(L"MethodName").c_str();
+	auto script_path = GetProperty<std::wstring>(L"ScriptPath");
+	auto script = script_path.c_str();
+	auto method_name = GetProperty<std::wstring>(L"MethodName");
+	auto method = method_name.c_str();
 	auto data_type = data->GetDataType();
 
 	assert(wcslen(script) != 0 && wcslen(method) != 0);
@@ -108,11 +110,10 @@ void* Yap::Radiomics::PythonRunScript(IData * data, OUT int & output_type, Dimen
 	output_type = GetProperty<int>(L"ReturnDataType");
 
 	/* how to handle out_data to let this processor hold the data instead of Python? */
-	
 	void * out_data = nullptr;
-	out_data = PYTHON_PROCESS(script, method, data_type, output_type, input_dims,
-		GetDataArray<void>(data), output_dims, input_size, output_size, true);
-	/*switch (data_type)
+	// out_data = PYTHON_PROCESS(script, method, data_type, output_type, input_dims,
+	// 	dynamic_cast<void*>(data), output_dims, input_size, output_size, true); 
+	switch (data_type)
 	{
 	case DataTypeInt:
 		out_data = PYTHON_PROCESS(script, method, data_type, output_type, input_dims,
@@ -160,7 +161,7 @@ void* Yap::Radiomics::PythonRunScript(IData * data, OUT int & output_type, Dimen
 		break;
 	default:
 		assert(0 && L"Error data type!");
-	}*/
+	}
 
 	int dim_cout = 0;
 	for (size_t i = 0; i < 4; ++i)
@@ -168,13 +169,13 @@ void* Yap::Radiomics::PythonRunScript(IData * data, OUT int & output_type, Dimen
 
 	if (out_data == nullptr || dim_cout != output_dims)
 	{
-		LOG_ERROR(L"Processor::Radiomics do not return any data or wrong dimensions.", L"PythonRecon");
+		LOG_ERROR(L"Processor::ExtractFeatures do not return any data or wrong dimensions.", L"PythonRecon");
 		return nullptr;
 	}
 	return out_data;
 }
 
-size_t Yap::Radiomics::GetTotalSize(size_t dimension_count, size_t size[])
+size_t Yap::ExtractFeatures::GetTotalSize(size_t dimension_count, size_t size[])
 {
 	size_t total_size = 1;
 	for (size_t i = 0; i < dimension_count; ++i)
@@ -185,7 +186,7 @@ size_t Yap::Radiomics::GetTotalSize(size_t dimension_count, size_t size[])
 	return total_size;
 }
 
-bool Yap::Radiomics::SetRefData(IData * data)
+bool Yap::ExtractFeatures::SetRefData(IData * data)
 {
 	DataHelper help_data(data);
 	_ref_data = YapShared(data);
@@ -209,11 +210,51 @@ bool Yap::Radiomics::SetRefData(IData * data)
 	default:
 		return false;
 	}
-	PYTHON_SET_REF_DATA(GetDataArray<void>(data), help_data.GetDataType(), input_dims, input_size);
+
+	switch (help_data.GetDataType())
+	{
+	case DataTypeInt:
+		PYTHON_SET_REF_DATA(GetDataArray<int>(data), help_data.GetDataType(), input_dims, input_size);
+		break;
+	case DataTypeUnsignedInt:
+		PYTHON_SET_REF_DATA(GetDataArray<unsigned int>(data), help_data.GetDataType(), input_dims, input_size);
+		break;
+	case DataTypeShort:
+		PYTHON_SET_REF_DATA(GetDataArray<short>(data), help_data.GetDataType(), input_dims, input_size);
+		break;
+	case DataTypeUnsignedShort:
+		PYTHON_SET_REF_DATA(GetDataArray<unsigned short>(data), help_data.GetDataType(), input_dims, input_size);
+		break;
+	case DataTypeChar:
+		PYTHON_SET_REF_DATA(GetDataArray<char>(data), help_data.GetDataType(), input_dims, input_size);
+		break;
+	case DataTypeUnsignedChar:
+		PYTHON_SET_REF_DATA(GetDataArray<unsigned char>(data), help_data.GetDataType(), input_dims, input_size);
+		break;
+	case DataTypeComplexFloat:
+		PYTHON_SET_REF_DATA(GetDataArray<std::complex<float>>(data), help_data.GetDataType(), input_dims, input_size);
+		break;
+	case DataTypeComplexDouble:
+		PYTHON_SET_REF_DATA(GetDataArray<std::complex<double>>(data), help_data.GetDataType(), input_dims, input_size);
+		break;
+	case DataTypeBool:
+		PYTHON_SET_REF_DATA(GetDataArray<bool>(data), help_data.GetDataType(), input_dims, input_size);
+		break;
+	case DataTypeFloat:
+		PYTHON_SET_REF_DATA(GetDataArray<float>(data), help_data.GetDataType(), input_dims, input_size);
+		break;
+	case DataTypeDouble:
+		PYTHON_SET_REF_DATA(GetDataArray<double>(data), help_data.GetDataType(), input_dims, input_size);
+		break;
+	default:
+		assert(0&&L"TypeError");
+	}
+	// PythonUserImpl::GetInstance().SetReferenceData();
+	// PYTHON_SET_REF_DATA(dynamic_cast<void*>(data), help_data.GetDataType(), input_dims, input_size);//GetDataArray<void>(data)
 	return true;
 }
 
-void Yap::Radiomics::CreateDimension(Dimensions & dimensions, size_t output_dims, size_t * output_size)
+void Yap::ExtractFeatures::CreateDimension(Dimensions & dimensions, size_t output_dims, size_t * output_size)
 {
 	switch (output_dims)
 	{
@@ -241,7 +282,7 @@ void Yap::Radiomics::CreateDimension(Dimensions & dimensions, size_t output_dims
 	}
 }
 
-bool Yap::Radiomics::FeedOut(IData * inut_data, void* out_data, Dimensions dimensions, int data_type, size_t size)
+bool Yap::ExtractFeatures::FeedOut(IData * inut_data, void* out_data, Dimensions dimensions, int data_type, size_t size)
 {
 	void * out_my_data;
 	try
@@ -283,7 +324,7 @@ bool Yap::Radiomics::FeedOut(IData * inut_data, void* out_data, Dimensions dimen
 			break;
 		}
 		default:
-			LOG_ERROR(L"ReturnDataType set error", L"Radiomics--PythonRecon");
+			LOG_ERROR(L"ReturnDataType set error", L"ExtractFeatures--PythonRecon");
 			Feed(L"Output", nullptr);
 			return false;
 	}

@@ -78,66 +78,6 @@ validation_data = Z_normalization(validation_data)
 
 # Select features
 
-# f_test = r'D:\RadiomicsProject\new data test all features .xlsx'
-# bk_test = xlrd.open_workbook(f_test)
-# shxrange_test = range(bk_test.nsheets)
-# try:
-#     sh_test = bk_test.sheet_by_name("Sheet")
-# except:
-#     print("no sheet in %s named Sheet")
-# nrows_test = sh_test.nrows
-# ncols_test = sh_test.ncols
-# print("nrows %d, ncols %d"%(nrows_test, ncols_test))
-# row_list_test = []
-# row_number_test = 0
-# for i in range(570):
-#     row_data_test = sh_test.row_values(i)
-#     if isNum(row_data_test[1]):
-#         row_list_test.append(row_data_test)
-#         row_number_test += 1
-#     else:
-#         continue
-# label_test_value = []
-# label_test = np.zeros(42)
-# label_test_value = sh_test.row_values(570)
-# row_test = len(row_list_test)
-# column_test = len(row_list_test[1])
-# for i in range(1, column_test):
-#     label_test[i-1] = label_test_value[i]
-#
-# print('the label test shape:', label_test.shape)
-# data_test = np.zeros([row_test, column_test-1])
-#
-# for i in range(row_test):
-#     for j in range(1, column_test):
-#         data_test[i, j - 1] = row_list_test[i][j]
-# where_tesr_are_nan = np.isnan(data_test)
-# data_test[where_tesr_are_nan] = 0
-# data_test = np.unique(data_test, axis = 0)
-# data_test = data_test.T
-# print('data test shape:', data_test.shape)
-
-
-##SVD
-# svd = TruncatedSVD(2)
-# new_data_train = svd.fit_transform(data_train)
-# print(svd.explained_variance_ratio_)
-
-
-
-
-##PCA
-# pca = PCA(n_components=10)
-# new_data_train = pca.fit_transform(training_data)
-# print(pca.explained_variance_ratio_)
-# print(pca.explained_variance_)
-# # new_data_test = pca.transform(data_test)
-# print(new_data_train.shape)
-# clf2 = svm.SVC(C=0.4)
-# clf2.fit(new_data_train, label_train)
-# print('train accuracy2: %f' % (np.mean(label_train == clf2.predict(new_data_train))))
-# print('test accuracy2: %f' % (np.mean(label_test == clf2.predict(new_data_test))))
-
 
 # REF-Val
 start = time.time()
@@ -173,97 +113,6 @@ plt.show()
 # mask = selector.support_.tolist()
 # print(mask)
 
-mask = [False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, True, True, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, True, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, True, False, False, False, False, 
-False, False, False, False, False, False, True, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, True, False, False, False, False, False, True, False, 
-False, False, False, False, True, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, True, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, True, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, True, False, False, False, False, False, False, False, 
-False, False, False, True, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, True, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, True, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False, False, False, 
-False, False, False, False, False, False, False, False, False]
-
-mask = [False, True, False, True, False, False, False, False, False, True, True, 
-True, False, False, False, True, True, False, False, True, False, False, False, 
-False, False, False, True, False, True, False, False, False, True, False, False, 
-True, True, True, False, False, False, False, True, False, False, True, True, False, 
-False, True, True, True, False, False, True, True, False, False, False, False, False, 
-False, True, False, False, True, True, True, False, True, False, True, True, False, 
-True, False, False, True, False, True, False, True, False, True, True, True, False, 
-True, True, False, True, True, False, True, False, False, True, False, False, True, 
-False, True, True, False, False, False, False, False, True, False, True, False, False, 
-False, False, False, True, True, True, False, False, False, False, False, True, True, 
-False, False, True, True, False, True, False, False, True, True, False, False, False, 
-False, False, False, False, False, False, True, True, True, False, False, True, False, 
-True, False, True, False, True, True, True, False, False, False, False, True, True, 
-True, True, False, True, True, False, True, False, True, False, False, False, True, 
-False, False, True, False, True, False, False, False, True, False, True, True, True, 
-True, False, False, True, False, True, False, False, True, True, False, False, True,
- False, False, False, False, False, True, False, False, True, True, False, True, False, 
-True, False, False, False, False, False, True, True, True, False, False, False, False, 
-False, False, True, True, True, True, True, False, False, False, True, True, True, True, True, True, True, False, 
-False, False, False, True, False, False, False, False, False, True, True, False, False, 
-False, True, True, False, True, False, False, True, False, True, True, True, False, 
-False, True, False, False, False, False, False, False, False, False, False, True, True, 
-True, True, True, True, False, False, False, False, True, True, True, False, False, 
-False, False, False, False, False, True, False, False, True, True, False, False, False, False, False, False, True, False, 
-True, False, True, False, True, False, True, False, False, False, False, False, True, 
-True, True, False, False, False, True, True, False, False, True, False, True, False,
- False, True, False, True, True, False, True, False, True, False, True, False, False, 
-False, True, True, True, True, False, False, False, True, False, True, True, False, 
-False, False, False, False, False, True, True, False, True, True, True, False, True, True, False, True, False, True, False, 
-False, True, False, True, True, False, True, True, False, False, False, False, True, 
-False, False, False, False, False, False, False, True, True, True, False, True, False, 
-True, False, True, True, False, False, True, False, False, True, False, False, False,
-False, True, False, True, False, False, False, False, False, True, True, True, False,
-False, False, False, True, False, True, False, True, False, True, True, True, False, True, True, True, True, False, True, 
-False, True, True, False, True, False, True, False, True, False, False, True, True, 
-True, True, False, True, False, True, True, False, False, False, False, False, False, 
-False, False, False, True, False, False, True, False, True, False, False, False, False, 
-True, False, True, False, False, True, True, False, False, False, False, False, False, 
-False, False, True, False, False, False, False, False, False, False, False, False, False, 
-False, False, True, False, False, False, True, True, True, True]
-
 # mask = np.array(mask)
 # delete_column = []
 # for x in range(len(mask)):
@@ -289,7 +138,8 @@ False, False, True, False, False, False, True, True, True, True]
 # validation_data = Extracted_data(validation_data)
 
 # C越大，相当于惩罚松弛变量，希望松弛变量接近0，即对误分类的惩罚增大，
-# 趋向于对训练集全分对的情况，这样对训练集测试时准确率很高，但泛化能力弱。C值小，对误分类的惩罚减小，允许容错，将他们当成噪声点，泛化能力较强。
+# 趋向于对训练集全分对的情况，这样对训练集测试时准确率很高，但泛化能力弱。
+# C值小，对误分类的惩罚减小，允许容错，将他们当成噪声点，泛化能力较强。
 # clf = svm.SVC(C=)
 # clf.fit(training_data, training_label)
 # print(clf.fit(training_data, training_label))

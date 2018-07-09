@@ -176,8 +176,6 @@ namespace Yap {
 		template<typename T>
 		void * LoadData(std::ifstream & file, size_t byte_count, size_t data_size);
 
-		void NotifyIterationFinished(IData * data);
-
 		int _dimensions[8];
 		int _dimension_size;
 		bool _is_system_endian_same_data;
