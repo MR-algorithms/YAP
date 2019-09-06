@@ -23,6 +23,7 @@ namespace Yap
 	public:
 
 		bool SetDimension(DimensionType type, unsigned int length, unsigned int start_index = 0);
+		bool GetDimension(DimensionType type, unsigned int &length, unsigned int & start_index) const;
 		unsigned int GetLength(unsigned int dimension_index);
 
 		virtual unsigned int GetDimensionCount() override;
@@ -34,7 +35,9 @@ namespace Yap
 			unsigned int start_index, unsigned int length);
 
 		Dimensions & operator() (DimensionType type, unsigned int index, unsigned int length);
+		bool Combine(Dimensions * change);
 	private:
+
 		std::vector<Dimension> _dimension_info;
 	};
 

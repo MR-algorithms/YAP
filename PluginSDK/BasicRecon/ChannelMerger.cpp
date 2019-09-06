@@ -33,7 +33,7 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 	assert(Inputs()->Find(name) != nullptr);
 
 	DataHelper helper(data);
-	
+	assert(HasChannelDimension(data->GetDimensions()));
 	vector<unsigned int> key = GetKey(data->GetDimensions());
 	auto iter = _merge_buffers.find(key);
 	if (iter == _merge_buffers.end())
@@ -41,15 +41,15 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 		Dimensions merge_dimensions(helper.GetDimensionCount() - 1); // 消除DimensionChannel这一维
 
 		DimensionType type = DimensionInvalid;
-		unsigned int index = 0, length = 0;
+		unsigned int start_index = 0, length = 0;
 		unsigned int dest_dimension_index = 0;
 
 		for (unsigned int i = 0; i < helper.GetDimensionCount(); ++i)
 		{
-			data->GetDimensions()->GetDimensionInfo(i, type, index, length);
+			data->GetDimensions()->GetDimensionInfo(i, type, start_index, length);
 			if (type != DimensionChannel)
 			{
-				merge_dimensions.SetDimensionInfo(dest_dimension_index, type, index, length);
+				merge_dimensions.SetDimensionInfo(dest_dimension_index, type, start_index, length);
 				++dest_dimension_index;
 			}
 		}
@@ -129,5 +129,24 @@ std::vector<unsigned int> ChannelMerger::GetKey(IDimensions * dimensions)
 		}
 	}
 
+	return result;
+}
+
+bool ChannelMerger::HasChannelDimension(IDimensions *dimensions) const 
+{
+	bool  result = false;
+
+	for (unsigned int i = 0; i < dimensions->GetDimensionCount(); ++i)
+	{
+		DimensionType type = DimensionInvalid;
+		unsigned int start_index = 0;
+		unsigned int length = 0;
+
+		dimensions->GetDimensionInfo(i, type, start_index, length);
+		if (DimensionChannel == type)
+		{
+			result = true;
+		}
+	}
 	return result;
 }

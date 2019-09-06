@@ -18,6 +18,7 @@ namespace Yap
 		~SliceIterator(void);
 
 		virtual bool Input(const wchar_t * name, IData * data) override;
+		bool AddIndexParam(IData *data, int index) const;
 	};
 }
 #endif // SliceIterator_h__

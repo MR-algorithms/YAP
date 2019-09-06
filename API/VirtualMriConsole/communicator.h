@@ -20,7 +20,7 @@ public:
     bool SetRemoteHost(const wchar_t * ip_address, unsigned short port);
     bool Connect();
     bool Disconnect();
-    bool Send(const DataPackage& data);
+    bool Send(const DataPackage& package);
 
 protected slots:
     void slotDataReceived();

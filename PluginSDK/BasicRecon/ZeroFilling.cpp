@@ -51,8 +51,11 @@ ZeroFilling::ZeroFilling(const ZeroFilling& rhs)
 ZeroFilling::~ZeroFilling()
 {
 }
-
-bool ZeroFilling::Input(const wchar_t * port, IData * data)
+/**
+	\remark backup function.
+*/
+/*
+bool ZeroFilling::Input_backup(const wchar_t * port, IData * data)
 {
 	if (std::wstring(port) != L"Input")
 	{
@@ -177,9 +180,13 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 
 	auto dest_size = dest_height * dest_width;
 	auto source_size = input_width * input_height;
+	
+	Dimensions output_dimensions(data->GetDimensions());
+	output_dimensions.Combine(&dims);
+
 	if (data->GetDataType() == DataTypeComplexDouble)
 	{
-		auto output = CreateData<std::complex<double>>(data, &dims);
+		auto output = CreateData<std::complex<double>>(data, &output_dimensions);
 		memset(Yap::GetDataArray<complex<double>>(output.get()), 0, 
 			dest_width * dest_height * dest_depth * sizeof(complex<double>));
 
@@ -195,7 +202,7 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 	}
 	else
 	{
-		auto output = CreateData<std::complex<float>>(data, &dims);
+		auto output = CreateData<std::complex<float>>(data, &output_dimensions);
 		memset(Yap::GetDataArray<complex<float>>(output.get()), 0,
 			dest_width * dest_height * dest_depth * sizeof(complex<float>));
 
@@ -208,4 +215,240 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 		}
 		return Feed(L"Output", output.get());
 	}	
+}
+*/
+unsigned int ZeroFilling::GetFillingCount(IData* data, int dest_width, int dest_height, int dest_depth)
+{
+	
+	//Calculte dimension count.
+
+	DataHelper helper(data);
+	
+	unsigned int dimension_count = -1;
+	
+	if (dest_width > 0 && dest_height <= 0 && dest_depth <= 0
+		&& helper.GetDimension(DimensionReadout).type == DimensionReadout)
+	{
+		dimension_count = 1;
+
+	}
+	else if (dest_width > 0 && dest_height > 0 && dest_depth <= 0
+		&&helper.GetDimension(DimensionReadout).type == DimensionReadout
+		&&helper.GetDimension(DimensionPhaseEncoding).type == DimensionPhaseEncoding)//
+	{
+		dimension_count = 2;
+
+	}
+	else if (dest_width > 0 && dest_height > 0 && dest_depth > 0
+		&& helper.GetDimension(DimensionReadout).type == DimensionReadout
+		&& helper.GetDimension(DimensionPhaseEncoding).type == DimensionPhaseEncoding
+		&& helper.GetDimension(DimensionSlice).type == DimensionSlice)
+	{
+		dimension_count = 3;
+	}
+	else
+	{
+		assert(0);
+	}
+
+	return dimension_count;
+}
+
+
+void ZeroFilling::UpdateStartLength(const int input_length, int &dest_start, int &dest_length, bool same)
+{
+	if (!same)
+	{
+		if (dest_length == 0)
+		{
+			dest_length = input_length;
+		}
+		if (dest_start < 0)
+		{
+			dest_start = (dest_length - input_length) / 2;
+		}
+	}
+	else
+	{
+		dest_start = 0;
+		dest_length = input_length;
+	}
+	
+}
+/**
+	\remark rewrite according to Input_backup.
+	1, 1D Do 1D when width >0 && height <= 0 && depth <= 0 and there is actual readout dimension. And it should not change other dimensions.
+	2, 1D Do 2D when width >0 && height > 0  && depth <= 0 and there is actual phase encoding dimension. And it should not change other dimensions.
+	3, 1D Do 3D when width >0 && height > 0  && depth > 0  and there is actual slice dimension. And it should not change other dimensions.
+	3D Maybe be used in case of multislab in 3D imaging, the third dimension (slice dimension) denote the slice count of one slab.
+	\note Only zero filling in 2D is supported and tested.
+*/
+bool ZeroFilling::Input(const wchar_t * port, IData * data)
+{
+	
+	if (std::wstring(port) != L"Input")
+	{
+		LOG_ERROR(L"<ZeroFilling> Error input port name!", L"BasicRecon");
+		return false;
+	}
+
+	DataHelper helper(data);
+	if (helper.GetDataType() != DataTypeComplexDouble && helper.GetDataType() != DataTypeComplexFloat)
+	{
+		LOG_ERROR(L"<ZeroFilling> Error input data type!(DataTypeComplexDouble and DataTypeComplexFloat are available)", L"BasicRecon");
+		return false;
+	}
+
+	int dest_width(GetProperty<int>(L"DestWidth"));
+	if (dest_width < 0)
+	{
+		LOG_ERROR(L"<ZeroFilling> DestWidth cannot less than 0!", L"BasicRecon");
+		return false;
+	}
+
+	int dest_height(GetProperty<int>(L"DestHeight"));
+	if (dest_height < 0)
+	{
+		LOG_ERROR(L"<ZeroFilling> DestHeight cannot less than 0!", L"BasicRecon");
+		return false;
+	}
+
+	int dest_depth(GetProperty<int>(L"DestDepth"));
+	if (dest_depth < 0)
+	{
+		LOG_ERROR(L"<ZeroFilling> DestDepth cannot less than 0!", L"BasicRecon");
+		return false;
+	}
+	
+	int left = GetProperty<int>(L"Left");
+	int top = GetProperty<int>(L"Top");
+	int front = GetProperty<int>(L"Front");
+	Yap::Dimensions dims;
+	int input_width{ 1 }, input_height{ 1 }, input_depth{ 1 };
+
+	switch (GetFillingCount(data, dest_width, dest_height, dest_depth))
+	{
+	case 1:
+		input_width = helper.GetWidth();
+		input_height = helper.GetHeight();
+		input_depth = helper.GetSliceCount();
+
+		UpdateStartLength(input_width, left, dest_width);
+		UpdateStartLength(input_height, top, dest_height, true);
+		UpdateStartLength(input_depth, front, dest_depth, true);
+
+		if (dest_width < (int)helper.GetWidth() + left || left < 0)
+		{
+			LOG_ERROR(L"<ZeroFilling> Improper property DestWidth!(DestWidth should larger than sum of source width and property Left)", L"BasicRecon");
+			return false;
+		}
+		
+		dims(DimensionReadout, 0, dest_width);
+
+		break;
+	case 2:
+		input_width = helper.GetWidth();
+		input_height = helper.GetHeight();
+		input_depth = helper.GetSliceCount();
+	
+		UpdateStartLength(input_width, left, dest_width);
+		UpdateStartLength(input_height, top, dest_height);
+		UpdateStartLength(input_depth, front, dest_depth, true);
+		
+		if (dest_width < (int)helper.GetWidth() + left || left < 0)
+		{
+			LOG_ERROR(L"<ZeroFilling> Improper property DestWidth!(DestWidth should larger than sum of source width and property Left)", L"BasicRecon");
+			return false;
+		}
+
+		if (dest_height < helper.GetHeight() + top || top < 0)
+		{
+			LOG_ERROR(L"<ZeroFilling> Improper property DestHeight!(DestHeight should larger than sum of source height and property Top)", L"BasicRecon");
+			return false;
+		}
+
+		
+		dims(DimensionReadout, 0, dest_width)
+			(DimensionPhaseEncoding, 0, dest_height);
+
+		break;
+	case 3:
+		
+		input_width = helper.GetWidth();
+		input_height = helper.GetHeight();
+		input_depth = helper.GetSliceCount();
+
+		UpdateStartLength(input_width, left, dest_width);
+		UpdateStartLength(input_height, top, dest_height);
+		UpdateStartLength(input_depth, front, dest_depth);
+	
+		//
+		if (dest_width < (int)helper.GetWidth() + left || left < 0)
+		{
+			LOG_ERROR(L"<ZeroFilling> Improper property DestWidth!(DestWidth should larger than sum of source width and property Left)", L"BasicRecon");
+			return false;
+		}
+
+		if (dest_height < helper.GetHeight() + top || top < 0)
+		{
+			LOG_ERROR(L"<ZeroFilling> Improper property DestHeight!(DestHeight should larger than sum of source height and property Top)", L"BasicRecon");
+			return false;
+		}
+
+
+		if (dest_depth < helper.GetSliceCount() + front || front < 0)
+		{
+			LOG_ERROR(L"<ZeroFilling> Improper property DestDepth!(DestDepth should larger than sum of source slice count and property Front)", L"BasicRecon");
+			return false;
+		}
+
+		dims(DimensionReadout, 0, dest_width)
+			(DimensionPhaseEncoding, 0, dest_height)
+			(DimensionSlice, 0, dest_depth);
+		break;
+	
+	default:
+		LOG_ERROR(L"<ZeroFilling> Error input data dimension!(1D, 2D, 3D are available)", L"BasicRecon");
+		break;
+	}
+
+	
+
+	auto dest_size = dest_height * dest_width;
+	auto source_size = input_width * input_height;
+
+	Dimensions output_dimensions(data->GetDimensions());
+	output_dimensions.Combine(&dims);
+
+	if (data->GetDataType() == DataTypeComplexDouble)
+	{
+		auto output = CreateData<std::complex<double>>(data, &output_dimensions);
+		memset(Yap::GetDataArray<complex<double>>(output.get()), 0,
+			dest_width * dest_height * dest_depth * sizeof(complex<double>));
+
+		for (int slice = 0; slice < input_depth; ++slice)
+		{
+			zero_filling(Yap::GetDataArray<complex<double>>(output.get()) + dest_size * (slice + front),
+				dest_width, dest_height,
+				Yap::GetDataArray<complex<double>>(data) + source_size * slice,
+				input_width, input_height, left, top);
+		}
+
+		return Feed(L"Output", output.get());
+	}
+	else
+	{
+		auto output = CreateData<std::complex<float>>(data, &output_dimensions);
+		memset(Yap::GetDataArray<complex<float>>(output.get()), 0,
+			dest_width * dest_height * dest_depth * sizeof(complex<float>));
+
+		for (int slice = 0; slice < input_depth; ++slice)
+		{
+			zero_filling(Yap::GetDataArray<complex<float>>(output.get()) + dest_size * (slice + front),
+				dest_width, dest_height,
+				Yap::GetDataArray<complex<float>>(data) + source_size * slice,
+				input_width, input_height, left, top);
+		}
+		return Feed(L"Output", output.get());
+	}
 }

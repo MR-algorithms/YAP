@@ -78,7 +78,7 @@ private:
         //SampleDataStart _start_phases;
         int last_phase_index=0;
         std::thread _mythread;
-        std::thread _mythread2;//第二条子线程
+
         std::promise<bool> promiseObj;
         std::future<bool> futureObj = promiseObj.get_future();
 

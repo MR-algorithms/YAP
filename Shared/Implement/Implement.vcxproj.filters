@@ -96,6 +96,7 @@
   <ItemGroup>
     <None Include="README.md" />
     <None Include="ImplememtClassDiagram.cd" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Implement.rc">

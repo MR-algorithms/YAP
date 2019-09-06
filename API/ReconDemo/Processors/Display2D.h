@@ -22,13 +22,11 @@ public:
 
     virtual bool Input(const wchar_t * port, Yap::IData * data) override;
 
-    static void display_thread(Display2D* display2D,Yap::IData *data,std::promise<bool> &promiseObj);
 
 protected:
     ~Display2D();
     ImageLayoutWidget& _display_window;
 
-    //std::thread _display_thread;
 };
 
 #endif // DISPLAY_H

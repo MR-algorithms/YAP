@@ -88,7 +88,9 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
     int temp=scantask.mask.data.size();
     databin.SetSendPhaseCount(temp);
 
-    //succeed = true;//hard code. set true for debugging.
+    //hard coding. set true for debugging.
+    //If Succeed = true, it will always
+    succeed = true;
     if(!succeed)
     {
         promiseObj.set_value(false);

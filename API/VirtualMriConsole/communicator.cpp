@@ -64,27 +64,27 @@ bool Communicator::Disconnect()
     return waitForDisconnected();
 }
 
-bool Communicator::Send(const DataPackage &data)
+bool Communicator::Send(const DataPackage &package)
 {
 
 
     QByteArray byteArray1 =
-            QByteArray::fromRawData((char*)(&data.magic_anditem_count[0]), sizeof(uint32_t));
+            QByteArray::fromRawData((char*)(&package.magic_anditem_count[0]), sizeof(uint32_t));
 
 
     //
     QByteArray byteArray1b =
-            QByteArray::fromRawData((char*)(&data.magic_anditem_count[1]), sizeof(uint32_t));
+            QByteArray::fromRawData((char*)(&package.magic_anditem_count[1]), sizeof(uint32_t));
 
     QByteArray byteArray1c =
-            QByteArray::fromRawData((char*)data.head.data(), sizeof(HeadItem) * data.head.size());
+            QByteArray::fromRawData((char*)package.headitems.data(), sizeof(HeadItem) * package.headitems.size());
 
 
 
     QByteArray byteArray1cc;
-    for(int i = 0; i < static_cast<int>( data.head.size() ); i ++)
+    for(int i = 0; i < static_cast<int>( package.headitems.size() ); i ++)
     {
-         HeadItem headitem = data.head[i];
+         HeadItem headitem = package.headitems[i];
          QByteArray temp = QByteArray::fromRawData((char*)(&headitem), sizeof(HeadItem));
          byteArray1cc += temp;
     }
@@ -92,19 +92,19 @@ bool Communicator::Send(const DataPackage &data)
     assert(byteArray1c == byteArray1cc);
     //
     QByteArray byteArray2;
-    for(int i = 0; i < static_cast<int>( data.data.size() ); i ++)
+    for(int i = 0; i < static_cast<int>( package.valueitems.size() ); i ++)
     {
-         DataItem dataitem = data.data[i];
+         ValueItem valueitem = package.valueitems[i];
 
-         QByteArray temp = QByteArray::fromRawData((char*)dataitem.data.data(), dataitem.data.size());
+         QByteArray temp = QByteArray::fromRawData((char*)valueitem.value.data(), valueitem.value.size());
          byteArray2 += temp;
     }
 
 
     this->write(byteArray1 + byteArray1b + byteArray1c + byteArray2);
 
-    int bytesA = data.BytesFromDataitem();
-    int bytesB = data.BytesFromHeaditem();
+    int bytesA = package.BytesFromValueitems();
+    int bytesB = package.BytesFromHeaditems();
     int bytesC = byteArray2.size();
     assert( bytesA == bytesB && bytesA == bytesC);
 

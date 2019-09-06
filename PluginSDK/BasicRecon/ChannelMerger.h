@@ -32,7 +32,7 @@ namespace Yap
 
 			virtual ~MergeBuffer() {}
 		};
-
+		bool HasChannelDimension(IDimensions *dimensions) const;
 		std::vector<unsigned int> GetKey(IDimensions * dimensions);
 		std::map<std::vector<unsigned int>, MergeBuffer> _merge_buffers; 
 

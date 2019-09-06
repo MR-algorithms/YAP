@@ -106,7 +106,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Yapd.lib;Clientd.lib;Implementd.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win32_MTd.lib;lapack_win32_MTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Yapd.lib;Clientd.lib;SpecControld.lib;Implementd.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win32_MTd.lib;lapack_win32_MTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(YAP_ROOT)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -196,6 +196,8 @@
     <ClInclude Include="Fft3D.h" />
     <ClInclude Include="FineCF.h" />
     <ClInclude Include="GrayScaleUnifier.h" />
+    <ClInclude Include="IcePeFt.h" />
+    <ClInclude Include="IceReceiver.h" />
     <ClInclude Include="imageProcessing.h" />
     <ClInclude Include="JpegExporter.h" />
     <ClInclude Include="LinesSelector.h" />
@@ -288,6 +290,8 @@
     <ClCompile Include="Fft3D.cpp" />
     <ClCompile Include="FineCF.cpp" />
     <ClCompile Include="GrayScaleUnifier.cpp" />
+    <ClCompile Include="IcePeFt.cpp" />
+    <ClCompile Include="IceReceiver.cpp" />
     <ClCompile Include="JpegExporter.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>

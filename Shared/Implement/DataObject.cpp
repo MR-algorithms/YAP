@@ -44,6 +44,42 @@ Dimensions & Yap::Dimensions::operator()(DimensionType type, unsigned int index,
 
 	return *this;
 }
+/**
+	\remark Some processor, e.g. ZeroFilling, should produce new Dimensions according to itself and the other Dimensions, 
+	but it is probably not correct when there are more dimensions.
+*/
+
+bool Yap::Dimensions::Combine(Dimensions * change)
+{
+	DimensionType type = DimensionInvalid;
+	unsigned int index = 0, length = 0;
+
+	for (unsigned int i = 0; i < change->GetDimensionCount(); ++i)
+	{
+		change->GetDimensionInfo(i, type, index, length);
+
+		switch (change->GetDimensionCount())
+		{
+		case 1:
+			assert(type == DimensionReadout);
+			break;
+		case 2:
+			assert(type == DimensionReadout || type == DimensionPhaseEncoding);
+			break;
+		case 3:
+			assert(type == DimensionReadout || type == DimensionPhaseEncoding || type == DimensionSlice);
+			break;
+		default:
+			assert(0 && L"Do not support dimension other than read|phase|slice");
+			break;
+			
+		}
+		assert(SetDimension(type, length, index));
+	}
+
+
+	return true;
+}
 
 Yap::Dimensions::Dimensions()
 {
@@ -101,6 +137,27 @@ bool Yap::Dimensions::SetDimension(DimensionType type,
 		{
 			_dimension_info[i].length = length;
 			_dimension_info[i].start_index = start_index;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+	\return true if find DimensionTyep "type" in the Dimensions and  get dimension successfully, false otherwise.
+	\remark not used.
+*/
+bool Yap::Dimensions::GetDimension(DimensionType type,
+	unsigned int &length,
+	unsigned int &start_index) const 
+{
+	for (unsigned int i = 0; i < _dimension_info.size(); ++i)
+	{
+		if (_dimension_info[i].type == type)
+		{
+			length = _dimension_info[i].length;
+			start_index = _dimension_info[i].start_index;
 			return true;
 		}
 	}

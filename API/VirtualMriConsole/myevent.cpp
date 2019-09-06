@@ -9,7 +9,7 @@ MyEvent* EventQueue::GetEvent(std::timed_mutex &timeMutex, int milliSeconds)
 
     //while(_eventQueue.empty() ) { _evtQueueCondVar.wait(locker);   }
 
-    while(_eventQueue.empty() && !timeOut)
+    while(_eventQueue.empty() && !timeOut)//while there is no timer or other event.
     {
         int temp = milliSeconds;
         _evtQueueCondVar.wait(locker, [&]{

@@ -301,9 +301,9 @@ bool Databin::Go(const vector<int>& mask_vector)
                 memcpy(destline.data(), aline.get(), sizeof(std::complex<float>) * _dataInfo.freq_point_count);
                 //
 
-                data.data.resize( _dataInfo.freq_point_count);
+                data.data_value.resize( _dataInfo.freq_point_count);
 
-                memcpy(data.data.data(), aline.get(), sizeof(std::complex<float>) * _dataInfo.freq_point_count);
+                memcpy(data.data_value.data(), aline.get(), sizeof(std::complex<float>) * _dataInfo.freq_point_count);
 
                 DataPackage dataPackage;
                 MessageProcess::Pack(dataPackage, data);

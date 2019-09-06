@@ -87,9 +87,10 @@ void PipelineTest()
 
 	{
 		PipelineCompiler compiler;
-		auto pipeline = compiler.CompileFile(L"Pipelines\\Radiomics_test2.pipeline");
+		//auto pipeline = compiler.CompileFile(L"Pipelines\\Radiomics_test2.pipeline");
 		//auto pipeline = compiler.CompileFile(L"Pipelines\\test2.pipeline");
-
+		//auto pipeline = compiler.CompileFile(L"Pipelines\\Test_niumag_recon_yaplocal.pipeline");
+		auto pipeline = compiler.CompileFile(L"Pipelines\\Test0.pipeline");
 		if (pipeline.get() == nullptr)
 		{
 			return;
@@ -101,7 +102,7 @@ void PipelineTest()
 			pipeline->Input(L"Input", nullptr);
 		}
 	}
-
+	 
 	ModuleManager::GetInstance().Release();
 }
 

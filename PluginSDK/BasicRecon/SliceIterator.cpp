@@ -43,10 +43,11 @@ bool SliceIterator::Input(const wchar_t * name, IData * data)
 		Dimensions slice_data_dimensions(data->GetDimensions());
 		slice_data_dimensions.SetDimension(DimensionSlice, 1, i);
 		//Add variable "slice_index" to the variable space.
+		AddIndexParam(data, i);
 
-		VariableSpace variables(data->GetVariables());
-		variables.AddVariable(L"int", L"slice_index", L"slice index.");
-		variables.Set(L"slice_index", static_cast<int>(i) );
+		//VariableSpace variables(data->GetVariables());
+		//variables.AddVariable(L"int", L"slice_index", L"slice index.");
+		//variables.Set(L"slice_index", static_cast<int>(i) );
 		//
 
 		if (helper.GetDataType() == DataTypeComplexFloat)
@@ -70,4 +71,31 @@ bool SliceIterator::Input(const wchar_t * name, IData * data)
 	return true;
 }
 
+bool SliceIterator::AddIndexParam(IData *data, int index) const
+{
+	DataHelper helper(data);
+
+	if (nullptr == data->GetVariables())
+	{
+		VariableSpace variable;
+		//
+		if (helper.GetDataType() == DataTypeComplexFloat)
+		{
+			dynamic_cast<Yap::DataObject<std::complex<float>>*>(data)->SetVariables(variable.Variables());
+		}
+		else
+		{
+			dynamic_cast<Yap::DataObject<unsigned short>*>(data)->SetVariables(variable.Variables());
+		}
+		
+
+	}
+
+	VariableSpace variables(data->GetVariables());
+
+	variables.AddVariable(L"int", L"slice_index", L"slice index.");
+	variables.Set(L"slice_index", static_cast<int>(index));
+	return true;
+
+}
 

@@ -14,6 +14,7 @@ SliceSelector::SliceSelector(void):
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 
 	AddProperty<int>(L"SliceIndex", 3, L"The index of the slice you want to get.");
+	
 }
 
 Yap::SliceSelector::SliceSelector(const SliceSelector & rhs)
@@ -27,6 +28,11 @@ SliceSelector::~SliceSelector()
 
 bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 {
+	//Test VariableSpace.
+	VariableSpace variable(data->GetVariables());
+
+	//end of TESt.
+	
 	bool is_type_complexf = (Yap::GetDataArray<complex<float>>(data) != nullptr);
 	bool is_type_short =	(Yap::GetDataArray<short>(data) != nullptr);
 

@@ -1,6 +1,6 @@
 import "BasicRecon.dll";
 
-CmrDataReader reader(DataPath = "D:\\test_data\\RawData_256\\RawData",
+CmrDataReader reader(DataPath = "D:\\Data\\cpptest_data\\RawData_256\\RawData",
 	ChannelCount = 4, ChannelSwitch = 15);
 // property mapping can also be used in named property initialization. such as:
 // CmrRawDataReader reader(DataPath <== data_path,

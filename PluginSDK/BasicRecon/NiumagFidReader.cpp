@@ -107,6 +107,18 @@ bool Yap::NiumagFidReader::ReadNiumagFidData()
 
 		auto data = CreateData<complex<float>>(nullptr,
 			reinterpret_cast<complex<float>*>(buffer), dimensions);
+		
+		//Test CreateVariableSpace in Idata.
+		/*VariableSpace variables;
+		variables.AddVariable(L"bool", L"var1", L"var1.");
+		variables.Set(L"var1", true);
+		data->SetVariables(variables.Variables());*/
+
+		shared_ptr<int> p = make_shared<int>(42);
+		shared_ptr<int> q(p);                        //此对象现在有两个引用者，计数为2
+		shared_ptr<int> r = make_shared<int>(42);
+
+		//
 
 		Feed(L"Output", data.get());
 	}

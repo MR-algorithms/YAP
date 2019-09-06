@@ -106,6 +106,12 @@
     <ClCompile Include="PhaseCorrector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IcePeFt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IceReceiver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm2DWrapper.h">
@@ -214,6 +220,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PhaseCorrector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IcePeFt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IceReceiver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
