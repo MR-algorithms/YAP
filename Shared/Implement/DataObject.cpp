@@ -1,6 +1,6 @@
 ﻿#include "DataObject.h"
 
-using namespace Yap;
+//using namespace Yap;
 
 /**
 	获得相关数据使用的总的维数。
@@ -36,7 +36,7 @@ bool Yap::Dimensions::GetDimensionInfo(unsigned int dimension_index,
 	return true;
 }
 
-Dimensions & Yap::Dimensions::operator()(DimensionType type, unsigned int index, unsigned int length)
+Yap::Dimensions & Yap::Dimensions::operator()(DimensionType type, unsigned int index, unsigned int length)
 {
 	assert(type != DimensionInvalid);
 

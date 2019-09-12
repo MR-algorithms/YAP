@@ -19,6 +19,7 @@ namespace Yap
 		~ModulePhase();
 
 		virtual bool Input(const wchar_t * port, IData * data) override;
+		void TestChannelOnSlice(IData *output);
 	};
 }
 #endif // ModulePhase_h__

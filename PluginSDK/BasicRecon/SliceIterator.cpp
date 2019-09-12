@@ -43,7 +43,7 @@ bool SliceIterator::Input(const wchar_t * name, IData * data)
 		Dimensions slice_data_dimensions(data->GetDimensions());
 		slice_data_dimensions.SetDimension(DimensionSlice, 1, i);
 		//Add variable "slice_index" to the variable space.
-		AddIndexParam(data, i);
+		AddSliceindexParam(data, i);
 
 		//VariableSpace variables(data->GetVariables());
 		//variables.AddVariable(L"int", L"slice_index", L"slice index.");
@@ -70,8 +70,10 @@ bool SliceIterator::Input(const wchar_t * name, IData * data)
 
 	return true;
 }
-
-bool SliceIterator::AddIndexParam(IData *data, int index) const
+/**
+	\remark Add "Slice_Index" param to IData in pipeline. 
+*/
+bool SliceIterator::AddSliceindexParam(IData *data, int index) const
 {
 	DataHelper helper(data);
 

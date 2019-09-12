@@ -19,6 +19,9 @@ namespace Yap
 		~SliceSelector();
 
 		virtual bool Input(const wchar_t * name, IData * data) override;
+
+		bool AddSliceindexParam(IData *data, int index) const;
+		void TestChannelOnSlice(IData *output);
 	};
 }
 #endif // SliceSelector_h__

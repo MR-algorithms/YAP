@@ -6,7 +6,7 @@
 #include <boost/lexical_cast.hpp>
 #include "Utilities/macros.h"
 
-using namespace Yap;
+//using namespace Yap;
 using namespace std;
 
 

@@ -85,7 +85,7 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 			*merge_cursor += (source_data_vector[i] * source_data_vector[i]);
 		}
 	}
-
+	/*
 	float * merge_cursor = reinterpret_cast<float*>(iter->second.buffer->GetData());
 	float * merge_end = merge_cursor + helper.GetBlockSize(DimensionSlice);
 
@@ -93,6 +93,7 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 	{
 		*merge_cursor = sqrt(*merge_cursor);
 	}
+	*/
 
 // 	unsigned int bit_number = GetInt(L"ChannelSwitch");
 // 	unsigned int used_channel_count = 0;
@@ -103,6 +104,15 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 
 	if (iter->second.count == GetProperty<int>(L"ChannelCount"))
 	{
+		//xhb.
+		float * merge_cursor = reinterpret_cast<float*>(iter->second.buffer->GetData());
+		float * merge_end = merge_cursor + helper.GetBlockSize(DimensionSlice);
+
+		for (; merge_cursor < merge_end; ++merge_cursor)
+		{
+			*merge_cursor = sqrt(*merge_cursor);
+		}
+		//
 		Feed(L"Output", iter->second.buffer.get());
 	}
 
@@ -150,3 +160,4 @@ bool ChannelMerger::HasChannelDimension(IDimensions *dimensions) const
 	}
 	return result;
 }
+

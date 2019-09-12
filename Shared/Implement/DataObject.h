@@ -184,7 +184,7 @@ namespace Yap
 			assert(variables != nullptr);
 		}
 
-
+  
 	public:
 		virtual IDimensions * GetDimensions() override
 		{

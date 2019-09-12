@@ -5,6 +5,7 @@
 
 #include <math.h>
 #include <complex>
+#include <algorithm>
 
 using namespace Yap;
 using namespace std;
@@ -102,6 +103,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 				GetDataArray<float>(module.get()),
 				input_data.GetDataSize());
 
+			TestChannelOnSlice(module.get());
 			return Feed(L"Module", module.get());
 		}
 	}
@@ -129,4 +131,36 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 	}
 
 	return true;
+}
+
+
+void ModulePhase::TestChannelOnSlice(IData *output)
+{
+	auto temp = output->GetDimensions();
+	Dimensions data_dimentions(output->GetDimensions());
+	DataHelper helper(output);
+	Dimension channel_dimention = helper.GetDimension(DimensionChannel);
+	Dimension read_dimention = helper.GetDimension(DimensionReadout);
+	Dimension phase_dimention = helper.GetDimension(DimensionPhaseEncoding);
+
+
+	assert(channel_dimention.length == 1);
+
+	unsigned int width = read_dimention.length;
+	unsigned int height = phase_dimention.length;
+
+	float* p = GetDataArray<float>(output);
+	assert(channel_dimention.length == 1);
+	float max = *std::max_element<float*>(p, p + width * height);
+	float max2 = *std::max_element<float*>(p, p + 5);
+	float* tempp = p + channel_dimention.start_index * 20 * width;
+	for (unsigned int i = 0; i < 5*width; i++)
+	{
+		
+		*tempp = max;
+		++tempp;
+	}
+
+	return;
+
 }

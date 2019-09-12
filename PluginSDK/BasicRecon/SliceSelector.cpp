@@ -25,6 +25,16 @@ Yap::SliceSelector::SliceSelector(const SliceSelector & rhs)
 SliceSelector::~SliceSelector()
 {
 }
+	
+/**
+	\remark 各个处理器普遍存在三种问题：
+	1，数据维度转换时，信息丢失;比如：通道，回波索引，
+	2，数据访问只考虑了简单情况;
+	3，入口数据没有合理的合法性检查。
+	本处理器：这种访问数据的方式是有条件的：实际维度等于三维等于1（比如通道当前数据的通道维度大小[不是索引].）
+	另外一些参数需要专门考虑，如：Slice_index处理器参数空间、数据维度里必须有这个参数，数据参数空间是可选的，
+
+*/
 
 bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 {
@@ -38,7 +48,7 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 
 	assert((data != nullptr) && (is_type_complexf || is_type_short));
 	assert(Inputs()->Find(name) != nullptr);
-
+		
 	int slice_index = GetProperty<int>(L"SliceIndex");
 
 	DataHelper input_data(data);
@@ -49,9 +59,11 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 		data_dimentions.SetDimension(DimensionSlice, 1, slice_index);
 		if (is_type_complexf)
 		{
+			
 			auto output = CreateData<complex<float>>(data,
 				Yap::GetDataArray<complex<float>>(data) + slice_index * slice_block_size, 
 				data_dimentions, data);
+
 			Feed(L"Output", output.get());
 		}
 		if(is_type_short)
@@ -113,4 +125,52 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 		}
 	}
 	return true;
+}
+
+
+/**
+\remark Add "Slice_Index" param to IData in pipeline.
+*/
+bool SliceSelector::AddSliceindexParam(IData *data, int index) const
+{
+	DataHelper helper(data);
+
+	if (nullptr == data->GetVariables())
+	{
+		VariableSpace variable;
+		//
+		if (helper.GetDataType() == DataTypeComplexFloat)
+		{
+			dynamic_cast<Yap::DataObject<std::complex<float>>*>(data)->SetVariables(variable.Variables());
+		}
+		else
+		{
+			dynamic_cast<Yap::DataObject<unsigned short>*>(data)->SetVariables(variable.Variables());
+		}
+
+
+	}
+
+	VariableSpace variables(data->GetVariables());
+
+	variables.AddVariable(L"int", L"slice_index", L"slice index.");
+	variables.Set(L"slice_index", static_cast<int>(index));
+	return true;
+
+}
+
+void SliceSelector::TestChannelOnSlice(IData *output)
+{
+	auto temp = output->GetDimensions();
+	Dimensions data_dimentions(output->GetDimensions());
+	DataHelper helper(output);
+	Dimension channel_dimention = helper.GetDimension(DimensionChannel);
+	Dimension read_dimmention = helper.GetDimension(DimensionReadout);
+	Dimension phase_dimention = helper.GetDimension(DimensionPhaseEncoding);
+
+	
+	assert(channel_dimention.length == 1);
+
+	return;
+
 }
