@@ -97,6 +97,14 @@ bool SliceIterator::AddSliceindexParam(IData *data, int index) const
 
 	variables.AddVariable(L"int", L"slice_index", L"slice index.");
 	variables.Set(L"slice_index", static_cast<int>(index));
+
+	Dimension channel_dimension = helper.GetDimension(DimensionChannel);
+	if (channel_dimension.type != DimensionInvalid && channel_dimension.length == 1)
+	{
+		variables.AddVariable(L"int", L"channel_index", L"channel index.");
+		variables.Set(L"channel_index", static_cast<int>(channel_dimension.start_index));
+	}
+
 	return true;
 
 }

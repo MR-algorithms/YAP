@@ -5,10 +5,10 @@
 #include <QMouseEvent>
 #include <QApplication>
 #include <QKeyEvent>
-
+#include <qDebug>
 #include "Client/DataHelper.h"
 
-#include "Processors/Display2D.h"
+//#include "Processors/Display2D.h"
 
 
 
@@ -25,83 +25,61 @@ ImageLayoutWidget::ImageLayoutWidget(QWidget *parent) :
     SetLayout(_layout);
 }
 
-bool ImageLayoutWidget::AddImage(IData* data,
-                                 IVariableContainer *properties)
+bool ImageLayoutWidget::AddImage(IData* data )
 {
     if (data == nullptr)
         return false;
-
-    //xhb1111
-    //unsigned short test[512*2];
-    //unsigned short * image_data = Yap::GetDataArray<unsigned short>(data);
-    //memcpy(test, image_data + 255*512, sizeof(unsigned short)* 512*2);
-    //end of xhb1111
 
     _images.push_back(YapShared<IData>(data));
 
     auto images_size = _images.size();
     assert(images_size - 1 >= _first_visible_image_index);
 
-    //auto widget_index = images_size - 1 - _first_visible_image_index;
-    VariableSpace variables(data->GetVariables());
-    int channel_index=variables.Get<int>(L"channel_index");
-    int slice_index = variables.Get<int>(L"slice_index");
-    int phase_index=variables.Get<int>(L"phase_index");
-    //auto widget_index=(images_size-1)%4;
 
-    // _image_widgets[0]->SetImage(data, properties);测试
-    //_image_widgets[0]->update();
+    auto widget_index=images_size - 1 - _first_visible_image_index;
 
-    //QSize layou1=GetLayout();
-    QSize layout2(4,4);
-    SetLayout(layout2);
 
-    auto widget_index=slice_index;
-    unsigned int widgetCount=_image_widgets.size();
-    _image_widgets.resize(16);
     if (widget_index < _image_widgets.size())
     {
-        _image_widgets[widget_index]->SetImage(data, properties);
-        _image_widgets[widget_index]->update();
+        _image_widgets[widget_index]->SetImage(data);
+        //qDebug()<<"ImageWidget::update/repaint()";
+        _image_widgets[widget_index]->repaint();
+        //_image_widgets[widget_index]->update();
+
     }
 
+    HighlightCurrentWidget();
     return true;
 }
 
-bool ImageLayoutWidget::UpdateImage(Yap::IData* data, Yap::IVariableContainer *properties,unsigned int image_index)
+bool ImageLayoutWidget::UpdateImage(Yap::IData* data, unsigned int image_index)
 {
     if (data == nullptr)
         return false;
 
-   // if(_images.size()>16){ClearImages();}
-
-    _images.push_back(YapShared<IData>(data));
-
-    auto images_size = _images.size();
-
-
-    assert(images_size - 1 >= _first_visible_image_index);
-
-    unsigned int imagesCount=_image_widgets.size();
-    _image_widgets.resize(imagesCount);
-    assert(image_index<imagesCount);
-    //auto _index = images_size - 1 - _first_visible_image_index;
-
-    auto widget_index=image_index-_first_visible_image_index;
-    //auto widget_index=image_index;
-
-    _image_widgets[widget_index]->SetImage(data, properties);
-    _image_widgets[widget_index]->update();
-    /*assert(_myIndex>-1);
-    if (_index < _image_widgets.size())
+    if(image_index >= _images.size())
     {
-        if(_myIndex<_image_widgets.size())
+        AddImage(data);
+    }
+    else
+    {
+        //What about the original element?
+        _images[image_index] = YapShared<IData>(data);
+
+        auto widget_index = image_index - _first_visible_image_index;
+
+        if (widget_index < _image_widgets.size())
         {
-        _image_widgets[_myIndex]->SetImage(data, properties);
-        _image_widgets[_myIndex]->update();
+            _image_widgets[widget_index]->SetImage(data);
+            //qDebug()<<"ImageWidget::update/repaint()";
+            _image_widgets[widget_index]->repaint();
+            //_image_widgets[widget_index]->update();
+
+
         }
     }
-*/
+
+
     return true;
 }
 
@@ -159,7 +137,7 @@ void ImageLayoutWidget::BackupImage()
     }
 }
 
-void ImageLayoutWidget::UpdateWidgetImage()
+void ImageLayoutWidget::UpdateImageWidgets()
 {
     for (int i = 0; i < _layout.width() * _layout.height(); ++i)
     {
@@ -191,7 +169,7 @@ void ImageLayoutWidget::UpdateAll()
 
     _first_visible_image_index = MakeImageVisible(_current_image_index);
 
-    UpdateWidgetImage();
+    UpdateImageWidgets();
 
     HighlightCurrentWidget();
 
@@ -208,12 +186,22 @@ void ImageLayoutWidget::UpdateAll()
 
 unsigned int ImageLayoutWidget::MakeImageVisible(unsigned int image_index) const
 {
+    {
+        //unsigned int first_visible_index = 7 / _layout.width() * _layout.width();
+        //auto last = (17 - 1) / _layout.width() * _layout.width();
+        //auto max_first_visible_index = last - (_layout.height() - 1) * _layout.width();
+        //first_visible_index = unsigned int((first_visible_index < max_first_visible_index)
+        //                                   ? first_visible_index : max_first_visible_index);
+        //int x = 1;
+    }
+    //
     if (_images.empty())
         return 0;
 
     assert(image_index < _images.size());
 
     unsigned int first_visible_index = 0;
+
 
     if (_images.size() > (unsigned int)(_layout.width() * _layout.height()))
     {
@@ -367,7 +355,7 @@ void ImageLayoutWidget::PageDown()
             (_layout.width() * _layout.height()) *
             (_layout.width() * _layout.height());
 
-    UpdateWidgetImage();
+    UpdateImageWidgets();
 
     HighlightCurrentWidget();
 }
@@ -390,7 +378,7 @@ void ImageLayoutWidget::PageUp()
             (_layout.width() * _layout.height()) *
             (_layout.width() * _layout.height());
 
-    UpdateWidgetImage();
+    UpdateImageWidgets();
     HighlightCurrentWidget();
 }
 
@@ -404,7 +392,7 @@ void ImageLayoutWidget::Left()
         if (_current_image_index == _first_visible_image_index)
         {
             _first_visible_image_index -= _layout.width();
-            UpdateWidgetImage();
+            UpdateImageWidgets();
         }
 
         --_current_image_index;
@@ -421,7 +409,7 @@ void ImageLayoutWidget::Right()
         if (_current_image_index == _first_visible_image_index + _layout.width() * _layout.height() - 1)
         {
             _first_visible_image_index += _layout.width();
-            UpdateWidgetImage();
+            UpdateImageWidgets();
         }
         ++_current_image_index;
         HighlightCurrentWidget();
@@ -452,7 +440,7 @@ void ImageLayoutWidget::LineDown()
     }
     _current_image_index = min(_current_image_index + _layout.width(), unsigned(_images.size() - 1));
 
-    UpdateWidgetImage();
+    UpdateImageWidgets();
     HighlightCurrentWidget();
 }
 
@@ -465,7 +453,7 @@ void ImageLayoutWidget::LineUp()
         if (_first_visible_image_index != 0)
         {
             _first_visible_image_index -= _layout.width();
-            UpdateWidgetImage();
+            UpdateImageWidgets();
         }
     }
 
@@ -484,7 +472,7 @@ void ImageLayoutWidget::Home()
 
     HighlightCurrentWidget();
 
-    UpdateWidgetImage();
+    UpdateImageWidgets();
 }
 
 void ImageLayoutWidget::End()
@@ -497,7 +485,7 @@ void ImageLayoutWidget::End()
                                     (_layout.width() * _layout.height()));
 
     HighlightCurrentWidget();
-    UpdateWidgetImage();
+    UpdateImageWidgets();
 }
 
 void ImageLayoutWidget::OnFocusChange(ImageWidget *sender)

@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 //    std::thread t(w.on_buttonStart_clicked);
 //    t.join();
 
-    // w.setWindowState(Qt::WindowFullScreen);
+    w.setWindowState(Qt::WindowMaximized);
 
     return a.exec();
 }

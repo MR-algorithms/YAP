@@ -504,7 +504,32 @@ bool DataManager::Load(const QString& file_path)
     return true;
 }
 
+bool DataManager::LoadPipeline()
+{
 
+    QString pipeline_file = QString("config//pipelines//test0_qt.pipeline");
+    Yap::PipelineCompiler compiler;
+    auto pipeline = compiler.CompileFile(pipeline_file.toStdWString().c_str());
+    QFileInfo info(pipeline_file);
+    if (!pipeline)
+    {
+         QMessageBox::critical(nullptr, QString("Error"), QString("Error compliling the pipeline: ") + info.baseName());
+         return false;
+    }
+
+    auto reader = pipeline->Find(L"reader");
+    if (reader == nullptr)
+        return false;
+
+    //auto variables = ScanManager::GetHandle().GetVariables()->Variables();
+    //assert(variables);
+    //pipeline->SetGlobalVariables(variables);
+
+    auto reader_agent = ProcessorAgent(reader);
+
+    return pipeline->Input(L"Input", nullptr);
+
+}
 
 bool DataManager::LoadFidRecon(const QString& file_path)
 {

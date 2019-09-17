@@ -1,0 +1,36 @@
+import "BasicRecon.dll";
+
+CmrDataReader reader(DataPath = "D:\\Data\\cmr_data\\RawData_256\\RawData",
+	ChannelCount = 4, ChannelSwitch = 15);
+
+SliceIterator slice_iterator;
+//SliceSelector slice_selector(SliceIndex = 3);
+DcRemover dc_remover;
+ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);
+
+Fft2D fft;
+ModulePhase module_phase;
+//1 and 2:
+//JpegExporter jpeg_exporter(ExportFolder = "D:\\output\\test_cmr\\qt");
+//2
+//ChannelMerger channel_merge(ChannelCount = 4 );
+//3:
+DataTypeConvertor convertor;
+Display2D display2d;
+	
+reader->slice_iterator;
+slice_iterator->dc_remover;
+dc_remover->zero_filling;
+zero_filling->fft;
+fft->module_phase;
+//choose one of the following 3 items.
+//1:
+//module_phase.Module->jpeg_exporter;
+//2:
+//module_phase.Module->channel_merge;
+//channel_merge->jpeg_exporter;
+//3:
+module_phase.Module->convertor;
+convertor.UnsignedShort->display2d;
+//
+self.Input->reader.Input;

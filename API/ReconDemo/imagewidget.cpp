@@ -12,6 +12,8 @@
 #include <QKeyEvent>
 #include "imageobject.h"
 #include "Implement/VariableSpace.h"
+#include "windows.h"
+#include <QDebug>
 
 //#include "scanmanager.h"
 //xhb->解耦scanmanager
@@ -30,22 +32,16 @@ ImageWidget::ImageWidget(QWidget *parent) : QWidget(parent),
 
 }
 
-bool ImageWidget::SetImage(IData* data,
-                           //IVariableContainer* properties,
-                           bool repaint)
+bool ImageWidget::SetImage(IData* data, bool repaint)
 {
     _data = Yap::YapShared<IData>(data);
 
-    /*
+
     if (data->GetVariables() != nullptr)
     {
         _properties = YapShared(data->GetVariables());
     }
-    else
-    {
-        _properties = YapShared(ScanManager::GetHandle().GetVariables()->Variables());
-    }
-    */
+
 
     SetImageRect();
     if (data)
@@ -56,12 +52,7 @@ bool ImageWidget::SetImage(IData* data,
         unsigned short * image_data = GetDataArray<unsigned short>(_data.get());
         auto max_value = max_element(image_data, image_data + width * height);
 
-        //xhb1111
-        unsigned short test[512*2];
-        memcpy(test, image_data + 255*512, sizeof(unsigned short)* 512*2);
-        //end of xhb1111
-
-        _window_width = *max_value;//?
+        _window_width = *max_value;
         _window_level = *max_value / 2;
 
        _mapper.SetWindowSize(size());
@@ -69,9 +60,13 @@ bool ImageWidget::SetImage(IData* data,
 
        if (_properties.get() != nullptr)
        {
+
            VariableSpace variables(_properties.get());
-           auto fov_x = variables.Get<double>(L"FovRead");
-           auto fov_y = variables.Get<double>(L"FovPhase");
+           //auto fov_x = variables.Get<double>(L"FovRead");
+           //auto fov_y = variables.Get<double>(L"FovPhase");
+
+           auto fov_x = 100;
+           auto fov_y = 100;
 
            _mapper.SetFOV(fov_x, fov_y);
            _mapper.UpdateMapper();
@@ -113,6 +108,7 @@ bool ImageWidget::IsHighlighted() const
 
 void ImageWidget::paintEvent(QPaintEvent * /*event*/)
 {
+
     QPainter painter(this);
 
     QRect rect(QRect(0, 0, size().width(), size().height()));
@@ -125,6 +121,8 @@ void ImageWidget::paintEvent(QPaintEvent * /*event*/)
 
     if (_data)
     {
+
+        //qDebug()<< "ImageWidget(this = "<< this <<")::Thread id = "<<GetCurrentThreadId();
         DataHelper image(_data.get());
         auto width = image.GetWidth();
         auto height = image.GetHeight();
@@ -135,36 +133,11 @@ void ImageWidget::paintEvent(QPaintEvent * /*event*/)
 
         GrayScaleMapper mapper(_window_level, _window_width);
 
-
-        //xhb1111
-        //unsigned short test2[512*2];
-        //memcpy(test2, image_data, sizeof(unsigned short)* 512);
-        //end of xhb1111
-
-
         for (unsigned int i = 0; i < width * height; ++i)
         {
-            //xhb1111
-//            buffer[i] = 12;
-//            unsigned short tempy = *(image_data);
-//            unsigned short tempx = image_data[i];
-            //end of xhb1111
-
             buffer[i] = mapper[image_data[i]];
-
-
-
         }
-        /*
 
-        for (unsigned int i = 0; i < height; i++)
-        {
-            for(unsigned int j = 0; j < width; j ++)
-            {
-             buffer[i*width +j] = mapper[i];
-            }
-
-        }*/
         rect.adjust(1, 1, -1, -1);
         QImage qimage(buffer, int(width), int(height), QImage::Format_Grayscale8);
 
@@ -227,8 +200,8 @@ void ImageWidget::paintEvent(QPaintEvent * /*event*/)
         if (_properties.get() != nullptr)
         {
             VariableSpace variables(_properties.get());
-            auto fov_x = variables.Get<double>(L"FovRead");
-            auto fov_y = variables.Get<double>(L"FovPhase");
+            auto fov_x = 100;//variables.Get<double>(L"FovRead");
+            auto fov_y = 100;//variables.Get<double>(L"FovPhase");
 
             _mapper.SetFOV(fov_x, fov_y);
         }
@@ -350,8 +323,8 @@ void ImageWidget::SetImageRect()
     if (_properties.get() != nullptr)
     {
         VariableSpace variables(_properties.get());
-        auto cx = variables.Get<double>(L"FovRead");
-        auto cy = variables.Get<double>(L"FovPhase");
+        auto cx = 100;//variables.Get<double>(L"FovRead");
+        auto cy = 100;//variables.Get<double>(L"FovPhase");
 
         _image_rect.SetCx(cx);
         _image_rect.SetCy(cy);
@@ -393,8 +366,7 @@ std::pair<bool, Geometry::CRect3D> ImageWidget::GetImageRect()
 
 void ImageWidget::SetVector(double x1, double y1, double z1, double x2, double y2, double z2)
 {
-    //load一个文件的时候，由于目前文件保存的参数部分没做好，所以暂时先硬编码一个定位信息
-
+    //load涓€涓枃浠剁殑鏃跺€欙紝鐢变簬鐩墠鏂囦欢淇濆瓨鐨勫弬鏁伴儴鍒嗘病鍋氬ソ锛屾墍浠ユ殏鏃跺厛纭紪鐮佷竴涓畾浣嶄俊鎭?
     Vector3D row(x1, y1, z1);
     Vector3D column(x2, y2, z2);
     _image_rect.SetOrientation(row, column);

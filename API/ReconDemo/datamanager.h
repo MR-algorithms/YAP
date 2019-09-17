@@ -25,6 +25,7 @@ public:
     static DataManager& GetHandle();
     ~DataManager();
     bool Load(const QString& image_path);
+    bool LoadPipeline();
     bool Demo1D();
     bool Demo2D();
     bool ReceiveData(DataPackage &package, int cmd_id);

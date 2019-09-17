@@ -4,7 +4,8 @@
 #include "imagelayoutwidget.h"
 #include "Implement/LogUserImpl.h"
 #include "Client/DataHelper.h"
-
+#include <QThread>
+#include "windows.h"
 
 using namespace Yap;
 using namespace std;
@@ -48,11 +49,28 @@ bool Display2D::Input(const wchar_t * port, IData *data)
     int phase_index=variables.Get<int>(L"phase_index");
     */
     int slice_index = variables.Get<int>(L"slice_index");
-    //int channel_index = variables.Get<int>(L"channel_index");
+    int channel_index = variables.Get<int>(L"channel_index");
     //int slice_index = variables.Get<int>(L"slice_index");
 
-    //return _display_window.AddImage(data, nullptr);
-    return _display_window.UpdateImage(data,nullptr,slice_index);
+    //return _display_window.AddImage(data);
+    return _display_window.UpdateImage(data, slice_index);
+
+
+
+    //Test repaint the widget.
+    /*
+    QThread::sleep(5);
+
+    if(channel_index <= 4)
+    {
+        qDebug()<<"Display2d::thread id = "<<GetCurrentThreadId();
+
+        qDebug()<<"channel index = "<< channel_index;
+        return _display_window.UpdateImage(data, 0);
+    }
+    else
+        return true;
+    */
 
 }
 

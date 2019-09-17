@@ -14,8 +14,7 @@ class ImageWidget : public QWidget
     Q_OBJECT
 public:
     explicit ImageWidget(QWidget *parent = 0);
-    bool SetImage(Yap::IData* data, //Yap::IVariableContainer* variables,
-                  bool repaint = false);
+    bool SetImage(Yap::IData* data, bool repaint = false);
     void Clear(bool repaint = false);
 
     void SetHighlight(bool highlight, bool repaint = false);
