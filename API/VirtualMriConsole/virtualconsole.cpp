@@ -84,13 +84,7 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
     databin.GetCommunicator().get()->SetRemoteHost(scantask.ip_address.c_str(), scantask.port);
     bool succeed = databin.GetCommunicator().get()->Connect();
 
-    vector<int> mask_vec=scantask.mask.data;
-    int temp=scantask.mask.data.size();
-    databin.SetSendPhaseCount(temp);
-
-    //hard coding. set true for debugging.
-    //If Succeed = true, it will always
-    succeed = true;
+    succeed = true; //hard coding. set true for debugging.
     if(!succeed)
     {
         promiseObj.set_value(false);
@@ -120,7 +114,7 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
             This->_sendIndex = 0;
             int scan_id = 180106;
 
-            databin.Start(scan_id, scantask.mask.channelCount);
+            databin.Start(scan_id);
             qDebug()<<"scan Event";
 
         }
@@ -133,29 +127,14 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
 
             if(!databin.CanbeFinished())
             {
-                /*
-                vector<int> mask_vec=scantask.mask.data;
-                int temp=scantask.mask.data.size();
-                databin.SetSendPhaseCount(temp);
-                */
-                if(!databin.Go(mask_vec))
-                {
-//                    This->_timeMutex1.unlock();
-//                    This->_sendIndex = 0;
-                    qDebug()<<"Apply for unusual finished.";
-                    //QApplication::postEvent(scantask.pWnd, new QEvent(QEvent::Type(QEvent::User + finished)));
-                    databin.SetCurrentPhaseIndex(temp);
-                }
+                databin.Go();
+
                 if(databin.CanbeFinished())
                 {
                     This->_timeMutex1.unlock();
                     This->_sendIndex = 0;
                     qDebug()<<"Apply for finished.";
 
-                    //其中，scantask.pWnd存储的是创建该线程的窗口，也就是该线程的父线程，主要用于该子线程向父线程发送特定事件，以便进行线程间通信。
-                    //然后在任何你想要和父线程进行通信的地方，通过：
-                    //QApplication::postEvent(scantask.pWnd, new QEvent(MyEvent));
-                    //将该事件发送出去。const QEvent::Type MyEvent = (QEvent::Type)5001;建议用5000以上唯一的标识
 
                     QApplication::postEvent(scantask.pWnd, new QEvent(QEvent::Type(QEvent::User + finished)));
                 }

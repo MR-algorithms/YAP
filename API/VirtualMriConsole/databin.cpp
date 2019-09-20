@@ -96,8 +96,6 @@ void Databin::Load(std::wstring dataPath, int channelCount)
 
     _data = boost::shared_array<complex<float>>( reinterpret_cast<complex<float>*>(reader.ReadAllData(&_dataInfo, path2)));
 
-    int stop;
-
 
     //CString data_info_str;
     //data_info_str.Format(_T("DataInfo %d %d %d %d %d %d %d"),
@@ -209,18 +207,18 @@ unsigned int Databin::GetPhaseCount()
     return _dataInfo.phase_point_count;
 }
 
-void Databin::Start(int scan_id, int channel_count)
+void Databin::Start(int scan_id)
 {
     SampleDataStart start;
     start.scan_id = scan_id;
     start.dim1_size = _dataInfo.freq_point_count;
     start.dim2_size = _dataInfo.phase_point_count;
     start.dim3_size =_dataInfo.slice_count;
-    start.dim4_size = _dataInfo.dim4;
+    start.dim4_size = _dataInfo.channel_count;// It is the actual dim4_size in start structer.
     start.dim5_size = _dataInfo.dim5;
     start.dim6_size = _dataInfo.dim6;
 
-    start.channel_mask =AllChannel(channel_count);
+    start.channel_mask =AllChannel(_dataInfo.channel_count);
 
     start.dim23456_size = start.dim2_size
             * start.dim3_size
@@ -249,15 +247,16 @@ void Databin::Start(int scan_id, int channel_count)
 
 
 }
-bool Databin::Go(const vector<int>& mask_vector)
+
+bool Databin::Go()
 {
 
     //go
     //The dimension of CMR rawdata is different from the dimension of Communication protocol.
 
-    int lines_image = _dataInfo.phase_point_count;
-    int lines_channel = _dataInfo.phase_point_count * _dataInfo.slice_count;
-    //boost::shared_array<complex<float>> achannel = GetRawData(0);
+    int lines_of_slice = _dataInfo.phase_point_count;
+    int lines_of_channel = _dataInfo.phase_point_count * _dataInfo.slice_count;
+
 
 
     for(int channel_index = 0; channel_index < ChannelMaxSize; channel_index ++)
@@ -271,29 +270,21 @@ bool Databin::Go(const vector<int>& mask_vector)
                 //
                 SampleDataData data;
 
-                int real_phase_index=mask_vector.at(_current_phase_index);
-
                 data.coeff = 3.45f;
                 data.rec   = channel_index;
                 data.rp_id = 824;
 
                 data.dim23456_index
-                        = //channel_index * lines_channel+
-                         slice_index   * lines_image
-                         //+ _current_phase_index;
-                         +real_phase_index;
-
-                /*///
-                boost::shared_array<complex<float>> aslice
-                        = GetRawData(channel_index, slice_index);
-                std::vector<complex<float>> destslice;
-                destslice.resize(_dataInfo.freq_point_count*_dataInfo.phase_point_count);
-                memcpy(destslice.data(), aslice.get(), sizeof(std::complex<float>) * _dataInfo.freq_point_count*_dataInfo.phase_point_count);
-                ///*/
+                        = channel_index * lines_of_channel
+                        + slice_index   * lines_of_slice
+                        + _current_phase_index;
+                if(data.dim23456_index >=4096)
+                {
+                    int x = 2;
+                }
 
                 boost::shared_array<complex<float>> aline
-                        //= GetRawData(channel_index, slice_index, _current_phase_index);
-                         = GetRawData(channel_index, slice_index,real_phase_index);
+                        = GetRawData(channel_index, slice_index, _current_phase_index);
 
                 //
                 std::vector<complex<float>> destline;
@@ -312,26 +303,20 @@ bool Databin::Go(const vector<int>& mask_vector)
                 SampleDataData data2;
                 MessageProcess::Unpack(dataPackage, data2);
                 assert(data == data2);
-
-                if(_communicator.get()->Send(dataPackage))
-                {
-                    qDebug()<<"send channel_index="<<channel_index<<"slice_index="<<slice_index<<"_current_phase_index="<<real_phase_index<<"success";
-
-                }
-                else
-                {
-                    qDebug()<<"send channel_index="<<channel_index<<"slice_index="<<slice_index<<"_current_phase_index="<<real_phase_index<<"false";
-                    //slice_index=slice_index-1;//如果发送失败则重新发送
-                    return false;
-                }
+                //
+                _communicator.get()->Send(dataPackage);
             }
         }
     }
-    qDebug()<<"send all phase of"<<_current_phase_index;
 
     _current_phase_index ++;
+
     return true;
+
+
 }
+
+
 void Databin::End()
 {
     if(!_ended)

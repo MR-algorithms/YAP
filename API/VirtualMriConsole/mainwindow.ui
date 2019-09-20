@@ -106,7 +106,7 @@
         <item row="0" column="1">
          <widget class="QLineEdit" name="editDataFile">
           <property name="text">
-           <string>D:/Data/cpptest_data/RawData_256/RawData</string>
+           <string>D:/Data/cmr_data/RawData_256/RawData</string>
           </property>
          </widget>
         </item>

@@ -68,7 +68,7 @@ void MainWindow::on_scanButton_clicked()
     reference_task.ip_address = ip_address.toStdWString();
     reference_task.port = ui->editReconPort->text().toInt();
 
-    //reference_task.dataPath =L"D:\\test_data\\RawData_256\\RawData";
+    //reference_task.dataPath =L"D:\\Data\\cmr_data\\RawData_256\\RawData";
     reference_task.dataPath =ui->editDataFile->text().toStdWString();
 
 
@@ -78,7 +78,7 @@ void MainWindow::on_scanButton_clicked()
     //Hardcode: dataPath, channelCount, phaseCount,
     qDebug()<<"Hard code: dataPath, channelCount, phaseCount";
     int allPhaseCount=ui->editPhaseCount->text().toInt();
-    auto scantask = Scan::ScantaskGenerator::Create(reference_task, Scan::Mask(rate, type,allPhaseCount, 4));
+    auto scantask = Scan::ScantaskGenerator::Create(reference_task, Scan::Mask(rate, type,allPhaseCount, 1/*ChannelCount*/));
 
     qDebug()<<"MainWidow: onScanButton_clicked";
 
@@ -173,6 +173,6 @@ bool MainWindow::event(QEvent *event)
 
 void MainWindow::on_browsedatabutton_clicked()
 {
-    QString file_name = QFileDialog::getExistingDirectory(this,"Select the folder path","D:\\test_data");
+    QString file_name = QFileDialog::getExistingDirectory(this,"Select the folder path","D:\\Data\\cmr_data");
     ui->editDataFile->setText(file_name);
 }
