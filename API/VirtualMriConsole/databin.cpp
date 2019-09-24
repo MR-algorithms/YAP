@@ -56,7 +56,8 @@ struct DstRawDataName
 };
 
 
-Databin::Databin():_ended(false), _current_phase_index(0),_communicator(new Communicator){}
+Databin::Databin(const Scan::ScanTask & scantask):_ended(false), _current_scanmask_index(0),_communicator(new Communicator), _scantask(scantask)
+{}
 unsigned int Databin::AllChannel(int channelCount)
 {
     unsigned int selectAll = 0;
@@ -96,6 +97,8 @@ void Databin::Load(std::wstring dataPath, int channelCount)
 
     _data = boost::shared_array<complex<float>>( reinterpret_cast<complex<float>*>(reader.ReadAllData(&_dataInfo, path2)));
 
+    //
+    assert(_dataInfo.phase_point_count == _scantask.mask.phaseCount);
 
     //CString data_info_str;
     //data_info_str.Format(_T("DataInfo %d %d %d %d %d %d %d"),
@@ -241,7 +244,7 @@ void Databin::Start(int scan_id)
 
     _communicator.get()->Send(dataPackage);
 
-    _current_phase_index = 0;
+    _current_scanmask_index = 0;
 
 
 
@@ -256,6 +259,8 @@ bool Databin::Go()
 
     int lines_of_slice = _dataInfo.phase_point_count;
     int lines_of_channel = _dataInfo.phase_point_count * _dataInfo.slice_count;
+
+    int current_phase_index = _scantask.mask.data[_current_scanmask_index];
 
 
 
@@ -277,14 +282,11 @@ bool Databin::Go()
                 data.dim23456_index
                         = channel_index * lines_of_channel
                         + slice_index   * lines_of_slice
-                        + _current_phase_index;
-                if(data.dim23456_index >=4096)
-                {
-                    int x = 2;
-                }
+                        + current_phase_index;
+
 
                 boost::shared_array<complex<float>> aline
-                        = GetRawData(channel_index, slice_index, _current_phase_index);
+                        = GetRawData(channel_index, slice_index, current_phase_index);
 
                 //
                 std::vector<complex<float>> destline;
@@ -309,7 +311,7 @@ bool Databin::Go()
         }
     }
 
-    _current_phase_index ++;
+    _current_scanmask_index ++;
 
     return true;
 

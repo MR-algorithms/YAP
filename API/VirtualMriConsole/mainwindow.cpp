@@ -118,8 +118,8 @@ bool MainWindow::event(QEvent *event)
         //int test2 =342;
 
         //ui->editInfo->appendPlainText(QString("%1").arg(test2));
-        _scan_count=VirtualConsole::GetHandle().GetSendIndex();
-        QString message=tr("scanning:%1").arg(_scan_count);
+        unsigned int scan_count=VirtualConsole::GetHandle().GetSendIndex();
+        QString message=tr("scanning:%1").arg(scan_count);
         ui->editInfo->appendPlainText(message);
 
     }
@@ -130,6 +130,11 @@ bool MainWindow::event(QEvent *event)
         //ui->editInfo->appendPlainText(QString("stopped"));
 
         ui->editInfo->appendPlainText(QString("Finished!"));
+        //
+        unsigned int scan_count=VirtualConsole::GetHandle().GetSendIndex();
+        QString message=tr("<scanning:%1>").arg(scan_count);
+        ui->editInfo->appendPlainText(message);
+        //
         ui->scanButton->setEnabled(true);
         ui->stopButton->setEnabled(false);
         VirtualConsole::GetHandle().Stop();

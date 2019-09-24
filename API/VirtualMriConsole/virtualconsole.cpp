@@ -80,7 +80,7 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
     Lock_scantask.unlock();
 
 
-    Databin databin;
+    Databin databin(scantask);
     databin.GetCommunicator().get()->SetRemoteHost(scantask.ip_address.c_str(), scantask.port);
     bool succeed = databin.GetCommunicator().get()->Connect();
 
@@ -99,7 +99,7 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
 
     //
 
-    databin.Load(scantask.dataPath, scantask.mask.channelCount);
+    databin.Load();//scantask.dataPath, scantask.mask.channelCount);
     assert(This->_threadState == idle);
 
     for(;;)
@@ -128,11 +128,12 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
             if(!databin.CanbeFinished())
             {
                 databin.Go();
+                This->_sendIndex ++;
 
                 if(databin.CanbeFinished())
                 {
                     This->_timeMutex1.unlock();
-                    This->_sendIndex = 0;
+
                     qDebug()<<"Apply for finished.";
 
 
@@ -141,7 +142,7 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
                 else
                 {
                     //end of doing
-                    This->_sendIndex ++;
+
                     qDebug() << "send: "<< This->_sendIndex << "times";
 
 

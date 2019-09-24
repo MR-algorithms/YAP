@@ -7,18 +7,20 @@ using namespace Scan;
 Mask MaskGenerator::Create(unsigned int channelCount, unsigned int phaseCount, Mask::MaskType masktype, float sampleRate)
 {
     Mask mask;
+    assert(sampleRate >0 && sampleRate <= 1.0);
     mask.rate = sampleRate;
     mask.type = masktype;
     mask.channelCount = channelCount;
     mask.phaseCount = phaseCount;
-    int toSendPhaseCount=phaseCount*sampleRate;
 
     switch(masktype)
     {
     case Mask::mtSequential:
     {
-        mask.data.resize(toSendPhaseCount);
-        for(unsigned i = 0; i < toSendPhaseCount; i ++)
+        int masksize = sampleRate * phaseCount;
+        mask.data.resize(masksize);
+
+        for(unsigned i = 0; i < masksize; i ++)
         {
             mask.data[i] = i;
         }
@@ -26,51 +28,70 @@ Mask MaskGenerator::Create(unsigned int channelCount, unsigned int phaseCount, M
         break;
     case Mask::mtFromCenter:
     {
+        int masksize = sampleRate *  phaseCount;
+        if(masksize%2 != 0)
+        {
+            masksize ++;
+        }
         assert(phaseCount % 2 == 0);
-        mask.data.resize(toSendPhaseCount);
         unsigned int centerIndex = phaseCount / 2;
-        int temp=toSendPhaseCount/2;
 
-        for(unsigned i = 0; i <temp ; i ++)
+        int i = 0;
+
+        while(mask.data.size() < masksize)
+        {
+            mask.data.push_back( centerIndex - 1 - i );
+            mask.data.push_back( centerIndex + i );
+            i ++;
+        }
+        int x =  100 ;
+
+    }
+        break;
+        /*
+    case Mask::mtFromCenter:
+    {
+        //Dont support sample rate other than 1.0;
+        assert(sampleRate == 1.0);
+        assert(phaseCount % 2 == 0);
+        mask.data.resize(phaseCount);
+        unsigned int centerIndex = phaseCount / 2;
+
+        for(unsigned i = 0; i < centerIndex; i ++)
         {
             mask.data[2 * i] = centerIndex - 1 - i;
             mask.data[2 * i + 1] = centerIndex + i;
         }
-        if(toSendPhaseCount%2!=0)
-        {
-            mask.data[2*temp]=centerIndex-1-temp;
-        }
 
     }
         break;
+        */
     case Mask::mtFromSide:
     {
-        assert(phaseCount % 2 == 0);
-        mask.data.resize(toSendPhaseCount);
-        unsigned int centerIndex = phaseCount / 2;
-        int temp=toSendPhaseCount/2;
+        //Dont support sample rate other than 1.0;
+        assert(sampleRate == 1.0);
 
-        for(unsigned i = 0; i < temp; i ++)
+        assert(phaseCount % 2 == 0);
+        mask.data.resize(phaseCount);
+        unsigned int centerIndex = phaseCount / 2;
+
+        for(unsigned i = 0; i < centerIndex; i ++)
         {
             mask.data[2 * i] = i;
             mask.data[2 * i + 1] = phaseCount - 1 - i;
-        }
-        if(toSendPhaseCount%2!=0)
-        {
-            mask.data[2*temp]=temp;
         }
 
     }
         break;
     case Mask::mtEqualSampling:
     {
-        mask.data.resize(toSendPhaseCount);
+        mask.data.resize(phaseCount);
         int sampleStep = static_cast<int>( floor(1.0 / (sampleRate - 0.01) + 0.5) );
         unsigned int groupIndex = 0;
         for(unsigned i = 0; i < phaseCount; i ++)
         {
             int index = i % sampleStep; //每一组第几个；
-            if(( index == 0)&&(groupIndex < toSendPhaseCount))
+            if( index == 0)
             {
                 mask.data[groupIndex] = i;
                 groupIndex ++;
@@ -78,11 +99,10 @@ Mask MaskGenerator::Create(unsigned int channelCount, unsigned int phaseCount, M
         }
 
         //Keep the same size for consistency.
-        /* for(unsigned int i = groupIndex; i < phaseCount; i ++)
+        for(unsigned int i = groupIndex; i < phaseCount; i ++)
         {
             mask.data[i] = 999;
         }
-        */
         assert(mask.data.size()*sampleStep <= phaseCount);
 
     }

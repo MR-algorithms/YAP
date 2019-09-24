@@ -36,7 +36,6 @@ private:
 
     virtual bool event(QEvent *event);
 
-    unsigned int _scan_count=0;
 
 };
 
