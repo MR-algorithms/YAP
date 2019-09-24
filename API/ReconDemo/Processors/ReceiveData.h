@@ -3,13 +3,7 @@
 
 #include "Implement/ProcessorImpl.h"
 
-#include <future>
-#include<thread>
-#include<QDebug>
-#include<utility>
-#include<functional>
-#include<chrono>
-#include"globalvariable.h"
+
 
 struct RawDataInfoB
 {
@@ -40,29 +34,25 @@ class ReceiveData : public Yap::ProcessorImpl
 public:
     explicit ReceiveData();
     ReceiveData(const ReceiveData &rhs);
-    static void read_thread(ReceiveData* receiveData,Yap::IData *data,int channel_index);
-    static void read_thread0(int channel_index);
 
 private:
     virtual ~ReceiveData();
 
     virtual bool Input(const wchar_t *name, Yap::IData *data) override;
-    bool IsFinished(Yap::IData *data);
+    bool IsFinished(Yap::IData *data) const;
     bool InitScanData(Yap::IData *data);
 
     bool InsertPhasedata(Yap::IData *data);
     bool InsertPhasedata(std::complex<float> *data, int channel_index, int slice_index, int phase_index);
     bool CreateOutData(Yap::IData *data);
-    int GetChannelCountInMask(unsigned int channelMask);
-    int GetChannelIndexInMask(unsigned int channelMask, int channelIndex);
-    void TestWhatcanbeTested();
+    int GetChannelCountUsed(unsigned int channelMask) const;
+    int GetChannelMaskindex(unsigned int channelMask, int channelIndex) const;
+    void TestWhatcanbeTested() const;
     std::shared_ptr<std::complex<float>> _data;
     //std::vector<std::complex<float>> _datav;
     RawDataInfoB _dataInfo;
-    unsigned int _last_phase_index=-1;
-    unsigned int _received_phase_count=0;
     //bool _init;
-    std::vector<std::complex<float> > read_data;
+
     std::vector<std::complex<float>> LookintoPtr(std::complex<float> *data, int size, int start, int end);
 };
 

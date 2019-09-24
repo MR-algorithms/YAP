@@ -50,12 +50,11 @@ bool Display2D::Input(const wchar_t * port, IData *data)
     */
     int slice_index = variables.Get<int>(L"slice_index");
     int channel_index = variables.Get<int>(L"channel_index");
-    //int slice_index = variables.Get<int>(L"slice_index");
 
+
+    QThread::sleep(2);
     //return _display_window.AddImage(data);
     return _display_window.UpdateImage(data, slice_index);
-
-
 
     //Test repaint the widget.
     /*

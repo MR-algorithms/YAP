@@ -3,8 +3,8 @@ import "BasicRecon.dll";
 CmrDataReader reader(DataPath = "D:\\Data\\cmr_data\\RawData_256\\RawData",
 	ChannelCount = 4, ChannelSwitch = 15);
 
-SliceIterator slice_iterator;
-//SliceSelector slice_selector(SliceIndex = 3);
+//SliceIterator slice_iterator;
+SliceSelector slice_selector(SliceIndex = 3);
 DcRemover dc_remover;
 ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);
 
@@ -18,8 +18,8 @@ ModulePhase module_phase;
 DataTypeConvertor convertor;
 Display2D display2d;
 	
-reader->slice_iterator;
-slice_iterator->dc_remover;
+reader->slice_selector;
+slice_selector->dc_remover;
 dc_remover->zero_filling;
 zero_filling->fft;
 fft->module_phase;

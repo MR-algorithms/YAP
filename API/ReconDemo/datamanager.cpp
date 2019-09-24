@@ -16,9 +16,9 @@
 
 #include <QFileInfo>
 
-#include"globalvariable.h"
+
 #include "Client/DataHelper.h"
-#include <QThread>
+
 #include <QEvent>
 #include <QApplication>
 
@@ -51,24 +51,8 @@ bool DataManager::ReceiveData(DataPackage &package, int cmd_id)
     {
         SampleDataStart start;
         MessageProcess::Unpack(package, start);
-        //
-        SetSampleStart(start);
-        //Pipeline2DforNewScan(start);
-
+        Pipeline2DforNewScan(start);
         Pipeline1DforNewScan(start);
-
-        std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
-        gv_data_repopsitory._gv_sample_start=start;//
-        gv_data_repopsitory.gv_channel_count=GetChannelCountInMask(start.channel_mask);
-        gv_data_repopsitory._all_data.resize(start.dim1_size * start.dim2_size * start.dim3_size * gv_data_repopsitory.gv_channel_count);       
-        gv_data_repopsitory.gv_is_finished=false;
-        lck.unlock();
-        if(_mythread.joinable())
-        {
-             _mythread.join();
-        }
-
-        _mythread=std::thread(reconstruction_thread,this,std::ref(promiseObj));
 
     }
         break;
@@ -76,63 +60,8 @@ bool DataManager::ReceiveData(DataPackage &package, int cmd_id)
     {
         SampleDataData data;
         MessageProcess::Unpack(package, data);
-        //
-        std::vector<std::complex<float>> receive_line;
-        receive_line.resize(data.data.size());
-        memcpy(receive_line.data(),data.data.data(),sizeof(std::complex<float>)*data.data.size());
-        //
-
-
-        /*
-        receive_phases.insert(receive_phases.end(),receive_line.begin(),receive_line.end());
-        if(receive_phases.size()>=_start_phases.dim1_size*_start_phases.dim3_size)
-        {
-           InputToPipeline2D(data);
-           receive_phases.clear();
-        }
-
-        */
-
-         //auto output_data = CreateIData1D(data);
-
-         //InputToPipeline1D(data);
-
-         output_data = CreateIData1D(data);
-
-         if(!IsFinished(output_data.get()))
-         {
-             InSertPhasedata(output_data.get());
-
-         }
-         else
-         {
-             //_mythread.join();
-//             std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
-//             gv_data_repopsitory.gv_is_finished=true;
-//             lck.unlock();
-
-             if( futureObj.get() )
-
-             {
-                 qDebug() << "all finished";
-                 _mythread.join();
-
-             }
-            //std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
-
-            //lck.unlock();
-         }
-         if(_sampleDataData_count==0)
-          {
-           std::unique_lock <std::mutex> lck(gv_data_repopsitory.gv_mtx);
-           gv_data_repopsitory.gv_ready = true;
-           gv_data_repopsitory.gv_cv.notify_all();
-           lck.unlock();
-         }
-         _sampleDataData_count++;
-
-        //InputToPipeline1D(data);
-        //InputToPipeline2D(data);
+        InputToPipeline2D(data);
+        InputToPipeline1D(data);
 
     }
         break;
@@ -141,19 +70,7 @@ bool DataManager::ReceiveData(DataPackage &package, int cmd_id)
         SampleDataEnd end;
         MessageProcess::Unpack(package, end);
         End(end);
-        /*
-        std::unique_lock <std::mutex> lck(gv_data_repopsitory.gv_mtx);
-        gv_data_repopsitory.gv_is_finished=true;
-        lck.unlock();
-        _sampleDataData_count=0;
-        */
-//        if( futureObj.get() )
 
-//        {
-//            qDebug() << "all finished";
-//            //_mythread.join();
-
-//        }
     }
         break;
     default:
@@ -198,27 +115,15 @@ bool DataManager::Pipeline1DforNewScan(SampleDataStart &start)
     }
 
     return true;
-
-    return true;
 }
 
-bool DataManager::SetSampleStart(SampleDataStart &start)
+bool DataManager::Pipeline2DforNewScan(SampleDataStart &start)
 {
-    _sample_start=start;
-    return true;
-}
-
-
-bool DataManager::Pipeline2DforNewScan()
-{
-    //_sample_start = start;
-    //_rt_pipeline = this->CreatePipeline(QString("config//pipelines//realtime_recon.pipeline"));
-    _rt_pipeline=this->CreatePipeline(_pipeline_path);
+    _sample_start = start;
+    _rt_pipeline = this->CreatePipeline(QString("config//pipelines//realtime_recon.pipeline"));
 
     if(_rt_pipeline)
     {
-        gv_data_repopsitory._rt_pipeline=_rt_pipeline;
-
         return true;
     }
     else
@@ -228,196 +133,6 @@ bool DataManager::Pipeline2DforNewScan()
 
 }
 
-int DataManager::GetChannelCountInMask(unsigned int channelMask)
-{
-    int count_max = sizeof(unsigned int) * 8;
-        int countInMask = 0;
-        for(int channel_index = 0; channel_index < count_max; channel_index ++)
-        {
-            if (channelMask & (1 << channel_index))
-            {
-                countInMask ++;
-            }
-
-        }
-
-        return countInMask;
-}
-
-bool DataManager::InSertPhasedata(IData *data)
-{
-    std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
-    assert(data->GetVariables() != nullptr);
-
-    VariableSpace variables(data->GetVariables());
-
-    int channel_index = variables.Get<int>(L"channel_index");
-    int slice_index = variables.Get<int>(L"slice_index");
-    int phase_index = variables.Get<int>(L"phase_index");
-
-    int channelIndexInMask = GetChannelIndexInMask(_sample_start.channel_mask, channel_index);
-
-
-    auto phase_data = GetDataArray<std::complex<float>>(data);
-
-    int freqCount  = _sample_start.dim1_size;
-    int phaseCount = _sample_start.dim2_size;
-    int sliceCount = _sample_start.dim3_size;
-
-    int channelSize = freqCount * phaseCount * sliceCount;
-    int sliceSize = freqCount * phaseCount;
-
-    memcpy(gv_data_repopsitory._all_data.data() + channelSize * channelIndexInMask
-                       + sliceSize   * slice_index
-                       + freqCount   * phase_index,
-           phase_data, freqCount * sizeof(std::complex<float>));
-    auto temp3 = LookintoPtr(gv_data_repopsitory._all_data.data(), 655360, 65530, 65540);
-    lck.unlock();
-    return true;
-}
-
-
-int DataManager::GetChannelIndexInMask(unsigned int channelMask, int channelIndex)
-{
-
-    int channelIndexInMask = -1;
-    bool used = false;
-    if (channelMask & (1 << channelIndex))
-    {
-        used = true;
-    }
-
-    if(!used)
-    {
-
-    }
-    else
-    {
-        for(int i = 0; i <= channelIndex; i ++)
-        {
-            if (channelMask & (1 << i))
-            {
-                channelIndexInMask ++;
-            }
-
-        }
-
-    }
-
-    return channelIndexInMask;
-
-}
-
-std::vector<std::complex<float> > DataManager::LookintoPtr(std::complex<float> *data, int size, int start, int end)
-{
-        std::vector<std::complex<float>> view_data;
-        int view_size = end - start;
-
-        assert(start < end);
-        assert(end <= size);
-
-        view_data.resize(view_size);
-        memcpy(view_data.data(), data + start, view_size * sizeof(std::complex<float>));
-        return view_data;
-}
-
-bool DataManager::IsFinished(IData *data)
-{
-    std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
-    if(gv_data_repopsitory.gv_is_finished)
-    {
-         lck.unlock();
-         return true;
-    }
-
-    assert(data->GetVariables() != nullptr);
-
-    VariableSpace variables(data->GetVariables());
-
-    bool finished = variables.Get<bool>(L"Finished");
-    return finished;
-}
-
-void DataManager::reconstruction_thread(DataManager *datamanager,std::promise<bool> &promiseObj)
-{
-    //int t=0;
-    std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
-    while (!gv_data_repopsitory.gv_ready)
-           gv_data_repopsitory.gv_cv.wait(lck);
-    lck.unlock();
-    while (1)
-    {
-        std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
-        bool finish=gv_data_repopsitory.gv_is_finished;
-        lck.unlock();
-        if(!finish)
-        {
-            datamanager->_rt_pipeline->Input(L"Input",nullptr);
-            //datamanager->_rt_pipeline->Input(L"Input",datamanager->output_data.get());
-            //qDebug()<<"t="<<t;
-            //t++;
-        }
-        else
-        {
-             //std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
-             //int t=gv_data_repopsitory.gv_channel_count;
-             //lck.unlock();
-             qDebug()<<"The last reconstruction*************";
-             datamanager->_rt_pipeline->Input(L"Input",nullptr);
-             break;
-        }
-    }
-     //promiseObj.set_value(true);
-     QApplication::postEvent(datamanager->_pwnd, new QEvent(QEvent::Type(QEvent::User + finished)));
-
-
-}
-
-void DataManager::reconstruction_thread2()
-{
-    std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
-    while (!gv_data_repopsitory.gv_ready)
-           gv_data_repopsitory.gv_cv.wait(lck);
-    lck.unlock();
-    while (1)
-    {
-        std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
-        bool finish=gv_data_repopsitory.gv_is_finished;
-        Yap::SmartPtr<Yap::IProcessor> _rt_pipeline=gv_data_repopsitory._rt_pipeline;
-        lck.unlock();
-        if(!finish)
-        {
-            _rt_pipeline->Input(L"Input",nullptr);
-        }
-        else
-        {
-            _rt_pipeline->Input(L"Input",nullptr);
-            break;
-        }
-    }
-     std::unique_lock<std::mutex> lock(gv_data_repopsitory.gv_mtx);
-     QWidget* _pwnd=gv_data_repopsitory._pwnd;
-     lock.unlock();
-     QApplication::postEvent(_pwnd, new QEvent(QEvent::Type(QEvent::User + finished)));
-
-}
-
-void DataManager::SetPwnd(QWidget *pwnd)
-{
-    _pwnd=pwnd;
-    std::unique_lock<std::mutex> lck(gv_data_repopsitory.gv_mtx);
-    gv_data_repopsitory._pwnd=pwnd;
-    lck.unlock();
-}
-
-void DataManager::JoinThread()
-{
-    if(_mythread.joinable())
-    {
-        _mythread.join();
-    }
-
-}
 bool DataManager::InputToPipeline1D(SampleDataData &data)
 {
 
@@ -432,45 +147,13 @@ bool DataManager::InputToPipeline1D(SampleDataData &data)
 bool DataManager::InputToPipeline2D(SampleDataData &data)
 {
     //Put the recieved data into the pipeline.
-
     auto output_data = CreateIData1D(data);
-
-/*///
-    VariableSpace variables1(output_data->GetVariables());
-    int channel_index=variables1.Get<int>(L"channel_index");
-    int slice_index = variables1.Get<int>(L"slice_index");
-    int phase_index=variables1.Get<int>(L"phase_index");
-
-    receive_phases.insert(receive_phases.end(),data.data.begin(),data.data.end());
-    if(receive_phases.size()>=_sample_start.dim1_size*_sample_start.dim3_size)
-    {
-
-        int data_size = receive_phases.size();
-        std::complex<float> * data_vector1 = new std::complex<float>[data_size];
-
-        for(int i = 0; i < data_size; i ++)
-        {
-          data_vector1[i] = receive_phases[i];
-        }
-        Yap::Dimensions dimensions;
-        dimensions(Yap::DimensionReadout, 0U, 256)
-            (Yap::DimensionPhaseEncoding,phase_index, 1)
-            (Yap::DimensionSlice, 0U, 3);
-        auto output_data1 = Yap::YapShared(
-                    new Yap::DataObject<std::complex<float>>(nullptr, data_vector1, dimensions, nullptr, nullptr));
-        if(_rt_pipeline)
-            _rt_pipeline->Input(L"Input", output_data1.get());
-
-       receive_phases.clear();
-    }
-///*/
-
-
-   if(_rt_pipeline)
-    _rt_pipeline->Input(L"Input", output_data.get());
+    if(_rt_pipeline)
+        _rt_pipeline->Input(L"Input", output_data.get());
     return true;
 
 }
+
 
 bool DataManager::Load(const QString& file_path)
 {
@@ -694,7 +377,7 @@ bool DataManager::Demo1D()
     {
         Yap::PipelineConstructor constructor;
         constructor.Reset(true);
-        constructor.LoadModule(L"BasicRecon.dll");
+        //constructor.LoadModule(L"BasicRecon.dll");
 
         constructor.CreateProcessor(L"Display1D", L"Plot1D");
 
@@ -748,17 +431,6 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData1D()
     return output_data1;
 
 }
-bool DataManager::End(SampleDataEnd &end)
-{
-    Yap::VariableSpace variables;
-    variables.AddVariable(L"bool", L"Finished", L"Iteration finished.");
-    variables.Set(L"Finished", true);
-
-    //auto output = DataObject<int>::CreateVariableObject(variables.Variables(), nullptr);
-
-    //_rt_pipeline->Input(L"Input", output.get());
-    return true;
-}
 
 Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
 {
@@ -788,7 +460,6 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
     {
         Yap::VariableSpace variables;
         output_data->SetVariables(variables.Variables());
-        assert(nullptr!= output_data->GetVariables());
 
         int channel_mask = _sample_start.channel_mask;
 
@@ -866,3 +537,20 @@ void DataManager::calculate_dimindex(SampleDataStart &start, int dim23456_index,
 
 }
 
+
+
+bool DataManager::End(SampleDataEnd &end)
+{
+    Yap::VariableSpace variables;
+    variables.AddVariable(L"bool", L"Finished", L"Iteration finished.");
+    variables.Set(L"Finished", true);
+
+    auto output = DataObject<int>::CreateVariableObject(variables.Variables(), nullptr);
+
+    if(_rt_pipeline)
+    {
+        //Send a "Finished" message with no data array to the pipeline.
+        _rt_pipeline->Input(L"Input", output.get());
+    }
+    return true;
+}

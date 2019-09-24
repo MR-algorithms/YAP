@@ -47,7 +47,6 @@ SOURCES += \
     DataSample/reconserver.cpp \
     DataSample/datapackage.cpp \
     Processors/ReceiveData.cpp \
-    globalvariable.cpp \
     Processors/Display1D.cpp \
     Processors/Display2D.cpp \
     Processors/PSliceIterator.cpp \
@@ -83,7 +82,6 @@ HEADERS += \
     DataSample/CmrPackType.h \
     DataSample/datapackage.h \
     Processors/ReceiveData.h \
-    globalvariable.h \
     Processors/Display1D.h \
     Processors/Display2D.h \
     Processors/PSliceIterator.h \

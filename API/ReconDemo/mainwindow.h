@@ -28,8 +28,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    static void buttonStart_thread(MainWindow* mw);//创建的线程函数，必须为static
-
 
 private slots:
     //void on_loadpushButton_clicked();
@@ -47,11 +45,9 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    virtual bool event(QEvent *event);
     void SetImportedProcessors();
     std::shared_ptr<ReconServer> reconServer;
-    //ReconServer* reconServer;
-    std::thread _mythread;
+
 };
 
 #endif // MAINWINDOW_H
