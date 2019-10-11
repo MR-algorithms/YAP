@@ -49,8 +49,8 @@ SOURCES += \
     Processors/ReceiveData.cpp \
     Processors/Display1D.cpp \
     Processors/Display2D.cpp \
-    Processors/PSliceIterator.cpp \
-    Processors/PFft2D.cpp
+    Processors/rawdata.cpp \
+    commonmethod.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -84,8 +84,8 @@ HEADERS += \
     Processors/ReceiveData.h \
     Processors/Display1D.h \
     Processors/Display2D.h \
-    Processors/PSliceIterator.h \
-    Processors/PFft2D.h
+    Processors/rawdata.h \
+    commonmethod.h
 
 FORMS += \
         mainwindow.ui

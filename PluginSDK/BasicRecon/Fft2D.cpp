@@ -65,7 +65,9 @@ bool Fft2D::Input(const wchar_t * port, IData * data)
 		return false;
 	}
 
-	LOG_TRACE(L"<Fft2D> Input::After Check.", L"BasicRecon");
+	LOG_TRACE(L"<Fft2D> Input::After Check1.", L"BasicRecon");
+	LOG_TRACE(L"<Fft2D> Input::After Check2.", L"BasicRecon");
+	LOG_TRACE(L"<Fft2D> Input::After Check3.", L"BasicRecon");
 
 	auto width = input_data.GetWidth();
 	auto height = input_data.GetHeight();

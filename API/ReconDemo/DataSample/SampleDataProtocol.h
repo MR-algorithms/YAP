@@ -23,7 +23,7 @@ struct SampleDataStart
 	uint32_t dim4_size;
 	uint32_t dim5_size;
 	uint32_t dim6_size;
-	uint32_t channel_mask;
+    uint32_t channel_switch;
 
     SampleDataStart()
         : cmd_id(SAMPLE_DATA_START)
@@ -36,7 +36,7 @@ struct SampleDataStart
         , dim4_size(0)
         , dim5_size(0)
         , dim6_size(0)
-        , channel_mask(0)  {  }
+        , channel_switch(0)  {  }
 
     SampleDataStart& operator = (const SampleDataStart& rhs){
        cmd_id = rhs.cmd_id;
@@ -49,7 +49,7 @@ struct SampleDataStart
        dim4_size = rhs.dim4_size;
        dim5_size = rhs.dim5_size;
        dim6_size = rhs.dim6_size;
-       channel_mask = rhs.channel_mask;
+       channel_switch = rhs.channel_switch;
        return *this;
     }
 
@@ -65,7 +65,7 @@ struct SampleDataStart
                 dim4_size == rhs.dim4_size &&
                 dim5_size == rhs.dim5_size &&
                 dim6_size == rhs.dim6_size &&
-                channel_mask == rhs.channel_mask;
+                channel_switch == rhs.channel_switch;
 
     }
 
@@ -77,11 +77,11 @@ struct SampleDataStart
 struct SampleDataData
 {
 	uint32_t cmd_id;
-	uint32_t rp_id;
+    uint32_t rp_id;//
 	uint32_t dim23456_index;
-	uint32_t rec;
+    uint32_t rec;//channel Index;
 	float coeff;
-	std::vector<std::complex<float>> data;
+    std::vector<std::complex<float>> data_value;
 
     SampleDataData()
         : cmd_id(SAMPLE_DATA_DATA)
@@ -97,7 +97,7 @@ struct SampleDataData
         rec = rhs.rec;
         coeff = rhs.coeff;
 
-        data.assign(rhs.data.begin(),rhs.data.end());
+        data_value.assign(rhs.data_value.begin(),rhs.data_value.end());
         return *this;
     }
 
@@ -108,16 +108,16 @@ struct SampleDataData
                         rec == rhs.rec &&
                         coeff == rhs.coeff );
 
-        bool test2 = (data.size() == rhs.data.size());
+        bool test2 = (data_value.size() == rhs.data_value.size());
         if(!test1 || !test2)
         {
             return false;
         }
         else
         {
-            for(int i =0; i < static_cast<int>( data.size() ); i ++)
+            for(int i =0; i < static_cast<int>( data_value.size() ); i ++)
             {
-                if(data[i] != rhs.data[i])
+                if(data_value[i] != rhs.data_value[i])
                 {
                     return false;
                 }

@@ -4,7 +4,7 @@
 #include <QDebug>
 #include <cassert>
 #include <thread>
-#include "globalvariable.h"
+
 #include<functional>
 #include<utility>
 
@@ -40,12 +40,11 @@ void ReconClientSocket:: slotDataReceived()
 
                 //process the package.
 
-                //qDebug()<<"gv_ready============"<<gv_data_repopsitory.gv_ready;
                 //std::thread thread1(DataManager::GetHandle().ReceiveData,std::ref(this->_package),this->_bufferInfo);
                 DataManager::GetHandle().ReceiveData(this->_package, this->_bufferInfo.cmd_id);
                 //
                 _bufferInfo.Reset();
-               // thread1.join();
+
 
             }
 
@@ -137,9 +136,9 @@ bool ReconClientSocket::ReadHeaditem()
 
         assert(byteArray.size() == headitem_bytes);
 
-        _package.head.resize( headitem_count);
+        _package.headitems.resize( headitem_count);
 
-        memcpy(_package.head.data(), byteArray.data(), byteArray.size());
+        memcpy(_package.headitems.data(), byteArray.data(), byteArray.size());
 
         _package.CheckSelf(true, false, false);
 
@@ -153,7 +152,7 @@ bool ReconClientSocket::ReadHeaditem()
 bool ReconClientSocket::ReadValue()
 {
 
-    int bytesToRead = _package.BytesFromHeaditem();
+    int bytesToRead = _package.BytesFromHeaditems();
 
     int bytesLeft = bytesAvailable();
     qDebug()<< "Enter ReconClientSocket::ReadValue():  "<< bytesLeft<<" bytes available";
@@ -163,20 +162,20 @@ bool ReconClientSocket::ReadValue()
         return false;
     }
 
-    _package.data.resize( _package.head.size() );
-    for(int i = 0; i < static_cast<int>( _package.head.size() ); i ++)
+    _package.valueitems.resize( _package.headitems.size() );
+    for(int i = 0; i < static_cast<int>( _package.headitems.size() ); i ++)
     {
-        int dataitem_bytes = _package.head[i].size;
+        int dataitem_bytes = _package.headitems[i].value_size;
         QByteArray byteArray = read( dataitem_bytes );
         assert(byteArray.size() == dataitem_bytes);
 
-        _package.data[i].data.resize(dataitem_bytes);
-        memcpy( _package.data[i].data.data(), byteArray.data(), dataitem_bytes );//有问题。
+        _package.valueitems[i].value.resize(dataitem_bytes);
+        memcpy( _package.valueitems[i].value.data(), byteArray.data(), dataitem_bytes );//有问题。
 
     }
 
-    assert(_package.data[0].data.size() == sizeof(uint32_t));
-    memcpy( &_bufferInfo.cmd_id, _package.data[0].data.data(), sizeof(uint32_t));
+    assert(_package.valueitems[0].value.size() == sizeof(uint32_t));
+    memcpy( &_bufferInfo.cmd_id, _package.valueitems[0].value.data(), sizeof(uint32_t));
 
     _package.CheckSelf();
     return true;

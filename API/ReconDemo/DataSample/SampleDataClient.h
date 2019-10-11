@@ -55,7 +55,7 @@ public:
 
 	bool SetServerInfo(const std::string& ip, uint16_t port, const std::wstring& config_file, bool used_config);
     void SetObserver(std::shared_ptr<SampleDataObserver> observer);
-    void SetObserverChannel(uint32_t channel_mask);
+    void SetObserverChannel(uint32_t channel_switch);
 
     uint32_t GetVersion() const;
 

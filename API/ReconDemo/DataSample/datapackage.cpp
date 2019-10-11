@@ -9,40 +9,47 @@ void DataPackage::AddItem(uint16_t data_type, uint16_t second_type, const char* 
     HeadItem headitem;
     headitem.primary_type = data_type;
     headitem.second_type  = second_type;
-    headitem.size = size;
+    headitem.value_size = size;
 
-    head.push_back(headitem);
+    headitems.push_back(headitem);
 
     //
-    DataItem dataitem;
-    dataitem.data.resize(size);
+    ValueItem valueitem;
+    valueitem.value.resize(size);
     //for(int i = 0; i < size; i ++)
     //{
-    //    dataitem.data[i] = value[i];
+    //    valueitem.data[i] = value[i];
     //}
 
-    memcpy(dataitem.data.data(), value, size);
+    memcpy(valueitem.value.data(), value, size);
 
-    data.push_back(dataitem);//值拷贝？
+    valueitems.push_back(valueitem);
 
 }
 
-int DataPackage::BytesFromHeaditem() const
+int DataPackage::BytesFromHeaditems() const
 {
     int bytes = 0;
-    for(int i = 0; i < static_cast< int >( head.size()); i ++)
+    //"head.size()" is the count of headitmes in "head".
+    for(int i = 0; i < static_cast< int >( headitems.size()); i ++)
     {
-        bytes += head[i].size;
+        //head[i].size is the member varible "size" of the one element "head[i]"(headitem), rather that the size of one element (headitem).
+        bytes += headitems[i].value_size;
     }
     return bytes;
 }
 
-int DataPackage::BytesFromDataitem() const
+int DataPackage::BytesFromValueitems() const
 {
     int bytes = 0;
-    for(int i = 0; i < static_cast<int>( data.size() ); i ++)
+    //data.size(): the count of dataitems in "data".
+    for(int i = 0; i < static_cast<int>( valueitems.size() ); i ++)
     {
-        bytes += data[i].data.size();
+
+        //vector<item>.size: the count of items;
+        //Aitem.size: the member variable "size" of the item(Aitem). It happened that item has a member variable "size".
+        //So "size" is not a proper name for the member variable.
+        bytes += valueitems[i].value.size();
     }
     return bytes;
 
@@ -54,7 +61,7 @@ void DataPackage::CheckSelf(bool checkHead, bool checkCmdid, bool checkData)
     if(checkHead)
     {
         int headitem_count = magic_anditem_count[1];
-        assert( head.size() == headitem_count );
+        assert( headitems.size() == headitem_count );
 
     }
 
@@ -62,19 +69,19 @@ void DataPackage::CheckSelf(bool checkHead, bool checkCmdid, bool checkData)
     if(checkCmdid)
     {
         int cmd_id;
-        assert(data[0].data.size() == sizeof(uint32_t));
-        memcpy(&cmd_id, data[0].data.data(), sizeof(uint32_t));
+        assert(valueitems[0].value.size() == sizeof(uint32_t));
+        memcpy(&cmd_id, valueitems[0].value.data(), sizeof(uint32_t));
 
         switch(cmd_id)
         {
         case SAMPLE_DATA_START:
-            assert(head.size() == 11);
+            assert(headitems.size() == 11);
             break;
         case SAMPLE_DATA_DATA:
-            assert(head.size() == 6);
+            assert(headitems.size() == 6);
             break;
         case SAMPLE_DATA_END:
-            assert(head.size() == 2);
+            assert(headitems.size() == 2);
             break;
         default:
             break;
@@ -85,8 +92,7 @@ void DataPackage::CheckSelf(bool checkHead, bool checkCmdid, bool checkData)
     //
     if(checkData)
     {
-        assert( BytesFromDataitem() == BytesFromHeaditem());
-
+        assert( BytesFromValueitems() == BytesFromHeaditems());
     }
 
 }
@@ -104,7 +110,7 @@ bool MessageProcess::Pack(DataPackage &package, const SampleDataStart &start)
             start.dim4_size,
             start.dim5_size,
             start.dim6_size,
-            start.channel_mask };
+            start.channel_switch };
 
     package.magic_anditem_count[0] = 0xFFFFFFFF;
     package.magic_anditem_count[1] = info.size();
@@ -123,7 +129,6 @@ bool MessageProcess::Pack(DataPackage &package, const SampleDataData &data)
 {
 
 
-    //std::vector<std::complex<float>> data;
 
     package.magic_anditem_count[0] = 0xFFFFFFFF;
     package.magic_anditem_count[1] = 6;
@@ -161,8 +166,8 @@ bool MessageProcess::Pack(DataPackage &package, const SampleDataData &data)
 
     package.AddItem(cmr::PackItemTypeHelper<std::complex<float>>::value,
                     mstArray,
-                    reinterpret_cast<const char*>(data.data.data()),
-                    sizeof(std::complex<float>) * data.data.size() );
+                    reinterpret_cast<const char*>(data.data_value.data()),
+                    sizeof(std::complex<float>) * data.data_value.size() );
 
 
     return true;
@@ -192,13 +197,11 @@ bool MessageProcess::Pack(DataPackage &package, const SampleDataEnd &end)
 }
 bool MessageProcess::Unpack(const DataPackage &package, SampleDataStart &start)
 {
-    //包检查
-
     uint32_t info[11];
-    for(int i = 0; i < static_cast<int>( package.data.size() ); i ++)
+    for(int i = 0; i < static_cast<int>( package.valueitems.size() ); i ++)
     {
-        DataItem dataitem = package.data[i];
-        memcpy(reinterpret_cast<char*>(&info[i]), dataitem.data.data(), dataitem.data.size());
+        ValueItem valueitem = package.valueitems[i];
+        memcpy(reinterpret_cast<char*>(&info[i]), valueitem.value.data(), valueitem.value.size());
     }
 
     start.cmd_id    = info[0];
@@ -211,7 +214,7 @@ bool MessageProcess::Unpack(const DataPackage &package, SampleDataStart &start)
     start.dim4_size   = info[7];
     start.dim5_size   = info[8];
     start.dim6_size   = info[9];
-    start.channel_mask   = info[10];
+    start.channel_switch   = info[10];
     return true;
 
 }
@@ -219,12 +222,12 @@ bool MessageProcess::Unpack(const DataPackage &package, SampleDataData  &data)
 {
     //包自完备检查--回波数据长度除以复数类型大小是否复数数据点数，是否等于Frequence_Points.
 
-    assert(package.data.size());
+    assert(package.valueitems.size());
     uint32_t info[4];
     for(int i = 0; i < 4; i ++)
     {
-        DataItem dataitem = package.data[i];
-        memcpy(reinterpret_cast<char*>(&info[i]), dataitem.data.data(), dataitem.data.size());
+        ValueItem valueitem = package.valueitems[i];
+        memcpy(reinterpret_cast<char*>(&info[i]), valueitem.value.data(), valueitem.value.size());
     }
 
     data.cmd_id     = info[0];
@@ -233,16 +236,16 @@ bool MessageProcess::Unpack(const DataPackage &package, SampleDataData  &data)
     data.rec        = info[3];
 
     //
-    DataItem dataitem1 = package.data[4];
-    memcpy(reinterpret_cast<char*>(&data.coeff), dataitem1.data.data(), dataitem1.data.size());
+    ValueItem valueitem1 = package.valueitems[4];
+    memcpy(reinterpret_cast<char*>(&data.coeff), valueitem1.value.data(), valueitem1.value.size());
     //
 
 
-    DataItem dataitem2 = package.data[5];
-    int complex_points = dataitem2.data.size() / sizeof(std::complex<float>);
+    ValueItem valueitem2 = package.valueitems[5];
+    int complex_points = valueitem2.value.size() / sizeof(std::complex<float>);
 
-    data.data.resize( complex_points);
-    memcpy(data.data.data(), dataitem2.data.data(), dataitem2.data.size());
+    data.data_value.resize( complex_points);
+    memcpy(data.data_value.data(), valueitem2.value.data(), valueitem2.value.size());
 
 
     return true;
@@ -250,13 +253,11 @@ bool MessageProcess::Unpack(const DataPackage &package, SampleDataData  &data)
 }
 bool MessageProcess::Unpack(const DataPackage &package, SampleDataEnd   &end)
 {
-    //包检查
-
     uint32_t info[2];
-    for(int i = 0; i < static_cast<int>( package.data.size() ); i ++)
+    for(int i = 0; i < static_cast<int>( package.valueitems.size() ); i ++)
     {
-        DataItem dataitem = package.data[i];
-        memcpy(reinterpret_cast<char*>(&info[i]), dataitem.data.data(), dataitem.data.size());
+        ValueItem valueitem = package.valueitems[i];
+        memcpy(reinterpret_cast<char*>(&info[i]), valueitem.value.data(), valueitem.value.size());
     }
 
     end.cmd_id    = info[0];

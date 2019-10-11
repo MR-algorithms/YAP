@@ -12,7 +12,7 @@
 namespace Yap{struct IData; }
 
 
-enum EThreadState{ idle, scanning, paused, finished};
+
 class DataManager
 {
 public:
@@ -42,7 +42,7 @@ private:
     Yap::SmartPtr<Yap::IData> CreateDemoIData2D();
     Yap::SmartPtr<Yap::IData> CreateDemoIData1D();
     Yap::SmartPtr<Yap::IData> CreateIData1D(SampleDataData &data);
-    void calculate_dimindex(SampleDataStart &start, int dim23456, int &dim2_index, int &dim3_index);
+    void calculate_dimindex(SampleDataStart &start, int dim23456, int &phase_index, int &slice_index);
 
     bool Pipeline2DforNewScan(SampleDataStart &start);
 
@@ -51,6 +51,7 @@ private:
 
     bool InputToPipeline1D(SampleDataData &data);
     bool InputToPipeline2D(SampleDataData &data);
+
 
     bool End(SampleDataEnd &end);
 

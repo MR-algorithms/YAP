@@ -19,12 +19,12 @@ struct HeadItem //MsgPackBufferSocketIO
 {
     uint16_t primary_type;
     uint16_t second_type;
-    uint32_t size; // sizeof(T) * element_count
+    uint32_t value_size; // sizeof(T) * element_count
 };
 
-struct DataItem
+struct ValueItem
 {
-    std::vector<char> data;
+    std::vector<char> value;
 };
 
 //
@@ -35,12 +35,12 @@ struct DataItem
 struct DataPackage
 {
     uint32_t magic_anditem_count[2];
-    std::vector<HeadItem> head;
-    std::vector<DataItem> data;
+    std::vector<HeadItem> headitems;
+    std::vector<ValueItem> valueitems;
 
     void AddItem(uint16_t data_type, uint16_t second_type, const char* value, int size);
-    int BytesFromHeaditem() const;
-    int BytesFromDataitem() const;
+    int BytesFromHeaditems() const; //Calulalte the bytes of valueitems according to headitems.
+    int BytesFromValueitems() const;//Calulalte the bytes of valueitems according to valueitems.
     void CheckSelf(bool checkHead = true, bool checkCmdid = true, bool checkData = true);
 };
 

@@ -6,7 +6,7 @@
 #include "API/Yap/ProcessorAgent.h"
 #include "Implement/CompositeProcessor.h"
 #include "API/Yap/PipelineConstructor.h"
-
+#include "commonmethod.h"
 #include <algorithm>
 #include <qmessagebox>
 #include <io.h>
@@ -434,22 +434,36 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData1D()
 
 Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
 {
+    //
+    int channel_switch = _sample_start.channel_switch;
 
-    int data_size = data.data.size();
+    int freq_count = _sample_start.dim1_size;
+    int phase_count = _sample_start.dim2_size;
+    int slice_count = _sample_start.dim3_size;
+
+    int channel_index = data.rec;
+
+    int phase_index, slice_index;
+    calculate_dimindex(_sample_start, data.dim23456_index, phase_index, slice_index);
+
+    //
+    int data_size = data.data_value.size();
+    assert(phase_count == data_size);
     std::complex<float> * data_vector2 = new std::complex<float>[data_size];
 
     for(int i = 0; i < data_size; i ++)
     {
-      data_vector2[i] = data.data[i];
+      data_vector2[i] = data.data_value[i];
     }
 
     Yap::Dimensions dimensions;
-    dimensions(Yap::DimensionReadout, 0U, data_size)
+    dimensions(Yap::DimensionReadout, 0U, freq_count)
         (Yap::DimensionPhaseEncoding, 0U, 1)//
         (Yap::DimensionSlice, 0U, 1);
-        //(Yap::Dimension4, 0U, dim4)
-        //(Yap::DimensionChannel, data.rec, 1);
 
+    //dimensions(Yap::DimensionReadout, 0U, freq_count)
+    //    (Yap::DimensionPhaseEncoding, 0U, 1)//
+    //    (Yap::DimensionSlice, 0U, 1);
 
     auto output_data = Yap::YapShared(
                 new Yap::DataObject<std::complex<float>>(nullptr, data_vector2, dimensions, nullptr, nullptr));
@@ -461,81 +475,66 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
         Yap::VariableSpace variables;
         output_data->SetVariables(variables.Variables());
 
-        int channel_mask = _sample_start.channel_mask;
-
-        int slice_count = _sample_start.dim3_size;
-        int phase_count = _sample_start.dim2_size;
-        int freq_count = _sample_start.dim1_size;
-        int dim4 = _sample_start.dim4_size;
-        int dim5 = _sample_start.dim5_size;
-        int dim6 = _sample_start.dim6_size;
-
-        int channel_index = data.rec;
-        int phase_index, slice_index;
-
-        calculate_dimindex(_sample_start, data.dim23456_index, phase_index, slice_index);
-
 
         variables.AddVariable(L"bool", L"Finished", L"The end of sample data.");
-        variables.AddVariable(L"int",  L"channel_mask", L"channel mask.");
+        variables.AddVariable(L"int",  L"channel_switch", L"channel switch.");
         variables.AddVariable(L"int",  L"channel_index", L"channel index.");
         variables.AddVariable(L"int",  L"slice_count", L"slice count.");
         variables.AddVariable(L"int",  L"slice_index", L"slice index.");
         variables.AddVariable(L"int",  L"phase_count", L"phase count.");
         variables.AddVariable(L"int",  L"phase_index", L"phase index.");
         variables.AddVariable(L"int",  L"freq_count",  L"frequency count.");
-        variables.AddVariable(L"int",  L"dim4",  L"dim4.");
-        variables.AddVariable(L"int",  L"dim5",  L"dim5.");
-        variables.AddVariable(L"int",  L"dim6",  L"dim6.");
 
 
         variables.Set(L"Finished", false);
-        variables.Set(L"channel_mask", channel_mask);
+        variables.Set(L"channel_switch", channel_switch);
         variables.Set(L"channel_index", channel_index);
         variables.Set(L"slice_count", slice_count);
         variables.Set(L"slice_index", slice_index);
         variables.Set(L"phase_count", phase_count);
         variables.Set(L"phase_index", phase_index);
         variables.Set(L"freq_count", freq_count);
-        variables.Set(L"dim4", dim4);
-        variables.Set(L"dim5", dim5);
-        variables.Set(L"dim6", dim6);
 
     }
 
-
+    //test get method.
     VariableSpace variables1(output_data->GetVariables());
-    int channel_index=variables1.Get<int>(L"channel_index");
-    int slice_index = variables1.Get<int>(L"slice_index");
-    int phase_index=variables1.Get<int>(L"phase_index");
+    int temp1=variables1.Get<int>(L"channel_index");
+    int temp2 = variables1.Get<int>(L"slice_index");
+    int temp3=variables1.Get<int>(L"phase_index");
     //
     return output_data;
 
 }
 
-void DataManager::calculate_dimindex(SampleDataStart &start, int dim23456_index, int &dim2_index, int &dim3_index)
+void DataManager::calculate_dimindex(SampleDataStart &start, int dim23456_index, int &phase_index, int &slice_index)
 {
 
-    int dim2_size = start.dim2_size;
-    int dim3_size = start.dim3_size;
+    //sending end: dim2 = phase_count, dim3 = slice_count;
+    //dim4 maybe echo images or other else.
+    int phase_count = start.dim2_size;
+    int slice_count = start.dim3_size;
     int dim4_size = start.dim4_size;
     int dim5_size = start.dim5_size;
     int dim6_size = start.dim6_size;
     int dim23456_size = start.dim23456_size;
 
+
     assert(dim4_size == 1);
     assert(dim5_size == 1);
     assert(dim6_size == 1);
+    assert(phase_count * slice_count == dim23456_size);
 
-    assert( dim2_size * dim3_size == dim23456_size);
-    assert(dim23456_index < dim23456_size);
+    //Decode the order of data received, according to the encoded order in the sender.
 
-    dim3_index = dim23456_index / dim2_size;
-    assert(dim3_index < dim3_size);
+    CommonMethod::split_index(dim23456_index, phase_count, slice_count, phase_index, slice_index);
 
-    dim2_index = dim23456_index - dim3_index * dim2_size;
+
+
 
 }
+
+
 
 
 
@@ -554,3 +553,5 @@ bool DataManager::End(SampleDataEnd &end)
     }
     return true;
 }
+
+
