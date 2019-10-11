@@ -11,19 +11,19 @@ void DataPackage::AddItem(uint16_t data_type, uint16_t second_type, const char* 
     headitem.second_type  = second_type;
     headitem.value_size = size;
 
-    headitems.push_back(headitem);//值拷贝？
+    headitems.push_back(headitem);
 
     //
     ValueItem valueitem;
     valueitem.value.resize(size);
     //for(int i = 0; i < size; i ++)
     //{
-    //    dataitem.data[i] = value[i];
+    //    valueitem.data[i] = value[i];
     //}
 
     memcpy(valueitem.value.data(), value, size);
 
-    valueitems.push_back(valueitem);//值拷贝？
+    valueitems.push_back(valueitem);
 
 }
 
@@ -110,7 +110,7 @@ bool MessageProcess::Pack(DataPackage &package, const SampleDataStart &start)
             start.dim4_size,
             start.dim5_size,
             start.dim6_size,
-            start.channel_mask };
+            start.channel_switch };
 
     package.magic_anditem_count[0] = 0xFFFFFFFF;
     package.magic_anditem_count[1] = info.size();
@@ -214,7 +214,7 @@ bool MessageProcess::Unpack(const DataPackage &package, SampleDataStart &start)
     start.dim4_size   = info[7];
     start.dim5_size   = info[8];
     start.dim6_size   = info[9];
-    start.channel_mask   = info[10];
+    start.channel_switch   = info[10];
     return true;
 
 }

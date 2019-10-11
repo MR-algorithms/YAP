@@ -11,6 +11,7 @@
 #include "QApplication"
 #include "QThread"
 
+using namespace VirtualConsoleNS;
 
 VirtualConsole VirtualConsole::s_instance;
 using namespace Scan;
@@ -48,7 +49,7 @@ public:
 
     std::timed_mutex _timeMutex1;
 
-    int _sendIndex;//表示已经发送了几条k空间数据（所有通道所有层的一行算一条）
+    int _sendIndex;//琛ㄧず宸茬粡鍙戦€佷簡鍑犳潯k绌洪棿鏁版嵁锛堟墍鏈夐€氶亾鎵€鏈夊眰鐨勪竴琛岀畻涓€鏉★級
 
 };
 
@@ -218,7 +219,7 @@ bool VirtualConsoleImpl::Scan()
     }
     else
     {
-        //连接不成功
+        //杩炴帴涓嶆垚鍔
         qDebug() << "connecting fail.";
         _thread.join();
         return false;

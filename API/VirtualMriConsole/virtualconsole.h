@@ -12,6 +12,8 @@ namespace Scan {
     struct Mask;
     struct ScanTask;
 }
+namespace VirtualConsoleNS {
+
 enum EThreadState{ idle, scanning, paused, finished};
 class VirtualConsole
 {
@@ -31,8 +33,9 @@ private:
 
     static VirtualConsole s_instance;
 
-    VirtualConsole();//单键模式下所有的构造函数都应该是private的
+    VirtualConsole();//鍗曢敭妯″紡涓嬫墍鏈夌殑鏋勯€犲嚱鏁伴兘搴旇鏄痯rivate鐨
 
 };
 
+}
 #endif // VIRTUALCONSOLE_H

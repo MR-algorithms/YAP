@@ -76,14 +76,14 @@ void MainWindow::on_scanButton_clicked()
     Scan::Mask::MaskType type = static_cast<Scan::Mask::MaskType>( ui->maskComboBox->currentIndex() );
 
     //Hardcode: dataPath, channelCount, phaseCount,
-    qDebug()<<"Hard code: dataPath, channelCount, phaseCount";
+    qDebug()<<"Hard code: dataPath, channelCount, phaseCount in Mainwindow::on_startButton_clicked";
     int allPhaseCount=ui->editPhaseCount->text().toInt();
-    auto scantask = Scan::ScantaskGenerator::Create(reference_task, Scan::Mask(rate, type,allPhaseCount, 1/*ChannelCount*/));
+    auto scantask = Scan::ScantaskGenerator::Create(reference_task, Scan::Mask(rate, type,allPhaseCount, 4/*ChannelCount*/));
 
-    qDebug()<<"MainWidow: onScanButton_clicked";
+    qDebug()<<"MainWidow2: onScanButton_clicked";
 
-    VirtualConsole::GetHandle().PrepareScantask(scantask);
-    if(!VirtualConsole::GetHandle().Scan())
+    VirtualConsoleNS::VirtualConsole::GetHandle().PrepareScantask(scantask);
+    if(!VirtualConsoleNS::VirtualConsole::GetHandle().Scan())
     {
       QMessageBox::warning(this,"Warning", "Not connected", QMessageBox::Yes);//, QMessageBox::No);
     }
@@ -104,7 +104,7 @@ void MainWindow::on_stopButton_clicked()
     ui->scanButton->setEnabled(true);
     ui->stopButton->setEnabled(false);
 
-    VirtualConsole::GetHandle().Stop();
+    VirtualConsoleNS::VirtualConsole::GetHandle().Stop();
     //qDebug()<<"Scan stopped!";
 }
 
@@ -113,31 +113,32 @@ void MainWindow::on_stopButton_clicked()
 bool MainWindow::event(QEvent *event)
 {
     switch (event->type()) {
-    case QEvent::User+scanning:
+    case QEvent::User+VirtualConsoleNS::scanning:
     {
         //int test2 =342;
 
         //ui->editInfo->appendPlainText(QString("%1").arg(test2));
-        unsigned int scan_count=VirtualConsole::GetHandle().GetSendIndex();
+        unsigned int scan_count=VirtualConsoleNS::VirtualConsole::GetHandle().GetSendIndex();
         QString message=tr("scanning:%1").arg(scan_count);
         ui->editInfo->appendPlainText(message);
 
     }
         break;
 
-    case QEvent::User + finished:
+    case QEvent::User + VirtualConsoleNS::finished:
     {
         //ui->editInfo->appendPlainText(QString("stopped"));
 
         ui->editInfo->appendPlainText(QString("Finished!"));
         //
-        unsigned int scan_count=VirtualConsole::GetHandle().GetSendIndex();
+        unsigned int scan_count=VirtualConsoleNS::VirtualConsole::GetHandle().GetSendIndex();
+
         QString message=tr("<scanning:%1>").arg(scan_count);
         ui->editInfo->appendPlainText(message);
         //
         ui->scanButton->setEnabled(true);
         ui->stopButton->setEnabled(false);
-        VirtualConsole::GetHandle().Stop();
+        VirtualConsoleNS::VirtualConsole::GetHandle().Stop();
 
 
 

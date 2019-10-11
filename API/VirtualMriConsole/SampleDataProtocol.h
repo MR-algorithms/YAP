@@ -23,7 +23,7 @@ struct SampleDataStart
 	uint32_t dim4_size;
 	uint32_t dim5_size;
 	uint32_t dim6_size;
-	uint32_t channel_mask;
+    uint32_t channel_switch;
 
     SampleDataStart()
         : cmd_id(SAMPLE_DATA_START)
@@ -36,7 +36,7 @@ struct SampleDataStart
         , dim4_size(0)
         , dim5_size(0)
         , dim6_size(0)
-        , channel_mask(0)  {  }
+        , channel_switch(0)  {  }
 
     SampleDataStart& operator = (const SampleDataStart& rhs){
        cmd_id = rhs.cmd_id;
@@ -49,7 +49,7 @@ struct SampleDataStart
        dim4_size = rhs.dim4_size;
        dim5_size = rhs.dim5_size;
        dim6_size = rhs.dim6_size;
-       channel_mask = rhs.channel_mask;
+       channel_switch = rhs.channel_switch;
        return *this;
     }
 
@@ -65,7 +65,7 @@ struct SampleDataStart
                 dim4_size == rhs.dim4_size &&
                 dim5_size == rhs.dim5_size &&
                 dim6_size == rhs.dim6_size &&
-                channel_mask == rhs.channel_mask;
+                channel_switch == rhs.channel_switch;
 
     }
 

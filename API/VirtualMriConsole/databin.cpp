@@ -19,7 +19,7 @@ struct DstRawDataName
     DstRawDataName(const std::wstring& suffix_str, int gp_count, int gp_idx)
         : suffix(suffix_str), group_count(gp_count), group_index(gp_idx){}
 
-    std::vector<std::wstring> GetNames(unsigned int channel_mask)
+    std::vector<std::wstring> GetNames(unsigned int channel_switch)
     {
 
 
@@ -27,7 +27,7 @@ struct DstRawDataName
         std::vector<std::wstring> output;
         for (size_t channel_index = 0; channel_index < ChannelMaxSize; ++channel_index)
         {
-            if (channel_mask & (1 << channel_index))
+            if (channel_switch & (1 << channel_index))
             {
 
                 std::wostringstream filename;
@@ -80,9 +80,9 @@ void Databin::Load(std::wstring dataPath, int channelCount)
     CEcnuRawDataReader reader;
 
     wstring file_ext = L"fid"; //L"mrd" :
-    unsigned int channel_mask = AllChannel(channelCount);
+    unsigned int channel_switch = AllChannel(channelCount);
     DstRawDataName name_function(file_ext, group_count, group_index);
-    std::vector<std::wstring> path = name_function.GetNames(channel_mask);
+    std::vector<std::wstring> path = name_function.GetNames(channel_switch);
     std::vector<std::string> path2;
 
     for (size_t i = 0; i < path.size(); ++i)
@@ -217,11 +217,11 @@ void Databin::Start(int scan_id)
     start.dim1_size = _dataInfo.freq_point_count;
     start.dim2_size = _dataInfo.phase_point_count;
     start.dim3_size =_dataInfo.slice_count;
-    start.dim4_size = _dataInfo.channel_count;// It is the actual dim4_size in start structer.
+    start.dim4_size = _dataInfo.dim4;
     start.dim5_size = _dataInfo.dim5;
     start.dim6_size = _dataInfo.dim6;
 
-    start.channel_mask =AllChannel(_dataInfo.channel_count);
+    start.channel_switch =AllChannel(_dataInfo.channel_count);
 
     start.dim23456_size = start.dim2_size
             * start.dim3_size
@@ -257,8 +257,7 @@ bool Databin::Go()
     //go
     //The dimension of CMR rawdata is different from the dimension of Communication protocol.
 
-    int lines_of_slice = _dataInfo.phase_point_count;
-    int lines_of_channel = _dataInfo.phase_point_count * _dataInfo.slice_count;
+    int phase_count = _dataInfo.phase_point_count;
 
     int current_phase_index = _scantask.mask.data[_current_scanmask_index];
 
@@ -267,7 +266,7 @@ bool Databin::Go()
     for(int channel_index = 0; channel_index < ChannelMaxSize; channel_index ++)
     {
 
-        if (_start.channel_mask & (1 << channel_index))
+        if (_start.channel_switch & (1 << channel_index))
         {
 
             for(int slice_index = 0; slice_index < static_cast<int>(_start.dim3_size ); slice_index ++)
@@ -279,9 +278,10 @@ bool Databin::Go()
                 data.rec   = channel_index;
                 data.rp_id = 824;
 
+                //dim23456 does not denote the sending order, but for receiveing end decode
+                //every index.
                 data.dim23456_index
-                        = channel_index * lines_of_channel
-                        + slice_index   * lines_of_slice
+                        = slice_index   * phase_count
                         + current_phase_index;
 
 
