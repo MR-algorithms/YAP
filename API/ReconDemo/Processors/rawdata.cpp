@@ -1,4 +1,4 @@
-#include "rawdata.h"
+#include "Rawdata.h"
 #include <assert.h>
 #include "commonmethod.h"
 using namespace Databin;
@@ -31,10 +31,12 @@ bool RawData::InitChannels(int freqcount, int phasecount, int slicecount, int ch
 
     int max_channelcount = sizeof(channel_switch) * 8;
 
+    int channel_used = 0;
     for(int index = 0; index < max_channelcount; index ++)
     {
         if(CommonMethod::IsChannelOn(channel_switch, index))
         {
+            channel_used ++;
             ChannelData channel_data;
             channel_data.channel_index  = index;
             channel_data.updated        = false;
@@ -52,6 +54,8 @@ bool RawData::InitChannels(int freqcount, int phasecount, int slicecount, int ch
         }
 
     }
+    assert(channel_used == CommonMethod::GetChannelCountUsed(channel_switch));
+
     return true;
 }
 
@@ -78,6 +82,8 @@ void RawData::InsertPhasedata(std::complex<float>* source, int length, int chann
                     + slice_size * slice_index
                     + freq_count * phase_index;
             memcpy(dest_pointer, source, length * sizeof(std::complex<float>) );
+            assert(!CommonMethod::IsComplexelementZero<std::complex<float>>(source, length));
+
 
         }
     }

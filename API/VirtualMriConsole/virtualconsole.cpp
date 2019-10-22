@@ -113,7 +113,9 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
             This->_threadState = scanning;
             This->_timeMutex1.lock();
             This->_sendIndex = 0;
-            int scan_id = 180106;
+
+            srand((int)time(0));
+            int scan_id = rand();
 
             databin.Start(scan_id);
             qDebug()<<"scan Event";

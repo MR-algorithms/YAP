@@ -3,10 +3,13 @@
 #include "Implement/DataObject.h"
 #include "Implement/LogUserImpl.h"
 #include "Client/DataHelper.h"
-#include "rawdata.h"
+#include "Rawdata.h"
+#include "commonmethod.h"
+#include "DataWatch.h"
 
 using namespace Yap;
 using namespace std;
+const bool cnstTEST = true;
 
 ReceiveData::ReceiveData() : ProcessorImpl(L"ReceiveData")
 {
@@ -19,7 +22,7 @@ ReceiveData::ReceiveData() : ProcessorImpl(L"ReceiveData")
 
 ReceiveData::ReceiveData(const ReceiveData &rhs) :  ProcessorImpl(rhs)
 {
-    LOG_TRACE(L"<ReceiveData> constructor called.", L"ReconDemo");
+    LOG_TRACE(L"<ReceiveData> copy constructor called.", L"ReconDemo");
 }
 
 bool ReceiveData::Input(const wchar_t * port, IData *data)
@@ -50,12 +53,9 @@ bool ReceiveData::StoreData(Yap::IData *data)
         if(!_rawdata.Ready())
         {
             InitScanData(data);
-            InsertPhasedata(data);
         }
-        else
-        {
-            InsertPhasedata(data);
-        }
+
+        InsertPhasedata(data);
     }
 
     //Start thread if the processing thread does not running;
@@ -131,7 +131,19 @@ bool ReceiveData::InsertPhasedata(Yap::IData *data)
     auto source = GetDataArray<std::complex<float>>(data);
     int length = helpler.GetWidth();
 
+    //if(cnstTEST)
+       // assert(!CommonMethod::IsComplexelementZero<std::complex<float>>(source, length) );
     _rawdata.InsertPhasedata(source, length, channel_index, slice_index, phase_index);
+
+    wstringstream wss;
+    wss<<L"-------Feed : phase index == "<<phase_index
+      << L", channel_index == " << channel_index
+      << L", slice_index == " << slice_index;
+
+    wstring ws ;
+    ws=wss.str(); //»ò ss>>strtEST;
+    LOG_TRACE(ws.c_str(), L"ReconDemo");
+
     return true;
 }
 
@@ -157,23 +169,32 @@ bool ReceiveData::CreateOutData(std::complex<float>* channel_data, int channel_i
     //
     auto ref_data = CreateRefIData();
 
-    VariableSpace variables(ref_data.get()->GetVariables());
-    variables.AddVariable(L"bool", L"test_data", L"test.");
-    variables.Set(L"test_data", false);
-    //
-
     auto output = CreateData<complex<float>>(ref_data.get(), channel_data, dimensions);
 
-    //Feed(L"Output", output.get());
+    Feed(L"Output", output.get());
 
     LOG_TRACE(L"<ReceiveData> Feed channeldata.", L"ReconDemo");
     //
-    //#include <sstream>
+    //Log
     wstringstream wss;
     wss<<L"-------Feed : channel index == "<<channel_index;
     wstring ws ;
     ws=wss.str(); //»ò ss>>strtEST;
     LOG_TRACE(ws.c_str(), L"ReconDemo");
+    //Out the specified channel rawdata.
+    //
+
+    if(false){
+        for(int i=0; i <slice_count; i++)
+        {
+            wstringstream wss;
+            wss<<L"d:\\temp";
+            wstring wpath = wss.str();
+            CDataWatch::ExportData(wpath.c_str(),
+                                   channel_data + channel_index*freq_count*phase_count*slice_count,
+                                   256, 256, i);
+        }
+    }
     //
 
     return true;
@@ -186,5 +207,5 @@ Yap::SmartPtr<Yap::IData> ReceiveData::CreateRefIData()
 }
 ReceiveData::~ReceiveData()
 {
-
+    LOG_TRACE(L"<ReceiveData>  destructor called.", L"ReconDemo");
 }

@@ -437,6 +437,7 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
     //
     int channel_switch = _sample_start.channel_switch;
 
+    int scan_id = _sample_start.scan_id;
     int freq_count = _sample_start.dim1_size;
     int phase_count = _sample_start.dim2_size;
     int slice_count = _sample_start.dim3_size;
@@ -540,9 +541,13 @@ void DataManager::calculate_dimindex(SampleDataStart &start, int dim23456_index,
 
 bool DataManager::End(SampleDataEnd &end)
 {
+    int channel_switch = _sample_start.channel_switch;
+
     Yap::VariableSpace variables;
     variables.AddVariable(L"bool", L"Finished", L"Iteration finished.");
+    variables.AddVariable(L"int",  L"channel_switch", L"channel switch.");
     variables.Set(L"Finished", true);
+    variables.Set(L"channel_switch", channel_switch);
 
     auto output = DataObject<int>::CreateVariableObject(variables.Variables(), nullptr);
 

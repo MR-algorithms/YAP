@@ -21,7 +21,7 @@ Display1D::Display1D(const Display1D &rhs) :
     ProcessorImpl(rhs),
     _display_plot(rhs._display_plot)
 {
-    LOG_TRACE(L"<Display1D> constructor called.", L"ReconDemo");
+    LOG_TRACE(L"<Display1D> copy constructor called.", L"ReconDemo");
 }
 
 bool Display1D::Input(const wchar_t *port, Yap::IData *data)
@@ -55,5 +55,5 @@ bool Display1D::Input(const wchar_t *port, Yap::IData *data)
 
 Display1D::~Display1D()
 {
-
+    LOG_TRACE(L"<Display2D>  destructor called.", L"ReconDemo");
 }

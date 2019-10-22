@@ -11,6 +11,7 @@
 #include "scantask.h"
 #include "mask.h"
 #include <QFileDialog>
+#include <time.h>
 
 //#include "databin.h"//test
 
@@ -27,9 +28,16 @@ MainWindow::MainWindow(QWidget *parent) :
     QRegExpValidator *pReg = new QRegExpValidator(rx, ui->editMaskFile);
 
     ui->editMaskFile->setValidator(pReg);
+    ui->editMaskFile->setText("0.05");
 
     //int test2 =99;
     //ui->editInfo->appendPlainText(QString("%1").arg(test2));
+
+    srand((int)time(0));
+    for(int x=0;x<10;x++)
+    {
+          qDebug()<< "rand() == "<< rand();
+    }
 
 }
 

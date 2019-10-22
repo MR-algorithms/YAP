@@ -49,8 +49,9 @@ SOURCES += \
     Processors/ReceiveData.cpp \
     Processors/Display1D.cpp \
     Processors/Display2D.cpp \
-    Processors/rawdata.cpp \
-    commonmethod.cpp
+    commonmethod.cpp \
+    Processors/Rawdata.cpp \
+    DataWatch.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -84,8 +85,9 @@ HEADERS += \
     Processors/ReceiveData.h \
     Processors/Display1D.h \
     Processors/Display2D.h \
-    Processors/rawdata.h \
-    commonmethod.h
+    commonmethod.h \
+    Processors/Rawdata.h \
+    DataWatch.h
 
 FORMS += \
         mainwindow.ui

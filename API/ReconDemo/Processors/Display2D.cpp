@@ -26,7 +26,7 @@ Display2D::Display2D(const Display2D &rhs) :
     ProcessorImpl(rhs),
     _display_window(rhs._display_window)
 {
-    LOG_TRACE(L"<Display2D> constructor called.", L"ReconDemo");
+    LOG_TRACE(L"<Display2D> copy constructor called.", L"ReconDemo");
 }
 
 bool Display2D::Input(const wchar_t * port, IData *data)
@@ -49,7 +49,6 @@ bool Display2D::Input(const wchar_t * port, IData *data)
     //calcute the image index managed in the Layout Window.
     int index = channel_count * channel_count + slice_index;
 
-    QThread::sleep(2);
     //return _display_window.AddImage(data);
     return _display_window.UpdateImage(data, index);
 
@@ -73,5 +72,5 @@ bool Display2D::Input(const wchar_t * port, IData *data)
 
 Display2D::~Display2D()
 {
-
+    LOG_TRACE(L"<Display2D>  destructor called.", L"ReconDemo");
 }

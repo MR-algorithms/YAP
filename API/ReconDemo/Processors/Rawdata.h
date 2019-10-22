@@ -13,6 +13,12 @@ namespace Databin{
 struct ChannelData
 {
     int channel_index;
+    //To be revised:
+    //A: Update state: 2 possible schemes:
+    //1, store every slice state which denotes if it is updated.
+    //2, only one state vairabe, but the state should be set false between
+    //beginning and ending of the writing.
+    //B: Sample state: It should be recorded that If the raw data is really existance in every phase step.
     bool updated;
     int freq_count;
     int phase_count;
