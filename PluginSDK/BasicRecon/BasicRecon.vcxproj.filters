@@ -106,10 +106,10 @@
     <ClCompile Include="PhaseCorrector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IcePeFt.cpp">
+    <ClCompile Include="IceReceiver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IceReceiver.cpp">
+    <ClCompile Include="IcePeFt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -222,10 +222,10 @@
     <ClInclude Include="PhaseCorrector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IcePeFt.h">
+    <ClInclude Include="IceReceiver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IceReceiver.h">
+    <ClInclude Include="IcePeFt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

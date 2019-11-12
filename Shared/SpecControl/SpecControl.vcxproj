@@ -137,12 +137,24 @@
     <ClInclude Include="CmrPackItemTypeHelper.h" />
     <ClInclude Include="CmrPackType.h" />
     <ClInclude Include="datapackage.h" />
+    <ClInclude Include="WindowsDemultiplexer.h" />
+    <ClInclude Include="EventDemultiplexer.h" />
+    <ClInclude Include="EventHandler.h" />
+    <ClInclude Include="ListenHandler.h" />
+    <ClInclude Include="Reactor.h" />
+    <ClInclude Include="ReactorImpl.h" />
+    <ClInclude Include="ConnectionHandler.h" />
     <ClInclude Include="SocketReceiver.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TransmitterProtocol.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="WindowsDemultiplexer.cpp" />
+    <ClCompile Include="ListenHandler.cpp" />
+    <ClCompile Include="Reactor.cpp" />
+    <ClCompile Include="ReactorImpl.cpp" />
+    <ClCompile Include="ConnectionHandler.cpp" />
     <ClCompile Include="SocketReceiver.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "IceReceiver.h"
 #include "SpecControl/SocketReceiver.h"
+#include "SpecControl\Reactor.h"
+#include "SpecControl\ListenHandler.h"
+
 #include "Implement/LogUserImpl.h"
 
 #include <sstream>
@@ -12,6 +15,7 @@
 using namespace Yap;
 using namespace std;
 using namespace TransmitterProtocol;
+
 
 //using boost::assign::list_of;
 
@@ -33,6 +37,17 @@ IceReceiver::~IceReceiver()
 }
 
 bool IceReceiver::Input(const wchar_t * name, IData * data)
+{
+	EventHandler *handler = new ListenHandler();
+	Reactor::get_instance().regist(handler);
+	while (true)//check any event and dispatch();
+	{
+		Reactor::get_instance().dispatch();
+	}
+	return true;
+
+}
+bool IceReceiver::Input_Reserve(const wchar_t * name, IData * data)
 {
 	// Should not pass in data to start raw data file reading.
 	assert(data == nullptr);

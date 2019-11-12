@@ -19,6 +19,8 @@ namespace Yap
 		virtual bool Input(const wchar_t * name, IData * data) override;
 		
 		void OutputDatablock(DataBlock &data_block);
+
+		bool Input_Reserve(const wchar_t * name, IData * data);
 	
 	};
 }
