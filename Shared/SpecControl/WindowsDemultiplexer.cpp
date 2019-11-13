@@ -48,7 +48,7 @@ int WindowsDemultiplexer::wait_event()
 	{
 		index = ::WSAWaitForMultipleEvents(static_cast<DWORD>(1), event_array.data() + i,
 			TRUE, 1000, FALSE);
-		if (index = WSA_WAIT_FAILED || index == WSA_WAIT_TIMEOUT)
+		if (index == WSA_WAIT_FAILED || index == WSA_WAIT_TIMEOUT)
 		{
 			continue;
 		}
@@ -97,8 +97,11 @@ bool WindowsDemultiplexer::regist(EventHandler* handler)
 		_handlers.push_back(handle_info);
 
 	}
-	
-	return handler->handle_regist();
+	if (!handler->handle_regist())
+	{
+		this->remove(handler);
+	}
+	return true;
 	
 }
 

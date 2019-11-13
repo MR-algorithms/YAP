@@ -50,7 +50,7 @@ bool SocketReceiver::EstablishConnection()
 	
 	SOCKADDR_IN addr_srv;
 	addr_srv.sin_family = AF_INET;
-	addr_srv.sin_port = htons(8888);//端口号
+	addr_srv.sin_port = htons(10);//端口号
 	//addrSrv.sin_addr.S_un.S_addr = inet_addr("192.168.56.101");
 	addr_srv.sin_addr.S_un.S_addr = htonl(INADDR_ANY);//IP地址(用于监听本地任意的地址)
 													   //bzero(&(addrSrv.sin_zero) ); 
@@ -67,13 +67,16 @@ bool SocketReceiver::EstablishConnection()
 		return false;
 	}
 
-	
-	if (!::bind(_socket_listen, (LPSOCKADDR)&addr_srv, sizeof(SOCKADDR_IN)))
+	int error = WSAGetLastError();
+
+	if (::bind(_socket_listen, (LPSOCKADDR)&addr_srv, sizeof(SOCKADDR_IN))== SOCKET_ERROR)
 	{
 		wstringstream ss;
-		ss << L"failed bind" << std::endl;
+		ss << L"failed bind" << WSAGetLastError() << std::endl;
 		error_info += ss.str();
 	}
+
+	int error2 = WSAGetLastError();
 
 	if (listen(_socket_listen, 10) == SOCKET_ERROR)
 	{
@@ -81,6 +84,8 @@ bool SocketReceiver::EstablishConnection()
 		ss << L"listen failed" << std::endl;
 		error_info += ss.str();
 	}
+
+	int error3 = WSAGetLastError();
 
 	int len = sizeof(SOCKADDR);
 

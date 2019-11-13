@@ -3,6 +3,7 @@
 #include "ReactorImpl.h"
 #include <assert.h>
 #include <new>
+#include "FormatString.h"
 
 Reactor Reactor::reactor;
 
@@ -13,6 +14,9 @@ Reactor& Reactor::get_instance()
 
 Reactor::Reactor() 
 {
+	DebugInfo::Output(L"Reactor::Reactor", L"new ReactorImpl()...",
+		reinterpret_cast<int>(this), true);
+
 	_reactor_impl = new (std::nothrow)ReactorImpl();
 	assert(_reactor_impl != NULL);
 }

@@ -3,6 +3,7 @@
 #include "SpecControl/SocketReceiver.h"
 #include "SpecControl\Reactor.h"
 #include "SpecControl\ListenHandler.h"
+#include "SpecControl\FormatString.h"
 
 #include "Implement/LogUserImpl.h"
 
@@ -34,18 +35,49 @@ IceReceiver::IceReceiver(const IceReceiver & rhs)
 
 IceReceiver::~IceReceiver()
 {
+	if (_thread)
+	{
+		if (_thread->joinable())
+		{
+			_thread->join();
+		}
+	}
 }
+//Start Reactor engine from any place other than pipeline, maybe from a specified thread function, but we don't care.
+
+//1, Establish network connect with mri system, "ConnectHandler" create a pipeline according to scan id and refresh the databin which used 
+//   only for a scan.
+//   Note that reactor and pipeline are running in the same thread, while receiving a scan's data body in a specified thread function.
+
+//for pipeline:
+//1, Check constantly whether there is new data ready for reconstruction, and feed the data to the follow processer.  
+//   Note that the pipeline don't care when it should quit.
+
 
 bool IceReceiver::Input(const wchar_t * name, IData * data)
 {
-	EventHandler *handler = new ListenHandler();
+	//Start ReceivedataThreadfunc();
+	std::wstring threadinfo(DebugInfo::get_threadinfo());
+
+	_thread = std::shared_ptr<std::thread>(new std::thread(&IceReceiver::ReceivedataThreadfunc));
+
+	
+	return true;
+
+}
+
+bool IceReceiver::ReceivedataThreadfunc()
+{
+	std::wstring threadinfo(DebugInfo::get_threadinfo());
+
+	EventHandler *handler = new ListenHandler(10);
 	Reactor::get_instance().regist(handler);
 	while (true)//check any event and dispatch();
 	{
 		Reactor::get_instance().dispatch();
 	}
-	return true;
 
+	return true;
 }
 bool IceReceiver::Input_Reserve(const wchar_t * name, IData * data)
 {
@@ -58,6 +90,8 @@ bool IceReceiver::Input_Reserve(const wchar_t * name, IData * data)
 		cout << "_socket_receiver.Init() failed" << endl;
 		return false;
 	}
+	socket_receiver.EstablishConnection();
+
 	std::shared_ptr<DataBlock> data_block = socket_receiver.NextBlock();
 
 	if (data_block)

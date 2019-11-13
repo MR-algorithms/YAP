@@ -35,6 +35,7 @@ private:
     Ui::MainWindow *ui;
 
     virtual bool event(QEvent *event);
+    void test_func();
 
 
 };

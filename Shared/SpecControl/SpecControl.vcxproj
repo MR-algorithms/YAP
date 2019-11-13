@@ -30,6 +30,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -137,6 +138,7 @@
     <ClInclude Include="CmrPackItemTypeHelper.h" />
     <ClInclude Include="CmrPackType.h" />
     <ClInclude Include="datapackage.h" />
+    <ClInclude Include="FormatString.h" />
     <ClInclude Include="WindowsDemultiplexer.h" />
     <ClInclude Include="EventDemultiplexer.h" />
     <ClInclude Include="EventHandler.h" />
@@ -150,6 +152,7 @@
     <ClInclude Include="TransmitterProtocol.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FormatString.cpp" />
     <ClCompile Include="WindowsDemultiplexer.cpp" />
     <ClCompile Include="ListenHandler.cpp" />
     <ClCompile Include="Reactor.cpp" />

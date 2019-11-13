@@ -6,16 +6,17 @@
 #include "ConnectionHandler.h"
 #include "EventDemultiplexer.h"
 #include "Implement\LogUserImpl.h"
-//#include "FormatString.h"
+#include "FormatString.h"
+#include <sstream>
 
 #include <stdio.h>
 #include <new>
 #include <assert.h>
 
 
-ListenHandler::ListenHandler()
+ListenHandler::ListenHandler(int port)
 {
-	SOCKET listening_socket = Init(8000);
+	SOCKET listening_socket = Init(port);
 
 	WSAEVENT event = WSACreateEvent();
 	if (event == WSA_INVALID_EVENT)
@@ -37,7 +38,7 @@ ListenHandler::~ListenHandler()
 	shutdown(_listening_info.handle, SD_BOTH);
 	closesocket(_listening_info.handle);
 }
-//ListenHandler is a special read function other than usual Handler. 
+//ListenHandler's read function is different from that of ConnectHandler. 
 //When the server received an Event of connection request, it can accept the connection socket.
 void ListenHandler::handle_read() 
 {
@@ -67,27 +68,46 @@ SOCKET ListenHandler::Init(int port)
 {
 	
 	SOCKET listening_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	
+	std::wstring  werror_info;
+	if (listening_socket == SOCKET_ERROR)
+	{
+		
+		std::wstringstream ss;
+		ss << L"Socket() error" << WSAGetLastError() << std::endl;
+		werror_info = ss.str();
+		
+	}
+
 	// 创建了一个流套接字
 	sockaddr_in server_addr;
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = htons(port);
 	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-
+	
 	int result_code = bind(listening_socket, (SOCKADDR*)&server_addr, sizeof(server_addr));
 	if (result_code == SOCKET_ERROR)
 	{
 		int error = WSAGetLastError();
 		closesocket(listening_socket);
-		//LOG_ERROR(FormatStringW(L"bind socket error, error code %d.", error).c_str());
+		Yap::LOG_ERROR(FormatStringW(L"bind socket error, error code %d.", error).c_str(), L"SpecControl");
 		return INVALID_SOCKET;
 	}
+	/*
+	if (!::bind(listening_socket, (LPSOCKADDR)&server_addr, sizeof(SOCKADDR_IN)))
+	{
+		std::wstringstream ss;
+		ss << L"failed bind" << L"error_code : "<<WSAGetLastError()<<std::endl;
+		werror_info = ss.str();
+	}
+	*/
+	int result_code2 = listen(listening_socket, 5);
 
-	result_code = listen(listening_socket, 5);
-	if (result_code == SOCKET_ERROR)
+	if (result_code2 == SOCKET_ERROR)
 	{
 		int error = WSAGetLastError();
 		closesocket(listening_socket);
-		//LOG_ERROR(FormatStringW(L"listen error, error code %d.", error).c_str());
+		Yap::LOG_ERROR(FormatStringW(L"listen error, error code %d.", error).c_str(), L"SpecControl");
 		return INVALID_SOCKET;
 	}
 	
@@ -96,9 +116,7 @@ SOCKET ListenHandler::Init(int port)
 
 bool ListenHandler::handle_regist()
 {
-	//assert(0);
 	
-	//------------
 	SOCKET handle = _listening_info.handle;
 	WSAEVENT event = _listening_info.event;
 
@@ -106,7 +124,7 @@ bool ListenHandler::handle_regist()
 	{
 		int error = WSAGetLastError();
 		closesocket(handle);
-		//LOG_ERROR(FormatStringW(L"EventSelect error, error code %d.", error).c_str());
+		Yap::LOG_ERROR(FormatStringW(L"ListenHandler::Handle_regist(): EventSelect error, error code %d.", error).c_str(), L"SpecControl");
 		return false;
 	}
 	return true;

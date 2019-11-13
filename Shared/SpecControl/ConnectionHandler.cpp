@@ -7,7 +7,8 @@
 #include <stdio.h>
 #include <WinSock2.h>
 #include <new>
-
+#include "FormatString.h"
+#include "Implement\LogUserImpl.h"
 
 ConnectionHandler::ConnectionHandler(Handle connection) 
 {
@@ -50,25 +51,20 @@ void ConnectionHandler::handle_error()
 bool ConnectionHandler::handle_regist()
 {
 
-	//assert(0);
-	if (INVALID_SOCKET != _connection_info.handle)
+		
+	SOCKET handle = _connection_info.handle;
+	WSAEVENT event = _connection_info.event;
+	
+	assert(INVALID_SOCKET != handle);
+	if (SOCKET_ERROR == WSAEventSelect(handle, event, FD_READ))
 	{
-		//What does it mean with parameters "NLL, 0"?
-		if (0 != WSAEventSelect(_connection_info.handle, NULL, 0))
-		{
-			//LOG_ERROR(FormatStringW(L"SetEventNULL Error %d", WSAGetLastError()).c_str());
-			
-		}
-		u_long block = 0;
-		if (0 != ioctlsocket(_connection_info.handle, FIONBIO, &block))
-		{
-			//LOG_ERROR(FormatStringW(L"SetUnblock Error %d", WSAGetLastError()).c_str());
-			
-		}
-		//items[index].handler(socket);
-		return true;
+		int error = WSAGetLastError();
+		closesocket(handle);
+		Yap::LOG_ERROR(FormatStringW(L"ConnectionHandler::handle_regist(): EventSelect error, error code %d.", error).c_str(), 
+			L"SpecControl");
+		return false;
 	}
-	return false;
+	return true;
 
 }
 

@@ -1,3 +1,4 @@
+#include <WinSock2.h>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -13,12 +14,38 @@
 #include <QFileDialog>
 #include <time.h>
 
+void MainWindow::test_func()
+{
+    WSADATA wsa;
+    ::WSAStartup(MAKEWORD(2,2), &wsa);
+
+    SOCKET  s;
+    SOCKADDR_IN serveraddr;
+    int port = 10;
+
+    s = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+    serveraddr.sin_family = AF_INET;
+    serveraddr.sin_port = htons(port);
+    serveraddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    int connect_return = ::connect(s, (SOCKADDR*)(&serveraddr), sizeof(serveraddr));
+
+    int error_code = WSAGetLastError();
+    assert( connect_return != SOCKET_ERROR);
+
+    ::closesocket(s);
+    WSACleanup();
+
+
+}
+
 //#include "databin.h"//test
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    //test_func();
     ui->setupUi(this);
     ui->connectButton->setEnabled(false);
     ui->scanButton->setEnabled(true);
@@ -38,6 +65,8 @@ MainWindow::MainWindow(QWidget *parent) :
     {
           qDebug()<< "rand() == "<< rand();
     }
+
+
 
 }
 

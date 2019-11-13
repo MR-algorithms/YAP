@@ -11,7 +11,7 @@
 
 class ListenHandler : public EventHandler {
 public:
-	ListenHandler();
+	explicit ListenHandler(int port);
 	virtual ~ListenHandler();
 	virtual HandleInfo get_handleinfo() const {
 		return _listening_info;
