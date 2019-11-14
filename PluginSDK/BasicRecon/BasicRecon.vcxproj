@@ -197,7 +197,6 @@
     <ClInclude Include="FineCF.h" />
     <ClInclude Include="GrayScaleUnifier.h" />
     <ClInclude Include="IcePeFt.h" />
-    <ClInclude Include="IceReceiver.h" />
     <ClInclude Include="imageProcessing.h" />
     <ClInclude Include="JpegExporter.h" />
     <ClInclude Include="LinesSelector.h" />
@@ -291,7 +290,6 @@
     <ClCompile Include="FineCF.cpp" />
     <ClCompile Include="GrayScaleUnifier.cpp" />
     <ClCompile Include="IcePeFt.cpp" />
-    <ClCompile Include="IceReceiver.cpp" />
     <ClCompile Include="JpegExporter.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>

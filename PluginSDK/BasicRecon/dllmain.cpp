@@ -37,7 +37,7 @@
 #include "SubSampling.h"
 #include "ZeroFilling.h"
 
-#include "IceReceiver.h"
+//#include "IceReceiver.h"
 
 #include "IcePeFt.h"
 
@@ -86,7 +86,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(SliceSelector)
 	ADD_PROCESSOR(SubSampling)
 	ADD_PROCESSOR(ZeroFilling)
-	ADD_PROCESSOR(IceReceiver)
+	//ADD_PROCESSOR(IceReceiver)
 	
 	ADD_PROCESSOR(IcePeFt)
 	ADD(L"HFlipFloat", new Algorithm2DInPlaceWrapper<float>(hflip<float>, L"HFlipFloat"))
