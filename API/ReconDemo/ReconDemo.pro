@@ -16,6 +16,7 @@ TEMPLATE = app
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
+DEFINES += WIN32_LEAN_AND_MEAN
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -43,15 +44,125 @@ SOURCES += \
     rectcalc.cpp \
     imagelayoutwidget.cpp \
     datamanager.cpp \
-    DataSample/reconclientsocket.cpp \
-    DataSample/reconserver.cpp \
-    DataSample/datapackage.cpp \
     Processors/ReceiveData.cpp \
     Processors/Display1D.cpp \
     Processors/Display2D.cpp \
-    commonmethod.cpp \
     Processors/Rawdata.cpp \
-    DataWatch.cpp
+    Geometry/algorithm.cpp \
+    Geometry/cmatrix44.cpp \
+    Geometry/Line3D.cpp \
+    Geometry/Matrix33.cpp \
+    Geometry/Plane.cpp \
+    Geometry/Rect2D.cpp \
+    Geometry/Rect3D.cpp \
+    Geometry/Segment2D.cpp \
+    Geometry/Segment3D.cpp \
+    Processors/Display1D.cpp \
+    Processors/Display2D.cpp \
+    Processors/rawdata.cpp \
+    Processors/ReceiveData.cpp \
+    datamanager.cpp \
+    grayscalemapper.cpp \
+    imagelayoutwidget.cpp \
+    imageobject.cpp \
+    imagewidget.cpp \
+    imagewindowmapper.cpp \
+    main.cpp \
+    mainwindow.cpp \
+    plot1d.cpp \
+    rectcalc.cpp \
+    Geometry/algorithm.cpp \
+    Geometry/cmatrix44.cpp \
+    Geometry/Line3D.cpp \
+    Geometry/Matrix33.cpp \
+    Geometry/Plane.cpp \
+    Geometry/Rect2D.cpp \
+    Geometry/Rect3D.cpp \
+    Geometry/Segment2D.cpp \
+    Geometry/Segment3D.cpp \
+    Processors/Display1D.cpp \
+    Processors/Display2D.cpp \
+    Processors/rawdata.cpp \
+    Processors/ReceiveData.cpp \
+    Utilities/FormatString.cpp \
+    datamanager.cpp \
+    grayscalemapper.cpp \
+    imagelayoutwidget.cpp \
+    imageobject.cpp \
+    imagewidget.cpp \
+    imagewindowmapper.cpp \
+    main.cpp \
+    mainwindow.cpp \
+    plot1d.cpp \
+    rectcalc.cpp \
+    Utilities/commonmethod.cpp \
+    Utilities/DataWatch.cpp \
+    Geometry/algorithm.cpp \
+    Geometry/cmatrix44.cpp \
+    Geometry/Line3D.cpp \
+    Geometry/Matrix33.cpp \
+    Geometry/Plane.cpp \
+    Geometry/Rect2D.cpp \
+    Geometry/Rect3D.cpp \
+    Geometry/Segment2D.cpp \
+    Geometry/Segment3D.cpp \
+    Processors/Display1D.cpp \
+    Processors/Display2D.cpp \
+    Processors/rawdata.cpp \
+    Processors/ReceiveData.cpp \
+    Reactor/ConnectionHandler.cpp \
+    Reactor/ListenHandler.cpp \
+    Reactor/Reactor.cpp \
+    Reactor/ReactorImpl.cpp \
+    Reactor/WindowsDemultiplexer.cpp \
+    Utilities/commonmethod.cpp \
+    Utilities/DataWatch.cpp \
+    Utilities/FormatString.cpp \
+    datamanager.cpp \
+    grayscalemapper.cpp \
+    imagelayoutwidget.cpp \
+    imageobject.cpp \
+    imagewidget.cpp \
+    imagewindowmapper.cpp \
+    main.cpp \
+    mainwindow.cpp \
+    plot1d.cpp \
+    rectcalc.cpp \
+    Geometry/algorithm.cpp \
+    Geometry/cmatrix44.cpp \
+    Geometry/Line3D.cpp \
+    Geometry/Matrix33.cpp \
+    Geometry/Plane.cpp \
+    Geometry/Rect2D.cpp \
+    Geometry/Rect3D.cpp \
+    Geometry/Segment2D.cpp \
+    Geometry/Segment3D.cpp \
+    MessagePack/datapackage.cpp \
+    MessagePack/reconclientsocket.cpp \
+    MessagePack/reconserver.cpp \
+    MessagePack/SampleDataProtocol.cpp \
+    Processors/Display1D.cpp \
+    Processors/Display2D.cpp \
+    Processors/rawdata.cpp \
+    Processors/ReceiveData.cpp \
+    Reactor/ConnectionHandler.cpp \
+    Reactor/ListenHandler.cpp \
+    Reactor/Reactor.cpp \
+    Reactor/ReactorImpl.cpp \
+    Reactor/WindowsDemultiplexer.cpp \
+    Utilities/commonmethod.cpp \
+    Utilities/DataWatch.cpp \
+    Utilities/FormatString.cpp \
+    datamanager.cpp \
+    grayscalemapper.cpp \
+    imagelayoutwidget.cpp \
+    imageobject.cpp \
+    imagewidget.cpp \
+    imagewindowmapper.cpp \
+    main.cpp \
+    mainwindow.cpp \
+    plot1d.cpp \
+    rectcalc.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -75,19 +186,139 @@ HEADERS += \
     imagelayoutwidget.h \
     datamanager.h \
     StringHelper.h \
-    DataSample/reconclientsocket.h \
-    DataSample/reconserver.h \
-    DataSample/SampleDataClient.h \
-    DataSample/SampleDataProtocol.h \
-    DataSample/CmrPackItemTypeHelper.h \
-    DataSample/CmrPackType.h \
-    DataSample/datapackage.h \
     Processors/ReceiveData.h \
     Processors/Display1D.h \
     Processors/Display2D.h \
-    commonmethod.h \
     Processors/Rawdata.h \
-    DataWatch.h
+    Geometry/algorithm.h \
+    Geometry/Angle.h \
+    Geometry/cmatrix44.h \
+    Geometry/geometry.h \
+    Geometry/Line3D.h \
+    Geometry/Matrix33.h \
+    Geometry/Plane.h \
+    Geometry/Rect2D.h \
+    Geometry/Rect3D.h \
+    Geometry/Segment2D.h \
+    Geometry/Segment3D.h \
+    Processors/Display1D.h \
+    Processors/Display2D.h \
+    Processors/Rawdata.h \
+    Processors/ReceiveData.h \
+    datamanager.h \
+    grayscalemapper.h \
+    imagelayoutwidget.h \
+    imageobject.h \
+    imagewidget.h \
+    imagewindowmapper.h \
+    mainwindow.h \
+    plot1d.h \
+    rectcalc.h \
+    StringHelper.h \
+    Geometry/algorithm.h \
+    Geometry/Angle.h \
+    Geometry/cmatrix44.h \
+    Geometry/geometry.h \
+    Geometry/Line3D.h \
+    Geometry/Matrix33.h \
+    Geometry/Plane.h \
+    Geometry/Rect2D.h \
+    Geometry/Rect3D.h \
+    Geometry/Segment2D.h \
+    Geometry/Segment3D.h \
+    Processors/Display1D.h \
+    Processors/Display2D.h \
+    Processors/Rawdata.h \
+    Processors/ReceiveData.h \
+    Utilities/FormatString.h \
+    datamanager.h \
+    grayscalemapper.h \
+    imagelayoutwidget.h \
+    imageobject.h \
+    imagewidget.h \
+    imagewindowmapper.h \
+    mainwindow.h \
+    plot1d.h \
+    rectcalc.h \
+    StringHelper.h \
+    Utilities/commonmethod.h \
+    Utilities/DataWatch.h \
+    Geometry/algorithm.h \
+    Geometry/Angle.h \
+    Geometry/cmatrix44.h \
+    Geometry/geometry.h \
+    Geometry/Line3D.h \
+    Geometry/Matrix33.h \
+    Geometry/Plane.h \
+    Geometry/Rect2D.h \
+    Geometry/Rect3D.h \
+    Geometry/Segment2D.h \
+    Geometry/Segment3D.h \
+    Processors/Display1D.h \
+    Processors/Display2D.h \
+    Processors/Rawdata.h \
+    Processors/ReceiveData.h \
+    Reactor/ConnectionHandler.h \
+    Reactor/EventDemultiplexer.h \
+    Reactor/EventHandler.h \
+    Reactor/ListenHandler.h \
+    Reactor/Reactor.h \
+    Reactor/ReactorImpl.h \
+    Reactor/WindowsDemultiplexer.h \
+    Utilities/commonmethod.h \
+    Utilities/DataWatch.h \
+    Utilities/FormatString.h \
+    datamanager.h \
+    grayscalemapper.h \
+    imagelayoutwidget.h \
+    imageobject.h \
+    imagewidget.h \
+    imagewindowmapper.h \
+    mainwindow.h \
+    plot1d.h \
+    rectcalc.h \
+    StringHelper.h \
+    Geometry/algorithm.h \
+    Geometry/Angle.h \
+    Geometry/cmatrix44.h \
+    Geometry/geometry.h \
+    Geometry/Line3D.h \
+    Geometry/Matrix33.h \
+    Geometry/Plane.h \
+    Geometry/Rect2D.h \
+    Geometry/Rect3D.h \
+    Geometry/Segment2D.h \
+    Geometry/Segment3D.h \
+    MessagePack/CmrPackItemTypeHelper.h \
+    MessagePack/CmrPackType.h \
+    MessagePack/datapackage.h \
+    MessagePack/reconclientsocket.h \
+    MessagePack/reconserver.h \
+    MessagePack/SampleDataProtocol.h \
+    Processors/Display1D.h \
+    Processors/Display2D.h \
+    Processors/Rawdata.h \
+    Processors/ReceiveData.h \
+    Reactor/ConnectionHandler.h \
+    Reactor/EventDemultiplexer.h \
+    Reactor/EventHandler.h \
+    Reactor/ListenHandler.h \
+    Reactor/Reactor.h \
+    Reactor/ReactorImpl.h \
+    Reactor/WindowsDemultiplexer.h \
+    Utilities/commonmethod.h \
+    Utilities/DataWatch.h \
+    Utilities/FormatString.h \
+    datamanager.h \
+    grayscalemapper.h \
+    imagelayoutwidget.h \
+    imageobject.h \
+    imagewidget.h \
+    imagewindowmapper.h \
+    mainwindow.h \
+    plot1d.h \
+    rectcalc.h \
+    StringHelper.h
 
 FORMS += \
         mainwindow.ui
@@ -110,6 +341,7 @@ LIBS += -L$$[THIRDPARTY]/boost/lib64-msvc-14.0/ -lboost_thread-vc140-mt-1_61
 LIBS += -L$$[THIRDPARTY]/FFTW/lib/ -llibfftw3-3
 LIBS += -L$$[THIRDPARTY]/FFTW/lib/ -llibfftw3f-3
 LIBS += -L$$[THIRDPARTY]/FFTW/lib/ -llibfftw3l-3
+LIBS += -lws2_32
 }
 else:win32:CONFIG(debug, debug|release): {
 LIBS += -L$$[YAP_ROOT]/LIB/ -lYapd -lClientd -lImplementd
@@ -118,6 +350,7 @@ LIBS += -L$$[THIRDPARTY]/boost/lib64-msvc-14.0/ -lboost_thread-vc140-mt-gd-1_61
 LIBS += -L$$[THIRDPARTY]/FFTW/lib/ -llibfftw3-3
 LIBS += -L$$[THIRDPARTY]/FFTW/lib/ -llibfftw3f-3
 LIBS += -L$$[THIRDPARTY]/FFTW/lib/ -llibfftw3l-3
+LIBS += -lws2_32
 }
 else:unix: {
 LIBS += -L$$[YAP_ROOT]/LIB/ -lClientd -lImplementd -lYapd

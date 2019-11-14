@@ -6,7 +6,7 @@
 #include "API/Yap/ProcessorAgent.h"
 #include "Implement/CompositeProcessor.h"
 #include "API/Yap/PipelineConstructor.h"
-#include "commonmethod.h"
+#include "Utilities\commonmethod.h"
 #include <algorithm>
 #include <qmessagebox>
 #include <io.h>

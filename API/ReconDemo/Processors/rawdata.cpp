@@ -1,6 +1,6 @@
 #include "Rawdata.h"
 #include <assert.h>
-#include "commonmethod.h"
+#include "Utilities\commonmethod.h"
 using namespace Databin;
 
 

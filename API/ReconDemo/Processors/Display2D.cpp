@@ -5,8 +5,8 @@
 #include "Implement/LogUserImpl.h"
 
 #include "Client/DataHelper.h"
-#include "commonmethod.h"
-#include <QThread>
+#include "Utilities\commonmethod.h"
+//#include <QThread>
 #include "windows.h"
 
 using namespace Yap;
@@ -72,5 +72,5 @@ bool Display2D::Input(const wchar_t * port, IData *data)
 
 Display2D::~Display2D()
 {
-    LOG_TRACE(L"<Display2D>  destructor called.", L"ReconDemo");
+    //LOG_TRACE(L"<Display2D>  destructor called.", L"ReconDemo");
 }

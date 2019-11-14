@@ -55,5 +55,5 @@ bool Display1D::Input(const wchar_t *port, Yap::IData *data)
 
 Display1D::~Display1D()
 {
-    LOG_TRACE(L"<Display2D>  destructor called.", L"ReconDemo");
+    //LOG_TRACE(L"<Display2D>  destructor called.", L"ReconDemo");
 }

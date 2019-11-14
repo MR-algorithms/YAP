@@ -4,8 +4,8 @@
 #include "Implement/LogUserImpl.h"
 #include "Client/DataHelper.h"
 #include "Rawdata.h"
-#include "commonmethod.h"
-#include "DataWatch.h"
+#include "Utilities\commonmethod.h"
+#include "Utilities\DataWatch.h"
 
 using namespace Yap;
 using namespace std;
@@ -207,5 +207,5 @@ Yap::SmartPtr<Yap::IData> ReceiveData::CreateRefIData()
 }
 ReceiveData::~ReceiveData()
 {
-    LOG_TRACE(L"<ReceiveData>  destructor called.", L"ReconDemo");
+    //LOG_TRACE(L"<ReceiveData>  destructor called.", L"ReconDemo");
 }
