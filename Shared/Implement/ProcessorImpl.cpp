@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <assert.h>
 #include "Interface/Interfaces.h"
-
+#include "Utilities/CommonMethod.h"
 #include "VariableSpace.h"
 
 using namespace std;
@@ -235,6 +235,122 @@ namespace _details
 		_module = YapShared(module);
 	}
 
+	bool Yap::ProcessorImpl::VariablesValid(IData *data, int *slice_index_return,
+		int *slice_count_return, int *channel_index_return, int *channel_switch_return) const
+	{
+		//CString str = TEXT("D:\\temp\\1.jpg");
+		//FileSystem::FileExists("D:\\temp\\1.jpg");// ;
+
+		VariableSpace variables(data->GetVariables());
+
+		int slice_index = variables.Get<int>(L"slice_index");
+		int slice_count = variables.Get<int>(L"slice_count");
+		int channel_index = variables.Get<int>(L"channel_index");
+		unsigned int channel_switch = variables.Get<int>(L"channel_switch");
+		int channel_count = CommonMethod::GetChannelCountUsed(channel_switch);
+
+		//channel_index < 0 denotes channel merged data.
+		//channel max count equals sizeof(unsigned int) * 8;
+		//slice count denotes the total number of 1 channel.
+		//slice index denote the slice index in a channel.
+
+		int channel_count_max = sizeof(unsigned int) * 8;
+		assert(slice_index >= 0);
+		assert(slice_index < slice_count);
+		assert(slice_count >= 1);
+		assert(slice_count <= 200);
+		assert(channel_index >= 0);
+		assert(channel_index <= channel_count_max);
+
+		if (slice_index_return) {
+			*slice_index_return = slice_index;
+		}
+		if (slice_count_return) {
+			*slice_count_return = slice_count;
+		}
+		if (channel_index_return) {
+			*channel_index_return = channel_index;
+		}
+		if (channel_switch_return) {
+			*channel_switch_return = channel_switch;
+		}
+		return true;
+	}
+
+	/**
+	\remark Add "Slice_Index" param to IData in pipeline.
+	*/
+	bool Yap::ProcessorImpl::AddSliceindexParam(IData *data, int index, int data_type)
+	{
+		
+		if (nullptr == data->GetVariables())
+		{
+			VariableSpace variable;
+			//
+			if (data_type == Yap::DataTypeComplexFloat)
+			{
+				dynamic_cast<Yap::DataObject<std::complex<float>>*>(data)->SetVariables(variable.Variables());
+			}
+			else
+			{
+				dynamic_cast<Yap::DataObject<unsigned short>*>(data)->SetVariables(variable.Variables());
+			}
+
+
+		}
+
+		VariableSpace variables(data->GetVariables());
+
+		variables.AddVariable(L"int", L"slice_index", L"slice index.");
+		variables.Set(L"slice_index", static_cast<int>(index));
+		/*
+		Yap::IDimensions *dimensions = data->GetDimensions();
+		//Yap::Dimensions  *dimensions2 = dynamic_cast<Yap::Dimensions*>(dimensions);
+		unsigned int channel_length;
+		unsigned int channel_start_index;
+		bool result = dynamic_cast<Yap::Dimensions*>(dimensions)->GetDimension2(
+								Yap::DimensionChannel,
+								channel_length,
+								channel_start_index);
+			
+		if (result && channel_length == 1)
+		{
+			variables.AddVariable(L"int", L"channel_index", L"channel index.");
+			variables.Set(L"channel_index", static_cast<int>(channel_start_index));
+		}
+		*/
+		return true;
+
+	}
+
+	bool Yap::ProcessorImpl::AddASingleVarible(IData *data, wstring variable_name, int value, int data_type)
+	{
+		if (nullptr == data->GetVariables())
+		{
+			VariableSpace variable;
+			//
+			if (data_type == Yap::DataTypeComplexFloat)
+			{
+				dynamic_cast<Yap::DataObject<std::complex<float>>*>(data)->SetVariables(variable.Variables());
+			}
+			else if(data_type == Yap::DataTypeShort)
+			{
+				dynamic_cast<Yap::DataObject<unsigned short>*>(data)->SetVariables(variable.Variables());
+			}
+			else
+			{
+				assert(0);
+			}
+
+
+		}
+
+		VariableSpace variables(data->GetVariables());
+
+		variables.AddVariable(L"int", variable_name.c_str(), (variable_name + L":.").c_str());
+		variables.Set(variable_name.c_str(), static_cast<int>(value));
+		return true;
+	}
 
 };	// namepace Yap
 

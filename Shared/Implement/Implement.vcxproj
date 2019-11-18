@@ -103,7 +103,8 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>log4cplusud.lib</AdditionalDependencies>
+      <AdditionalDependencies>log4cplusud.lib;Utilitiesd.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Projects\Yap2\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

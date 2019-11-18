@@ -148,7 +148,7 @@ bool Yap::Dimensions::SetDimension(DimensionType type,
 	\return true if find DimensionTyep "type" in the Dimensions and  get dimension successfully, false otherwise.
 	\remark not used.
 */
-bool Yap::Dimensions::GetDimension(DimensionType type,
+bool Yap::Dimensions::GetDimension2(DimensionType type,
 	unsigned int &length,
 	unsigned int &start_index) const 
 {

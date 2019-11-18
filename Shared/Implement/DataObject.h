@@ -23,7 +23,7 @@ namespace Yap
 	public:
 
 		bool SetDimension(DimensionType type, unsigned int length, unsigned int start_index = 0);
-		bool GetDimension(DimensionType type, unsigned int &length, unsigned int & start_index) const;
+		bool GetDimension2(DimensionType type, unsigned int &length, unsigned int & start_index) const;
 		unsigned int GetLength(unsigned int dimension_index);
 
 		virtual unsigned int GetDimensionCount() override;

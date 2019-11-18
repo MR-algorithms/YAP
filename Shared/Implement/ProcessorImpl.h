@@ -13,6 +13,7 @@
 #include "VariableSpace.h"
 #include "Interface/smartptr.h"
 #include <type_traits>
+#include <string>
 
 namespace Yap
 {
@@ -151,7 +152,12 @@ namespace Yap
 				}
 			}
 		}
-
+		//
+		bool VariablesValid(IData *data, int *slice_index_return=nullptr, 
+			int *slice_count_return=nullptr, int *channel_index_return = nullptr, int *channel_switch_return=nullptr) const;
+		bool AddSliceindexParam(IData *data, int index, int data_type);
+		bool AddASingleVarible(IData *data, std::wstring variable_name, int value, int data_type);
+		//
 		SmartPtr<ISharedObject> _module;
 
 		SmartPtr<PtrContainerImpl<IPort>> _input;

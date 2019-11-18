@@ -165,7 +165,9 @@ bool JpegExporter::Input( const wchar_t * name, IData * data)
 	assert(_impl);
 
 	DataHelper data_helper(data);
-
+	//Check to tell if the preceding processer set the variables correctly.
+	assert(VariablesValid(data));
+	
 	assert(data_helper.GetActualDimensionCount() == 2 && L"Input JpegExporter data must actual 2 dimensions.");
 
 	auto stretch_pixel_data = GetProperty<bool>(L"StretchPixelData");
@@ -199,4 +201,5 @@ bool JpegExporter::Input( const wchar_t * name, IData * data)
 	}
 	return true;
 }
+
 

@@ -106,7 +106,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Yapd.lib;Clientd.lib;SpecControld.lib;Implementd.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win32_MTd.lib;lapack_win32_MTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Yapd.lib;Clientd.lib;Utilitiesd.lib;Implementd.lib;libfftw3-3.lib;libfftw3f-3.lib;libfftw3l-3.lib;blas_win32_MTd.lib;lapack_win32_MTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(YAP_ROOT)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>

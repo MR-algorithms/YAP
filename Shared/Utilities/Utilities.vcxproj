@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Clipboard.cpp" />
+    <ClCompile Include="CommonMethod.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="Markup.cpp" />
     <ClCompile Include="scrrun.c" />
@@ -151,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clipboard.h" />
+    <ClInclude Include="CommonMethod.h" />
     <ClInclude Include="FileSystem.h" />
     <ClInclude Include="macros.h" />
     <ClInclude Include="Markup.h" />

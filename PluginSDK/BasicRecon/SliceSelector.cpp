@@ -49,9 +49,11 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 	assert((data != nullptr) && (is_type_complexf || is_type_short));
 	assert(Inputs()->Find(name) != nullptr);
 		
+	assert(VariablesValid(data));
 	int slice_index = GetProperty<int>(L"SliceIndex");
-	AddSliceindexParam(data, slice_index);
 
+	//AddSliceindexParam(data, slice_index, DataHelper(data).GetDataType());
+	
 	DataHelper input_data(data);
 	Dimensions data_dimentions(data->GetDimensions());
 	unsigned int slice_block_size = input_data.GetBlockSize(DimensionSlice);
@@ -128,46 +130,6 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 	return true;
 }
 
-
-/**
-\remark Add "Slice_Index" param to IData in pipeline.
-*/
-bool SliceSelector::AddSliceindexParam(IData *data, int index) const
-{
-	DataHelper helper(data);
-
-	if (nullptr == data->GetVariables())
-	{
-		VariableSpace variable;
-		//
-		if (helper.GetDataType() == DataTypeComplexFloat)
-		{
-			dynamic_cast<Yap::DataObject<std::complex<float>>*>(data)->SetVariables(variable.Variables());
-		}
-		else
-		{
-			dynamic_cast<Yap::DataObject<unsigned short>*>(data)->SetVariables(variable.Variables());
-		}
-
-
-	}
-
-	VariableSpace variables(data->GetVariables());
-
-	variables.AddVariable(L"int", L"slice_index", L"slice index.");
-	variables.Set(L"slice_index", static_cast<int>(index));
-
-	Dimension channel_dimension = helper.GetDimension(DimensionChannel);
-	if (channel_dimension.type != DimensionInvalid && channel_dimension.length == 1)
-	{
-		variables.AddVariable(L"int", L"channel_index", L"channel index.");
-		variables.Set(L"channel_index", static_cast<int>(channel_dimension.start_index));
-	}
-
-
-	return true;
-
-}
 
 void SliceSelector::TestChannelOnSlice(IData *output)
 {

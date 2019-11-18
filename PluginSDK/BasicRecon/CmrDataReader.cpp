@@ -7,6 +7,7 @@
 #include <boost\assign\list_of.hpp>
 #include <iomanip>
 #include <fstream>
+#include "Client\DataHelper.h"
 
 using namespace Yap;
 using namespace std;
@@ -144,7 +145,16 @@ bool CmrDataReader::ReadRawData(unsigned int channel_index)
 
 	auto output_data = CreateData<complex<float>>(nullptr,
 		reinterpret_cast<complex<float>*>(raw_data_buffer), dimensions);
-
+	//Add some variables and check them.
+	unsigned int channel_switch = GetProperty<int>(L"ChannelSwitch");
+	AddASingleVarible(output_data.get(), L"slice_index", 0, DataHelper(output_data.get()).GetDataType());
+	AddASingleVarible(output_data.get(), L"slice_count", total_slice_count, DataHelper(output_data.get()).GetDataType());
+	AddASingleVarible(output_data.get(), L"channel_index", channel_index, DataHelper(output_data.get()).GetDataType());
+	AddASingleVarible(output_data.get(), L"channel_switch", channel_switch, DataHelper(output_data.get()).GetDataType());
+	
+	int slice_index_return;
+	assert(VariablesValid(output_data.get(), &slice_index_return));
+	
 	Feed(L"Output", output_data.get());
 
 	return true;
