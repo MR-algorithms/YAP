@@ -84,7 +84,7 @@ SOURCES += \
     Processors/Display2D.cpp \
     Processors/rawdata.cpp \
     Processors/ReceiveData.cpp \
-    Utilities/FormatString.cpp \
+    QtUtilities/FormatString.cpp \
     datamanager.cpp \
     grayscalemapper.cpp \
     imagelayoutwidget.cpp \
@@ -95,8 +95,6 @@ SOURCES += \
     mainwindow.cpp \
     plot1d.cpp \
     rectcalc.cpp \
-    Utilities/commonmethod.cpp \
-    Utilities/DataWatch.cpp \
     Geometry/algorithm.cpp \
     Geometry/cmatrix44.cpp \
     Geometry/Line3D.cpp \
@@ -115,9 +113,9 @@ SOURCES += \
     Reactor/Reactor.cpp \
     Reactor/ReactorImpl.cpp \
     Reactor/WindowsDemultiplexer.cpp \
-    Utilities/commonmethod.cpp \
-    Utilities/DataWatch.cpp \
-    Utilities/FormatString.cpp \
+    QtUtilities/commonmethod.cpp \
+    QtUtilities/DataWatch.cpp \
+    QtUtilities/FormatString.cpp \
     datamanager.cpp \
     grayscalemapper.cpp \
     imagelayoutwidget.cpp \
@@ -150,9 +148,9 @@ SOURCES += \
     Reactor/Reactor.cpp \
     Reactor/ReactorImpl.cpp \
     Reactor/WindowsDemultiplexer.cpp \
-    Utilities/commonmethod.cpp \
-    Utilities/DataWatch.cpp \
-    Utilities/FormatString.cpp \
+    QtUtilities/commonmethod.cpp \
+    QtUtilities/DataWatch.cpp \
+    QtUtilities/FormatString.cpp \
     datamanager.cpp \
     grayscalemapper.cpp \
     imagelayoutwidget.cpp \
@@ -230,7 +228,7 @@ HEADERS += \
     Processors/Display2D.h \
     Processors/Rawdata.h \
     Processors/ReceiveData.h \
-    Utilities/FormatString.h \
+    QtUtilities/FormatString.h \
     datamanager.h \
     grayscalemapper.h \
     imagelayoutwidget.h \
@@ -241,8 +239,8 @@ HEADERS += \
     plot1d.h \
     rectcalc.h \
     StringHelper.h \
-    Utilities/commonmethod.h \
-    Utilities/DataWatch.h \
+    QtUtilities/commonmethod.h \
+    QtUtilities/DataWatch.h \
     Geometry/algorithm.h \
     Geometry/Angle.h \
     Geometry/cmatrix44.h \
@@ -265,9 +263,9 @@ HEADERS += \
     Reactor/Reactor.h \
     Reactor/ReactorImpl.h \
     Reactor/WindowsDemultiplexer.h \
-    Utilities/commonmethod.h \
-    Utilities/DataWatch.h \
-    Utilities/FormatString.h \
+    QtUtilities/commonmethod.h \
+    QtUtilities/DataWatch.h \
+    QtUtilities/FormatString.h \
     datamanager.h \
     grayscalemapper.h \
     imagelayoutwidget.h \
@@ -306,9 +304,9 @@ HEADERS += \
     Reactor/Reactor.h \
     Reactor/ReactorImpl.h \
     Reactor/WindowsDemultiplexer.h \
-    Utilities/commonmethod.h \
-    Utilities/DataWatch.h \
-    Utilities/FormatString.h \
+    QtUtilities/commonmethod.h \
+    QtUtilities/DataWatch.h \
+    QtUtilities/FormatString.h \
     datamanager.h \
     grayscalemapper.h \
     imagelayoutwidget.h \

@@ -16,10 +16,9 @@ DataTypeConvertor convertor;
 //switch or not Merge processor.
 ChannelMerger channel_merge(ChannelCount = 4 );
 
-//select one of the following.
-//JpegExporter jpeg_exporter(ExportFolder = "D:\\output\\test0_qt_pipeline");
-Display2D display2d;
-
+//select jpeg or display2d.
+JpegExporter jpeg_exporter(ExportFolder = "D:\\output\\test0_qt_pipeline");
+//Display2D display2d;
 	
 reader->slice_selector;
 slice_selector->dc_remover;
@@ -31,13 +30,15 @@ fft->module_phase;
 //1: jpeg.
 //module_phase.Module->jpeg_exporter;
 //merge.
-//module_phase.Module->channel_merge;
+module_phase.Module->channel_merge;
+channel_merge->jpeg_exporter;
 //channel_merge->convertor;
 //convertor.UnsignedShort->jpeg_exporter;
 
 //2: display.
-module_phase.Module->convertor;
-convertor.UnsignedShort->display2d;
+//module_phase.Module->display
+//module_phase.Module->convertor;
+//convertor.UnsignedShort->display2d;
 //merge.
 //module_phase.Module->channel_merge;
 //channel_merge->convertor;

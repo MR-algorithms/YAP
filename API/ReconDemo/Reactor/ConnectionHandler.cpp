@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <WinSock2.h>
 #include <new>
-#include "Utilities\FormatString.h"
+#include "QtUtilities\FormatString.h"
 #include "Implement\LogUserImpl.h"
 
 ConnectionHandler::ConnectionHandler(Handle connection) 

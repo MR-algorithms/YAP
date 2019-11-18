@@ -38,19 +38,38 @@ bool Display2D::Input(const wchar_t * port, IData *data)
         return false;
 
          //
+    //
+    int slice_index;
+    int slice_count;
+    int channel_index;
+    int channel_switch;
+    this->VariablesValid(data, &slice_index, &slice_count, &channel_index, &channel_switch);
+    /*
     VariableSpace variables(data->GetVariables());
 
-
     int slice_index = variables.Get<int>(L"slice_index");
+    int slice_count = variables.Get<int>(L"slice_count");
     int channel_index = variables.Get<int>(L"channel_index");
     int channel_switch = variables.Get<int>(L"channel_switch");
     int channel_count = CommonMethod::GetChannelCountUsed(channel_switch);
 
     //calcute the image index managed in the Layout Window.
-    int index = channel_count * channel_count + slice_index;
+    int channelcount_max = sizeof(unsigned int) * 8;
+
+    assert( slice_index >= 0);
+    assert( slice_index < slice_count);
+    assert( slice_count >=1);
+    assert( slice_count <= 200);
+    assert( channel_index >=0);
+    assert( channel_index <= channelcount_max );
+    */
+
+
+
+    int image_key = channel_index;//slice_count * channel_index + slice_index;
 
     //return _display_window.AddImage(data);
-    return _display_window.UpdateImage(data, index);
+    return _display_window.UpdateImage(data, image_key);
 
     //Test repaint the widget.
     /*

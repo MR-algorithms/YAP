@@ -19,7 +19,7 @@ public:
     static DataManager& GetHandle();
     ~DataManager();
     bool Load(const QString& image_path);
-    bool LoadPipeline();
+    void LoadPipeline(const QString& pipeline);
     bool Demo1D();
     bool Demo2D();
     bool ReceiveData(DataPackage &package, int cmd_id);
@@ -39,7 +39,7 @@ private:
 
     bool ProcessFidfile(const QString& file_path, const QString& pipelineFile);
 
-    Yap::SmartPtr<Yap::IData> CreateDemoIData2D();
+    Yap::SmartPtr<Yap::IData> CreateDemoIData2D(int &width, int &height, int &slice_count);
     Yap::SmartPtr<Yap::IData> CreateDemoIData1D();
     Yap::SmartPtr<Yap::IData> CreateIData1D(SampleDataData &data);
     void calculate_dimindex(SampleDataStart &start, int dim23456, int &phase_index, int &slice_index);
@@ -47,6 +47,13 @@ private:
     bool Pipeline2DforNewScan(SampleDataStart &start);
 
     bool Pipeline1DforNewScan(SampleDataStart &start);
+    void AddVariables(Yap::IData *idata,
+                      int phase_count,
+                      int slice_index,
+                      int slice_count,
+                      int channel_switch,
+                      int channel_index
+                      );
  //
 
     bool InputToPipeline1D(SampleDataData &data);

@@ -2,7 +2,7 @@
 #include "ReactorImpl.h"
 #include <assert.h>
 #include <new>
-#include "Utilities\FormatString.h"
+#include "QtUtilities\FormatString.h"
 
 Reactor Reactor::reactor;
 

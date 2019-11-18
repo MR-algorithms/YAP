@@ -52,21 +52,21 @@ bool ImageLayoutWidget::AddImage(IData* data )
     return true;
 }
 
-bool ImageLayoutWidget::UpdateImage(Yap::IData* data, unsigned int image_index)
+bool ImageLayoutWidget::UpdateImage(Yap::IData* data, unsigned int image_key)
 {
     if (data == nullptr)
         return false;
 
-    if(image_index >= _images.size())
+    if(image_key >= _images.size())
     {
         AddImage(data);
     }
     else
     {
         //What about the original element?
-        _images[image_index] = YapShared<IData>(data);
+        _images[image_key] = YapShared<IData>(data);
 
-        auto widget_index = image_index - _first_visible_image_index;
+        auto widget_index = image_key - _first_visible_image_index;
 
         if (widget_index < _image_widgets.size())
         {

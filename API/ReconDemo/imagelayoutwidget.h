@@ -18,7 +18,7 @@ public:
 
     bool AddImage(Yap::IData* data);
 
-    bool UpdateImage(Yap::IData* data, unsigned int image_index=0);
+    bool UpdateImage(Yap::IData* data, unsigned int image_key=0);
 
     const std::vector<Yap::SmartPtr<Yap::IData>> GetImages() const;
     void ClearImages();//Not used.

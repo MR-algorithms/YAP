@@ -41,7 +41,7 @@ DataManager& DataManager::GetHandle()
 
 DataManager::~DataManager()
 {
-    //_mythread.join();
+
 }
 bool DataManager::ReceiveData(DataPackage &package, int cmd_id)
 {
@@ -187,30 +187,13 @@ bool DataManager::Load(const QString& file_path)
     return true;
 }
 
-bool DataManager::LoadPipeline()
+void DataManager::LoadPipeline(const QString& pipeline)
 {
 
-    QString pipeline_file = QString("config//pipelines//test0_qt.pipeline");
-    Yap::PipelineCompiler compiler;
-    auto pipeline = compiler.CompileFile(pipeline_file.toStdWString().c_str());
-    QFileInfo info(pipeline_file);
-    if (!pipeline)
-    {
-         QMessageBox::critical(nullptr, QString("Error"), QString("Error compliling the pipeline: ") + info.baseName());
-         return false;
-    }
+    auto result = this->CreatePipeline(pipeline);
 
-    auto reader = pipeline->Find(L"reader");
-    if (reader == nullptr)
-        return false;
 
-    //auto variables = ScanManager::GetHandle().GetVariables()->Variables();
-    //assert(variables);
-    //pipeline->SetGlobalVariables(variables);
-
-    auto reader_agent = ProcessorAgent(reader);
-
-    return pipeline->Input(L"Input", nullptr);
+    result->Input(L"Input", nullptr);
 
 }
 
@@ -221,10 +204,6 @@ bool DataManager::LoadFidRecon(const QString& file_path)
     //auto file_name = file_info.baseName();
     auto path = file_info.path();
 
-    /*  if (!ProcessFidfile(file_path, QString("config//pipelines//realtime_recon.pipeline")))
-        return false;
-    */
-    //if (!ProcessFidfile(file_path, QString("D:\\Projects\\Yap2\\API\\ReconDemo\\config\\pipelines\\niumag_recon.pipeline")))
     double x = 3.141;
 
     if (!ProcessFidfile(file_path, QString("config//pipelines//niumag_recon.pipeline")))
@@ -273,7 +252,7 @@ Yap::SmartPtr<IProcessor> DataManager::CreatePipeline(const QString& pipelineFil
     QFileInfo info(pipelineFile);
     if (!pipeline)
     {
-        QMessageBox::critical(nullptr, QString("Error"), QString("Error compliling the pipeline: ") + info.baseName());
+        //QMessageBox::critical(nullptr, QString("Error"), QString("Error compliling the pipeline: ") + info.baseName());
         return Yap::SmartPtr<IProcessor>();
     }
 
@@ -297,7 +276,10 @@ bool DataManager::Demo2D()
         if (pipeline)
         {
 
-            auto output_data = CreateDemoIData2D();
+            int width, height, slice_count;
+            auto output_data = CreateDemoIData2D(width, height, slice_count);
+            AddVariables(output_data.get(), height, 0, 1, 1, 0);
+
             pipeline->Input(L"Input", output_data.get());
         }
     }
@@ -309,18 +291,18 @@ bool DataManager::Demo2D()
     return true;
 }
 
-Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData2D()
+Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData2D(int &width, int &height, int &slice_count)
 {
     Yap::Dimensions dimensions;
-    unsigned int width = 512;
-    unsigned int height = 512;
-    unsigned int total_slice_count = 1;
+    width = 512;
+    height = 512;
+    slice_count = 1;
 
-    auto complex_slices = std::shared_ptr<std::complex<float>>(new std::complex<float>[width * height * total_slice_count]);
+    auto complex_slices = std::shared_ptr<std::complex<float>>(new std::complex<float>[width * height * slice_count]);
 
-    auto ushort_slices = new unsigned short[width * height * total_slice_count];
+    auto ushort_slices = new unsigned short[width * height * slice_count];
 
-    for(unsigned i = 0; i < total_slice_count; i ++)
+    for(unsigned i = 0; i < slice_count; i ++)
     {
         unsigned slice_pixels = width * height;
 
@@ -357,19 +339,56 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData2D()
 
     dimensions(Yap::DimensionReadout, 0U, width)
         (Yap::DimensionPhaseEncoding, 0U, height)
-        (Yap::DimensionSlice, 0U, total_slice_count);
+        (Yap::DimensionSlice, 0U, slice_count);
 
 
 
     auto output_data1 = Yap::YapShared(
                 new Yap::DataObject<unsigned short>(nullptr, ushort_slices, dimensions, nullptr, nullptr));
 
-    //auto output_data2 = new Yap::DataObject<unsigned short>(nullptr, ushort_slices.get(), dimensions, nullptr, true, nullptr);
 
     return output_data1;
 
 
 }
+
+void DataManager::AddVariables(Yap::IData* data,
+                  int phase_count,
+                  int slice_index,
+                  int slice_count,
+                  int channel_switch,
+                  int channel_index
+                  )
+{
+    DataHelper helper(data);
+    if (nullptr == data->GetVariables())    {
+        VariableSpace variable;
+        //
+        if (helper.GetDataType() == DataTypeComplexFloat)   {
+            dynamic_cast<Yap::DataObject<std::complex<float>>*>(data)->SetVariables(variable.Variables());
+        }
+        else {
+            dynamic_cast<Yap::DataObject<unsigned short>*>(data)->SetVariables(variable.Variables());
+        }
+    }
+
+    VariableSpace variables(data->GetVariables());
+
+    variables.AddVariable(L"int",  L"channel_switch", L"channel switch.");
+    variables.AddVariable(L"int",  L"channel_index", L"channel index.");
+    variables.AddVariable(L"int",  L"slice_count", L"slice count.");
+    variables.AddVariable(L"int",  L"slice_index", L"slice index.");
+    variables.AddVariable(L"int",  L"phase_count", L"phase count.");
+
+    variables.Set(L"channel_switch", channel_switch);
+    variables.Set(L"channel_index", channel_index);
+    variables.Set(L"slice_count", slice_count);
+    variables.Set(L"slice_index", slice_index);
+    variables.Set(L"phase_count", phase_count);
+
+
+}
+
 bool DataManager::Demo1D()
 {
 

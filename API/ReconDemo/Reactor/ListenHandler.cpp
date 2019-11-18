@@ -4,7 +4,7 @@
 #include "ConnectionHandler.h"
 #include "EventDemultiplexer.h"
 #include "Implement\LogUserImpl.h"
-#include "Utilities\FormatString.h"
+#include "QtUtilities\FormatString.h"
 #include <sstream>
 
 #include <stdio.h>

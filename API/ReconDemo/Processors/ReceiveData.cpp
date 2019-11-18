@@ -4,8 +4,8 @@
 #include "Implement/LogUserImpl.h"
 #include "Client/DataHelper.h"
 #include "Rawdata.h"
-#include "Utilities\commonmethod.h"
-#include "Utilities\DataWatch.h"
+#include "QtUtilities\commonmethod.h"
+#include "QtUtilities\DataWatch.h"
 
 using namespace Yap;
 using namespace std;

@@ -12,8 +12,8 @@
 #include<functional>
 #include<chrono>
 
-class ReconClientSocket;
-class ReconServer;
+//class ReconClientSocket;
+//class ReconServer;
 
 namespace Ui {
 class MainWindow;
@@ -46,7 +46,7 @@ private:
     Ui::MainWindow *ui;
 
     void SetImportedProcessors();
-    std::shared_ptr<ReconServer> reconServer;
+    //std::shared_ptr<ReconServer> reconServer;
 
 };
 
