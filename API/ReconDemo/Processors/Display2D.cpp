@@ -1,6 +1,6 @@
 #include "Display2D.h"
 
-#include "datamanager.h"
+#include "ProcessorlineManager.h"
 #include "imagelayoutwidget.h"
 #include "Implement/LogUserImpl.h"
 
@@ -66,9 +66,10 @@ bool Display2D::Input(const wchar_t * port, IData *data)
 
 
 
-    int image_key = channel_index;//slice_count * channel_index + slice_index;
+    int image_key = slice_count * channel_index + slice_index;
 
     //return _display_window.AddImage(data);
+
     return _display_window.UpdateImage(data, image_key);
 
     //Test repaint the widget.

@@ -19,6 +19,7 @@ public:
 	virtual void handle_write();
 	virtual void handle_error();
 	virtual bool handle_regist();
+    virtual bool handle_close();
 	
 private:
 	SOCKET Init(int port);

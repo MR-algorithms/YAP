@@ -31,8 +31,6 @@ bool Plot1D::SetData(const std::vector<float> &data)
 
     for(unsigned int i = 0; i < data.size(); ++i)
     {
-//        double I = double(_x_min) + double(i) * (double(_x_max - _x_min) / double(data.size()));
-//        _series_magn->append(I, data[i]);
         _series_magn->append(i, data[i]);
     }
 
@@ -55,11 +53,6 @@ bool Plot1D::SetData(const std::vector<std::complex<float> > &data)
 
     for(unsigned int i = 0; i < data.size(); ++i)
     {
-//        double I = double(_x_min) + double(i) * (double(_x_max - _x_min) / double(data.size()));
-//        _series_real->append(I, data[i].real());
-//        _series_imag->append(I, data[i].imag());
-//        auto amp = sqrt(data[i].real() * data[i].real() + data[i].imag() * data[i].imag());
-//        _series_magn->append(I, amp);
 
         _series_real->append(i, data[i].real());
         _series_imag->append(i, data[i].imag());

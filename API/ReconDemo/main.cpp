@@ -16,8 +16,7 @@ int main(int argc, char *argv[])
 
     MainWindow w;
     w.show();
-//    std::thread t(w.on_buttonStart_clicked);
-//    t.join();
+
 
     w.setWindowState(Qt::WindowMaximized);
 

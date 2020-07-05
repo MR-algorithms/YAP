@@ -27,12 +27,11 @@ ListenHandler::ListenHandler(int port)
 	}
 	_listening_info = HandleInfo(event, listening_socket, this);
 
-
 }
 
 ListenHandler::~ListenHandler() 
 {
-	
+    WSACloseEvent(_listening_info.event);
 	shutdown(_listening_info.handle, SD_BOTH);
 	closesocket(_listening_info.handle);
 }
@@ -42,8 +41,28 @@ void ListenHandler::handle_read()
 {
 	
 	//----------
-	int connection = accept(_listening_info.handle, NULL, NULL);
+    //WSAResetEvent(_listening_info.event);
+
+    //int connection = accept(_listening_info.handle, NULL, NULL);
 	
+    //Check if the accept is successful.
+    SOCKADDR_IN addrConn;
+    int len = sizeof(SOCKADDR);
+    int connection = accept(_listening_info.handle, (SOCKADDR*)&addrConn, &len);
+    if (connection == SOCKET_ERROR)
+    {
+        std::wstringstream wss;
+        wss << L"failed accept" << std::endl;
+        //DebugInfo::Output(L"ListenHandler::Hand_read", wss.str(),
+        //    reinterpret_cast<int>(this), true);
+    }
+    std::wstringstream wss;
+    wss << "the IP address of conn is:" << inet_ntoa(addrConn.sin_addr) << std::endl;
+    //DebugInfo::Output(L"ListenHandler::Hand_read", wss.str(),
+    //    reinterpret_cast<int>(this), true);
+
+
+    //
 	//Create new connection handler and register it.
 	EventHandler* handler = new (std::nothrow)ConnectionHandler(connection);
 	assert(handler != NULL);
@@ -56,7 +75,7 @@ void ListenHandler::handle_write() {
 }
 
 void ListenHandler::handle_error() {
-	// do nothing
+    // do nothing
 }
 
 
@@ -127,4 +146,11 @@ bool ListenHandler::handle_regist()
 	}
 	return true;
 		
+}
+
+
+bool ListenHandler::handle_close()
+{
+    assert(0 &&L"Not Implemented!");
+    return true;
 }

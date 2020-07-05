@@ -1,4 +1,4 @@
-#include "datamanager.h"
+#include "ProcessorlineManager.h"
 #include <cassert>
 #include "StringHelper.h"
 #include "Implement/DataObject.h"
@@ -21,76 +21,34 @@
 
 #include <QEvent>
 #include <QApplication>
+#include "Processors/Rawdata.h"
 
 using namespace std;
 using namespace Yap;
+using namespace Databin;
 
-DataManager DataManager::s_instance;
+ProcessorlineManager ProcessorlineManager::s_instance;
 
-DataManager::DataManager()
+ProcessorlineManager::ProcessorlineManager()
 {
 
 }
 
 
-DataManager& DataManager::GetHandle()
+ProcessorlineManager& ProcessorlineManager::GetHandle()
 {
     return s_instance;
 
 }
 
-DataManager::~DataManager()
+ProcessorlineManager::~ProcessorlineManager()
 {
 
 }
-bool DataManager::ReceiveData(DataPackage &package, int cmd_id)
+
+bool ProcessorlineManager::Pipeline1DforNewScan(int scan_id)
 {
-    switch(cmd_id)
-    {
-    case SAMPLE_DATA_START:
-    {
-        SampleDataStart start;
-        MessageProcess::Unpack(package, start);
-        Pipeline2DforNewScan(start);
-        Pipeline1DforNewScan(start);
-
-    }
-        break;
-    case SAMPLE_DATA_DATA:
-    {
-        SampleDataData data;
-        MessageProcess::Unpack(package, data);
-        InputToPipeline2D(data);
-        InputToPipeline1D(data);
-
-    }
-        break;
-    case SAMPLE_DATA_END:
-    {
-        SampleDataEnd end;
-        MessageProcess::Unpack(package, end);
-        End(end);
-
-    }
-        break;
-    default:
-        break;
-
-    }
-
-    return true;
-}
-
-void DataManager::setPipelinPath(const QString &pipeline_path)
-{
-    _pipeline_path=pipeline_path;
-}
-
-bool DataManager::Pipeline1DforNewScan(SampleDataStart &start)
-{
-    _sample_start = start;
-
-    try
+     try
     {
         Yap::PipelineConstructor constructor;
         constructor.Reset(true);
@@ -117,12 +75,11 @@ bool DataManager::Pipeline1DforNewScan(SampleDataStart &start)
     return true;
 }
 
-bool DataManager::Pipeline2DforNewScan(SampleDataStart &start)
+bool ProcessorlineManager::Pipeline2DforNewScan(int scan_id)
 {
-    _sample_start = start;
-    _rt_pipeline = this->CreatePipeline(QString("config//pipelines//realtime_recon.pipeline"));
+    _rt_pipeline2D = this->CreatePipeline(QString("config//pipelines//realtime_recon.pipeline"));
 
-    if(_rt_pipeline)
+    if(_rt_pipeline2D)
     {
         return true;
     }
@@ -133,29 +90,8 @@ bool DataManager::Pipeline2DforNewScan(SampleDataStart &start)
 
 }
 
-bool DataManager::InputToPipeline1D(SampleDataData &data)
-{
 
-    auto output_data = CreateIData1D(data);
-    if(_rt_pipeline1D)
-        _rt_pipeline1D->Input(L"Input", output_data.get());
-    return true;
-
-}
-
-
-bool DataManager::InputToPipeline2D(SampleDataData &data)
-{
-    //Put the recieved data into the pipeline.
-    auto output_data = CreateIData1D(data);
-    if(_rt_pipeline)
-        _rt_pipeline->Input(L"Input", output_data.get());
-    return true;
-
-}
-
-
-bool DataManager::Load(const QString& file_path)
+bool ProcessorlineManager::LoadData(const QString& file_path)
 {
     auto extension = make_lower(file_path.toStdWString().substr(file_path.toStdWString().size() - 4, 4));
 
@@ -167,11 +103,12 @@ bool DataManager::Load(const QString& file_path)
     }
     else if (extension == L".fid")
     {
-        float x = 3.14;
-        // Load fid data and show recon iamges.
-        if (!LoadFidRecon(file_path))//xhb->
+        QFileInfo file_info(file_path);
+        auto path = file_info.path();
 
+        if (!ProcessFidfile(file_path, QString("config//pipelines//niumag_recon.pipeline"))){
             return false;
+        }
     }
     else
     {
@@ -187,7 +124,7 @@ bool DataManager::Load(const QString& file_path)
     return true;
 }
 
-void DataManager::LoadPipeline(const QString& pipeline)
+void ProcessorlineManager::RunPipeline(const QString& pipeline)
 {
 
     auto result = this->CreatePipeline(pipeline);
@@ -197,22 +134,8 @@ void DataManager::LoadPipeline(const QString& pipeline)
 
 }
 
-bool DataManager::LoadFidRecon(const QString& file_path)
-{
 
-    QFileInfo file_info(file_path);
-    //auto file_name = file_info.baseName();
-    auto path = file_info.path();
-
-    double x = 3.141;
-
-    if (!ProcessFidfile(file_path, QString("config//pipelines//niumag_recon.pipeline")))
-         return false;
-    return true;
-}
-
-
-bool DataManager::ProcessFidfile(const QString &file_path, const QString &pipelineFile)
+bool ProcessorlineManager::ProcessFidfile(const QString &file_path, const QString &pipelineFile)
 {
 
    Yap::PipelineCompiler compiler;
@@ -242,7 +165,7 @@ bool DataManager::ProcessFidfile(const QString &file_path, const QString &pipeli
 }
 
 
-Yap::SmartPtr<IProcessor> DataManager::CreatePipeline(const QString& pipelineFile)
+Yap::SmartPtr<IProcessor> ProcessorlineManager::CreatePipeline(const QString& pipelineFile)
 {
 
 
@@ -258,7 +181,37 @@ Yap::SmartPtr<IProcessor> DataManager::CreatePipeline(const QString& pipelineFil
 
      return pipeline;
 }
-bool DataManager::Demo2D()
+
+bool ProcessorlineManager::Demo1D()
+{
+
+    try
+    {
+        Yap::PipelineConstructor constructor;
+        constructor.Reset(true);
+        //constructor.LoadModule(L"BasicRecon.dll");
+
+        constructor.CreateProcessor(L"Display1D", L"Plot1D");
+
+        constructor.MapInput(L"Input", L"Plot1D", L"Input");
+
+        SmartPtr<IProcessor> pipeline = constructor.GetPipeline();
+        if (pipeline)
+        {
+
+            auto output_data = CreateDemoIData1D();
+            pipeline->Input(L"Input", output_data.get());
+        }
+    }
+    catch (ConstructError& e)
+    {
+        //wcout << e.GetErrorMessage() << std::endl;
+    }
+
+    return true;
+}
+
+bool ProcessorlineManager::Demo2D()
 {
 
     try
@@ -291,7 +244,7 @@ bool DataManager::Demo2D()
     return true;
 }
 
-Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData2D(int &width, int &height, int &slice_count)
+Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateDemoIData2D(int &width, int &height, int &slice_count)
 {
     Yap::Dimensions dimensions;
     width = 512;
@@ -352,7 +305,7 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData2D(int &width, int &height
 
 }
 
-void DataManager::AddVariables(Yap::IData* data,
+void ProcessorlineManager::AddVariables(Yap::IData* data,
                   int phase_count,
                   int slice_index,
                   int slice_count,
@@ -389,40 +342,8 @@ void DataManager::AddVariables(Yap::IData* data,
 
 }
 
-bool DataManager::Demo1D()
+Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateDemoIData1D()
 {
-
-    try
-    {
-        Yap::PipelineConstructor constructor;
-        constructor.Reset(true);
-        //constructor.LoadModule(L"BasicRecon.dll");
-
-        constructor.CreateProcessor(L"Display1D", L"Plot1D");
-
-        constructor.MapInput(L"Input", L"Plot1D", L"Input");
-
-        SmartPtr<IProcessor> pipeline = constructor.GetPipeline();
-        if (pipeline)
-        {
-
-            auto output_data = CreateDemoIData1D();
-            pipeline->Input(L"Input", output_data.get());
-        }
-    }
-    catch (ConstructError& e)
-    {
-        //wcout << e.GetErrorMessage() << std::endl;
-    }
-
-    return true;
-}
-
-
-Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData1D()
-{
-
-
     const double PI = 3.1415926;
     int data_vector2_size = 314;
     std::complex<float> * data_vector2 = new std::complex<float>[data_vector2_size];
@@ -450,8 +371,8 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateDemoIData1D()
     return output_data1;
 
 }
-
-Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
+/*
+Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateIData1D(SampleDataData &data)
 {
     //
     int channel_switch = _sample_start.channel_switch;
@@ -462,9 +383,6 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
     int slice_count = _sample_start.dim3_size;
 
     int channel_index = data.rec;
-
-    int phase_index, slice_index;
-    calculate_dimindex(_sample_start, data.dim23456_index, phase_index, slice_index);
 
     //
     int data_size = data.data_value.size();
@@ -481,86 +399,54 @@ Yap::SmartPtr<Yap::IData> DataManager::CreateIData1D(SampleDataData &data)
         (Yap::DimensionPhaseEncoding, 0U, 1)//
         (Yap::DimensionSlice, 0U, 1);
 
-    //dimensions(Yap::DimensionReadout, 0U, freq_count)
-    //    (Yap::DimensionPhaseEncoding, 0U, 1)//
-    //    (Yap::DimensionSlice, 0U, 1);
 
     auto output_data = Yap::YapShared(
                 new Yap::DataObject<std::complex<float>>(nullptr, data_vector2, dimensions, nullptr, nullptr));
-
-
 
     if (output_data->GetVariables() == nullptr)
     {
         Yap::VariableSpace variables;
         output_data->SetVariables(variables.Variables());
 
-
         variables.AddVariable(L"bool", L"Finished", L"The end of sample data.");
         variables.AddVariable(L"int",  L"channel_switch", L"channel switch.");
         variables.AddVariable(L"int",  L"channel_index", L"channel index.");
         variables.AddVariable(L"int",  L"slice_count", L"slice count.");
-        variables.AddVariable(L"int",  L"slice_index", L"slice index.");
-        variables.AddVariable(L"int",  L"phase_count", L"phase count.");
-        variables.AddVariable(L"int",  L"phase_index", L"phase index.");
         variables.AddVariable(L"int",  L"freq_count",  L"frequency count.");
-
 
         variables.Set(L"Finished", false);
         variables.Set(L"channel_switch", channel_switch);
         variables.Set(L"channel_index", channel_index);
         variables.Set(L"slice_count", slice_count);
-        variables.Set(L"slice_index", slice_index);
-        variables.Set(L"phase_count", phase_count);
-        variables.Set(L"phase_index", phase_index);
         variables.Set(L"freq_count", freq_count);
 
     }
 
-    //test get method.
-    VariableSpace variables1(output_data->GetVariables());
-    int temp1=variables1.Get<int>(L"channel_index");
-    int temp2 = variables1.Get<int>(L"slice_index");
-    int temp3=variables1.Get<int>(L"phase_index");
-    //
     return output_data;
 
 }
 
-void DataManager::calculate_dimindex(SampleDataStart &start, int dim23456_index, int &phase_index, int &slice_index)
+*/
+
+bool ProcessorlineManager::OnDataBegin(int scan_id)
 {
 
-    //sending end: dim2 = phase_count, dim3 = slice_count;
-    //dim4 maybe echo images or other else.
-    int phase_count = start.dim2_size;
-    int slice_count = start.dim3_size;
-    int dim4_size = start.dim4_size;
-    int dim5_size = start.dim5_size;
-    int dim6_size = start.dim6_size;
-    int dim23456_size = start.dim23456_size;
-
-
-    assert(dim4_size == 1);
-    assert(dim5_size == 1);
-    assert(dim6_size == 1);
-    assert(phase_count * slice_count == dim23456_size);
-
-    //Decode the order of data received, according to the encoded order in the sender.
-
-    CommonMethod::split_index(dim23456_index, phase_count, slice_count, phase_index, slice_index);
-
-
-
-
+    Pipeline1DforNewScan(scan_id);
+    Pipeline2DforNewScan(scan_id);
+    assert(_rt_pipeline1D);
+    //assert(_rt_pipeline2D);
+    return true;
 }
 
 
-
-
-
-bool DataManager::End(SampleDataEnd &end)
+bool ProcessorlineManager::OnDataData(int scan_id)
 {
-    int channel_switch = _sample_start.channel_switch;
+    return true;
+}
+bool ProcessorlineManager::OnDataEnd(int scan_id)
+{
+
+    int channel_switch = RawData::GetHandle().channel_switch();
 
     Yap::VariableSpace variables;
     variables.AddVariable(L"bool", L"Finished", L"Iteration finished.");
@@ -570,12 +456,11 @@ bool DataManager::End(SampleDataEnd &end)
 
     auto output = DataObject<int>::CreateVariableObject(variables.Variables(), nullptr);
 
-    if(_rt_pipeline)
+    if(_rt_pipeline2D)
     {
         //Send a "Finished" message with no data array to the pipeline.
-        _rt_pipeline->Input(L"Input", output.get());
+        _rt_pipeline2D->Input(L"Input", output.get());
     }
+
     return true;
 }
-
-

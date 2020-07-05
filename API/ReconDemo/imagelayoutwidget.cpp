@@ -51,7 +51,13 @@ bool ImageLayoutWidget::AddImage(IData* data )
     HighlightCurrentWidget();
     return true;
 }
-
+///
+/// \brief ImageLayoutWidget::UpdateImage
+/// You should
+/// \param data
+/// \param image_key
+/// \return
+///
 bool ImageLayoutWidget::UpdateImage(Yap::IData* data, unsigned int image_key)
 {
     if (data == nullptr)

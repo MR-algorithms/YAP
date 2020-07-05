@@ -1,6 +1,5 @@
 #include "imageobject.h"
 /*
-#include "datamanager.h"
 #include "imagelayoutwidget.h"
 #include "Implement/LogUserImpl.h"
 #include "Client/DataHelper.h"

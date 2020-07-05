@@ -78,19 +78,18 @@ void DebugInfo::Output(const wchar_t *info_tag, const wchar_t* info, int this_po
 	std::string str;
 	ss2 >> str;
 
-	if (first_enter)
-	{
+    QString qsinfo_tag = QString::fromWCharArray(info_tag);
+    QString qsinfo = QString::fromWCharArray(info);
 
-        //QDebug()<<FormatSting("%d, :: -------Enter %s--------- ", enter_times, info_tag).c_str();
 
-		
-	}
+    if(first_enter)
+    {
+        qDebug()<<enter_times++<<": ==================Enter"<<qsinfo_tag<<" ==============================";
+    }
+    qDebug() << qsinfo_tag <<": " << qsinfo;
+    qDebug() << "thread id :"<< QString(str.c_str());
+    qDebug() << "this pointer : 0x"<<hex<<this_pointer;
 
-    //QDebug()<<FormatSting("%s : %s", info_tag, info).c_str();
-    //QDebug()<<FormatSting("thread id: %s", str.c_str()).c_str();
-    //QDebug()<<FormatSting("this pointer: %x", this_pointer).c_str();
-	
-	
 }
 
 std::wstring DebugInfo::get_threadinfo()

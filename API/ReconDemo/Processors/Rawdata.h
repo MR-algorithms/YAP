@@ -12,6 +12,7 @@ namespace Databin{
 ///
 struct ChannelData
 {
+    int scan_id;
     int channel_index;
     //To be revised:
     //A: Update state: 2 possible schemes:
@@ -26,6 +27,7 @@ struct ChannelData
     int dim4;
     std::vector<std::complex<float>> data;
     ChannelData():
+        scan_id(0),
         channel_index(0),
         updated(false),
         freq_count(0),
@@ -37,6 +39,7 @@ struct ChannelData
     }
     ChannelData(const ChannelData &rhs)
     {
+        scan_id = rhs.scan_id;
         channel_index = rhs.channel_index;
         updated = rhs.updated;
         freq_count = rhs.freq_count;
@@ -47,6 +50,7 @@ struct ChannelData
     }
 
     ChannelData& operator = (const ChannelData& rhs){
+        scan_id = rhs.scan_id;
         channel_index = rhs.channel_index;
         updated = rhs.updated;
         freq_count = rhs.freq_count;
@@ -60,28 +64,40 @@ struct ChannelData
 
 
 };
-
+//RawData should have some properties:
+//1, singleton;
+//2, different thread can access it safely.
+//3, multi protocol.
+//4, no thread function.
 class RawData
 {
 
 public:
+    static RawData& GetHandle() {return s_instance;}
 
-    RawData(): _ready(false) {}
-    void Prepare(int freqcount, int phasecount, int slicecount, int channel_switch);
+    void Prepare(int scan_id, int freqcount, int phasecount, int slicecount, int channel_switch);
     bool Ready(){return _ready;}
     void InsertPhasedata(std::complex<float>* source, int length, int channel_index, int slice_index, int phase_index);
-    int MaxChannelCount();
+    int MaxChannelIndex();
+    int PhaseCount();
+    int channel_switch(){return _channel_switch;}
     bool NeedProcess(const int channel_index);
     std::complex<float>* NewChanneldata(const int channel_index, int& freq_count, int& phase_count, int& slice_count);
 
 private:
-    bool InitChannels(int freqcount, int phasecount, int slicecount, int channel_switch);
+
+    RawData(): _ready(false) {}
+
+    bool InitChannels(int scan_id, int freqcount, int phasecount, int slicecount, int channel_switch);
     bool IsChannelOn(int channel_switch, int channel_index);
+
+    static RawData s_instance;
 
     //An element of vector<ChannelData> stores all infomations and
     //data of a channel.
     //Note that the index of the vector element doesnot equal the channel index.
     std::vector<ChannelData> _channels_data;
+    int _channel_switch;
     bool _ready;
 };
 

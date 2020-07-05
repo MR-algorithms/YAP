@@ -1,33 +1,22 @@
 #include "reconclientsocket.h"
 #include "SampleDataProtocol.h"
-#include "datamanager.h"
+#include "Reactor/SampleDataServer.h"
 #include <QDebug>
 #include <cassert>
-#include <thread>
+#include "MsgPackBufferSocketIO.h"
 
-#include<functional>
-#include<utility>
 
-ReconClientSocket::ReconClientSocket(QObject *parent) : QTcpSocket(parent)
+ReconClientSocket::ReconClientSocket(SOCKET socket): _socket(socket){ }
+
+void ReconClientSocket::DataReceived()
 {
-    connect(this, &QTcpSocket::readyRead, this, &ReconClientSocket::slotDataReceived);
-    connect(this, &QTcpSocket::disconnected, this, &ReconClientSocket::slotDisconnected);
-}
+    //cmr::MsgPackBufferSocketIO io;
+    //int lengthx = io.qt_bytesAvailable(_socket);
 
+    //qDebug()<< "Enter ReconClientSocket:: slotDataReceived():  "<< lengthx<<" bytes available";
 
-void ReconClientSocket:: slotDataReceived()
-{
-    int lengthx = bytesAvailable();
-
-    emit signalDataReceived(lengthx);
-
-    qDebug()<< "Enter ReconClientSocket:: slotDataReceived():  "<< lengthx<<" bytes available";
-
-    while (true)
-    {
-
-        if( !Read(_bufferInfo.Next) )//长度不够。
-
+    while (true) {
+        if( !Read(_bufferInfo.Next) )
         {
             return;
         }
@@ -35,28 +24,26 @@ void ReconClientSocket:: slotDataReceived()
         {
             _bufferInfo.Next = static_cast<ReadinfoType>(
                         static_cast<int>(_bufferInfo.Next) + 1 );
-            if(_bufferInfo.Next == ReadinfoType::rtFinished)
-            {
+            if(_bufferInfo.Next == ReadinfoType::rtFinished)  {
 
-                //process the package.
-
-                //std::thread thread1(DataManager::GetHandle().ReceiveData,std::ref(this->_package),this->_bufferInfo);
-                DataManager::GetHandle().ReceiveData(this->_package, this->_bufferInfo.cmd_id);
-                //
+                SampleDataServer::GetHandle().OnDataServer(this->_package, this->_bufferInfo.cmd_id);
                 _bufferInfo.Reset();
-
 
             }
 
         }
     }
 
-
 }
 
 
 bool ReconClientSocket::Read(ReadinfoType rt)
 {
+    int x = 3;
+    int y = 4;
+    int z = x + y;
+    int w = 2*x;
+
     switch(rt)
     {
         case rtFlag:
@@ -74,7 +61,6 @@ bool ReconClientSocket::Read(ReadinfoType rt)
         }
         default:
         {
-           // assert(0);
             return false;
         }
     }
@@ -85,16 +71,20 @@ bool ReconClientSocket::ReadFlag()
 {
     QByteArray byteArray;
 
-    int bytesLeft = bytesAvailable();
+    cmr::MsgPackBufferSocketIO io;
+    int bytesLeft = io.qt_bytesAvailable(_socket);
 
     qDebug()<< "Enter ReconClientSocket::ReadFlag():  "<< bytesLeft<<" bytes available";
-    if( bytesLeft < 2 * sizeof(uint32_t) )
+    int bytesToRead = 2 *sizeof(uint32_t);
+
+    //if( bytesLeft < 2 * sizeof(uint32_t) )
+    if( bytesLeft < bytesToRead )
     {
         return false;
     }
     else
     {
-        byteArray = read(2 * sizeof(uint32_t));
+        byteArray = io.qt_read(_socket, 2 * sizeof(uint32_t));
 
         uint32_t first =  *(uint32_t*) (char*)byteArray.data();
         uint32_t second = *(uint32_t*)((char*)byteArray.data() + sizeof(uint32_t));
@@ -120,10 +110,11 @@ bool ReconClientSocket::ReadHeaditem()
 {
     QByteArray byteArray;
 
+    cmr::MsgPackBufferSocketIO io;
     int headitem_count = _bufferInfo.headitem_count;
     int headitem_bytes = _bufferInfo.headitem_count * sizeof(HeadItem);
 
-    int bytesLeft = bytesAvailable();
+    int bytesLeft = io.qt_bytesAvailable(_socket);
     qDebug()<< "Enter ReconClientSocket::ReadHeaditem():  "<< bytesLeft<<" bytes available";
 
     if( bytesLeft < headitem_bytes)
@@ -132,17 +123,11 @@ bool ReconClientSocket::ReadHeaditem()
     }
     else
     {
-        byteArray = read(headitem_bytes);
-
+        byteArray = io.qt_read(_socket, headitem_bytes);
         assert(byteArray.size() == headitem_bytes);
-
         _package.headitems.resize( headitem_count);
-
         memcpy(_package.headitems.data(), byteArray.data(), byteArray.size());
-
         _package.CheckSelf(true, false, false);
-
-
 
     }
 
@@ -154,7 +139,8 @@ bool ReconClientSocket::ReadValue()
 
     int bytesToRead = _package.BytesFromHeaditems();
 
-    int bytesLeft = bytesAvailable();
+    cmr::MsgPackBufferSocketIO io;
+    int bytesLeft = io.qt_bytesAvailable(_socket);
     qDebug()<< "Enter ReconClientSocket::ReadValue():  "<< bytesLeft<<" bytes available";
 
     if(bytesLeft < bytesToRead)
@@ -166,7 +152,7 @@ bool ReconClientSocket::ReadValue()
     for(int i = 0; i < static_cast<int>( _package.headitems.size() ); i ++)
     {
         int dataitem_bytes = _package.headitems[i].value_size;
-        QByteArray byteArray = read( dataitem_bytes );
+        QByteArray byteArray = io.qt_read( _socket, dataitem_bytes );
         assert(byteArray.size() == dataitem_bytes);
 
         _package.valueitems[i].value.resize(dataitem_bytes);
@@ -179,13 +165,4 @@ bool ReconClientSocket::ReadValue()
 
     _package.CheckSelf();
     return true;
-}
-
-
-void ReconClientSocket::slotDisconnected()
-{
-    //gv_data_repopsitory.gv_is_finished=true;
-    qDebug()<<"ReconClientSocket: Recieving disconnected message.";
-    emit signalDisconnected(this->socketDescriptor());
-
 }

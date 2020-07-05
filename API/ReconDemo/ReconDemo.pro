@@ -43,7 +43,6 @@ SOURCES += \
     plot1d.cpp \
     rectcalc.cpp \
     imagelayoutwidget.cpp \
-    datamanager.cpp \
     Processors/ReceiveData.cpp \
     Processors/Display1D.cpp \
     Processors/Display2D.cpp \
@@ -59,9 +58,7 @@ SOURCES += \
     Geometry/Segment3D.cpp \
     Processors/Display1D.cpp \
     Processors/Display2D.cpp \
-    Processors/rawdata.cpp \
     Processors/ReceiveData.cpp \
-    datamanager.cpp \
     grayscalemapper.cpp \
     imagelayoutwidget.cpp \
     imageobject.cpp \
@@ -82,10 +79,8 @@ SOURCES += \
     Geometry/Segment3D.cpp \
     Processors/Display1D.cpp \
     Processors/Display2D.cpp \
-    Processors/rawdata.cpp \
     Processors/ReceiveData.cpp \
     QtUtilities/FormatString.cpp \
-    datamanager.cpp \
     grayscalemapper.cpp \
     imagelayoutwidget.cpp \
     imageobject.cpp \
@@ -106,7 +101,6 @@ SOURCES += \
     Geometry/Segment3D.cpp \
     Processors/Display1D.cpp \
     Processors/Display2D.cpp \
-    Processors/rawdata.cpp \
     Processors/ReceiveData.cpp \
     Reactor/ConnectionHandler.cpp \
     Reactor/ListenHandler.cpp \
@@ -116,7 +110,6 @@ SOURCES += \
     QtUtilities/commonmethod.cpp \
     QtUtilities/DataWatch.cpp \
     QtUtilities/FormatString.cpp \
-    datamanager.cpp \
     grayscalemapper.cpp \
     imagelayoutwidget.cpp \
     imageobject.cpp \
@@ -137,11 +130,9 @@ SOURCES += \
     Geometry/Segment3D.cpp \
     MessagePack/datapackage.cpp \
     MessagePack/reconclientsocket.cpp \
-    MessagePack/reconserver.cpp \
     MessagePack/SampleDataProtocol.cpp \
     Processors/Display1D.cpp \
     Processors/Display2D.cpp \
-    Processors/rawdata.cpp \
     Processors/ReceiveData.cpp \
     Reactor/ConnectionHandler.cpp \
     Reactor/ListenHandler.cpp \
@@ -151,7 +142,6 @@ SOURCES += \
     QtUtilities/commonmethod.cpp \
     QtUtilities/DataWatch.cpp \
     QtUtilities/FormatString.cpp \
-    datamanager.cpp \
     grayscalemapper.cpp \
     imagelayoutwidget.cpp \
     imageobject.cpp \
@@ -160,7 +150,11 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     plot1d.cpp \
-    rectcalc.cpp
+    rectcalc.cpp \
+    Reactor/SampleDataServer.cpp \
+    MessagePack/MsgPackBufferSocketIO.cpp \
+    ProcessorlineManager.cpp \
+    QDataEvent.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -182,7 +176,6 @@ HEADERS += \
     plot1d.h \
     rectcalc.h \
     imagelayoutwidget.h \
-    datamanager.h \
     StringHelper.h \
     Processors/ReceiveData.h \
     Processors/Display1D.h \
@@ -201,9 +194,7 @@ HEADERS += \
     Geometry/Segment3D.h \
     Processors/Display1D.h \
     Processors/Display2D.h \
-    Processors/Rawdata.h \
     Processors/ReceiveData.h \
-    datamanager.h \
     grayscalemapper.h \
     imagelayoutwidget.h \
     imageobject.h \
@@ -226,10 +217,8 @@ HEADERS += \
     Geometry/Segment3D.h \
     Processors/Display1D.h \
     Processors/Display2D.h \
-    Processors/Rawdata.h \
     Processors/ReceiveData.h \
     QtUtilities/FormatString.h \
-    datamanager.h \
     grayscalemapper.h \
     imagelayoutwidget.h \
     imageobject.h \
@@ -254,7 +243,6 @@ HEADERS += \
     Geometry/Segment3D.h \
     Processors/Display1D.h \
     Processors/Display2D.h \
-    Processors/Rawdata.h \
     Processors/ReceiveData.h \
     Reactor/ConnectionHandler.h \
     Reactor/EventDemultiplexer.h \
@@ -266,7 +254,6 @@ HEADERS += \
     QtUtilities/commonmethod.h \
     QtUtilities/DataWatch.h \
     QtUtilities/FormatString.h \
-    datamanager.h \
     grayscalemapper.h \
     imagelayoutwidget.h \
     imageobject.h \
@@ -291,11 +278,9 @@ HEADERS += \
     MessagePack/CmrPackType.h \
     MessagePack/datapackage.h \
     MessagePack/reconclientsocket.h \
-    MessagePack/reconserver.h \
     MessagePack/SampleDataProtocol.h \
     Processors/Display1D.h \
     Processors/Display2D.h \
-    Processors/Rawdata.h \
     Processors/ReceiveData.h \
     Reactor/ConnectionHandler.h \
     Reactor/EventDemultiplexer.h \
@@ -307,7 +292,6 @@ HEADERS += \
     QtUtilities/commonmethod.h \
     QtUtilities/DataWatch.h \
     QtUtilities/FormatString.h \
-    datamanager.h \
     grayscalemapper.h \
     imagelayoutwidget.h \
     imageobject.h \
@@ -316,7 +300,12 @@ HEADERS += \
     mainwindow.h \
     plot1d.h \
     rectcalc.h \
-    StringHelper.h
+    StringHelper.h \
+    Reactor/ICommandHandler.h \
+    Reactor/SampleDataServer.h \
+    MessagePack/MsgPackBufferSocketIO.h \
+    ProcessorlineManager.h \
+    QDataEvent.h
 
 FORMS += \
         mainwindow.ui

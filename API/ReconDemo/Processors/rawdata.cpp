@@ -3,7 +3,7 @@
 #include "Utilities\commonmethod.h"
 using namespace Databin;
 
-
+RawData RawData::s_instance;
 ///
 /// \brief RawData::Prepare
 /// \param freqcount
@@ -11,22 +11,24 @@ using namespace Databin;
 /// \param slicecount
 /// \param channel_switch
 ///
-void RawData::Prepare(int freqcount, int phasecount, int slicecount, int channel_switch)
+void RawData::Prepare(int scan_id, int freqcount, int phasecount, int slicecount, int channel_switch)
 {
 
-    InitChannels(freqcount, phasecount, slicecount, channel_switch);
+    _channel_switch = _channel_switch;
+    InitChannels(scan_id, freqcount, phasecount, slicecount, channel_switch);
     _ready = true;
 
 }
 ///
 /// \brief RawData::InitChannels
+/// For each channels, Setup the parameters and allocate the memory space.
 /// \param freqcount
 /// \param phasecount
 /// \param slicecount
 /// \param channel_switch
 /// \return
 ///
-bool RawData::InitChannels(int freqcount, int phasecount, int slicecount, int channel_switch)
+bool RawData::InitChannels(int scan_id, int freqcount, int phasecount, int slicecount, int channel_switch)
 {
 
     int max_channelcount = sizeof(channel_switch) * 8;
@@ -38,6 +40,7 @@ bool RawData::InitChannels(int freqcount, int phasecount, int slicecount, int ch
         {
             channel_used ++;
             ChannelData channel_data;
+            channel_data.scan_id        = scan_id;
             channel_data.channel_index  = index;
             channel_data.updated        = false;
             channel_data.freq_count     = freqcount;
@@ -91,13 +94,12 @@ void RawData::InsertPhasedata(std::complex<float>* source, int length, int chann
 
 }
 /**
-  @remark Copy all the channel infomations of a specified channel index to the input variable
-  of ChannelData structure.
+  @remark Allocate a storage with specified size and copy the data in databin to the storage.
 */
 std::complex<float>* RawData::NewChanneldata(const int channel_index,
                    int& freq_count, int& phase_count, int& slice_count)
 {
-    assert(channel_index < MaxChannelCount());
+    assert(channel_index <= MaxChannelIndex());
 
     std::complex<float>* channel_data;
     int count = 0;
@@ -123,17 +125,28 @@ std::complex<float>* RawData::NewChanneldata(const int channel_index,
 
 
 ///
-/// \brief RawData::MaxChannelCount
+/// \brief RawData::MaxChanneIndex
 /// \return
 ///
-int RawData::MaxChannelCount()
+int RawData::MaxChannelIndex()
 {
     int max_index = -1;
     for(auto channel: _channels_data)
     {
         max_index = (max_index >= channel.channel_index) ? max_index : channel.channel_index;
     }
-    return (max_index + 1);
+    return max_index;
+
+}
+int RawData::PhaseCount()
+{
+    assert(_channels_data.size()>0);
+    int phase_count = _channels_data[0].phase_count;
+    for (auto iter = _channels_data.cbegin(); iter != _channels_data.cend(); iter++)
+    {
+        assert(phase_count == (*iter).phase_count);
+    }
+    return phase_count;
 
 }
 bool RawData::NeedProcess(const int channel_index)
