@@ -33,7 +33,7 @@ private:
 
     static VirtualConsole s_instance;
 
-    VirtualConsole();//鍗曢敭妯″紡涓嬫墍鏈夌殑鏋勯€犲嚱鏁伴兘搴旇鏄痯rivate鐨
+    VirtualConsole();
 
 };
 

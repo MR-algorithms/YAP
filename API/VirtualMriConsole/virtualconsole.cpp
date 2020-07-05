@@ -10,6 +10,7 @@
 #include "QEvent"
 #include "QApplication"
 #include "QThread"
+#include "Windows.h"
 
 using namespace VirtualConsoleNS;
 
@@ -28,7 +29,10 @@ public:
     bool PrepareScantask(const ScanTask& task);
     bool Scan();
     void Stop();
-    unsigned int GetSendIndex(){return _sendIndex;}
+    unsigned int GetSendIndex(){
+        std::lock_guard<std::mutex> Lock(_scanTask_mutex);
+        return _sendIndex;
+    }
 
 private:
 
@@ -38,6 +42,8 @@ private:
     bool Init(const wchar_t *ip_address, unsigned short port);
 
 public:
+    // Send data: a phase step with slices or other kind of block to be sent to data processor server.
+    static void SendBlock(Databin &databin, ScanTask &scan_task, int &send_index);
     ScanTask _scanTask;
     std::mutex _scanTask_mutex;
     std::shared_ptr<EventQueue> _evtQueue;
@@ -49,7 +55,7 @@ public:
 
     std::timed_mutex _timeMutex1;
 
-    int _sendIndex;//琛ㄧず宸茬粡鍙戦€佷簡鍑犳潯k绌洪棿鏁版嵁锛堟墍鏈夐€氶亾鎵€鏈夊眰鐨勪竴琛岀畻涓€鏉★級
+    int _sendIndex;
 
 };
 
@@ -118,7 +124,10 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
             int scan_id = rand();
 
             databin.Start(scan_id);
-            qDebug()<<"scan Event";
+            qDebug()<<"VirtualConsoleImpl::ThreadFunction--receive scan Event";
+
+            SendBlock(databin, This->_scanTask, This->_sendIndex);
+            return 1;
 
         }
             break;
@@ -126,7 +135,7 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
         case MyEvent::time:
         {
             //Doing something.
-
+            /*
 
             if(!databin.CanbeFinished())
             {
@@ -137,7 +146,7 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
                 {
                     This->_timeMutex1.unlock();
 
-                    qDebug()<<"Apply for finished.";
+                    qDebug()<<"VirtualConsoleImple::SendBlock--post finished event.";
 
 
                     QApplication::postEvent(scantask.pWnd, new QEvent(QEvent::Type(QEvent::User + finished)));
@@ -153,6 +162,7 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
                     QApplication::postEvent(scantask.pWnd, new QEvent(QEvent::Type(QEvent::User + scanning)));
                 }
             }
+            */
         }
             break;
 
@@ -185,7 +195,30 @@ unsigned int VirtualConsoleImpl::ThreadFunction(VirtualConsoleImpl *This, std::p
     return 1;
 }
 
+void VirtualConsoleImpl::SendBlock(Databin &databin, ScanTask& scan_task, int &send_index)
+{
+    while(true)
+    {
+        Sleep(12000);
 
+        if(!databin.CanbeFinished())
+        {
+            databin.Go();
+            send_index = databin.current_scanindex();
+
+            qDebug() << "VirtualConsoleImple::SendBlock --- send: "<< send_index << "times";
+            QApplication::postEvent(scan_task.pWnd, new QEvent(QEvent::Type(QEvent::User + scanning)));
+        }
+        else
+        {
+            qDebug()<<"VirtualConsoleImple::SendBlock--post finished event.";
+            QApplication::postEvent(scan_task.pWnd, new QEvent(QEvent::Type(QEvent::User + finished)));
+            return;
+        }
+
+    }
+
+}
 
 bool VirtualConsoleImpl::PrepareScantask(const ScanTask& scan_task)
 {
@@ -203,31 +236,22 @@ bool VirtualConsoleImpl::Scan()
     std::promise<bool> promiseObj;
     std::future<bool> futureObj = promiseObj.get_future();
 
-    //
-
     _threadState = idle;
     _thread = std::thread(ThreadFunction , this, std::ref(promiseObj));
 
-
     if( futureObj.get() )
     {
-        //_timeMutex1.unlock();//
-        //rand();
         std::unique_lock<std::mutex> Lock_event(_event_mutex);
 
         _evtQueue.get()->PushEvent(new MyEvent(MyEvent::scan));
         return true;
-
     }
     else
     {
-        //杩炴帴涓嶆垚鍔
         qDebug() << "connecting fail.";
         _thread.join();
         return false;
-
     }
-
 
 }
 

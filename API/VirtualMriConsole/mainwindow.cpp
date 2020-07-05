@@ -33,8 +33,9 @@ void MainWindow::test_func()
     int error_code = WSAGetLastError();
     assert( connect_return != SOCKET_ERROR);
 
-    ::closesocket(s);
-    WSACleanup();
+    //WSAsend()
+    //::closesocket(s);
+    //WSACleanup();
 
 
 }
@@ -60,11 +61,11 @@ MainWindow::MainWindow(QWidget *parent) :
     //int test2 =99;
     //ui->editInfo->appendPlainText(QString("%1").arg(test2));
 
-    srand((int)time(0));
-    for(int x=0;x<10;x++)
-    {
-          qDebug()<< "rand() == "<< rand();
-    }
+    //srand((int)time(0));
+    //for(int x=0;x<10;x++)
+    //{
+    //      qDebug()<< "rand() == "<< rand();
+    //}
 
 
 
@@ -117,7 +118,7 @@ void MainWindow::on_scanButton_clicked()
     int allPhaseCount=ui->editPhaseCount->text().toInt();
     auto scantask = Scan::ScantaskGenerator::Create(reference_task, Scan::Mask(rate, type,allPhaseCount, 4/*ChannelCount*/));
 
-    qDebug()<<"MainWidow2: onScanButton_clicked";
+    qDebug()<<"MainWidow::onScanButton_clicked()";
 
     VirtualConsoleNS::VirtualConsole::GetHandle().PrepareScantask(scantask);
     if(!VirtualConsoleNS::VirtualConsole::GetHandle().Scan())
@@ -156,7 +157,7 @@ bool MainWindow::event(QEvent *event)
 
         //ui->editInfo->appendPlainText(QString("%1").arg(test2));
         unsigned int scan_count=VirtualConsoleNS::VirtualConsole::GetHandle().GetSendIndex();
-        QString message=tr("scanning:%1").arg(scan_count);
+        QString message=tr("MainWindow::event()--scanning:%1").arg(scan_count);
         ui->editInfo->appendPlainText(message);
 
     }
@@ -166,11 +167,11 @@ bool MainWindow::event(QEvent *event)
     {
         //ui->editInfo->appendPlainText(QString("stopped"));
 
-        ui->editInfo->appendPlainText(QString("Finished!"));
+        ui->editInfo->appendPlainText(QString("MainWindow::event()--Finished!"));
         //
         unsigned int scan_count=VirtualConsoleNS::VirtualConsole::GetHandle().GetSendIndex();
 
-        QString message=tr("<scanning:%1>").arg(scan_count);
+        QString message=tr("<MainWindow::event()--scanning:%1>").arg(scan_count);
         ui->editInfo->appendPlainText(message);
         //
         ui->scanButton->setEnabled(true);

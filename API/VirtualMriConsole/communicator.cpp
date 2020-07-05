@@ -34,17 +34,17 @@ bool Communicator::SetRemoteHost(const wchar_t * ip_address, unsigned short port
 }
 void Communicator::slotConnected()
 {
-    qDebug()<<"Communicator: slotConnected.";
+    qDebug()<<"Communicator::slotConnected().";
 }
 
 void Communicator::slotDataReceived()
 {
-    qDebug()<<"Communicator: slotDataReceived.";
+    qDebug()<<"Communicator::slotDataReceived().";
 }
 
 void Communicator::slotDisconnected()
 {
-    qDebug()<<"Communicator: slotDisconnected.";
+    qDebug()<<"Communicator::slotDisconnected().";
 }
 
 bool Communicator::Connect()
@@ -59,6 +59,7 @@ bool Communicator::Connect()
 
 bool Communicator::Disconnect()
 {
+    qDebug()<<"Communicator::Disconnect().";
     disconnectFromHost();
     //return true;
     return waitForDisconnected();
@@ -100,17 +101,26 @@ bool Communicator::Send(const DataPackage &package)
          byteArray2 += temp;
     }
 
+    int write_return = this->write(byteArray1 + byteArray1b + byteArray1c + byteArray2);
+    if( write_return == -1)
+    {
+        qDebug()<<"Communicator::Send -- calling write function failed!";
+        return false;
+    }
+    else
+    {
+        int bytesA = package.BytesFromValueitems();
+        int bytesB = package.BytesFromHeaditems();
+        int bytesC = byteArray2.size();
+        assert( bytesA == bytesB && bytesA == bytesC);
+        int bytesTotal = QByteArray(byteArray1 + byteArray1b + byteArray1c + byteArray2).size();
+        assert(write_return == bytesTotal);
+        qDebug()<<"Communicator::Send--calling write sending "<< bytesTotal <<" bytes";
 
-    this->write(byteArray1 + byteArray1b + byteArray1c + byteArray2);
+        bool success = this->waitForBytesWritten(30000);
+        assert(success);
 
-    int bytesA = package.BytesFromValueitems();
-    int bytesB = package.BytesFromHeaditems();
-    int bytesC = byteArray2.size();
-    assert( bytesA == bytesB && bytesA == bytesC);
+        return true;
+    }
 
-    int bytesTotal = QByteArray(byteArray1 + byteArray1b + byteArray1c + byteArray2).size();
-    qDebug()<<"Send "<< bytesTotal <<" bytes";
-
-    bool succeed = this->waitForBytesWritten();
-    return succeed;
 }

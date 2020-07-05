@@ -40,6 +40,7 @@ public:
     bool Go();
     void End();
     bool CanbeFinished(){return _current_scanmask_index >=static_cast<int>( _scantask.mask.data.size() );}
+    int current_scanindex()const {return _current_scanmask_index;}
     bool Stoped(){return _ended;}
 
 
