@@ -20,7 +20,7 @@ namespace Yap
 
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
-		void TestChannelOnSlice(IData *output);
+		
 	};
 }
 #endif // SliceSelector_h__

@@ -118,7 +118,8 @@ public:
 	}
 
 	template <typename SOURCE_TYPE>
-	SmartPtr(const SmartPtr<SOURCE_TYPE>& source)
+	SmartPtr(const SmartPtr<SOURCE_TYPE>& source)//missing ":_pointer(source._pointer)"
+												 //May be this function is not called in any code. 
 	{
 		if (source.get() == nullptr)
 			return;
@@ -128,7 +129,7 @@ public:
 
 		auto shared_object = dynamic_cast<ISharedObject*>(_pointer);
 		assert(shared_object && "Only type derived from ISharedObject can be wrapped in SmartPtr.");
-		shared_object->Lock();
+		shared_object->Lock(); //Need Lock again in pointer assignment.
 	}
 
 	SmartPtr(SmartPtr<TYPE>&& source) : _pointer(source._pointer)
@@ -145,7 +146,7 @@ public:
 		auto shared_pointer = dynamic_cast<ISharedObject*>(_pointer);
 		if (shared_pointer != nullptr)
 		{
-			shared_pointer->Lock();
+			shared_pointer->Lock(); //why needs Lock in this right reference, while there's no lock in the following "operator =".
 		}
 	}
 

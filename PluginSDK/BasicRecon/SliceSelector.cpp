@@ -130,19 +130,3 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 	return true;
 }
 
-
-void SliceSelector::TestChannelOnSlice(IData *output)
-{
-	auto temp = output->GetDimensions();
-	Dimensions data_dimentions(output->GetDimensions());
-	DataHelper helper(output);
-	Dimension channel_dimention = helper.GetDimension(DimensionChannel);
-	Dimension read_dimmention = helper.GetDimension(DimensionReadout);
-	Dimension phase_dimention = helper.GetDimension(DimensionPhaseEncoding);
-
-	
-	assert(channel_dimention.length == 1);
-
-	return;
-
-}

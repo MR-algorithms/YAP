@@ -103,7 +103,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 				GetDataArray<float>(module.get()),
 				input_data.GetDataSize());
 
-			TestChannelOnSlice(module.get());
+			//TestChannelOnSlice(module.get());
 			return Feed(L"Module", module.get());
 		}
 	}

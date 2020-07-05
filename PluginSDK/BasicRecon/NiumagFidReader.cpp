@@ -6,6 +6,8 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <cassert>
+#include "Client\DataHelper.h"
 
 using namespace Yap;
 using namespace std;
@@ -108,16 +110,18 @@ bool Yap::NiumagFidReader::ReadNiumagFidData()
 		auto data = CreateData<complex<float>>(nullptr,
 			reinterpret_cast<complex<float>*>(buffer), dimensions);
 		
-		//Test CreateVariableSpace in Idata.
-		/*VariableSpace variables;
-		variables.AddVariable(L"bool", L"var1", L"var1.");
-		variables.Set(L"var1", true);
-		data->SetVariables(variables.Variables());*/
+		
 
-		shared_ptr<int> p = make_shared<int>(42);
-		shared_ptr<int> q(p);                        //此对象现在有两个引用者，计数为2
-		shared_ptr<int> r = make_shared<int>(42);
 
+		//
+		//Add some variables and check them.
+		AddASingleVarible(data.get(), L"slice_index", 0, DataHelper(data.get()).GetDataType());
+		AddASingleVarible(data.get(), L"slice_count", dim3, DataHelper(data.get()).GetDataType());
+		AddASingleVarible(data.get(), L"channel_index", 0, DataHelper(data.get()).GetDataType());
+		AddASingleVarible(data.get(), L"channel_switch", 1, DataHelper(data.get()).GetDataType());
+
+		int slice_index_return;
+		assert(VariablesValid(data.get(), &slice_index_return));
 		//
 
 		Feed(L"Output", data.get());
