@@ -14,7 +14,6 @@
 #include <QFileInfo>
 #include "Client/DataHelper.h"
 
-#include <QEvent>
 #include <QApplication>
 
 using namespace std;
@@ -80,7 +79,6 @@ bool SampleDataServer::OnDataStart(SampleDataStart &start)//cmr::MsgUnpack& msg_
         int slice_count = _sample_start.dim3_size;
         RawData::GetHandle().Prepare(scan_id, freq_count, phase_count, slice_count, channel_switch);
 
-        _observer->OnDataBegin(start.scan_id);
     }
     return true;
 }
@@ -96,7 +94,8 @@ bool SampleDataServer::OnDataData(SampleDataData &data)//cmr::MsgUnpack& msg_pac
     //
     int data_size = data.data_value.size();
 
-    assert(RawData::GetHandle().PhaseCount()==data_size);
+    const ChannelData& channel = RawData::GetHandle().GetChannelData(channel_index);
+    assert(channel.phase_count==data_size);
 
     std::complex<float> * data_vector2 = new std::complex<float>[data_size];
 
@@ -106,47 +105,14 @@ bool SampleDataServer::OnDataData(SampleDataData &data)//cmr::MsgUnpack& msg_pac
     }
     RawData::GetHandle().InsertPhasedata(data_vector2, data_size, channel_index, slice_index, phase_index);
     //-
-    _observer->OnDataData(_sample_start.scan_id, phase);
     return true;
 }
 
 bool SampleDataServer::OnDataEnd(SampleDataEnd &end)//cmr::MsgUnpack& msg_pack, TransferInfo& info)
 {
-    _observer->OnDataEnd(_sample_start.scan_id);
     return true;
 }
 
-/*
-bool SampleDataServer::InsertPhasedata(Yap::IData *data)
-{
-   assert(data->GetVariables() != nullptr);
-   VariableSpace variables(data->GetVariables());
-   int channel_index = variables.Get<int>(L"channel_index");
-   int slice_index = variables.Get<int>(L"slice_index");
-   int phase_index = variables.Get<int>(L"phase_index");
-
-   DataHelper helpler(data);
-   assert(helpler.GetActualDimensionCount() == 1);
-   assert(helpler.GetDataType() == DataTypeComplexFloat);
-   auto source = GetDataArray<std::complex<float>>(data);
-   int length = helpler.GetWidth();
-
-   //if(cnstTEST)
-      // assert(!CommonMethod::IsComplexelementZero<std::complex<float>>(source, length) );
-   RawData::GetHandle().InsertPhasedata(source, length, channel_index, slice_index, phase_index);
-
-   wstringstream wss;
-   wss<<L"-------Feed : phase index == "<<phase_index
-     << L", channel_index == " << channel_index
-     << L", slice_index == " << slice_index;
-
-   wstring ws ;
-   ws=wss.str(); //»ò ss>>strtEST;
-   LOG_TRACE(ws.c_str(), L"ReconDemo");
-
-   return true;
-}
-*/
 void SampleDataServer::calculate_dimindex(SampleDataStart &start, int dim23456_index, int &phase_index, int &slice_index)
 {
 
@@ -169,12 +135,6 @@ void SampleDataServer::calculate_dimindex(SampleDataStart &start, int dim23456_i
 
     CommonMethod::split_index(dim23456_index, phase_count, slice_count, phase_index, slice_index);
 
-}
-
-void SampleDataServer::SetObserver(std::shared_ptr<SampleDataObserver> observer)
-{
-    //boost::unique_lock<boost::mutex> lk(_state_mutex);
-    _observer = observer;
 }
 
 bool SampleDataServer::Run()

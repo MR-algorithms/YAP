@@ -8,7 +8,6 @@
 #include <new>
 #include "QtUtilities\FormatString.h"
 #include "Implement\LogUserImpl.h"
-#include "SampleDataServer.h"
 #include "MessagePack/reconclientsocket.h"
 
 ConnectionHandler::ConnectionHandler(Handle connection) 

@@ -4,6 +4,61 @@
 using namespace Databin;
 
 RawData RawData::s_instance;
+
+//check the state of phase steps of all slices.
+//0: no data;
+//1: all slices datas of the current phase step have been inserted.
+//2: part of slices datas of the current phase step have been inserted.
+int ChannelData::InsertphaseStateOfSlices()
+{
+    assert(slice_count > 0);
+    assert(phase_count > 0);
+    assert(phase_index >= 0);
+    std::vector<int> slices;
+    slices.resize(slice_count);
+
+    for(int i=0; i < slice_count; i++)
+    {
+        slices[i] = phasemask_slices[i * phase_count + phase_index];
+    }
+    int state = 0;
+    if(IsSameValue(slices, 0))
+    {
+        state = 0;
+    }
+    else if(IsSameValue(slices, 1))
+    {
+        state = 1;
+    }
+    else
+        state = 2;
+
+    return state;
+}
+
+//check if all values are specified value.
+bool ChannelData::IsSameValue(std::vector<int> &slices, int value)
+{
+    int label = value;
+    int i = 0;
+    for(i=0; i< slices.size(); i++)
+    {
+        assert(slices[i]==0 || slices[i]==1);
+        if(label != value)
+            break;
+    }
+    if(i==slices.size())
+    {
+        return true;
+    }
+    else
+    {
+        assert(i>0&&i<slices.size());
+        return false;
+    }
+
+}
+
 ///
 /// \brief RawData::Prepare
 /// \param freqcount
@@ -11,10 +66,10 @@ RawData RawData::s_instance;
 /// \param slicecount
 /// \param channel_switch
 ///
+/// freqCount: data count in the frequency direction.
 void RawData::Prepare(int scan_id, int freqcount, int phasecount, int slicecount, int channel_switch)
 {
 
-    _channel_switch = _channel_switch;
     InitChannels(scan_id, freqcount, phasecount, slicecount, channel_switch);
     _ready = true;
 
@@ -41,16 +96,18 @@ bool RawData::InitChannels(int scan_id, int freqcount, int phasecount, int slice
             channel_used ++;
             ChannelData channel_data;
             channel_data.scan_id        = scan_id;
+            channel_data.channel_switch = channel_switch;
             channel_data.channel_index  = index;
-            channel_data.updated        = false;
-            channel_data.freq_count     = freqcount;
+             channel_data.freq_count     = freqcount;
             channel_data.phase_count    = phasecount;
             channel_data.slice_count    = slicecount;
             channel_data.dim4           = 1;
 
             channel_data.data.resize(freqcount * phasecount * slicecount);
+            channel_data.phasemask_slices.resize(phasecount * slicecount);
 
             memset(channel_data.data.data(), 0, channel_data.data.size() * sizeof(std::complex<float>));
+            memset(channel_data.phasemask_slices.data(), 0, channel_data.phasemask_slices.size() * sizeof(int));
 
             _channels_data.push_back(channel_data);
 
@@ -62,9 +119,7 @@ bool RawData::InitChannels(int scan_id, int freqcount, int phasecount, int slice
     return true;
 }
 
-
-
-
+//InsertPhaseData of one slice.
 void RawData::InsertPhasedata(std::complex<float>* source, int length, int channel_index, int slice_index, int phase_index)
 {
     assert(_ready);
@@ -72,11 +127,29 @@ void RawData::InsertPhasedata(std::complex<float>* source, int length, int chann
     int count = 0;
     for(auto it = _channels_data.begin(); it != _channels_data.end(); it++)
     {
+        //find the right channel to insert phase data.
         if((*it).channel_index == channel_index)
         {
+            //check validation.
             count ++;
-            assert(count == 1);//Ensure only enter once.
-            (*it).updated = true;
+            assert(count == 1);
+            int state =(*it).InsertphaseStateOfSlices();
+            if(state==0)//start writing.
+            {
+                (*it).phase_index = phase_index;
+            }
+            else if(state==2)//writing
+            {
+                assert((*it).phase_index==phase_index);
+
+            }
+            else
+            {
+                assert(state==1);
+                assert(0);
+            }
+            //end of check.
+
             int freq_count = (*it).freq_count;
             int phase_count = (*it).phase_count;
             int slice_size = freq_count * phase_count;
@@ -87,16 +160,22 @@ void RawData::InsertPhasedata(std::complex<float>* source, int length, int chann
             memcpy(dest_pointer, source, length * sizeof(std::complex<float>) );
             assert(!CommonMethod::IsComplexelementZero<std::complex<float>>(source, length));
 
+            state = (*it).InsertphaseStateOfSlices();
+            if(state==1)
+            {
+                NotifyObserver(SSChannelPhaseStep, (*it).scan_id, channel_index, phase_index);
+            }
+            assert(state==2);
 
         }
     }
 
-
 }
 /**
-  @remark Allocate a storage with specified size and copy the data in databin to the storage.
+    @remark Create a complex buffer filled with a channel data from data databin,
+    which is to be used in reconstruction pipeline.
 */
-std::complex<float>* RawData::NewChanneldata(const int channel_index,
+std::complex<float>* RawData::NewChanneldata(int channel_index,
                    int& freq_count, int& phase_count, int& slice_count)
 {
     assert(channel_index <= MaxChannelIndex());
@@ -123,6 +202,39 @@ std::complex<float>* RawData::NewChanneldata(const int channel_index,
     return channel_data;
 }
 
+std::complex<float>* RawData::NewPhaseStep(int channel_index, int display_count)
+{
+    assert(channel_index <= MaxChannelIndex());
+
+
+    std::complex<float>* display_buffer;
+    int count = 0;
+    for(auto item: _channels_data)
+    {
+        if(item.channel_index == channel_index)
+        {
+            count ++;
+            int freq_count = item.freq_count;
+            int phase_count = item.phase_count;
+            int slice_count = item.slice_count;
+
+            assert(display_count>0 && display_count<freq_count*slice_count);
+            display_buffer = new std::complex<float>[display_count];
+            int left = display_count;
+            for(int i=0; i<slice_count; i++)
+            {
+                int length = (left<freq_count)? left:freq_count;
+                memcpy( display_buffer + i*freq_count, item.data.data(), length * sizeof(std::complex<float>));
+                left -= length;
+            }
+            assert(left==0);
+        }
+    }
+    //Enusre there is one and only one channel with specified index.
+    assert(count == 1);
+    return display_buffer;
+
+}
 
 ///
 /// \brief RawData::MaxChanneIndex
@@ -138,16 +250,18 @@ int RawData::MaxChannelIndex()
     return max_index;
 
 }
-int RawData::PhaseCount()
+
+const ChannelData& RawData::GetChannelData(int channel_index) const
 {
     assert(_channels_data.size()>0);
+    const ChannelData& result = _channels_data[channel_index];
+
     int phase_count = _channels_data[0].phase_count;
     for (auto iter = _channels_data.cbegin(); iter != _channels_data.cend(); iter++)
     {
         assert(phase_count == (*iter).phase_count);
     }
-    return phase_count;
-
+    return result;
 }
 bool RawData::NeedProcess(const int channel_index)
 {
@@ -157,9 +271,23 @@ bool RawData::NeedProcess(const int channel_index)
     {
         if(channel_index == channel.channel_index)
         {
-            return channel.updated;
+            int state = channel.InsertphaseStateOfSlices();
+            return(state==1);
         }
     }
 
     return false;
+}
+
+void RawData::NotifyObserver(ScanSignal scan_signal, uint32_t scan_id, int channel_index, int phase_index)
+{
+    _observer->OnData(scan_signal, scan_id, channel_index, phase_index);
+    return;
+}
+
+
+void RawData::SetObserver(std::shared_ptr<IDataObserver> observer)
+{
+    //boost::unique_lock<boost::mutex> lk(_state_mutex);
+    _observer = observer;
 }

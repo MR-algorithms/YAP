@@ -16,12 +16,12 @@
 
 #include <QFileInfo>
 
-
+#include "Processors/Rawdata.h"
 #include "Client/DataHelper.h"
 
 #include <QEvent>
 #include <QApplication>
-#include "Processors/Rawdata.h"
+
 
 using namespace std;
 using namespace Yap;
@@ -199,7 +199,7 @@ bool ProcessorlineManager::Demo1D()
         if (pipeline)
         {
 
-            auto output_data = CreateDemoIData1D();
+            auto output_data = CreateDemoData1D();
             pipeline->Input(L"Input", output_data.get());
         }
     }
@@ -230,7 +230,7 @@ bool ProcessorlineManager::Demo2D()
         {
 
             int width, height, slice_count;
-            auto output_data = CreateDemoIData2D(width, height, slice_count);
+            auto output_data = CreateDemoData2D(width, height, slice_count);
             AddVariables(output_data.get(), height, 0, 1, 1, 0);
 
             pipeline->Input(L"Input", output_data.get());
@@ -244,7 +244,135 @@ bool ProcessorlineManager::Demo2D()
     return true;
 }
 
-Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateDemoIData2D(int &width, int &height, int &slice_count)
+
+void ProcessorlineManager::AddVariables(Yap::IData* data,
+                  int phase_count,
+                  int slice_index,
+                  int slice_count,
+                  int channel_switch,
+                  int channel_index
+                  )
+{
+    DataHelper helper(data);
+    if (nullptr == data->GetVariables())    {
+        VariableSpace variable;
+        //
+        if (helper.GetDataType() == DataTypeComplexFloat)   {
+            dynamic_cast<Yap::DataObject<std::complex<float>>*>(data)->SetVariables(variable.Variables());
+        }
+        else {
+            dynamic_cast<Yap::DataObject<unsigned short>*>(data)->SetVariables(variable.Variables());
+        }
+    }
+
+    VariableSpace variables(data->GetVariables());
+
+    variables.AddVariable(L"int",  L"channel_switch", L"channel switch.");
+    variables.AddVariable(L"int",  L"channel_index", L"channel index.");
+    variables.AddVariable(L"int",  L"slice_count", L"slice count.");
+    variables.AddVariable(L"int",  L"slice_index", L"slice index.");
+    variables.AddVariable(L"int",  L"phase_count", L"phase count.");
+
+    variables.Set(L"channel_switch", channel_switch);
+    variables.Set(L"channel_index", channel_index);
+    variables.Set(L"slice_count", slice_count);
+    variables.Set(L"slice_index", slice_index);
+    variables.Set(L"phase_count", phase_count);
+
+
+}
+
+
+bool ProcessorlineManager::OnScanStart(int scan_id)
+{
+
+    Pipeline1DforNewScan(scan_id);
+    //Pipeline2DforNewScan(scan_id);
+    assert(_rt_pipeline1D);
+    //assert(_rt_pipeline2D);
+    return true;
+}
+
+
+bool ProcessorlineManager::OnChannelPhasestep(int scan_id)
+{
+    InputPipeline1D();
+    return true;
+}
+bool ProcessorlineManager::OnScanFinished(int scan_id)
+{
+/*
+    int channel_switch = RawData::GetHandle().channel_switch();
+
+    Yap::VariableSpace variables;
+    variables.AddVariable(L"bool", L"Finished", L"Iteration finished.");
+    variables.AddVariable(L"int",  L"channel_switch", L"channel switch.");
+    variables.Set(L"Finished", true);
+    variables.Set(L"channel_switch", channel_switch);
+
+    auto output = DataObject<int>::CreateVariableObject(variables.Variables(), nullptr);
+
+    if(_rt_pipeline2D)
+    {
+        //Send a "Finished" message with no data array to the pipeline.
+        _rt_pipeline2D->Input(L"Input", output.get());
+    }
+*/
+    return true;
+}
+
+bool ProcessorlineManager::InputPipeline1D()
+{
+
+    const double PI = 3.1415926;
+    static double phi0 = 0;
+    phi0 += 0.1 * PI;
+
+    auto output_data = CreateDemoData1D(phi0);
+    if(_rt_pipeline1D)
+        _rt_pipeline1D->Input(L"Input", output_data.get());
+    return true;
+
+}
+
+bool ProcessorlineManager::InputPipeline2D()
+{
+
+    return true;
+}
+
+Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateDemoData1D(double phi0)
+{
+
+    const double PI = 3.1415926;
+    int data_vector2_size = 314;
+    std::complex<float> * data_vector2 = new std::complex<float>[data_vector2_size];
+
+
+
+    double dw = 4*PI / data_vector2_size;
+    for(int i = 0; i < data_vector2_size; i ++)
+    {
+
+      double temp = 10;//data_vector2_size + 10 - i;
+      data_vector2[i].real( temp* 10* sin(i * dw + phi0) );
+      data_vector2[i].imag( temp* 10* cos(i * dw + phi0) );
+    }
+
+    //
+    Yap::Dimensions dimensions;
+    dimensions(Yap::DimensionReadout, 0U, data_vector2_size)
+        (Yap::DimensionPhaseEncoding, 0U, 1)
+        (Yap::DimensionSlice, 0U, 1);
+
+    auto output_data1 = Yap::YapShared(
+                new Yap::DataObject<std::complex<float>>(nullptr, data_vector2, dimensions, nullptr, nullptr));
+
+
+    return output_data1;
+
+}
+Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateDemoData2D(int &width, int &height, int &slice_count)
 {
     Yap::Dimensions dimensions;
     width = 512;
@@ -305,94 +433,22 @@ Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateDemoIData2D(int &width, in
 
 }
 
-void ProcessorlineManager::AddVariables(Yap::IData* data,
-                  int phase_count,
-                  int slice_index,
-                  int slice_count,
-                  int channel_switch,
-                  int channel_index
-                  )
-{
-    DataHelper helper(data);
-    if (nullptr == data->GetVariables())    {
-        VariableSpace variable;
-        //
-        if (helper.GetDataType() == DataTypeComplexFloat)   {
-            dynamic_cast<Yap::DataObject<std::complex<float>>*>(data)->SetVariables(variable.Variables());
-        }
-        else {
-            dynamic_cast<Yap::DataObject<unsigned short>*>(data)->SetVariables(variable.Variables());
-        }
-    }
 
-    VariableSpace variables(data->GetVariables());
-
-    variables.AddVariable(L"int",  L"channel_switch", L"channel switch.");
-    variables.AddVariable(L"int",  L"channel_index", L"channel index.");
-    variables.AddVariable(L"int",  L"slice_count", L"slice count.");
-    variables.AddVariable(L"int",  L"slice_index", L"slice index.");
-    variables.AddVariable(L"int",  L"phase_count", L"phase count.");
-
-    variables.Set(L"channel_switch", channel_switch);
-    variables.Set(L"channel_index", channel_index);
-    variables.Set(L"slice_count", slice_count);
-    variables.Set(L"slice_index", slice_index);
-    variables.Set(L"phase_count", phase_count);
-
-
-}
-
-Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateDemoIData1D()
-{
-    const double PI = 3.1415926;
-    int data_vector2_size = 314;
-    std::complex<float> * data_vector2 = new std::complex<float>[data_vector2_size];
-
-
-    double dw = 4*PI / data_vector2_size;
-    for(int i = 0; i < data_vector2_size; i ++)
-    {
-
-      double temp = data_vector2_size + 10 - i;
-      data_vector2[i].real( temp* 10* sin(i * dw ) );
-      data_vector2[i].imag( temp* 10* cos(i * dw ) );
-    }
-
-    //
-    Yap::Dimensions dimensions;
-    dimensions(Yap::DimensionReadout, 0U, data_vector2_size)
-        (Yap::DimensionPhaseEncoding, 0U, 1)
-        (Yap::DimensionSlice, 0U, 1);
-
-    auto output_data1 = Yap::YapShared(
-                new Yap::DataObject<std::complex<float>>(nullptr, data_vector2, dimensions, nullptr, nullptr));
-
-
-    return output_data1;
-
-}
-/*
-Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateIData1D(SampleDataData &data)
+Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateData1D(int scan_id, int channel_index, int phase_index)
 {
     //
-    int channel_switch = _sample_start.channel_switch;
+    const ChannelData &channeldata = RawData::GetHandle().GetChannelData(channel_index);
 
-    int scan_id = _sample_start.scan_id;
-    int freq_count = _sample_start.dim1_size;
-    int phase_count = _sample_start.dim2_size;
-    int slice_count = _sample_start.dim3_size;
+    int freq_count = channeldata.freq_count;
+    int phase_count = channeldata.phase_count;
+    int slice_count = channeldata.slice_count;
 
-    int channel_index = data.rec;
+    int channel_switch = channeldata.channel_switch;
+    assert(scan_id==channeldata.scan_id);
+    assert(channel_index==channeldata.channel_index);
 
     //
-    int data_size = data.data_value.size();
-    assert(phase_count == data_size);
-    std::complex<float> * data_vector2 = new std::complex<float>[data_size];
-
-    for(int i = 0; i < data_size; i ++)
-    {
-      data_vector2[i] = data.data_value[i];
-    }
+    std::complex<float> * buffer = RawData::GetHandle().NewPhaseStep(channel_index, freq_count);
 
     Yap::Dimensions dimensions;
     dimensions(Yap::DimensionReadout, 0U, freq_count)
@@ -401,7 +457,7 @@ Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateIData1D(SampleDataData &da
 
 
     auto output_data = Yap::YapShared(
-                new Yap::DataObject<std::complex<float>>(nullptr, data_vector2, dimensions, nullptr, nullptr));
+                new Yap::DataObject<std::complex<float>>(nullptr, buffer, dimensions, nullptr, nullptr));
 
     if (output_data->GetVariables() == nullptr)
     {
@@ -425,42 +481,11 @@ Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateIData1D(SampleDataData &da
     return output_data;
 
 }
+/*
 
+Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateData2D(int scan_id, int channel_index)
+{
+
+}
 */
 
-bool ProcessorlineManager::OnDataBegin(int scan_id)
-{
-
-    Pipeline1DforNewScan(scan_id);
-    Pipeline2DforNewScan(scan_id);
-    assert(_rt_pipeline1D);
-    //assert(_rt_pipeline2D);
-    return true;
-}
-
-
-bool ProcessorlineManager::OnDataData(int scan_id)
-{
-    return true;
-}
-bool ProcessorlineManager::OnDataEnd(int scan_id)
-{
-
-    int channel_switch = RawData::GetHandle().channel_switch();
-
-    Yap::VariableSpace variables;
-    variables.AddVariable(L"bool", L"Finished", L"Iteration finished.");
-    variables.AddVariable(L"int",  L"channel_switch", L"channel switch.");
-    variables.Set(L"Finished", true);
-    variables.Set(L"channel_switch", channel_switch);
-
-    auto output = DataObject<int>::CreateVariableObject(variables.Variables(), nullptr);
-
-    if(_rt_pipeline2D)
-    {
-        //Send a "Finished" message with no data array to the pipeline.
-        _rt_pipeline2D->Input(L"Input", output.get());
-    }
-
-    return true;
-}

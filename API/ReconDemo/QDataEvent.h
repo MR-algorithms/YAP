@@ -11,27 +11,40 @@ enum DimensionType{
     unknown
 };
 
-enum DataEvent
+enum ScanSignal
 {
-    DataBegin,
-    DataData,
-    DataEnd,
-    DataUnkown,
+    SSScanStart,
+    SSSlicePhaseStep,   //Phase step is written in a slice.
+    SSChannelPhaseStep, //phase step is wiitten in a channel,
+    SSSliceFinished,    //
+    SSChannelFinished,
+    SSScanFinished,
+    SSUnkown,
+
 };
 
 class QDataEvent : public QEvent
 {
 public:
-    QDataEvent(QEvent::Type type, DataEvent data_event, uint32_t scan_id, DimensionType dimension_type=unknown);
-    DataEvent GetDataEvent() const;
-    uint32_t GetScanID() const;
+    QDataEvent(QEvent::Type type, ScanSignal scan_signal, uint32_t scan_id, int channel_index, int phase_index);
+    ScanSignal GetScanSignal() const{return _scan_signal;}
+    uint32_t GetScanID() const {return _scan_id;}
+    int GetChannelIndex() const {return _channel_index;}
+    int GetPhaseIndex() const {return _phase_index;}
 private:
-    DataEvent _data_event;
+    ScanSignal _scan_signal;
     uint32_t _scan_id;
-    DimensionType _dimenison_type;
-    int _start_index;
-    int _size_in_dimension;
+    int _channel_index;
+    int _phase_index;
 
+
+};
+
+class IDataObserver
+{
+public:
+    virtual ~IDataObserver(){}
+    virtual void OnData(ScanSignal scan_signal, uint32_t scan_id, int channel_index, int phase_index) = 0;
 
 };
 #endif // CDATAEVENT_H

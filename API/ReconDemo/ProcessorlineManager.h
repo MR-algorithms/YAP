@@ -24,22 +24,27 @@ public:
     void RunPipeline(const QString& pipeline);
     bool LoadData(const QString& image_path);
     //
-    bool OnDataBegin(int scan_id);
-    bool OnDataData(int scan_id);
-    bool OnDataEnd(int scan_id);
+    bool OnScanStart(int scan_id);
+    bool OnChannelPhasestep(int scan_id);
+    bool OnScanFinished(int scan_id);
 
 private:
     ProcessorlineManager();
     static ProcessorlineManager s_instance;
 
     Yap::SmartPtr<Yap::IProcessor> CreatePipeline(const QString& pipelineFile);
-    bool ProcessFidfile(const QString& file_path, const QString& pipelineFile);
-    Yap::SmartPtr<Yap::IData> CreateDemoIData2D(int &width, int &height, int &slice_count);
-    Yap::SmartPtr<Yap::IData> CreateDemoIData1D();
 
-
-    bool Pipeline2DforNewScan(int scan_id);
     bool Pipeline1DforNewScan(int scan_id);
+    bool Pipeline2DforNewScan(int scan_id);
+    bool InputPipeline1D();
+    bool InputPipeline2D();
+
+    bool ProcessFidfile(const QString& file_path, const QString& pipelineFile);
+    Yap::SmartPtr<Yap::IData> CreateDemoData1D(double phi0=0);
+    Yap::SmartPtr<Yap::IData> CreateDemoData2D(int &width, int &height, int &slice_count);
+    Yap::SmartPtr<Yap::IData> CreateData1D(int scan_id, int channel_index, int phase_index);
+    //Yap::SmarpPtr<Yap::IData> CreateData2D(int scan_id, int channel_index);
+
 
     void AddVariables(Yap::IData *idata,
                       int phase_count,

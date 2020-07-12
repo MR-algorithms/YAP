@@ -1,21 +1,13 @@
 #include "QDataEvent.h"
 
-QDataEvent::QDataEvent(QEvent::Type type, DataEvent data_event, uint32_t scan_id, DimensionType dimension_type)
+QDataEvent::QDataEvent(QEvent::Type type, ScanSignal scan_signal,
+                       uint32_t scan_id, int channel_index, int phase_index)
     : QEvent(type)
-    , _data_event(data_event)
+    , _scan_signal(scan_signal)
     , _scan_id(scan_id)
-    , _dimenison_type(dimension_type)
+    , _channel_index(channel_index)
+    , _phase_index(phase_index)
 {
 
-}
-
-DataEvent QDataEvent::GetDataEvent() const
-{
-    return _data_event;
-}
-
-uint32_t QDataEvent::GetScanID() const
-{
-    return _scan_id;
 }
 
