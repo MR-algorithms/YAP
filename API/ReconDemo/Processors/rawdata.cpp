@@ -1,6 +1,7 @@
 #include "Rawdata.h"
 #include <assert.h>
 #include "Utilities\commonmethod.h"
+#include "QtUtilities/FormatString.h"
 //#include <algorithm>
 //#include <vector>
 //#include <iterator>
@@ -66,7 +67,13 @@ void ChannelData::SetPhasesteps(int slice_index, int phase_index)
 void RawData::Prepare(int scan_id, int freqcount, int phasecount, int slicecount, int channel_switch)
 {
 
+    DebugInfo::Output(L"RawData::Prepare()", L"Enter ...",
+                      reinterpret_cast<int>(this), true, DebugInfo::flow_type2);
+
     InitChannels(scan_id, freqcount, phasecount, slicecount, channel_switch);
+
+    DebugInfo::Output(L"RawData::Prepare()", L"Send SSScanStart...",
+                      reinterpret_cast<int>(this), false, DebugInfo::flow_type2);
     NotifyObserver(SSScanStart, scan_id, 0, 0);
     _ready = true;
 
@@ -161,6 +168,8 @@ void RawData::InsertPhasedata(std::complex<float>* source, int length, int chann
             state = (*it).StateOfPhasesteps();
             if(state==1)
             {
+                DebugInfo::Output(L"RawData::InsertPhasedata()", L"Notifying phase step..",
+                                  reinterpret_cast<int>(this), false, DebugInfo::flow_type2);
                 NotifyObserver(SSChannelPhaseStep, (*it).scan_id, channel_index, phase_index);
             }
             else

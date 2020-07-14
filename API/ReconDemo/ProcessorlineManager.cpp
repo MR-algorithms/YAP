@@ -7,6 +7,7 @@
 #include "Implement/CompositeProcessor.h"
 #include "API/Yap/PipelineConstructor.h"
 #include "Utilities\commonmethod.h"
+#include "QtUtilities/FormatString.h"
 #include <algorithm>
 #include <qmessagebox>
 #include <io.h>
@@ -288,6 +289,8 @@ void ProcessorlineManager::AddVariables(Yap::IData* data,
 bool ProcessorlineManager::OnScanStart(int scan_id)
 {
 
+    DebugInfo::Output(L"ProcessorlineManager::OnScanStart()", L"Enter...",
+                      reinterpret_cast<int>(this), false, DebugInfo::flow_type2);
     Pipeline1DforNewScan(scan_id);
     //Pipeline2DforNewScan(scan_id);
     assert(_rt_pipeline1D);
@@ -298,7 +301,10 @@ bool ProcessorlineManager::OnScanStart(int scan_id)
 
 bool ProcessorlineManager::OnChannelPhasestep(int scan_id, int channel_index, int phase_index)
 {
+    DebugInfo::Output(L"ProcessorlineManager::OnChannelPhasestep()", L"Enter...",
+                      reinterpret_cast<int>(this), true, DebugInfo::flow_type2);
     InputPipeline1D(scan_id, channel_index, phase_index);
+
     return true;
 }
 bool ProcessorlineManager::OnScanFinished(int scan_id)

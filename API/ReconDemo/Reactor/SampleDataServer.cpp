@@ -33,8 +33,10 @@ SampleDataServer& SampleDataServer::GetHandle()
 SampleDataServer::~SampleDataServer()
 {
 }
-bool SampleDataServer::OnDataServer(DataPackage &package, int cmd_id)
+bool SampleDataServer::OnDataParsing(DataPackage &package, int cmd_id)
 {
+    DebugInfo::Output(L"SampleDataServer::OnDataParsing()", L"Enter ...",
+                      reinterpret_cast<int>(this), true, DebugInfo::flow_type2);
     switch(cmd_id)
     {
     case SAMPLE_DATA_START:
@@ -69,6 +71,9 @@ bool SampleDataServer::OnDataServer(DataPackage &package, int cmd_id)
 
 bool SampleDataServer::OnDataStart(SampleDataStart &start)//cmr::MsgUnpack& msg_pack, TransferInfo& info)
 {
+    DebugInfo::Output(L"SampleDataServer::OnDataStart()", L"Enter ...",
+                      reinterpret_cast<int>(this), true, DebugInfo::flow_type2);
+
     if(!RawData::GetHandle().Ready())
     {
         _sample_start = start;
@@ -136,7 +141,7 @@ void SampleDataServer::calculate_dimindex(SampleDataStart &start, int dim23456_i
     CommonMethod::split_index(dim23456_index, phase_count, slice_count, phase_index, slice_index);
 
 }
-
+/*
 bool SampleDataServer::Run()
 {
     if(_thread)
@@ -170,99 +175,7 @@ void SampleDataServer::ThreadFunction()
 {
     DebugInfo::Output(L"SampleDataServer:ThreadFunction()", L"Enter...",
                       reinterpret_cast<int>(this), true);
-
-/*
-    while(true)
-    {
-        std::wstringstream ss;
-        ss<<L"---io.read()----"<<debug_count++;
-        std::wstring debug_info;
-        debug_info = ss.str();
-        //DebugInfo::Output(L"SampleDataClient::RunSampleDataClientSession()", debug_info.c_str(),
-        //                  reinterpret_cast<int>(this), false, DebugInfo::accept_flow);
-        //
-        if(false == io.Read(_socket, msg_bufferr))
-        {
-            DebugInfo::Output(L"SampleDataClient::RunSampleDataClientSession()",
-                              L"Test accept0",
-                              reinterpret_cast<int>(this), false, DebugInfo::accept_flow);
-
-            LOG_ERROR(L"Data Client IO Read error.");
-            OnError();
-            break;
-        }
-        uint32_t cmd_id;
-        cmr::MsgUnpack unpack(&msg_bufferr);
-        if(mpeSuccess != unpack.Convert(0, cmd_id))
-        {
-            LOG_ERROR(L"Convert Header Error.");
-            OnError();
-
-            DebugInfo::Output(L"SampleDataClient::RunSampleDataClientSession()",
-                              L"Test accept1",
-                              reinterpret_cast<int>(this), false, DebugInfo::accept_flow);
-
-            break;
-        }
-
-        if(SAMPLE_DATA_START == cmd_id)
-        {
-            {
-                boost::unique_lock<boost::mutex> lk(_state_mutex);
-                _current_scan_observer = _observer;
-            }
-            DebugInfo::Output(L"SampleDataClient::RunSampleDataClientSession()", L"calling OnDataStart()...",
-                              reinterpret_cast<int>(this), false);
-            if(!OnDataStart(unpack, info))
-            {
-                LOG_ERROR(L"OnDataStart Error.");
-                OnError();
-                break;
-            }
-        }
-        else if(SAMPLE_DATA_DATA == cmd_id)
-        {
-            DebugInfo::Output(L"SampleDataClient::RunSampleDataClientSession()", L"calling OnDataData()...",
-                              reinterpret_cast<int>(this), false);
-            if (!OnDataData(unpack, info))
-            {
-                LOG_ERROR(L"OnDataData Error.");
-                OnError();
-                break;
-            }
-        }
-        else if(SAMPLE_DATA_END == cmd_id)
-        {
-            DebugInfo::Output(L"SampleDataClient::RunSampleDataClientSession()", L"calling OnDataEnd()...",
-                              reinterpret_cast<int>(this), false);
-            if(!OnDataEnd(unpack, info))
-            {
-                LOG_ERROR(L"OnDataEnd Error.");
-                OnError();
-                break;
-            }
-        }
-        else if(SAMPLE_DATA_HEARTBEAT == cmd_id)
-        {
-
-            DebugInfo::Output(L"SampleDataClient::RunSampleDataClientSession()",
-                              debug_info.c_str(),
-                              reinterpret_cast<int>(this), false, DebugInfo::accept_flow);
-
-        }
-        else
-        {
-            LOG_ERROR(L"Unknown Msgr.");
-            OnError();
-            DebugInfo::Output(L"SampleDataClient::RunSampleDataClientSession()",
-                              L"Test accept3",
-                              reinterpret_cast<int>(this), false, DebugInfo::accept_flow);
-
-            break;
-        }
-    }
-    */
 }
 
-
+*/
 

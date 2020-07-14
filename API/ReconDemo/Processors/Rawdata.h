@@ -12,11 +12,6 @@
 
 
 ///
-///
-///1£¬Reconstruction is a time consuming process, it should be implemented with independent thread;
-///2, 1D data display can be implemented with notifying mode.
-///3, Databin shall maintain which phase steps of a channel can be used to be feeded into pipeline.
-///4, In the first step, we consider 1D data display while storing a phase step.
 namespace Databin{
 ///
 /// \brief The ChannelData struct
@@ -84,6 +79,7 @@ struct ChannelData
 //2, different thread can access it safely.
 //3, multi protocol.
 //4, no thread function.
+//5, Notify user(UI) when, for example: finish writing the current phase step of all slices of the current channel.
 class RawData
 {
 

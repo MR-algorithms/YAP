@@ -26,7 +26,7 @@ void ReconClientSocket::DataReceived()
                         static_cast<int>(_bufferInfo.Next) + 1 );
             if(_bufferInfo.Next == ReadinfoType::rtFinished)  {
 
-                SampleDataServer::GetHandle().OnDataServer(this->_package, this->_bufferInfo.cmd_id);
+                SampleDataServer::GetHandle().OnDataParsing(this->_package, this->_bufferInfo.cmd_id);
                 _bufferInfo.Reset();
 
             }
