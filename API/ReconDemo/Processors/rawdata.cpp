@@ -1,6 +1,9 @@
 #include "Rawdata.h"
 #include <assert.h>
 #include "Utilities\commonmethod.h"
+//#include <algorithm>
+//#include <vector>
+//#include <iterator>
 using namespace Databin;
 
 RawData RawData::s_instance;
@@ -9,7 +12,7 @@ RawData RawData::s_instance;
 //0: no data;
 //1: all slices datas of the current phase step have been inserted.
 //2: part of slices datas of the current phase step have been inserted.
-int ChannelData::InsertphaseStateOfSlices()
+int ChannelData::StateOfPhasesteps()
 {
     assert(slice_count > 0);
     assert(phase_count > 0);
@@ -22,40 +25,33 @@ int ChannelData::InsertphaseStateOfSlices()
         slices[i] = phasemask_slices[i * phase_count + phase_index];
     }
     int state = 0;
-    if(IsSameValue(slices, 0))
+    auto result = std::find(slices.begin(), slices.end(), 1);
+    if(result == slices.end())//cannot find 1.
     {
         state = 0;
     }
-    else if(IsSameValue(slices, 1))
-    {
-        state = 1;
-    }
     else
-        state = 2;
+    {
+        result = std::find(slices.begin(), slices.end(), 0);
+        if(result == slices.end())//cannot find 0.
+        {
+            state = 1;
+        }
+        else
+            state = 2;
+    }
 
     return state;
 }
 
-//check if all values are specified value.
-bool ChannelData::IsSameValue(std::vector<int> &slices, int value)
+void ChannelData::SetPhasesteps(int slice_index, int phase_index)
 {
-    int label = value;
-    int i = 0;
-    for(i=0; i< slices.size(); i++)
-    {
-        assert(slices[i]==0 || slices[i]==1);
-        if(label != value)
-            break;
-    }
-    if(i==slices.size())
-    {
-        return true;
-    }
-    else
-    {
-        assert(i>0&&i<slices.size());
-        return false;
-    }
+    assert(slice_count > 0);
+    assert(phase_count > 0);
+    assert(phase_index >= 0);
+
+    phasemask_slices[slice_index * phase_count + phase_index] = 1;
+
 
 }
 
@@ -71,6 +67,7 @@ void RawData::Prepare(int scan_id, int freqcount, int phasecount, int slicecount
 {
 
     InitChannels(scan_id, freqcount, phasecount, slicecount, channel_switch);
+    NotifyObserver(SSScanStart, scan_id, 0, 0);
     _ready = true;
 
 }
@@ -133,7 +130,7 @@ void RawData::InsertPhasedata(std::complex<float>* source, int length, int chann
             //check validation.
             count ++;
             assert(count == 1);
-            int state =(*it).InsertphaseStateOfSlices();
+            int state =(*it).StateOfPhasesteps();
             if(state==0)//start writing.
             {
                 (*it).phase_index = phase_index;
@@ -146,7 +143,7 @@ void RawData::InsertPhasedata(std::complex<float>* source, int length, int chann
             else
             {
                 assert(state==1);
-                assert(0);
+
             }
             //end of check.
 
@@ -160,12 +157,17 @@ void RawData::InsertPhasedata(std::complex<float>* source, int length, int chann
             memcpy(dest_pointer, source, length * sizeof(std::complex<float>) );
             assert(!CommonMethod::IsComplexelementZero<std::complex<float>>(source, length));
 
-            state = (*it).InsertphaseStateOfSlices();
+            (*it).SetPhasesteps(slice_index, phase_index);
+            state = (*it).StateOfPhasesteps();
             if(state==1)
             {
                 NotifyObserver(SSChannelPhaseStep, (*it).scan_id, channel_index, phase_index);
             }
-            assert(state==2);
+            else
+            {
+                assert(state==2);
+                int xx = 3;
+            }
 
         }
     }
@@ -202,14 +204,15 @@ std::complex<float>* RawData::NewChanneldata(int channel_index,
     return channel_data;
 }
 
-std::complex<float>* RawData::NewPhaseStep(int channel_index, int display_count)
+//Create a new complex buffer with the current phase step data.
+std::complex<float>* RawData::NewPhaseStep(int channel_index, int phase_index, int display_count)
 {
     assert(channel_index <= MaxChannelIndex());
 
 
     std::complex<float>* display_buffer;
     int count = 0;
-    for(auto item: _channels_data)
+    for(auto &item: _channels_data)
     {
         if(item.channel_index == channel_index)
         {
@@ -217,15 +220,24 @@ std::complex<float>* RawData::NewPhaseStep(int channel_index, int display_count)
             int freq_count = item.freq_count;
             int phase_count = item.phase_count;
             int slice_count = item.slice_count;
+            //item.slice_count = 13; //source data can be written, while iterating by reference.
 
             assert(display_count>0 && display_count<freq_count*slice_count);
             display_buffer = new std::complex<float>[display_count];
             int left = display_count;
-            for(int i=0; i<slice_count; i++)
+            for(int i=0; i<slice_count; i++)//Data count different from phase count is supported.
             {
                 int length = (left<freq_count)? left:freq_count;
-                memcpy( display_buffer + i*freq_count, item.data.data(), length * sizeof(std::complex<float>));
+                assert(length>0);
+                int slice_size = freq_count*phase_count;
+
+                memcpy( display_buffer + i*freq_count,
+                        item.data.data()+i*slice_size + phase_index*freq_count,
+                        length * sizeof(std::complex<float>));
+                assert(!CommonMethod::IsComplexelementZero<std::complex<float>>(display_buffer, length));
                 left -= length;
+                if(left==0)
+                    break;
             }
             assert(left==0);
         }
@@ -271,7 +283,7 @@ bool RawData::NeedProcess(const int channel_index)
     {
         if(channel_index == channel.channel_index)
         {
-            int state = channel.InsertphaseStateOfSlices();
+            int state = channel.StateOfPhasesteps();
             return(state==1);
         }
     }

@@ -25,7 +25,7 @@ public:
     bool LoadData(const QString& image_path);
     //
     bool OnScanStart(int scan_id);
-    bool OnChannelPhasestep(int scan_id);
+    bool OnChannelPhasestep(int scan_id, int channel_index, int phase_index);
     bool OnScanFinished(int scan_id);
 
 private:
@@ -36,11 +36,11 @@ private:
 
     bool Pipeline1DforNewScan(int scan_id);
     bool Pipeline2DforNewScan(int scan_id);
-    bool InputPipeline1D();
-    bool InputPipeline2D();
+    bool InputPipeline1D(int scan_id, int channel_index, int phase_index);
+    bool InputPipeline2D(int scan_id, int channel_index, int phase_index);
 
     bool ProcessFidfile(const QString& file_path, const QString& pipelineFile);
-    Yap::SmartPtr<Yap::IData> CreateDemoData1D(double phi0=0);
+    Yap::SmartPtr<Yap::IData> CreateDemoData1D(int phase_index = 100, double phi0=0);
     Yap::SmartPtr<Yap::IData> CreateDemoData2D(int &width, int &height, int &slice_count);
     Yap::SmartPtr<Yap::IData> CreateData1D(int scan_id, int channel_index, int phase_index);
     //Yap::SmarpPtr<Yap::IData> CreateData2D(int scan_id, int channel_index);

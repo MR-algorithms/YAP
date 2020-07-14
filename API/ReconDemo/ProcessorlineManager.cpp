@@ -48,7 +48,9 @@ ProcessorlineManager::~ProcessorlineManager()
 
 bool ProcessorlineManager::Pipeline1DforNewScan(int scan_id)
 {
-     try
+    if(_rt_pipeline1D)
+        return true;
+    try
     {
         Yap::PipelineConstructor constructor;
         constructor.Reset(true);
@@ -294,9 +296,9 @@ bool ProcessorlineManager::OnScanStart(int scan_id)
 }
 
 
-bool ProcessorlineManager::OnChannelPhasestep(int scan_id)
+bool ProcessorlineManager::OnChannelPhasestep(int scan_id, int channel_index, int phase_index)
 {
-    InputPipeline1D();
+    InputPipeline1D(scan_id, channel_index, phase_index);
     return true;
 }
 bool ProcessorlineManager::OnScanFinished(int scan_id)
@@ -321,27 +323,28 @@ bool ProcessorlineManager::OnScanFinished(int scan_id)
     return true;
 }
 
-bool ProcessorlineManager::InputPipeline1D()
+bool ProcessorlineManager::InputPipeline1D(int scan_id, int channel_index, int phase_index)
 {
 
     const double PI = 3.1415926;
     static double phi0 = 0;
-    phi0 += 0.1 * PI;
+    phi0 += 0.1*PI;
 
-    auto output_data = CreateDemoData1D(phi0);
-    if(_rt_pipeline1D)
-        _rt_pipeline1D->Input(L"Input", output_data.get());
+    //auto output_data = CreateDemoData1D(phase_index, phi0);
+    auto output_data = CreateData1D(scan_id, channel_index, phase_index);
+    assert(_rt_pipeline1D);
+    _rt_pipeline1D->Input(L"Input", output_data.get());
     return true;
 
 }
 
-bool ProcessorlineManager::InputPipeline2D()
+bool ProcessorlineManager::InputPipeline2D(int scan_id, int channel_index, int phase_index)
 {
 
     return true;
 }
 
-Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateDemoData1D(double phi0)
+Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateDemoData1D(int phase_index, double phi0)
 {
 
     const double PI = 3.1415926;
@@ -354,7 +357,7 @@ Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateDemoData1D(double phi0)
     for(int i = 0; i < data_vector2_size; i ++)
     {
 
-      double temp = 10;//data_vector2_size + 10 - i;
+      double temp = phase_index;//data_vector2_size + 10 - i;
       data_vector2[i].real( temp* 10* sin(i * dw + phi0) );
       data_vector2[i].imag( temp* 10* cos(i * dw + phi0) );
     }
@@ -409,8 +412,6 @@ Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateDemoData2D(int &width, int
 
                 ushort_slices[index] = j;
 
-
-
             }
         }
 
@@ -448,7 +449,7 @@ Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateData1D(int scan_id, int ch
     assert(channel_index==channeldata.channel_index);
 
     //
-    std::complex<float> * buffer = RawData::GetHandle().NewPhaseStep(channel_index, freq_count);
+    std::complex<float> * buffer = RawData::GetHandle().NewPhaseStep(channel_index, phase_index, freq_count);
 
     Yap::Dimensions dimensions;
     dimensions(Yap::DimensionReadout, 0U, freq_count)

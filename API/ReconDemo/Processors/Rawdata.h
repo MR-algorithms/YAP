@@ -74,9 +74,8 @@ struct ChannelData
         phasemask_slices.assign(rhs.phasemask_slices.begin(), rhs.phasemask_slices.end());
         return *this;
     }
-    int InsertphaseStateOfSlices();
-    bool IsSameValue(std::vector<int> &slices, int value);
-
+    int StateOfPhasesteps();
+    void SetPhasesteps(int slice_index, int phase_index);
 
 
 };
@@ -100,7 +99,7 @@ public:
 
     bool NeedProcess(const int channel_index);
     std::complex<float>* NewChanneldata(int channel_index, int& freq_count, int& phase_count, int& slice_count);
-    std::complex<float>* NewPhaseStep(int channel_index, int display_count);
+    std::complex<float>* NewPhaseStep(int channel_index, int phase_index, int display_count);
 private:
 
     RawData(): _ready(false) {}
