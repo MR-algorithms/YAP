@@ -1,6 +1,6 @@
 #include <cassert>
 #include "StringHelper.h"
-#include "Implement/DataObject.h"
+//#include "Implement/DataObject.h"
 #include "QtUtilities\commonmethod.h"
 #include "SampleDataServer.h"
 #include "QtUtilities/FormatString.h"

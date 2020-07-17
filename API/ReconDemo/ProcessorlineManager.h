@@ -43,8 +43,6 @@ private:
     Yap::SmartPtr<Yap::IData> CreateDemoData1D(int phase_index = 100, double phi0=0);
     Yap::SmartPtr<Yap::IData> CreateDemoData2D(int &width, int &height, int &slice_count);
     Yap::SmartPtr<Yap::IData> CreateData1D(int scan_id, int channel_index, int phase_index);
-    //Yap::SmarpPtr<Yap::IData> CreateData2D(int scan_id, int channel_index);
-
 
     void AddVariables(Yap::IData *idata,
                       int phase_count,

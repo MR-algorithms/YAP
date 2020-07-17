@@ -1,6 +1,6 @@
 #include "imagewidget.h"
 #include "Client/DataHelper.h"
-#include "Implement/DataObject.h"
+//#include "Implement/DataObject.h"
 #include "grayscalemapper.h"
 #include <cassert>
 

@@ -6,6 +6,7 @@
 #include "Rawdata.h"
 #include "QtUtilities\commonmethod.h"
 #include "QtUtilities\DataWatch.h"
+#include <QDebug>
 
 using namespace Yap;
 using namespace std;
@@ -33,6 +34,43 @@ bool ReceiveData::Input(const wchar_t * port, IData *data)
 
     if (wstring(port) != L"Input")
         return false;
+
+    assert(data);
+    assert(data->GetVariables() != nullptr);
+    VariableSpace variables(data->GetVariables());
+    int scan_signal = variables.Get<int>(L"scan_signal");
+    switch(scan_signal)
+    {
+    case 1:
+    {
+        //Threadfunc_running();
+        //if(!_thread_running)
+        //    _thread_running = std::shared_ptr<std::thread>(
+        //                new std::thread(std::bind(&ReceiveData::Threadfunc_running, this)));
+    }
+        break;
+    case 2:
+    {
+        int phase_index = variables.Get<int>(L"phase_index");
+
+        qDebug()<<"---------scanning phase step =" <<phase_index << "**********";
+    }
+        break;
+    case 3:
+    {
+
+        return true;
+    }
+        break;
+    default:
+        break;
+    }
+
+}
+
+void ReceiveData::Threadfunc_running()
+{
+    //---------
     for(int index = 0; index < RawData::GetHandle().MaxChannelIndex(); index ++)
     {
         if(RawData::GetHandle().NeedProcess(index))
@@ -47,7 +85,7 @@ bool ReceiveData::Input(const wchar_t * port, IData *data)
         }
     }
 
-    return true;
+    return;
 
 }
 

@@ -13,12 +13,13 @@ enum DimensionType{
 
 enum ScanSignal
 {
-    SSScanStart,
-    SSSlicePhaseStep,   //Phase step is written in a slice.
+    SSScanStart = 1,
     SSChannelPhaseStep, //phase step is wiitten in a channel,
+    SSScanFinished,
+
+    SSSlicePhaseStep,   //Phase step is written in a slice.
     SSSliceFinished,    //
     SSChannelFinished,
-    SSScanFinished,
     SSUnkown,
 
 };

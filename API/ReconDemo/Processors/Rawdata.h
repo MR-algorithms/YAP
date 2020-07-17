@@ -27,8 +27,8 @@ struct ChannelData
     int phase_count;
     int slice_count;
     int dim4;
-    std::vector<std::complex<float>> data;
-    std::vector<int> phasemask_slices; //recording current phase mask of all slices.
+    std::complex<float>* datax;
+    bool* phasemask_slices; //recording current phase mask of all slices.
     ChannelData():
         scan_id(0),
         channel_switch(0),
@@ -39,8 +39,8 @@ struct ChannelData
         slice_count(0),
         dim4(0)
     {
-        data.resize(0);
-        phasemask_slices.resize(0);
+        datax = nullptr;
+        phasemask_slices = nullptr;
     }
     ChannelData(const ChannelData &rhs)
     {
@@ -52,23 +52,51 @@ struct ChannelData
         phase_count = rhs.phase_count;
         slice_count = rhs.slice_count;
         dim4 = rhs.dim4;
-        data.assign(rhs.data.begin(),rhs.data.end());
-        phasemask_slices.assign(rhs.phasemask_slices.begin(), rhs.phasemask_slices.end());
+        int channel_size = freq_count*phase_count * slice_count;
+        datax = new std::complex<float>[channel_size];
+        memcpy(datax, rhs.datax, channel_size*sizeof(std::complex<float>));
+        phasemask_slices = new bool[phase_count*slice_count];
+        memcpy(phasemask_slices, rhs.phasemask_slices, phase_count*slice_count*sizeof(bool));
     }
 
     ChannelData& operator = (const ChannelData& rhs){
         scan_id = rhs.scan_id;
-        phasemask_slices = rhs.phasemask_slices;
         channel_index = rhs.channel_index;
         phase_index = rhs.phase_index;
         freq_count = rhs.freq_count;
         phase_count = rhs.phase_count;
         slice_count = rhs.slice_count;
         dim4 = rhs.dim4;
-        data.assign(rhs.data.begin(),rhs.data.end());
-        phasemask_slices.assign(rhs.phasemask_slices.begin(), rhs.phasemask_slices.end());
+        int channel_size = freq_count*phase_count * slice_count;
+        if(datax!=nullptr)
+        {
+            delete[] datax;
+        }
+        else
+        {
+            datax= new std::complex<float>[channel_size];
+        }
+        memcpy(datax, rhs.datax, channel_size*sizeof(std::complex<float>));
+
+        if(phasemask_slices!=nullptr)
+        {
+            delete[] phasemask_slices;
+        }
+        else
+        {
+            phasemask_slices = new bool[phase_count*slice_count];
+        }
+        memcpy(phasemask_slices, rhs.phasemask_slices, phase_count*slice_count*sizeof(bool));
         return *this;
     }
+    ~ChannelData()
+    {
+        if(datax != nullptr)
+            delete[] datax;
+        if(phasemask_slices != nullptr)
+            delete[] phasemask_slices;
+    }
+
     int StateOfPhasesteps();
     void SetPhasesteps(int slice_index, int phase_index);
 

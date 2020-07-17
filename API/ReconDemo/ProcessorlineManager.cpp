@@ -292,9 +292,22 @@ bool ProcessorlineManager::OnScanStart(int scan_id)
     DebugInfo::Output(L"ProcessorlineManager::OnScanStart()", L"Enter...",
                       reinterpret_cast<int>(this), false, DebugInfo::flow_type2);
     Pipeline1DforNewScan(scan_id);
-    //Pipeline2DforNewScan(scan_id);
+    Pipeline2DforNewScan(scan_id);
     assert(_rt_pipeline1D);
-    //assert(_rt_pipeline2D);
+    assert(_rt_pipeline2D);
+    //
+
+    Yap::VariableSpace variables;
+    variables.AddVariable(L"int", L"scan_signal", L"Scan Signal.");
+    variables.AddVariable(L"int",  L"scan_id", L"scan id.");
+
+    variables.Set(L"scan_signal", static_cast<int>(SSScanStart));
+    variables.Set(L"scan_id", scan_id);
+
+    auto output = DataObject<int>::CreateVariableObject(variables.Variables(), nullptr);
+
+    _rt_pipeline2D->Input(L"Input", output.get());
+
     return true;
 }
 
@@ -304,28 +317,25 @@ bool ProcessorlineManager::OnChannelPhasestep(int scan_id, int channel_index, in
     DebugInfo::Output(L"ProcessorlineManager::OnChannelPhasestep()", L"Enter...",
                       reinterpret_cast<int>(this), true, DebugInfo::flow_type2);
     InputPipeline1D(scan_id, channel_index, phase_index);
+    InputPipeline2D(scan_id, channel_index, phase_index);
+
+    //
+
 
     return true;
 }
 bool ProcessorlineManager::OnScanFinished(int scan_id)
 {
-/*
-    int channel_switch = RawData::GetHandle().channel_switch();
-
     Yap::VariableSpace variables;
-    variables.AddVariable(L"bool", L"Finished", L"Iteration finished.");
-    variables.AddVariable(L"int",  L"channel_switch", L"channel switch.");
-    variables.Set(L"Finished", true);
-    variables.Set(L"channel_switch", channel_switch);
+    variables.AddVariable(L"int", L"scan_signal", L"Scan Signal.");
+    variables.AddVariable(L"int",  L"scan_id", L"scan id.");
+    variables.Set(L"scan_signal", static_cast<int>(SSScanFinished));
+    variables.Set(L"scan_id", scan_id);
 
     auto output = DataObject<int>::CreateVariableObject(variables.Variables(), nullptr);
 
-    if(_rt_pipeline2D)
-    {
-        //Send a "Finished" message with no data array to the pipeline.
-        _rt_pipeline2D->Input(L"Input", output.get());
-    }
-*/
+    assert(_rt_pipeline2D);
+    _rt_pipeline2D->Input(L"Input", output.get());
     return true;
 }
 
@@ -346,8 +356,24 @@ bool ProcessorlineManager::InputPipeline1D(int scan_id, int channel_index, int p
 
 bool ProcessorlineManager::InputPipeline2D(int scan_id, int channel_index, int phase_index)
 {
+    Yap::VariableSpace variables;
 
+    variables.AddVariable(L"int", L"scan_signal", L"scan signal.");
+    variables.AddVariable(L"int",  L"scan_id", L"scan id.");
+    variables.AddVariable(L"int", L"channel_index", L"channel index.");
+    variables.AddVariable(L"int", L"phase_index", L"phase index.");
+
+    variables.Set(L"scan_signal", static_cast<int>(SSChannelPhaseStep));
+    variables.Set(L"scan_id", scan_id);
+    variables.Set(L"channel_index", channel_index);
+    variables.Set(L"phase_index", phase_index);
+
+    auto output = DataObject<int>::CreateVariableObject(variables.Variables(), nullptr);
+
+    assert(_rt_pipeline2D);
+    _rt_pipeline2D->Input(L"Input", output.get());
     return true;
+
 }
 
 Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateDemoData1D(int phase_index, double phi0)
@@ -488,11 +514,4 @@ Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateData1D(int scan_id, int ch
     return output_data;
 
 }
-/*
-
-Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateData2D(int scan_id, int channel_index)
-{
-
-}
-*/
 

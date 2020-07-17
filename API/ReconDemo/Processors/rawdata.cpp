@@ -23,7 +23,7 @@ int ChannelData::StateOfPhasesteps()
 
     for(int i=0; i < slice_count; i++)
     {
-        slices[i] = phasemask_slices[i * phase_count + phase_index];
+        slices[i] = *(phasemask_slices + i * phase_count + phase_index);
     }
     int state = 0;
     auto result = std::find(slices.begin(), slices.end(), 1);
@@ -51,7 +51,7 @@ void ChannelData::SetPhasesteps(int slice_index, int phase_index)
     assert(phase_count > 0);
     assert(phase_index >= 0);
 
-    phasemask_slices[slice_index * phase_count + phase_index] = 1;
+    *(phasemask_slices + slice_index * phase_count + phase_index) = true;
 
 
 }
@@ -107,11 +107,13 @@ bool RawData::InitChannels(int scan_id, int freqcount, int phasecount, int slice
             channel_data.slice_count    = slicecount;
             channel_data.dim4           = 1;
 
-            channel_data.data.resize(freqcount * phasecount * slicecount);
-            channel_data.phasemask_slices.resize(phasecount * slicecount);
+            assert(channel_data.datax==nullptr);
+            int channel_size = freqcount*phasecount * slicecount;
+            channel_data.datax = new std::complex<float>[channel_size];
+            channel_data.phasemask_slices = new bool[phasecount * slicecount];
 
-            memset(channel_data.data.data(), 0, channel_data.data.size() * sizeof(std::complex<float>));
-            memset(channel_data.phasemask_slices.data(), 0, channel_data.phasemask_slices.size() * sizeof(int));
+            memset(channel_data.datax, 0, channel_size * sizeof(std::complex<float>));
+            memset(channel_data.phasemask_slices, 0, phasecount*slicecount * sizeof(bool));
 
             _channels_data.push_back(channel_data);
 
@@ -158,7 +160,7 @@ void RawData::InsertPhasedata(std::complex<float>* source, int length, int chann
             int phase_count = (*it).phase_count;
             int slice_size = freq_count * phase_count;
 
-            auto dest_pointer = (*it).data.data()
+            auto dest_pointer = (*it).datax
                     + slice_size * slice_index
                     + freq_count * phase_index;
             memcpy(dest_pointer, source, length * sizeof(std::complex<float>) );
@@ -198,18 +200,19 @@ std::complex<float>* RawData::NewChanneldata(int channel_index,
         if(item.channel_index == channel_index)
         {
             count ++;
+            assert(count == 1);
+
             freq_count = item.freq_count;
             phase_count = item.phase_count;
             slice_count = item.slice_count;
 
             int length = freq_count * phase_count * slice_count;
             channel_data = new std::complex<float>[length];
-            memcpy( channel_data, item.data.data(), length * sizeof(std::complex<float>));
+            memcpy( channel_data, item.datax, length * sizeof(std::complex<float>));
 
         }
     }
-    //Enusre there is one and only one channel with specified index.
-    assert(count == 1);
+
     return channel_data;
 }
 
@@ -241,7 +244,7 @@ std::complex<float>* RawData::NewPhaseStep(int channel_index, int phase_index, i
                 int slice_size = freq_count*phase_count;
 
                 memcpy( display_buffer + i*freq_count,
-                        item.data.data()+i*slice_size + phase_index*freq_count,
+                        item.datax+i*slice_size + phase_index*freq_count,
                         length * sizeof(std::complex<float>));
                 assert(!CommonMethod::IsComplexelementZero<std::complex<float>>(display_buffer, length));
                 left -= length;
