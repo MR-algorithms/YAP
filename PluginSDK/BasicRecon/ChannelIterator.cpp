@@ -41,8 +41,8 @@ bool Yap::ChannelIterator::Input(const wchar_t * name, IData * data)
 	for (unsigned int i = channel_dimension.start_index; i < channel_dimension.start_index + channel_dimension.length; ++i)
 	{
 		Dimensions channel_slice_data_dimensions(data->GetDimensions());
-		channel_slice_data_dimensions.SetDimension(DimensionSlice, 1, slice_index);
-		channel_slice_data_dimensions.SetDimension(DimensionChannel, 1, i);
+		channel_slice_data_dimensions.SetDimensionInfo2(DimensionSlice, slice_index, 1);
+		channel_slice_data_dimensions.SetDimensionInfo2(DimensionChannel, i, 1);
 
 		auto output = CreateData<complex<float>>(data,
 			Yap::GetDataArray<complex<float>>(data) + i * slice_block_size, channel_slice_data_dimensions);

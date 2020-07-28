@@ -31,7 +31,7 @@ SliceSelector::~SliceSelector()
 	1，数据维度转换时，信息丢失;比如：通道，回波索引，
 	2，数据访问只考虑了简单情况;
 	3，入口数据没有合理的合法性检查。
-	本处理器：这种访问数据的方式是有条件的：实际维度等于三维等于1（比如通道当前数据的通道维度大小[不是索引].）
+	本处理器：这种访问数据的方式是有条件的：实际维度第三维等于1（比如通道当前数据的通道维度大小[不是索引].）
 	另外一些参数需要专门考虑，如：Slice_index处理器参数空间、数据维度里必须有这个参数，数据参数空间是可选的，
 
 */
@@ -49,31 +49,34 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 	assert((data != nullptr) && (is_type_complexf || is_type_short));
 	assert(Inputs()->Find(name) != nullptr);
 		
-	assert(VariablesValid(data));
 	int slice_index = GetProperty<int>(L"SliceIndex");
 
-	//AddSliceindexParam(data, slice_index, DataHelper(data).GetDataType());
-	
 	DataHelper input_data(data);
-	Dimensions data_dimentions(data->GetDimensions());
+	Dimensions data_dimensions(data->GetDimensions());
 	unsigned int slice_block_size = input_data.GetBlockSize(DimensionSlice);
 	if (input_data.GetActualDimensionCount() <= 3)
 	{		
-		data_dimentions.SetDimension(DimensionSlice, 1, slice_index);
+		data_dimensions.SetDimensionInfo2(DimensionSlice, slice_index, 1);
+		unsigned int length;
+		unsigned int index;
+		
+		dynamic_cast<Yap::Dimensions*>(data->GetDimensions())->GetDimensionInfo2(Yap::DimensionSlice, index, length);
+
 		if (is_type_complexf)
 		{
 			
 			auto output = CreateData<complex<float>>(data,
 				Yap::GetDataArray<complex<float>>(data) + slice_index * slice_block_size, 
-				data_dimentions, data);
-
+				data_dimensions, data);
+		
+			AddASingleVarible(output.get(), L"slice_count", length, DataHelper(output.get()).GetDataType());
 			Feed(L"Output", output.get());
 		}
 		if(is_type_short)
 		{
 			auto output = CreateData<short>(data,
 				Yap::GetDataArray<short>(data)
-				+ slice_index * slice_block_size, data_dimentions, data);
+				+ slice_index * slice_block_size, data_dimensions, data);
 			Feed(L"Output", output.get());
 		}
 	}

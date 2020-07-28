@@ -74,7 +74,7 @@ bool Yap::Dimensions::Combine(Dimensions * change)
 			break;
 			
 		}
-		assert(SetDimension(type, length, index));
+		assert(SetDimensionInfo2(type, index, length));
 	}
 
 
@@ -127,9 +127,8 @@ bool Yap::Dimensions::SetDimensionInfo(unsigned int dimension_index,
 	return true;
 }
 
-bool Yap::Dimensions::SetDimension(DimensionType type, 
-												 unsigned int length,
-												 unsigned int start_index)
+bool Yap::Dimensions::SetDimensionInfo2(DimensionType type, 
+											 unsigned int start_index, unsigned int length)
 {
 	for (unsigned int i = 0; i < _dimension_info.size(); ++i)
 	{
@@ -148,9 +147,9 @@ bool Yap::Dimensions::SetDimension(DimensionType type,
 	\return true if find DimensionTyep "type" in the Dimensions and  get dimension successfully, false otherwise.
 	\remark not used.
 */
-bool Yap::Dimensions::GetDimension2(DimensionType type,
-	unsigned int &length,
-	unsigned int &start_index) const 
+bool Yap::Dimensions::GetDimensionInfo2(DimensionType type,
+	unsigned int &start_index,
+	unsigned int &length) const
 {
 	for (unsigned int i = 0; i < _dimension_info.size(); ++i)
 	{

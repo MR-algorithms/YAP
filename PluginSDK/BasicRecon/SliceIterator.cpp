@@ -41,11 +41,8 @@ bool SliceIterator::Input(const wchar_t * name, IData * data)
 	for (unsigned int i = slice_dimension.start_index; i < slice_dimension.start_index + slice_dimension.length; ++i)
 	{
 		Dimensions slice_data_dimensions(data->GetDimensions());
-		slice_data_dimensions.SetDimension(DimensionSlice, 1, i);
+		slice_data_dimensions.SetDimensionInfo2(DimensionSlice, i, 1);
 	
-		AddSliceindexParam(data, i, helper.GetDataType());
-
-		
 		if (helper.GetDataType() == DataTypeComplexFloat)
 		{
 			auto output = CreateData<complex<float>>(data,

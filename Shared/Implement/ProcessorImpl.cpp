@@ -277,52 +277,7 @@ namespace _details
 		return true;
 	}
 
-	/**
-	\remark Add "Slice_Index" param to IData in pipeline.
-	*/
-	bool Yap::ProcessorImpl::AddSliceindexParam(IData *data, int index, int data_type)
-	{
-		
-		if (nullptr == data->GetVariables())
-		{
-			VariableSpace variable;
-			//
-			if (data_type == Yap::DataTypeComplexFloat)
-			{
-				dynamic_cast<Yap::DataObject<std::complex<float>>*>(data)->SetVariables(variable.Variables());
-			}
-			else
-			{
-				dynamic_cast<Yap::DataObject<unsigned short>*>(data)->SetVariables(variable.Variables());
-			}
-
-
-		}
-
-		VariableSpace variables(data->GetVariables());
-
-		variables.AddVariable(L"int", L"slice_index", L"slice index.");
-		variables.Set(L"slice_index", static_cast<int>(index));
-		/*
-		Yap::IDimensions *dimensions = data->GetDimensions();
-		//Yap::Dimensions  *dimensions2 = dynamic_cast<Yap::Dimensions*>(dimensions);
-		unsigned int channel_length;
-		unsigned int channel_start_index;
-		bool result = dynamic_cast<Yap::Dimensions*>(dimensions)->GetDimension2(
-								Yap::DimensionChannel,
-								channel_length,
-								channel_start_index);
-			
-		if (result && channel_length == 1)
-		{
-			variables.AddVariable(L"int", L"channel_index", L"channel index.");
-			variables.Set(L"channel_index", static_cast<int>(channel_start_index));
-		}
-		*/
-		return true;
-
-	}
-
+	
 	bool Yap::ProcessorImpl::AddASingleVarible(IData *data, wstring variable_name, int value, int data_type)
 	{
 		if (nullptr == data->GetVariables())

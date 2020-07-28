@@ -22,8 +22,8 @@ namespace Yap
 
 	public:
 
-		bool SetDimension(DimensionType type, unsigned int length, unsigned int start_index = 0);
-		bool GetDimension2(DimensionType type, unsigned int &length, unsigned int & start_index) const;
+		bool SetDimensionInfo2(DimensionType type, unsigned int start_index, unsigned int length);
+		bool GetDimensionInfo2(DimensionType type, unsigned int &start_index, unsigned int & length) const;
 		unsigned int GetLength(unsigned int dimension_index);
 
 		virtual unsigned int GetDimensionCount() override;
@@ -31,7 +31,7 @@ namespace Yap
 		virtual bool GetDimensionInfo(unsigned int dimension_index,
 			DimensionType & dimension_type, unsigned int& start_index, unsigned int& length) override;
 
-		virtual bool SetDimensionInfo(unsigned int dimension_index, DimensionType dimension_type, 
+		bool SetDimensionInfo(unsigned int dimension_index, DimensionType dimension_type, 
 			unsigned int start_index, unsigned int length);
 
 		Dimensions & operator() (DimensionType type, unsigned int index, unsigned int length);

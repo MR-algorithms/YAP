@@ -102,9 +102,9 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 // 	{
 // 		bit_number &= (bit_number - 1);   // 消除最低位的1.
 // 	}   // 最后used_channel_count得到1的个数。即打开的通道总数
-	int temp;
-	int channel_switch;
-	assert(this->VariablesValid(data, &temp, &temp, &temp, &channel_switch));
+	
+	VariableSpace variable(data->GetVariables());
+	int channel_switch = variable.Get<int>(L"channel_switch");
 	
 	int channel_count_used = CommonMethod::GetChannelCountUsed(channel_switch);
 	if (iter->second.count == channel_count_used)

@@ -119,7 +119,7 @@ unsigned int DataHelper::GetCoilCount()
 	unsigned int start, length;
 
 	TODO(Review the code.);
-
+	//这里第一个参数设置为4，有问题。
 	dimension->GetDimensionInfo(4, dimension_type, start, length);
 
 	return length;

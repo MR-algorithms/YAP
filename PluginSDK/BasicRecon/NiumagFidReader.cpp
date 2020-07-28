@@ -115,13 +115,8 @@ bool Yap::NiumagFidReader::ReadNiumagFidData()
 
 		//
 		//Add some variables and check them.
-		AddASingleVarible(data.get(), L"slice_index", 0, DataHelper(data.get()).GetDataType());
-		AddASingleVarible(data.get(), L"slice_count", dim3, DataHelper(data.get()).GetDataType());
-		AddASingleVarible(data.get(), L"channel_index", 0, DataHelper(data.get()).GetDataType());
 		AddASingleVarible(data.get(), L"channel_switch", 1, DataHelper(data.get()).GetDataType());
 
-		int slice_index_return;
-		assert(VariablesValid(data.get(), &slice_index_return));
 		//
 
 		Feed(L"Output", data.get());

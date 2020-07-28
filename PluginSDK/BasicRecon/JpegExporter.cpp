@@ -166,7 +166,6 @@ bool JpegExporter::Input( const wchar_t * name, IData * data)
 
 	DataHelper data_helper(data);
 	//Check to tell if the preceding processer set the variables correctly.
-	assert(VariablesValid(data));
 	
 	assert(data_helper.GetActualDimensionCount() == 2 && L"Input JpegExporter data must actual 2 dimensions.");
 
