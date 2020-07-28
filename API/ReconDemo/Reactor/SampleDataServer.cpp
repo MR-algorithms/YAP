@@ -1,6 +1,5 @@
 #include <cassert>
 #include "StringHelper.h"
-//#include "Implement/DataObject.h"
 #include "QtUtilities\commonmethod.h"
 #include "SampleDataServer.h"
 #include "QtUtilities/FormatString.h"
@@ -18,7 +17,7 @@
 
 using namespace std;
 using namespace Yap;
-using namespace Databin;
+using namespace ScanInfo;
 
 SampleDataServer SampleDataServer::s_instance;
 
@@ -74,47 +73,63 @@ bool SampleDataServer::OnDataStart(SampleDataStart &start)//cmr::MsgUnpack& msg_
     DebugInfo::Output(L"SampleDataServer::OnDataStart()", L"Enter ...",
                       reinterpret_cast<int>(this), true, DebugInfo::flow_type2);
 
-    if(!RawData::GetHandle().Ready())
-    {
-        _sample_start = start;
-        int channel_switch = _sample_start.channel_switch;
-        int scan_id = _sample_start.scan_id;
-        int freq_count = _sample_start.dim1_size;
-        int phase_count = _sample_start.dim2_size;
-        int slice_count = _sample_start.dim3_size;
-        RawData::GetHandle().Prepare(scan_id, freq_count, phase_count, slice_count, channel_switch);
+    _sample_start = start;
+    ScanDimension scan_dim;
+    scan_dim.channel_switch = _sample_start.channel_switch;
+    scan_dim.scan_id = _sample_start.scan_id;
+    scan_dim.freq_count = _sample_start.dim1_size;
+    scan_dim.phase_count = _sample_start.dim2_size;
+    scan_dim.slice_count = _sample_start.dim3_size;
 
-    }
+    NotifyObserver(SSScanStart, scan_dim, shared_ptr<complex<float>>());
+
     return true;
 }
-
+#include <QDebug>
 bool SampleDataServer::OnDataData(SampleDataData &data)//cmr::MsgUnpack& msg_pack, TransferInfo& info)
 {
     //
-    int channel_switch = _sample_start.channel_switch;
-    int channel_index = data.rec;
-    int phase_index, slice_index;
-    calculate_dimindex(_sample_start, data.dim23456_index, phase_index, slice_index);
+    DebugInfo::Output(L"SampleDataServer::OnDataData()", L"Enter ...",
+                      reinterpret_cast<int>(this), true, DebugInfo::flow_type2);
+    ScanInfo::ScanDimension scan_dim;
+	scan_dim.scan_id = _sample_start.scan_id;
+    scan_dim.channel_switch = _sample_start.channel_switch;
+    scan_dim.freq_count = _sample_start.dim1_size;
+    scan_dim.phase_count = _sample_start.dim2_size;
+    scan_dim.slice_count = _sample_start.dim3_size;
+    assert(scan_dim.phase_count == data.data_value.size());
 
-    //
-    int data_size = data.data_value.size();
+    scan_dim.channel_index = data.rec;
+    calculate_dimindex(_sample_start, data.dim23456_index,
+                       scan_dim.phase_index, scan_dim.slice_index);
 
-    const ChannelData& channel = RawData::GetHandle().GetChannelData(channel_index);
-    assert(channel.phase_count==data_size);
-
-    std::complex<float> * data_vector2 = new std::complex<float>[data_size];
-
-    for(int i = 0; i < data_size; i ++)
+    qDebug()<<"allocate : phase_index = "<<scan_dim.phase_index;
+    shared_ptr<complex<float>> buffer( new complex<float>[scan_dim.phase_count],
+            [=](complex<float> *p) {
+        qDebug()<<"DeAllocate : phase_index = " <<scan_dim.phase_index;
+        delete[] p;
+    } );
+	/*
+    for(int i = 0; i < scan_dim.phase_count; i ++)
     {
-      data_vector2[i] = data.data_value[i];
+		*(buffer.get() + i) = complex<float>(i, 80);// data.data_value[i];
     }
-    RawData::GetHandle().InsertPhasedata(data_vector2, data_size, channel_index, slice_index, phase_index);
+	*/
+    memcpy(buffer.get(), data.data_value.data(), scan_dim.phase_count * sizeof(complex<float>));
+
+	complex<float>* p1 = buffer.get();
+
+    NotifyObserver(SSChannelPhaseStep, scan_dim, buffer);
     //-
     return true;
 }
 
 bool SampleDataServer::OnDataEnd(SampleDataEnd &end)//cmr::MsgUnpack& msg_pack, TransferInfo& info)
 {
+    DebugInfo::Output(L"SampleDataServer::OnDataEnd()", L"Enter ...",
+                      reinterpret_cast<int>(this), true, DebugInfo::flow_type2);
+
+	NotifyObserver(SSScanFinished, ScanInfo::ScanDimension(), shared_ptr<complex<float>>());
     return true;
 }
 
@@ -141,41 +156,15 @@ void SampleDataServer::calculate_dimindex(SampleDataStart &start, int dim23456_i
     CommonMethod::split_index(dim23456_index, phase_count, slice_count, phase_index, slice_index);
 
 }
-/*
-bool SampleDataServer::Run()
+
+void SampleDataServer::NotifyObserver(ScanSignal scan_signal, const ScanDimension& scan_dim, shared_ptr<complex<float>> buffer)
 {
-    if(_thread)
-    {
-        return false;
-    }
-    DebugInfo::Output(L"SampleDataServer::Run()", L"bind SampleDataServer::ThreadFunction thread function",
-                      reinterpret_cast<int>(this), true);
-
-    _thread = std::shared_ptr<std::thread>(new std::thread(std::bind(&SampleDataServer::ThreadFunction, this)));
-    return true;
-
+    _observer->OnData(scan_signal, scan_dim, buffer);
+    return;
 }
 
 
-void SampleDataServer::ExitThread()
+void SampleDataServer::SetObserver(std::shared_ptr<IDataObserver> observer)
 {
-    if (_thread)
-    {
-        if(_thread->joinable())
-        {
-            //_thread->interrupt();
-            _thread->join();
-            _thread.reset();
-        }
-    }
+    _observer = observer;
 }
-
-
-void SampleDataServer::ThreadFunction()
-{
-    DebugInfo::Output(L"SampleDataServer:ThreadFunction()", L"Enter...",
-                      reinterpret_cast<int>(this), true);
-}
-
-*/
-

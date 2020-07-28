@@ -7,9 +7,6 @@
 
 #include "QDataEvent.h"
 
-/// Receiving data and storing data, while notifying the corresponding user.
-///
-
 
 ///
 namespace Databin{
@@ -27,6 +24,7 @@ struct ChannelData
     int phase_count;
     int slice_count;
     int dim4;
+	bool processed;//denote if there is new phase step data which can be used to reconstruct.
     std::complex<float>* datax;
     bool* phasemask_slices; //recording current phase mask of all slices.
     ChannelData():
@@ -37,7 +35,8 @@ struct ChannelData
         freq_count(0),
         phase_count(0),
         slice_count(0),
-        dim4(0)
+        dim4(0),
+		processed(true)
     {
         datax = nullptr;
         phasemask_slices = nullptr;
@@ -52,11 +51,19 @@ struct ChannelData
         phase_count = rhs.phase_count;
         slice_count = rhs.slice_count;
         dim4 = rhs.dim4;
+		processed = rhs.processed;
         int channel_size = freq_count*phase_count * slice_count;
-        datax = new std::complex<float>[channel_size];
-        memcpy(datax, rhs.datax, channel_size*sizeof(std::complex<float>));
-        phasemask_slices = new bool[phase_count*slice_count];
-        memcpy(phasemask_slices, rhs.phasemask_slices, phase_count*slice_count*sizeof(bool));
+		if (channel_size > 0) 
+		{
+			datax = new std::complex<float>[channel_size];
+			memcpy(datax, rhs.datax, channel_size * sizeof(std::complex<float>));
+		}
+		if (phase_count*slice_count > 0)
+		{
+			phasemask_slices = new bool[phase_count*slice_count];
+			memcpy(phasemask_slices, rhs.phasemask_slices, phase_count*slice_count * sizeof(bool));
+		}
+  
     }
 
     ChannelData& operator = (const ChannelData& rhs){
@@ -67,6 +74,7 @@ struct ChannelData
         phase_count = rhs.phase_count;
         slice_count = rhs.slice_count;
         dim4 = rhs.dim4;
+		processed = rhs.processed;
         int channel_size = freq_count*phase_count * slice_count;
         if(datax!=nullptr)
         {
@@ -97,39 +105,33 @@ struct ChannelData
             delete[] phasemask_slices;
     }
 
-    int StateOfPhasesteps();
-    void SetPhasesteps(int slice_index, int phase_index);
-
 
 };
-//RawData should have some properties:
-//1, singleton;
-//2, different thread can access it safely.
-//3, multi protocol.
-//4, no thread function.
-//5, Notify user(UI) when, for example: finish writing the current phase step of all slices of the current channel.
+//
 class RawData
 {
 
 public:
     static RawData& GetHandle() {return s_instance;}
-    void SetObserver(std::shared_ptr<IDataObserver> observer);
     void Prepare(int scan_id, int freqcount, int phasecount, int slicecount, int channel_switch);
     bool Ready(){return _ready;}
     void InsertPhasedata(std::complex<float>* source, int length, int channel_index, int slice_index, int phase_index);
-    int MaxChannelIndex();
+	int  MaxChannelIndex();
+    const ChannelData& GetChannelInfo() const;
 
-    const ChannelData& GetChannelData(int channel_index) const;
-
-    bool NeedProcess(const int channel_index);
-    std::complex<float>* NewChanneldata(int channel_index, int& freq_count, int& phase_count, int& slice_count);
-    std::complex<float>* NewPhaseStep(int channel_index, int phase_index, int display_count);
+    std::complex<float>* GetChannelRawdata(int channel_index, int& freq_count, int& phase_count, int& slice_count);
+	int GetNumofReadyphasesteps(int channel_index);//Used for controling number of reconstruction.
 private:
 
     RawData(): _ready(false) {}
 
     bool InitChannels(int scan_id, int freqcount, int phasecount, int slicecount, int channel_switch);
-    void NotifyObserver(ScanSignal scan_signal, uint32_t scan_id, int channel_index, int phase_index);
+	void UpdateChannel(ChannelData& channel_data, const complex<float>* data, const int freq_count, 
+		const int channel_index, const int slice_index, const int phase_index);
+	int  StateOfPhasesteps(const ChannelData& channel_data, int phase_index);
+	void SetPhasestep(ChannelData& channel_data, int channel_index, int slice_index, int phase_index);
+	vector<bool> GetReadyPhasesteps(const ChannelData& channel_data);
+
 
     static RawData s_instance;
 
@@ -140,7 +142,7 @@ private:
     int _current_channel_index;
     int _current_slice_index;
 
-    std::shared_ptr<IDataObserver> _observer;
+
     bool _ready;
 };
 

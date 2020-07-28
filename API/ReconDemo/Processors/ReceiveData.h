@@ -15,13 +15,13 @@ private:
     virtual ~ReceiveData();
 
     virtual bool Input(const wchar_t *name, Yap::IData *data) override;
-
-    void Threadfunc_running();
+	void Forward(Yap::IData *data);
+	//OnTimer();
+	void Threadfunc_running();
 
     bool IsFinished(Yap::IData *data) const;
 
-    Yap::SmartPtr<Yap::IData> CreateRefIData();
-    bool CreateOutData(std::complex<float>* channel_data, int channel_index,
+    Yap::SmartPtr<Yap::IData> CreateOutData(Yap::IData* data, std::complex<float>* channel_raw_data, int channel_index,
                        int freq_count, int phase_count, int slice_count);
 
     std::shared_ptr<std::thread> _thread_runing;

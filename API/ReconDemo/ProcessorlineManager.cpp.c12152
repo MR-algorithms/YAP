@@ -286,11 +286,11 @@ void ProcessorlineManager::AddVariables(Yap::IData* data,
 }
 
 
-bool ProcessorlineManager::OnScanStart(const ScanDimension& scan_dim)
+bool ProcessorlineManager::OnScanStart(const ScanData& scan_data)
 {
 
     DebugInfo::Output(L"ProcessorlineManager::OnScanStart()", L"Enter...",
-                      reinterpret_cast<int>(this), true, DebugInfo::flow_type2);
+                      reinterpret_cast<int>(this), false, DebugInfo::flow_type2);
     Pipeline1DforNewScan();
     Pipeline2DforNewScan();
     assert(_rt_pipeline1D);
@@ -306,14 +306,12 @@ bool ProcessorlineManager::OnScanStart(const ScanDimension& scan_dim)
     variables.AddVariable(L"int",  L"slice_count", L"slice count.");
 
     variables.Set(L"scan_signal", static_cast<int>(SSScanStart));
-    variables.Set(L"scan_id", scan_dim.scan_id);
-    variables.Set(L"channel_switch", scan_dim.channel_switch);
-    variables.Set(L"freq_count", scan_dim.freq_count);
-    variables.Set(L"phase_count", scan_dim.phase_count);
-    variables.Set(L"slice_count", scan_dim.slice_count);
+    variables.Set(L"scan_id", scan_data.scan_id);
+    variables.Set(L"channel_switch", scan_data.channel_switch);
+    variables.Set(L"freq_count", scan_data.freq_count);
+    variables.Set(L"phase_count", scan_data.phase_count);
+    variables.Set(L"slice_count", scan_data.slice_count);
 
-    DebugInfo::Output(L"ProcessorlineManager::OnScanStart()", L"feed ScanStart signal...",
-                      reinterpret_cast<int>(this), false, DebugInfo::flow_type2);
     auto output = DataObject<int>::CreateVariableObject(variables.Variables(), nullptr);
 
     _rt_pipeline2D->Input(L"Input", output.get());
@@ -322,16 +320,16 @@ bool ProcessorlineManager::OnScanStart(const ScanDimension& scan_dim)
 }
 
 
-bool ProcessorlineManager::OnChannelPhasestep(const ScanDimension& scan_dim, shared_ptr<complex<float>> buffer_pointer)
+bool ProcessorlineManager::OnChannelPhasestep(const ScanData& scan_data)
 {
     DebugInfo::Output(L"ProcessorlineManager::OnChannelPhasestep()", L"Enter...",
                       reinterpret_cast<int>(this), true, DebugInfo::flow_type2);
-    InputPipeline1D(scan_dim, buffer_pointer);
-    InputPipeline2D(scan_dim, buffer_pointer);
+    InputPipeline1D(scan_data);
+    InputPipeline2D(scan_data);
 
     return true;
 }
-bool ProcessorlineManager::OnScanFinished(const ScanDimension& scan_data)
+bool ProcessorlineManager::OnScanFinished(const ScanData& scan_data)
 {
 
     Yap::VariableSpace variables;
@@ -348,27 +346,25 @@ bool ProcessorlineManager::OnScanFinished(const ScanDimension& scan_data)
     return true;
 }
 
-bool ProcessorlineManager::InputPipeline1D(const ScanDimension& scan_dim, shared_ptr<complex<float>> buffer_pointer)
+bool ProcessorlineManager::InputPipeline1D(const ScanData& scan_data)
 {
 
     const double PI = 3.1415926;
     static double phi0 = 0;
     phi0 += 0.1*PI;
 
-    DebugInfo::Output(L"ProcessorlineManager::InputPipeline1D()", L"Enter ...",
-                      reinterpret_cast<int>(this), true, DebugInfo::flow_type2);
-    //auto output_data = CreateDemoData1D(scan_dim.phase_index, phi0);
-    auto output_data = CreateData1D(scan_dim, buffer_pointer);
+    //auto output_data = CreateDemoData1D(scan_data.phase_index, phi0);
+    auto output_data = CreateData1D(scan_data);
     assert(_rt_pipeline1D);
     _rt_pipeline1D->Input(L"Input", output_data.get());
     return true;
 
 }
 
-bool ProcessorlineManager::InputPipeline2D(const ScanDimension& scan_dim, shared_ptr<complex<float>> buffer_pointer)
+bool ProcessorlineManager::InputPipeline2D(const ScanData& scan_data)
 {
 
-    auto output = CreateData1D(scan_dim, buffer_pointer);
+    auto output = CreateData1D(scan_data);
     assert(_rt_pipeline2D);
     _rt_pipeline2D->Input(L"Input", output.get());
     return true;
@@ -461,20 +457,17 @@ Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateDemoData2D(int &width, int
 }
 
 
-Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateData1D(const ScanDimension& scan_dim, shared_ptr<complex<float>> buffer_pointer)
+Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateData1D(const ScanData& scan_data)
 {
 
     Yap::Dimensions dimensions;
-    dimensions(Yap::DimensionReadout, 0U, scan_dim.freq_count)
-        (Yap::DimensionPhaseEncoding, scan_dim.phase_index, 1)//
-        (Yap::DimensionSlice, scan_dim.slice_index, 1)
-        (Yap::DimensionChannel, scan_dim.channel_index, 1);
-
-    complex<float>* data_buffer = new complex<float>[scan_dim.freq_count];
-	memcpy(data_buffer, buffer_pointer.get(), scan_dim.freq_count * sizeof(complex<float>));
+    dimensions(Yap::DimensionReadout, 0U, scan_data.freq_count)
+        (Yap::DimensionPhaseEncoding, scan_data.phase_index, 1)//
+        (Yap::DimensionSlice, scan_data.slice_index, 1)
+        (Yap::DimensionChannel, scan_data.channel_index, 1);
 
     auto output_data = Yap::YapShared(
-                new Yap::DataObject<std::complex<float>>(nullptr, data_buffer, dimensions, nullptr, nullptr));
+                new Yap::DataObject<std::complex<float>>(nullptr, scan_data.data, dimensions, nullptr, nullptr));
 
     if (output_data->GetVariables() == nullptr)
     {
@@ -482,12 +475,8 @@ Yap::SmartPtr<Yap::IData> ProcessorlineManager::CreateData1D(const ScanDimension
         output_data->SetVariables(variables.Variables());
 
         variables.AddVariable(L"int", L"scan_signal", L"scan signal.");
-		variables.AddVariable(L"int", L"scan_id", L"scan id.");
-		variables.AddVariable(L"int", L"channel_switch", L"channel switch.");
 
         variables.Set(L"scan_signal", static_cast<int>(SSChannelPhaseStep));
-		variables.Set(L"scan_id", scan_dim.scan_id);
-		variables.Set(L"channel_switch", scan_dim.channel_switch);
     }
     return output_data;
 

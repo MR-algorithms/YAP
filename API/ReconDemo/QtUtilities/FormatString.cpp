@@ -70,6 +70,7 @@ std::wstring FormatStringW(const wchar_t* format, ...)
 
 void DebugInfo::Output(const wchar_t *info_tag, const wchar_t* info, int this_pointer, bool first_enter, int flow_type)
 {
+    return;
     if(flow_type!=flow_type2)
         return;
 

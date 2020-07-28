@@ -30,19 +30,18 @@ ReceiveData::ReceiveData(const ReceiveData &rhs) :  ProcessorImpl(rhs)
 
 bool ReceiveData::Input(const wchar_t * port, IData *data)
 {
-	
-	if (wstring(port) != L"Input")
+    //return true;
+
+    if (wstring(port) != L"Input")
         return false;
 
     assert(data);
     assert(data->GetVariables() != nullptr);
     VariableSpace variables(data->GetVariables());
-    ScanInfo::ScanSignal scan_signal = static_cast<ScanInfo::ScanSignal>( variables.Get<int>(L"scan_signal"));
-    qDebug()<<"scan_signal = "<<scan_signal;
-    
+    int scan_signal = variables.Get<int>(L"scan_signal");
     switch(scan_signal)
     {
-	case ScanInfo::SSScanStart:
+    case 1:
     {
         int scan_id = variables.Get<int>(L"scan_id");
         int channel_switch = variables.Get<int>(L"channel_switch");
@@ -53,105 +52,95 @@ bool ReceiveData::Input(const wchar_t * port, IData *data)
         RawData::GetHandle().Prepare(scan_id, freq_count, phase_count, slice_count, channel_switch);
     }
         break;
-	case ScanInfo::SSChannelPhaseStep:
+    case 2:
     {
         assert(RawData::GetHandle().Ready());
         bool is_type_complexf = (Yap::GetDataArray<complex<float>>(data) != nullptr);
         assert(is_type_complexf);
-		int scan_id = variables.Get<int>(L"scan_id");
-		assert(scan_id == RawData::GetHandle().GetChannelInfo().scan_id);
-
-        int freq_count;
         int phase_index;
         int slice_index;
         int channel_index;
-		unsigned int i;
-        for(i=0; i<data->GetDimensions()->GetDimensionCount(); i++)
+        for(unsigned int i=0; i<data->GetDimensions()->GetDimensionCount(); i++)
         {
             unsigned int length;
             unsigned int start_index;
             DimensionType dimension_type;
-            data->GetDimensions()->GetDimensionInfo(i, dimension_type, start_index, length);
-			
+            data->GetDimensions()->GetDimensionInfo(i, dimension_type, length, start_index);
             switch(dimension_type)
             {
             case Yap::DimensionReadout:
             {
-				freq_count = length;
-				assert(freq_count == RawData::GetHandle().GetChannelInfo().freq_count);
+                assert(length==RawData::GetHandle().GetChannelData().freq_count);
             }
                 break;
             case Yap::DimensionPhaseEncoding:
             {
-				assert(length == 1);
+                assert(length);
                 phase_index = start_index;
                 qDebug()<<"---------scanning phase step =" <<phase_index << "**********";
             }
                 break;
             case Yap::DimensionSlice:
             {
-				assert(length == 1);
+                assert(length==1);
                 slice_index = start_index;
+
             }
                 break;
-			case Yap::DimensionChannel:
-			{
-				assert(length == 1);
-				channel_index = start_index;
-			}
 
-			default:
+            default:
                 break;
             }
 
         }
-		assert(i == data->GetDimensions()->GetDimensionCount());
         //
-        std::complex<float>* buffer = Yap::GetDataArray<std::complex<float>>(data);
+        std::complex<float>* buffer = Yap::GetDataArray<std::complex<float>(data);
         RawData::GetHandle().InsertPhasedata(buffer, freq_count, channel_index, slice_index, phase_index);
         std::complex<float> temp = buffer[3];
+        delete[] buffer;
+        std::complex<float> temp2 = buffer[3];
 
-		Forward(data);
+
+
+
+        //Threadfunc_running();
+        //if(!_thread_running)
+        //    _thread_running = std::shared_ptr<std::thread>(
+        //                new std::thread(std::bind(&ReceiveData::Threadfunc_running, this)));
 
     }
         break;
-	case ScanInfo::SSScanFinished:
+    case 3:
     {
 
+        return true;
     }
         break;
     default:
         break;
     }
 
-	return true;
-
 }
-void ReceiveData::Forward(Yap::IData *data)
-{
-	//---------
-	for (int index = 0; index < RawData::GetHandle().MaxChannelIndex(); index++)
-	{
-		int num = RawData::GetHandle().GetNumofReadyphasesteps(index);
-		if ( num%10==0 && num>0)
-		{
-			int freq_count;
-			int phase_count;
-			int slice_count;
-			complex<float>* channel_raw_data = RawData::GetHandle().GetChannelRawdata(index, freq_count, phase_count, slice_count);
 
-			if (channel_raw_data)
-			{
-				auto output = CreateOutData(data, channel_raw_data, index, freq_count, phase_count, slice_count);
-				Feed(L"Output", output.get());
-			}
-		}
-		
-	}
-}
 void ReceiveData::Threadfunc_running()
 {
+    //---------
+    for(int index = 0; index < RawData::GetHandle().MaxChannelIndex(); index ++)
+    {
+        if(RawData::GetHandle().NeedProcess(index))
+        {
+            int freq_count;
+            int phase_count;
+            int slice_count;
+            std::complex<float>* channel_data =
+                RawData::GetHandle().NewChanneldata(index, freq_count, phase_count, slice_count);
+
+            CreateOutData(channel_data, index, freq_count, phase_count, slice_count);
+        }
+    }
+
     return;
+
 }
 
 
@@ -167,20 +156,23 @@ bool ReceiveData::IsFinished(Yap::IData *data) const
 
 }
 
-Yap::SmartPtr<Yap::IData>  ReceiveData::CreateOutData(Yap::IData* data, std::complex<float>* channel_raw_data, int channel_index,
+bool ReceiveData::CreateOutData(std::complex<float>* channel_data, int channel_index,
                                 int freq_count, int phase_count, int slice_count)
 {
+    unsigned int width = freq_count;
+    unsigned int height = phase_count;
+    //slice_count;
     unsigned int dim4 = 1;
     Dimensions dimensions;
-    dimensions(DimensionReadout, 0U, freq_count)
-        (DimensionPhaseEncoding, 0U, phase_count)
+    dimensions(DimensionReadout, 0U, width)
+        (DimensionPhaseEncoding, 0U, height)
         (DimensionSlice, 0U, slice_count)
         (Dimension4, 0U, dim4)
         (DimensionChannel, channel_index, 1);
     //
-
-    auto output = CreateData<complex<float>>(data, channel_raw_data, dimensions);
-    
+    auto ref_data = CreateRefIData();
+    auto output = CreateData<complex<float>>(ref_data.get(), channel_data, dimensions);
+    Feed(L"Output", output.get());
     LOG_TRACE(L"<ReceiveData> Feed channeldata.", L"ReconDemo");
     //
     //Log
@@ -199,15 +191,20 @@ Yap::SmartPtr<Yap::IData>  ReceiveData::CreateOutData(Yap::IData* data, std::com
             wss<<L"d:\\temp";
             wstring wpath = wss.str();
             CDataWatch::ExportData(wpath.c_str(),
-                                   channel_raw_data + channel_index*freq_count*phase_count*slice_count,
+                                   channel_data + channel_index*freq_count*phase_count*slice_count,
                                    256, 256, i);
         }
     }
     //
 
-    return output;
+    return true;
 }
 
+
+Yap::SmartPtr<Yap::IData> ReceiveData::CreateRefIData()
+{
+    return Yap::SmartPtr<Yap::IData>();
+}
 
 ReceiveData::~ReceiveData()
 {

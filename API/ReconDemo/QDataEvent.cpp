@@ -1,12 +1,11 @@
 #include "QDataEvent.h"
 
-QDataEvent::QDataEvent(QEvent::Type type, ScanSignal scan_signal,
-                       uint32_t scan_id, int channel_index, int phase_index)
+using namespace ScanInfo;
+QScanEvent::QScanEvent(QEvent::Type type, ScanSignal scan_signal, const ScanDimension& scan_dim, complex<float>* buffer)
     : QEvent(type)
     , _scan_signal(scan_signal)
-    , _scan_id(scan_id)
-    , _channel_index(channel_index)
-    , _phase_index(phase_index)
+    , _scan_dim(scan_dim)
+    , _buffer(buffer)
 {
 
 }

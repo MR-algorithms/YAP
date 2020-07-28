@@ -37,35 +37,14 @@ bool Display2D::Input(const wchar_t * port, IData *data)
     if (data == nullptr)
         return false;
 
-         //
     //
     int slice_index;
     int slice_count;
     int channel_index;
-    int channel_switch;
-    this->VariablesValid(data, &slice_index, &slice_count, &channel_index, &channel_switch);
-    /*
-    VariableSpace variables(data->GetVariables());
-
-    int slice_index = variables.Get<int>(L"slice_index");
-    int slice_count = variables.Get<int>(L"slice_count");
-    int channel_index = variables.Get<int>(L"channel_index");
-    int channel_switch = variables.Get<int>(L"channel_switch");
-    int channel_count = CommonMethod::GetChannelCountUsed(channel_switch);
-
-    //calcute the image index managed in the Layout Window.
-    int channelcount_max = sizeof(unsigned int) * 8;
-
-    assert( slice_index >= 0);
-    assert( slice_index < slice_count);
-    assert( slice_count >=1);
-    assert( slice_count <= 200);
-    assert( channel_index >=0);
-    assert( channel_index <= channelcount_max );
-    */
-
-
-
+	int channel_count;
+    
+	GetDimensionInfo(data, slice_index, slice_count, channel_index, channel_count);
+    
     int image_key = slice_count * channel_index + slice_index;
 
     //return _display_window.AddImage(data);
@@ -75,18 +54,57 @@ bool Display2D::Input(const wchar_t * port, IData *data)
     //Test repaint the widget.
     /*
     QThread::sleep(5);
-
-    if(channel_index <= 4)
+	if(channel_index <= 4)
     {
         qDebug()<<"Display2d::thread id = "<<GetCurrentThreadId();
-
-        qDebug()<<"channel index = "<< channel_index;
+		qDebug()<<"channel index = "<< channel_index;
         return _display_window.UpdateImage(data, 0);
     }
     else
         return true;
     */
 
+}
+
+void Display2D::GetDimensionInfo(Yap::IData* data, int& slice_index, int& slice_count, int& channel_index, int& channel_count)
+{
+	for (int i = 0; i<data->GetDimensions()->GetDimensionCount(); i++)
+	{
+		unsigned int length;
+		unsigned int start_index;
+		Yap::DimensionType dimension_type;
+		data->GetDimensions()->GetDimensionInfo(i, dimension_type, start_index, length);
+
+		switch (dimension_type)
+		{
+		
+		case Yap::DimensionSlice:
+		{
+			slice_index = start_index;
+			assert(length == 1);
+		}
+		break;
+		case Yap::DimensionChannel:
+		{
+			channel_index = start_index;
+			assert(length == 1);
+		}
+		default:
+			break;
+		}
+	}
+
+	VariableSpace variables(data->GetVariables());
+	int channel_switch = variables.Get<int>(L"channel_switch");
+	slice_count = variables.Get<int>(L"slice_count");
+	channel_count = CommonMethod::GetChannelCountUsed(channel_switch);
+	//int channelcount_max = sizeof(unsigned int) * 8;
+	assert(slice_index >= 0);
+	assert(slice_index < slice_count);
+	assert(slice_count >= 1);
+	assert(slice_count <= 200);
+	assert(channel_index >= 0);
+	assert(channel_index <= channel_count);
 }
 
 
