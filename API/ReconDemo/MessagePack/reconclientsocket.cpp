@@ -74,7 +74,7 @@ bool ReconClientSocket::ReadFlag()
     cmr::MsgPackBufferSocketIO io;
     int bytesLeft = io.qt_bytesAvailable(_socket);
 
-    qDebug()<< "Enter ReconClientSocket::ReadFlag():  "<< bytesLeft<<" bytes available";
+    //qDebug()<< "Enter ReconClientSocket::ReadFlag():  "<< bytesLeft<<" bytes available";
     int bytesToRead = 2 *sizeof(uint32_t);
 
     //if( bytesLeft < 2 * sizeof(uint32_t) )
@@ -115,7 +115,7 @@ bool ReconClientSocket::ReadHeaditem()
     int headitem_bytes = _bufferInfo.headitem_count * sizeof(HeadItem);
 
     int bytesLeft = io.qt_bytesAvailable(_socket);
-    qDebug()<< "Enter ReconClientSocket::ReadHeaditem():  "<< bytesLeft<<" bytes available";
+    //qDebug()<< "Enter ReconClientSocket::ReadHeaditem():  "<< bytesLeft<<" bytes available";
 
     if( bytesLeft < headitem_bytes)
     {
@@ -141,7 +141,7 @@ bool ReconClientSocket::ReadValue()
 
     cmr::MsgPackBufferSocketIO io;
     int bytesLeft = io.qt_bytesAvailable(_socket);
-    qDebug()<< "Enter ReconClientSocket::ReadValue():  "<< bytesLeft<<" bytes available";
+    //qDebug()<< "Enter ReconClientSocket::ReadValue():  "<< bytesLeft<<" bytes available";
 
     if(bytesLeft < bytesToRead)
     {

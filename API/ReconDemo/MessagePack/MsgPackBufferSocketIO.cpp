@@ -52,7 +52,7 @@ QByteArray cmr::MsgPackBufferSocketIO::qt_read(SOCKET socket, int length)
 
     DebugInfo::Output(L"MsgPackBufferSocketIO::qt_read()", L"Enter...",
                       reinterpret_cast<int>(this), true, DebugInfo::flow_type1);
-    qDebug()<< "Enter MsgPackBufferSocketIO::qt_read():  read "<< length<<" bytes";
+    //qDebug()<< "Enter MsgPackBufferSocketIO::qt_read():  read "<< length<<" bytes";
 
 
     return result;

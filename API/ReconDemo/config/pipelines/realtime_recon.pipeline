@@ -1,24 +1,28 @@
 import "BasicRecon.dll";
 ReceiveData receiver;
 SliceIterator slice_iterator;
-SliceSelector slice_selector(SliceIndex = 3);
+//SliceSelector slice_selector(SliceIndex = 3);
 
 DcRemover dc_remover;
 ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);
 Fft2D fft;
 ModulePhase module_phase;
-//ChannelMerger channel_merger(ChannelCount = 4);
+ChannelMerger channel_merger(ChannelCount = 4);
 DataTypeConvertor convertor;
 Display2D display2d;
 //JpegExporter jpeg_exporter(ExportFolder = "d:\\Output\\test1");
 	
-receiver->slice_selector;
-slice_selector->dc_remover;
+receiver->slice_iterator;
+slice_iterator->dc_remover;
 dc_remover->zero_filling;
 zero_filling->fft;
 fft->module_phase;
 //module_phase.Module->jpeg_exporter;
+
 module_phase.Module->convertor;
+//module_phase.Module->channel_merger;
+//channel_merger->convertor;
+
 convertor.UnsignedShort->display2d;
 
 self.Input->receiver.Input;

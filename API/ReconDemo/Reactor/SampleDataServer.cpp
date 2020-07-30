@@ -103,10 +103,10 @@ bool SampleDataServer::OnDataData(SampleDataData &data)//cmr::MsgUnpack& msg_pac
     calculate_dimindex(_sample_start, data.dim23456_index,
                        scan_dim.phase_index, scan_dim.slice_index);
 
-    qDebug()<<"allocate : phase_index = "<<scan_dim.phase_index;
+    //qDebug()<<"allocate : phase_index = "<<scan_dim.phase_index;
     shared_ptr<complex<float>> buffer( new complex<float>[scan_dim.phase_count],
             [=](complex<float> *p) {
-        qDebug()<<"DeAllocate : phase_index = " <<scan_dim.phase_index;
+        //qDebug()<<"DeAllocate : phase_index = " <<scan_dim.phase_index;
         delete[] p;
     } );
 	/*

@@ -117,7 +117,8 @@ public:
     bool Ready(){return _ready;}
     void InsertPhasedata(std::complex<float>* source, int length, int channel_index, int slice_index, int phase_index);
 	int  MaxChannelIndex();
-    const ChannelData& GetChannelInfo() const;
+    const ChannelData& GetChannelInfo(int channel_index = 0) const;
+	void SetChannelInfo(int channel_index, bool processed);//fake processing.
 
     std::complex<float>* GetChannelRawdata(int channel_index, int& freq_count, int& phase_count, int& slice_count);
 	int GetNumofReadyphasesteps(int channel_index);//Used for controling number of reconstruction.

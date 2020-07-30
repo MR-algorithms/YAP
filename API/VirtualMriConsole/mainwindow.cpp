@@ -116,7 +116,7 @@ void MainWindow::on_scanButton_clicked()
     //Hardcode: dataPath, channelCount, phaseCount,
     qDebug()<<"Hard code: dataPath, channelCount, phaseCount in Mainwindow::on_startButton_clicked";
     int allPhaseCount=ui->editPhaseCount->text().toInt();
-    auto scantask = Scan::ScantaskGenerator::Create(reference_task, Scan::Mask(rate, type,allPhaseCount, 4/*ChannelCount*/));
+    auto scantask = Scan::ScantaskGenerator::Create(reference_task, Scan::Mask(rate, type,allPhaseCount, 1/*ChannelCount*/));
 
     qDebug()<<"MainWidow::onScanButton_clicked()";
 

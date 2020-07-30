@@ -17,7 +17,7 @@ using namespace Yap;
 
 ImageLayoutWidget::ImageLayoutWidget(QWidget *parent) :
     QWidget(parent),
-    _layout(4,4),
+    _layout(5,4),
     _max_layout(8,4),
     _first_visible_image_index(0),
     _current_image_index(0)

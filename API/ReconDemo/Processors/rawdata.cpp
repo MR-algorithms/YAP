@@ -130,6 +130,7 @@ void RawData::UpdateChannel(ChannelData& channel_data, const complex<float>* dat
 	else
 	{
 		assert(state == 2);
+		assert(channel_data.processed);
 	}
 
 }
@@ -245,6 +246,8 @@ std::complex<float>* RawData::GetChannelRawdata(int channel_index,
         int length = freq_count * phase_count * slice_count;
         channel_raw_data = new std::complex<float>[length];
         memcpy( channel_raw_data, (*it).datax, length * sizeof(std::complex<float>));
+		//Data is seen as being processed after feeding into other processer.
+		(*it).processed = true;
         
     }
 	else
@@ -272,12 +275,13 @@ int RawData::MaxChannelIndex()
 }
 
 
-const ChannelData& RawData::GetChannelInfo() const
+const ChannelData& RawData::GetChannelInfo(int channel_index ) const
 {
     assert(_channels_data.size()>0);
-    const ChannelData& result = _channels_data[0];
+	assert(channel_index >= 0 && channel_index < _channels_data.size());
+    const ChannelData& result = _channels_data[channel_index];
 
-    //--
+    //check.
     int scan_id = _channels_data[0].scan_id;
     int phase_count = _channels_data[0].phase_count;
     for (auto iter = _channels_data.cbegin(); iter != _channels_data.cend(); iter++)
@@ -290,3 +294,9 @@ const ChannelData& RawData::GetChannelInfo() const
     return result;
 }
 
+void RawData::SetChannelInfo(int channel_index, bool processed)
+{
+	assert(_channels_data.size()>0);
+	assert(channel_index >= 0 && channel_index < _channels_data.size());
+	_channels_data[channel_index].processed = true;
+}

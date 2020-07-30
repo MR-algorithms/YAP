@@ -199,7 +199,7 @@ void VirtualConsoleImpl::SendBlock(Databin &databin, ScanTask& scan_task, int &s
 {
     while(true)
     {
-        Sleep(12000);
+        Sleep(1000);
 
         if(!databin.CanbeFinished())
         {

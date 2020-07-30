@@ -48,7 +48,9 @@ bool Display2D::Input(const wchar_t * port, IData *data)
     int image_key = slice_count * channel_index + slice_index;
 
     //return _display_window.AddImage(data);
-
+	qDebug() << "channel_index" << channel_index;
+	qDebug() << "slice_index" << slice_index;
+	qDebug() << "image_key" << image_key;
     return _display_window.UpdateImage(data, image_key);
 
     //Test repaint the widget.
@@ -68,6 +70,9 @@ bool Display2D::Input(const wchar_t * port, IData *data)
 
 void Display2D::GetDimensionInfo(Yap::IData* data, int& slice_index, int& slice_count, int& channel_index, int& channel_count)
 {
+	//Set channel_index = 0 for the channel merged image.
+
+	channel_index = 0;
 	for (int i = 0; i<data->GetDimensions()->GetDimensionCount(); i++)
 	{
 		unsigned int length;

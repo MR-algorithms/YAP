@@ -38,7 +38,7 @@ bool ReceiveData::Input(const wchar_t * port, IData *data)
     assert(data->GetVariables() != nullptr);
     VariableSpace variables(data->GetVariables());
     ScanInfo::ScanSignal scan_signal = static_cast<ScanInfo::ScanSignal>( variables.Get<int>(L"scan_signal"));
-    qDebug()<<"scan_signal = "<<scan_signal;
+    //qDebug()<<"scan_signal = "<<scan_signal;
     
     switch(scan_signal)
     {
@@ -85,7 +85,7 @@ bool ReceiveData::Input(const wchar_t * port, IData *data)
             {
 				assert(length == 1);
                 phase_index = start_index;
-                qDebug()<<"---------scanning phase step =" <<phase_index << "**********";
+                //qDebug()<<"---------scanning phase step =" <<phase_index << "**********";
             }
                 break;
             case Yap::DimensionSlice:
@@ -109,6 +109,15 @@ bool ReceiveData::Input(const wchar_t * port, IData *data)
         //
         std::complex<float>* buffer = Yap::GetDataArray<std::complex<float>>(data);
         RawData::GetHandle().InsertPhasedata(buffer, freq_count, channel_index, slice_index, phase_index);
+		//output:
+		/*
+		int num = RawData::GetHandle().GetNumofReadyphasesteps(channel_index);
+		qDebug() << "Insert Phase: channel_index" << channel_index << "slice_index" << slice_index << "phase_index" << phase_index;
+		if (!RawData::GetHandle().GetChannelInfo(channel_index).processed)
+		{
+			qDebug() << "-------------------channel_index" << channel_index << "Ready phase steps" << num;
+		}
+		*/
         std::complex<float> temp = buffer[3];
 
 		Forward(data);
@@ -130,21 +139,38 @@ bool ReceiveData::Input(const wchar_t * port, IData *data)
 void ReceiveData::Forward(Yap::IData *data)
 {
 	//---------
-	for (int index = 0; index < RawData::GetHandle().MaxChannelIndex(); index++)
+	int max_channelindex= RawData::GetHandle().MaxChannelIndex();
+	for (int index = 0; index <= max_channelindex; index++)
 	{
 		int num = RawData::GetHandle().GetNumofReadyphasesteps(index);
-		if ( num%10==0 && num>0)
+		bool processed = RawData::GetHandle().GetChannelInfo(index).processed;
+		if ( num%5==0 && !processed)
 		{
+
+			
 			int freq_count;
 			int phase_count;
 			int slice_count;
+			qDebug() << "--Forward.....reading buffer...";
 			complex<float>* channel_raw_data = RawData::GetHandle().GetChannelRawdata(index, freq_count, phase_count, slice_count);
 
 			if (channel_raw_data)
 			{
+				qDebug() << "--Forward----------channel_index" << index << "Ready phase steps" << num;
 				auto output = CreateOutData(data, channel_raw_data, index, freq_count, phase_count, slice_count);
+				//Log
+				wstringstream wss;
+				wss << L"Feed: channel index == " << index << L"\tPhase step counts = " << num;
+				wstring ws;
+				ws = wss.str(); //»ò ss>>strtEST;
+				LOG_TRACE(ws.c_str(), L"ReconDemo");
+
 				Feed(L"Output", output.get());
 			}
+		}
+		else
+		{
+			RawData::GetHandle().SetChannelInfo(index, true);
 		}
 		
 	}
