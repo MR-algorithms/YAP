@@ -77,6 +77,7 @@ bool Yap::SliceSelector::Input(const wchar_t * name, IData * data)
 			auto output = CreateData<short>(data,
 				Yap::GetDataArray<short>(data)
 				+ slice_index * slice_block_size, data_dimensions, data);
+			AddASingleVarible(output.get(), L"slice_count", length, DataHelper(output.get()).GetDataType());
 			Feed(L"Output", output.get());
 		}
 	}

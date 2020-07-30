@@ -5,6 +5,7 @@
 #include "Utilities\CommonMethod.h"
 #include "Implement/LogUserImpl.h"
 #include <cassert>
+#include <time.h>
 
 using namespace Yap;
 using namespace std;
@@ -30,6 +31,7 @@ ChannelMerger::~ChannelMerger(void)
 
 bool ChannelMerger::Input(const wchar_t * name, IData * data)
 {
+	time_t start = clock();
 	assert(data != nullptr);
 	assert(Inputs()->Find(name) != nullptr);
 
@@ -119,6 +121,15 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 			*merge_cursor = sqrt(*merge_cursor);
 		}
 		//
+		time_t end = clock();
+		int ms = float(end - start);// / CLOCKS_PER_SEC;
+		//Log
+		wstringstream wss;
+		wss << L"Channel merger: elapsed time =  " << ms << L"ms";
+		wstring ws;
+		ws = wss.str(); //或 ss>>strtEST;
+		LOG_TRACE(ws.c_str(), L"ChannelMerger");
+		
 		Feed(L"Output", iter->second.buffer.get());
 	}
 

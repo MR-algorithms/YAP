@@ -2,7 +2,7 @@
 
 #include "Client/DataHelper.h"
 #include "Implement/LogUserImpl.h"
-
+#include "time.h"
 #include <string>
 
 using namespace std;
@@ -41,6 +41,8 @@ Fft2D::~Fft2D()
 
 bool Fft2D::Input(const wchar_t * port, IData * data)
 {
+	time_t start = clock();
+
 	// Do some check.
 	if (data == nullptr)
 	{
@@ -78,6 +80,16 @@ bool Fft2D::Input(const wchar_t * port, IData * data)
 	{
 		LOG_TRACE(L"<Fft2D> Input::InPlace is true, before Fft().", L"BasicRecon");
 		Fft(data_array, data_array, width, height, GetProperty<bool>(L"Inverse"));
+		//
+		time_t end = clock();
+		int ms = float(end - start);// / CLOCKS_PER_SEC;
+									//Log
+		wstringstream wss;
+		wss << L"FFT2D(InPace): elapsed time =  " << ms << L"ms";
+		wstring ws;
+		ws = wss.str(); //»ò ss>>strtEST;
+		LOG_TRACE(ws.c_str(), L"Fft2D");
+		//
 		return Feed(L"Output", data);
 	}
 	else
@@ -88,6 +100,16 @@ bool Fft2D::Input(const wchar_t * port, IData * data)
 
 		Fft(data_array, GetDataArray<complex<float>>(output.get()),
 			width, height, GetProperty<bool>(L"Inverse"));
+		//
+		time_t end = clock();
+		int ms = float(end - start);// / CLOCKS_PER_SEC;
+									//Log
+		wstringstream wss;
+		wss << L"FFT2D(not InPace): elapsed time =  " << ms << L"ms";
+		wstring ws;
+		ws = wss.str(); //»ò ss>>strtEST;
+		LOG_TRACE(ws.c_str(), L"Fft2D");
+		//
 		return Feed(L"Output", output.get());
 	}
 }
