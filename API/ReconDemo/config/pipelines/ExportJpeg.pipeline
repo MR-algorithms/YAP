@@ -1,5 +1,0 @@
-import "BasicRecon.dll";
-
-JpegExporter jpeg_exporter;
-
-self.Input->jpeg_exporter.Input;

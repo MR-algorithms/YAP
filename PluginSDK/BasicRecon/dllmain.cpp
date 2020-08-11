@@ -5,6 +5,7 @@
 #include "Algorithm2DWrapper.h"
 #include "CalcuArea.h"
 #include "ChannelDataCollector.h"
+#include "ChannelImageDataCollector.h"
 #include "ChannelIterator.h"
 #include "ChannelMerger.h"
 #include "CmrDataReader.h"
@@ -56,6 +57,7 @@ extern "C" {
 BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(CalcuArea)
 	ADD_PROCESSOR(ChannelDataCollector)
+	ADD_PROCESSOR(ChannelImageDataCollector)
 	ADD_PROCESSOR(ChannelIterator)
 	ADD_PROCESSOR(ChannelMerger)
 	ADD_PROCESSOR(CmrDataReader)

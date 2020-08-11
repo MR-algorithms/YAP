@@ -15,7 +15,6 @@ namespace Yap
 		~ChannelDataCollector(void);
 
 		virtual bool Input(const wchar_t * name, IData * data) override;
-
 		struct CollectorBuffer
 		{
 			SmartPtr<ComplexFloatData> buffer;

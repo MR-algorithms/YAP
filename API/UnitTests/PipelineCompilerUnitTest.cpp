@@ -262,9 +262,9 @@ BOOST_AUTO_TEST_CASE(processor_ChannelMerger)
 	auto channel_count = properties->Find(L"ChannelCount");
 	BOOST_CHECK(channel_count != nullptr);
 	BOOST_CHECK(channel_count->GetType() == VariableInt);
-	auto channel_switch = properties->Find(L"ChannelSwitch");
-	BOOST_CHECK(channel_switch != nullptr);
-	BOOST_CHECK(channel_switch->GetType() == VariableInt);
+	auto ChannelSwitch = properties->Find(L"ChannelSwitch");
+	BOOST_CHECK(ChannelSwitch != nullptr);
+	BOOST_CHECK(ChannelSwitch->GetType() == VariableInt);
 }
 
 BOOST_AUTO_TEST_CASE(processor_CmrDataReader)
@@ -298,9 +298,9 @@ BOOST_AUTO_TEST_CASE(processor_CmrDataReader)
 	auto channel_count = properties->Find(L"ChannelCount");
 	BOOST_CHECK(channel_count != nullptr);
 	BOOST_CHECK(channel_count->GetType() == VariableInt);
-	auto channel_switch = properties->Find(L"ChannelSwitch");
-	BOOST_CHECK(channel_switch != nullptr);
-	BOOST_CHECK(channel_switch->GetType() == VariableInt);
+	auto ChannelSwitch = properties->Find(L"ChannelSwitch");
+	BOOST_CHECK(ChannelSwitch != nullptr);
+	BOOST_CHECK(ChannelSwitch->GetType() == VariableInt);
 	auto GroupCount = properties->Find(L"GroupCount");
 	BOOST_CHECK(GroupCount != nullptr);
 	BOOST_CHECK(GroupCount->GetType() == VariableInt);

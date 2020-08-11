@@ -31,7 +31,7 @@ namespace Yap
 
 		virtual bool Input(const wchar_t * name, IData * data) override;
 
-		bool ReadRawData(unsigned int channel_index);
+		bool ReadRawData(unsigned int channel_index, int channel_dimension_index);
 		float* ReadEcnuFile(const wchar_t * file_path, unsigned int& width, unsigned int& height,
 			unsigned int& slices, unsigned int& dim4);
 	};

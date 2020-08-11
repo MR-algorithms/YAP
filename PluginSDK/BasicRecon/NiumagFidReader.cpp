@@ -115,7 +115,7 @@ bool Yap::NiumagFidReader::ReadNiumagFidData()
 
 		//
 		//Add some variables and check them.
-		AddASingleVarible(data.get(), L"channel_switch", 1, DataHelper(data.get()).GetDataType());
+		AddASingleVarible(data.get(), L"channel_count", 1, DataHelper(data.get()).GetDataType());
 
 		//
 

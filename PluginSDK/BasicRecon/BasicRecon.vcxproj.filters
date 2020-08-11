@@ -109,6 +109,9 @@
     <ClCompile Include="IcePeFt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ChanneIImageDataCollector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm2DWrapper.h">
@@ -220,6 +223,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IcePeFt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChannelImageDataCollector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

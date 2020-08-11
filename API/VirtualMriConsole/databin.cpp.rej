@@ -1,9 +1,0 @@
-diff a/API/VirtualMriConsole/databin.cpp b/API/VirtualMriConsole/databin.cpp	(rejected hunks)
-@@ -97,6 +97,7 @@
-     _data = boost::shared_array<complex<float>>( reinterpret_cast<complex<float>*>(reader.ReadAllData(&_dataInfo, path2)));
- 
-     int stop;
-+
- 
-     //CString data_info_str;
-     //data_info_str.Format(_T("DataInfo %d %d %d %d %d %d %d"),

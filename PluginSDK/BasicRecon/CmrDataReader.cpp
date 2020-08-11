@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <fstream>
 #include "Client\DataHelper.h"
+#include "Utilities\CommonMethod.h"
 
 using namespace Yap;
 using namespace std;
@@ -59,6 +60,7 @@ bool CmrDataReader::Input(const wchar_t * name, IData * data)
 
 	int channel_count = GetProperty<int>(L"ChannelCount");
 	assert(channel_count > 0 && channel_count <= 32);
+	unsigned int channel_dimension_index = 0;
 	for (int channel_index = 0; channel_index < channel_count; ++channel_index)
 	{
 		unsigned int channel_mask = (1 << channel_index); // 每次循环都和0或，得到某通道0001(1),0010(2),0100(4),1000(8)
@@ -66,16 +68,17 @@ bool CmrDataReader::Input(const wchar_t * name, IData * data)
 
 		if (channel_used)
 		{
- 			if (!ReadRawData(channel_index))
+ 			if (!ReadRawData(channel_index, channel_dimension_index))
  			{
  				return false;
  			}
+			channel_dimension_index++;
 		}
 	}
 	return true;
 }
 
-bool CmrDataReader::ReadRawData(unsigned int channel_index)
+bool CmrDataReader::ReadRawData(unsigned int channel_index, int channel_dimension_index)
 {
 	std::wostringstream output;
 	output << GetProperty<std::wstring>(L"DataPath") << L"\\ChannelData"
@@ -141,13 +144,15 @@ bool CmrDataReader::ReadRawData(unsigned int channel_index)
 		(DimensionPhaseEncoding, 0U, height)
 		(DimensionSlice, 0U, total_slice_count)
 		(Dimension4, 0U, dim4)
-		(DimensionChannel, channel_index, 1);
+		(DimensionChannel, channel_dimension_index, 1);
 
 	auto output_data = CreateData<complex<float>>(nullptr,
 		reinterpret_cast<complex<float>*>(raw_data_buffer), dimensions);
 	//Add some variables and check them.
-	unsigned int channel_switch = GetProperty<int>(L"ChannelSwitch");
-	AddASingleVarible(output_data.get(), L"channel_switch", channel_switch, DataHelper(output_data.get()).GetDataType());
+	unsigned int ChannelSwitch = GetProperty<int>(L"ChannelSwitch");
+	int channel_count = CommonMethod::GetChannelCountUsed(ChannelSwitch);
+	AddASingleVarible(output_data.get(), L"channel_count", channel_count, DataHelper(output_data.get()).GetDataType());
+	AddASingleVarible(output_data.get(), L"ready_phasesteps", height, DataHelper(output_data.get()).GetDataType());
 	
 	Feed(L"Output", output_data.get());
 

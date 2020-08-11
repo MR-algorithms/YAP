@@ -184,6 +184,7 @@
     <ClInclude Include="Algorithm2DWrapper.h" />
     <ClInclude Include="CalcuArea.h" />
     <ClInclude Include="ChannelDataCollector.h" />
+    <ClInclude Include="ChannelImageDataCollector.h" />
     <ClInclude Include="ChannelIterator.h" />
     <ClInclude Include="ChannelMerger.h" />
     <ClInclude Include="CmrDataReader.h" />
@@ -227,6 +228,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="CalcuArea.cpp" />
+    <ClCompile Include="ChanneIImageDataCollector.cpp" />
     <ClCompile Include="ChannelDataCollector.cpp" />
     <ClCompile Include="ChannelIterator.cpp" />
     <ClCompile Include="ChannelMerger.cpp">

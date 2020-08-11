@@ -1,8 +1,0 @@
-import "BasicRecon.dll";
-
-NiumagFloatReader reader(DataPath = "config\\TempResults\\temp_shimming.shm");
-NiuMriDisplay1D display1d;
-
-reader->display1d;
-
-self.Input->reader.Input;
