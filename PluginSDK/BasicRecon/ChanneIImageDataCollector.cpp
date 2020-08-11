@@ -89,20 +89,23 @@ bool Yap::ChannelImageDataCollector::Input(const wchar_t * name, IData * data)
 		DataHelper helper2(iter->second.buffer.get());
 		if (iter->second.ready_phasesteps < old_ready_phasesteps)
 		{
-			break;
 		}
-		else if (iter->second.ready_phasesteps > old_ready_phasesteps)
+		else
 		{
-			iter->second.count = 0;
-			memset(collector_cursor, 0, helper2.GetDataSize() * sizeof(float));
+			if (iter->second.ready_phasesteps > old_ready_phasesteps)
+			{
+				iter->second.count = 0;
+				memset(collector_cursor, 0, helper2.GetDataSize() * sizeof(float));
+			}
+
+			auto * source_data_array = Yap::GetDataArray<float>(data);
+			float * source_cursor = source_data_array;
+
+			memcpy(collector_cursor + iter->second.count * helper.GetBlockSize(DimensionSlice),
+				source_cursor, helper.GetBlockSize(DimensionSlice) * sizeof(float));
+			++iter->second.count;
 		}
 		
-		auto * source_data_array = Yap::GetDataArray<float>(data);
-		float * source_cursor = source_data_array;
-		
-		memcpy(collector_cursor + iter->second.count * helper.GetBlockSize(DimensionSlice), 
-			source_cursor, helper.GetBlockSize(DimensionSlice) * sizeof(float));
-		++iter->second.count;
 	}
 
 	if (iter->second.count == channel_count)
