@@ -91,6 +91,7 @@ void PipelineTest()
 		//auto pipeline = compiler.CompileFile(L"Pipelines\\test2.pipeline");
 		//auto pipeline = compiler.CompileFile(L"Pipelines\\Test_niumag_recon_yaplocal.pipeline");
 		auto pipeline = compiler.CompileFile(L"Pipelines\\Test0_qt.pipeline");
+		//auto pipeline = compiler.CompileFile(L"Pipelines\\CompressedSensing2.pipeline");
 		if (pipeline.get() == nullptr)
 		{
 			return;
@@ -100,6 +101,7 @@ void PipelineTest()
 		if (pipeline)
 		{
 			pipeline->Input(L"Input", nullptr);
+			//pipeline->ProcessTimer();
 		}
 	}
 	 

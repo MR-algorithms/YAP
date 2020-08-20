@@ -26,6 +26,11 @@ ChannelMerger::ChannelMerger( const ChannelMerger& rhs )
 ChannelMerger::~ChannelMerger(void)
 {
 }
+bool ChannelMerger::OnTimer()
+{
+	LOG_TRACE(L"<ChannelMerge> OnTimer::", L"ChannelMerger");
+	return true;
+}
 
 bool ChannelMerger::Input(const wchar_t * name, IData * data)
 {
@@ -86,20 +91,22 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 		*merge_cursor = sqrt(*merge_cursor);
 	}
 		
-	//
-	time_t end = clock();
-	int ms = float(end - start);// / CLOCKS_PER_SEC;
-								//Log
-	wstringstream wss;
-	wss << L"Channel merger: elapsed time =  " << ms << L"ms";
-	wstring ws;
-	ws = wss.str(); //或 ss>>strtEST;
-	LOG_TRACE(ws.c_str(), L"ChannelMerger");
-
+	Log(float(clock()-start));
+	
 	Feed(L"Output", output.get());
 	
 
 	return true;
+}
+
+void ChannelMerger::Log(float ms)
+{
+	wstringstream wss;
+	wss << L"<ChannelMerger>: elapsed time =  " << ms << L"ms";
+	wstring ws;
+	ws = wss.str(); //或 ss>>strtEST;
+	LOG_TRACE(ws.c_str(), L"ChannelMerger");
+
 }
 
 //这是原来的代码：具有通道数据收集功能和通道合并功能，输入输出数据都是二维的。
@@ -208,7 +215,7 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 
 	return true;
 }
-*/
+
 std::vector<unsigned int> ChannelMerger::GetKey(IDimensions * dimensions) 
 {
 	std::vector<unsigned int> result;
@@ -250,4 +257,6 @@ bool ChannelMerger::HasChannelDimension(IDimensions *dimensions) const
 	}
 	return result;
 }
+
+*/
 

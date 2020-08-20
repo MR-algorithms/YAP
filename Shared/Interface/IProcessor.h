@@ -47,6 +47,8 @@ namespace Yap
 
 		/// Feed data into the processor via the specified port.
 		virtual bool Input(const wchar_t * name, IData * data) = 0;
+		virtual bool ProcessTimer() = 0;
+		virtual bool OnTimer() = 0;
 
 		/** @brief Specifies the module that hosts this processor. @p
 		The module should be locked till the processor is no longer used. */

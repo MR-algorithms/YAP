@@ -34,6 +34,7 @@ namespace Yap
 
 		bool Fft(std::complex<float> * data, std::complex<float> * result, size_t width, size_t height, bool inverse = false);
 		void Plan(size_t width, size_t height, bool inverse, bool in_place);
+		void Log(float ms);
 	};
 }
 

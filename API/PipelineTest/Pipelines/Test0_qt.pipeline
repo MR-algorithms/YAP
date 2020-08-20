@@ -48,3 +48,6 @@ channel_merge->jpeg_exporter;
 //convertor.UnsignedShort->display2d;
 //
 self.Input->reader.Input;
+//self.SelfA->reader.ReadA;
+//self.SelfB->convertor.Input;
+

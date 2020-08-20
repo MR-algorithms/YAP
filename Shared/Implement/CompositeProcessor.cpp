@@ -57,6 +57,21 @@ bool Yap::CompositeProcessor::Input(const wchar_t * port, IData * data)
 	return iter->second.processor->Input(iter->second.port.c_str(), data);
 }
 
+bool Yap::CompositeProcessor::ProcessTimer()
+{
+	std::map<std::wstring, Anchor>::iterator iter;
+	iter = _inputs.begin();
+
+	while (iter != _inputs.end())
+	{
+		iter->second.processor->ProcessTimer();
+		iter++;
+
+	}
+
+	return true;
+}
+
 bool Yap::CompositeProcessor::MapInput(const wchar_t * port, 
 	const wchar_t * inner_processor, 
 	const wchar_t * inner_port)

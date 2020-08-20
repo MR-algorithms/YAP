@@ -52,7 +52,11 @@ CmrDataReader::CmrDataReader(const CmrDataReader& rhs)
 CmrDataReader::~CmrDataReader()
 {
 }
-
+bool CmrDataReader::OnTimer()
+{
+	LOG_TRACE(L"<CmrDataRead> OnTimer::", L"CmrDataReader");
+	return true;
+}
 bool CmrDataReader::Input(const wchar_t * name, IData * data)
 {
 	// Should not pass in data to start raw data file reading.

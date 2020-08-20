@@ -26,6 +26,7 @@ namespace Yap
 
 		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) override;
 		virtual bool Input(const wchar_t * port, IData * data) override;
+		virtual bool ProcessTimer() override;
 
 		bool MapInput(const wchar_t * port, const wchar_t * inner_processor, const wchar_t * inner_port);
 		bool MapOutput(const wchar_t * port, const wchar_t * inner_processor, const wchar_t * inner_port);

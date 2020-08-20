@@ -6,7 +6,7 @@
 #include "Interface/Interfaces.h"
 #include "Utilities/CommonMethod.h"
 #include "VariableSpace.h"
-
+#include "LogUserImpl.h"
 using namespace std;
 using namespace Yap;
 
@@ -102,6 +102,8 @@ namespace _details
 		return true;
 	}
 
+	
+
 	bool ProcessorImpl::AddInput(const wchar_t * name, 
 								 unsigned int dimensions,
 								 int data_type)
@@ -131,6 +133,32 @@ namespace _details
 		}
 
 		return true;
+	}
+
+	bool ProcessorImpl::OnTimer()
+	{
+
+		LOG_TRACE(L"<ProcessorImpl> OnTimer::", L"ProcessorImpl");
+		return true;
+
+	}
+
+	bool ProcessorImpl::ProcessTimer()
+	{
+
+		LOG_TRACE(L"<ProcessorImpl> ProcessTimer::", L"ProcessorImpl");
+		std::multimap<std::wstring, Anchor>::iterator iter;
+		iter = _links.begin();
+		
+		OnTimer();
+		while (iter!=_links.end())
+		{
+			iter->second.processor->ProcessTimer();
+		}
+		
+		
+		return true;
+
 	}
 
 	

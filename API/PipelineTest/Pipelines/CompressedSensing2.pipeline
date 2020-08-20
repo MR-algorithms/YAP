@@ -1,31 +1,12 @@
 import "BasicRecon.dll";
-
-
 import "CompressedSensing.dll";
-
-
-
-
-CmrDataReader reader(DataPath = "D:\\test_data\\RawData_512\\RawData",
+CmrDataReader reader(DataPath = "D:\\Data\\cmr_data\\RawData_512\\RawData",
 	    ChannelCount = 4, ChannelSwitch = 15);
-
-
 SliceSelector slice_selector1(SliceIndex = 8);
-
-
 SliceSelector slice_selector2(SliceIndex = 8);
-
-
 //ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);
-
-
 //ZeroFilling zero_filling2(DestWidth = 512, DestHeight = 512);
-
-
-
 Fft2D fft;
-
-
 //Fft2D fft2;
 
 

@@ -30,6 +30,7 @@ namespace Yap
 		~CmrDataReader();
 
 		virtual bool Input(const wchar_t * name, IData * data) override;
+		virtual bool OnTimer() override;
 
 		bool ReadRawData(unsigned int channel_index, int channel_dimension_index);
 		float* ReadEcnuFile(const wchar_t * file_path, unsigned int& width, unsigned int& height,

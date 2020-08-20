@@ -67,9 +67,9 @@ bool Fft2D::Input(const wchar_t * port, IData * data)
 		return false;
 	}
 
-	LOG_TRACE(L"<Fft2D> Input::After Check1.", L"BasicRecon");
-	LOG_TRACE(L"<Fft2D> Input::After Check2.", L"BasicRecon");
-	LOG_TRACE(L"<Fft2D> Input::After Check3.", L"BasicRecon");
+	//LOG_TRACE(L"<Fft2D> Input::After Check1.", L"BasicRecon");
+	//LOG_TRACE(L"<Fft2D> Input::After Check2.", L"BasicRecon");
+	//LOG_TRACE(L"<Fft2D> Input::After Check3.", L"BasicRecon");
 
 	auto width = input_data.GetWidth();
 	auto height = input_data.GetHeight();
@@ -84,12 +84,8 @@ bool Fft2D::Input(const wchar_t * port, IData * data)
 		time_t end = clock();
 		int ms = float(end - start);// / CLOCKS_PER_SEC;
 									//Log
-		wstringstream wss;
-		wss << L"FFT2D(InPace): elapsed time =  " << ms << L"ms";
-		wstring ws;
-		ws = wss.str(); //»ò ss>>strtEST;
-		LOG_TRACE(ws.c_str(), L"Fft2D");
-		//
+		Log(ms);
+		
 		return Feed(L"Output", data);
 	}
 	else
@@ -104,11 +100,8 @@ bool Fft2D::Input(const wchar_t * port, IData * data)
 		time_t end = clock();
 		int ms = float(end - start);// / CLOCKS_PER_SEC;
 									//Log
-		wstringstream wss;
-		wss << L"FFT2D(not InPace): elapsed time =  " << ms << L"ms";
-		wstring ws;
-		ws = wss.str(); //»ò ss>>strtEST;
-		LOG_TRACE(ws.c_str(), L"Fft2D");
+		Log(ms);
+
 		//
 		return Feed(L"Output", output.get());
 	}
@@ -190,5 +183,15 @@ void Fft2D::Plan(size_t width, size_t height, bool inverse, bool in_place)
 	_plan_data_height = static_cast<unsigned int> (height);
 	_plan_inverse = inverse;
 	_plan_in_place = in_place;
+}
+
+
+void Fft2D::Log(float ms)
+{
+	wstringstream wss;
+	wss << L"<Fft2D>: elapsed time =  " << ms << L"ms";
+	wstring ws;
+	ws = wss.str(); //»ò ss>>strtEST;
+	LOG_TRACE(ws.c_str(), L"Fft2D");
 }
 

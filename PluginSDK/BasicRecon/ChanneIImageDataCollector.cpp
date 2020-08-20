@@ -68,11 +68,9 @@ bool Yap::ChannelImageDataCollector::Input(const wchar_t * name, IData * data)
 		collector_buffer.ready_phasesteps = variable.Get<int>(L"ready_phasesteps");
 		assert(collector_buffer.ready_phasesteps >= 0);
 
-		int x1 = helper.GetBlockSize(DimensionSlice);
-		int x2 = DataHelper(collector_buffer.buffer.get()).GetBlockSize(DimensionSlice);
-		DataHelper helper2(collector_buffer.buffer.get());
-		int x3 = helper2.GetDataSize();
-		int x4 = x3 / x1;
+
+		collector_dimensions.GetDimensionInfo2(DimensionSlice, index, length);
+		Log(collector_buffer.count - 1, index, collector_buffer.ready_phasesteps);
 
 		auto result = _collector_buffers.insert(make_pair(key, collector_buffer));
 		iter = result.first;
@@ -97,6 +95,14 @@ bool Yap::ChannelImageDataCollector::Input(const wchar_t * name, IData * data)
 				iter->second.count = 0;
 				memset(collector_cursor, 0, helper2.GetDataSize() * sizeof(float));
 			}
+
+			//
+			unsigned int index;
+			unsigned int length;
+			dynamic_cast<Yap::Dimensions*>(data->GetDimensions())->GetDimensionInfo2(
+				DimensionSlice, index, length);
+			Log(iter->second.count - 1, index, iter->second.ready_phasesteps);
+			//
 
 			auto * source_data_array = Yap::GetDataArray<float>(data);
 			float * source_cursor = source_data_array;
@@ -137,4 +143,15 @@ std::vector<unsigned int> Yap::ChannelImageDataCollector::GetKey(IDimensions * d
 	}
 
 	return result;
+}
+
+
+void ChannelImageDataCollector::Log(int channel_index, int slice_index, int ready_phasesteps)
+{
+	wstringstream wss;
+	wss << L"<ChannelImageDataCollector>: channel_index = " << channel_index << L"    slice_index = "
+		<<slice_index<<L"    ready_phasesteps = "<<ready_phasesteps;
+	wstring ws;
+	ws = wss.str(); //»ò ss>>strtEST;
+	LOG_TRACE(ws.c_str(), L"ChannelImageDataCollector");
 }

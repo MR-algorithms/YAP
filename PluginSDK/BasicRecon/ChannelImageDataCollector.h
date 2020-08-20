@@ -15,6 +15,8 @@ namespace Yap
 		~ChannelImageDataCollector(void);
 
 		virtual bool Input(const wchar_t * name, IData * data) override;
+
+		void Log(int channel_index, int slice_index, int ready_phasesteps);
 		
 		struct CollectorBuffer
 		{

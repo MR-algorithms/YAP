@@ -20,7 +20,10 @@ namespace Yap
 		~ChannelMerger(void);
 
 		virtual bool Input(const wchar_t * name, IData * data) override;
+		virtual bool OnTimer() override;
 
+		void Log(float ms);
+		/*
 		struct MergeBuffer
 		{
 			SmartPtr<FloatData> buffer;
@@ -35,6 +38,7 @@ namespace Yap
 		bool HasChannelDimension(IDimensions *dimensions) const;
 		std::vector<unsigned int> GetKey(IDimensions * dimensions);
 		std::map<std::vector<unsigned int>, MergeBuffer> _merge_buffers; 
+		*/
 
 	};
 }

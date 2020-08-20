@@ -48,7 +48,8 @@ namespace Yap
 
 		virtual bool Link(const wchar_t * output, IProcessor * next, const wchar_t * next_input) override;
 		virtual void SetModule(ISharedObject * module) override;
-
+		virtual bool OnTimer() override;
+		virtual bool ProcessTimer() override;
 		template<typename T> 
 		SmartPtr<DataObject<T>> CreateData(IData * reference, T* data, const Dimensions& dimensions, 
 			ISharedObject * parent = nullptr)
@@ -90,6 +91,8 @@ namespace Yap
 		bool AddOutput(const wchar_t * name, unsigned int dimensions, int data_type);
 
 		bool Feed(const wchar_t * name, IData * data);
+		
+		
 
 		template <typename T>
 		bool AddProperty(const wchar_t * property_id, typename variable_type_id<T>::set_type value, const wchar_t * description)
