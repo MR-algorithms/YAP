@@ -54,7 +54,7 @@ CmrDataReader::~CmrDataReader()
 }
 bool CmrDataReader::OnTimer()
 {
-	LOG_TRACE(L"<CmrDataRead> OnTimer::", L"CmrDataReader");
+	LOG_TRACE(L"<CmrDataRead> OnTimer::...", L"BasicRecon");
 	return true;
 }
 bool CmrDataReader::Input(const wchar_t * name, IData * data)

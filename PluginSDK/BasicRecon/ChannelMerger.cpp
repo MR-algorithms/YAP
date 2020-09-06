@@ -28,7 +28,7 @@ ChannelMerger::~ChannelMerger(void)
 }
 bool ChannelMerger::OnTimer()
 {
-	LOG_TRACE(L"<ChannelMerge> OnTimer::", L"ChannelMerger");
+	LOG_TRACE(L"<ChannelMerge> OnTimer::", L"BasicRecon");
 	return true;
 }
 
@@ -85,10 +85,19 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 
 	float * merge_cursor = Yap::GetDataArray<float>(output.get());
 	float * merge_end = merge_cursor + helper.GetBlockSize(DimensionSlice);
+	//
+	auto result = std::minmax_element(merge_cursor, merge_end);
+	decltype(*result.first) min_data = *result.first;
+	decltype(*result.first) max_data = *result.second;
+	min_data = sqrt(min_data);
+	max_data = sqrt(max_data);
+	double c = 4095 / (max_data - min_data);
+	double d = -4095 * min_data / (max_data - min_data);
+	//
 
 	for (; merge_cursor < merge_end; ++merge_cursor)
 	{
-		*merge_cursor = sqrt(*merge_cursor);
+		*merge_cursor = sqrt(*merge_cursor) * c + d;
 	}
 		
 	Log(float(clock()-start));
@@ -105,7 +114,7 @@ void ChannelMerger::Log(float ms)
 	wss << L"<ChannelMerger>: elapsed time =  " << ms << L"ms";
 	wstring ws;
 	ws = wss.str(); //或 ss>>strtEST;
-	LOG_TRACE(ws.c_str(), L"ChannelMerger");
+	LOG_TRACE(ws.c_str(), L"BasicRecon");
 
 }
 
@@ -208,7 +217,7 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 		wss << L"Channel merger: elapsed time =  " << ms << L"ms";
 		wstring ws;
 		ws = wss.str(); //或 ss>>strtEST;
-		LOG_TRACE(ws.c_str(), L"ChannelMerger");
+		LOG_TRACE(ws.c_str(), L"BasicRecon");
 		
 		Feed(L"Output", iter->second.buffer.get());
 	}

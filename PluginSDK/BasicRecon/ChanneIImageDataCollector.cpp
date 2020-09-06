@@ -34,7 +34,7 @@ bool Yap::ChannelImageDataCollector::Input(const wchar_t * name, IData * data)
 	DataHelper helper(data);
 	VariableSpace variable(data->GetVariables());
 	int channel_count = variable.Get<int>(L"channel_count");
-	
+	assert(channel_count > 0);
 
 	vector<unsigned int> key = GetKey(data->GetDimensions());
 	auto iter = _collector_buffers.find(key);
@@ -153,5 +153,5 @@ void ChannelImageDataCollector::Log(int channel_index, int slice_index, int read
 		<<slice_index<<L"    ready_phasesteps = "<<ready_phasesteps;
 	wstring ws;
 	ws = wss.str(); //»ò ss>>strtEST;
-	LOG_TRACE(ws.c_str(), L"ChannelImageDataCollector");
+	LOG_TRACE(ws.c_str(), L"BasicRecon");
 }

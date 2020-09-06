@@ -1,6 +1,6 @@
 import "BasicRecon.dll";
 
-CmrDataReader reader(DataPath = "D:\\Data\\cmr_data\\RawData_256\\RawData",
+CmrDataReader reader2(DataPath = "D:\\Data\\cmr_data\\RawData_256\\RawData",
 	ChannelCount = 4, ChannelSwitch = 13);
 
 //select iteraotr or selector.
@@ -22,7 +22,7 @@ ChannelMerger channel_merge;
 JpegExporter jpeg_exporter(ExportFolder = "D:\\output\\test0_qt_pipeline");
 //Display2D display2d;
 	
-reader->slice_iterator;
+reader2->slice_iterator;
 slice_iterator->dc_remover;
 dc_remover->zero_filling;
 zero_filling->fft;
@@ -31,12 +31,13 @@ fft->module_phase;
 //choose one of the following 3 items.
 //1: jpeg.
 //module_phase.Module->jpeg_exporter;
+
 //merge.
 module_phase.Module->data_collector;
 data_collector->channel_merge;
-channel_merge->jpeg_exporter;
-//channel_merge->convertor;
-//convertor.UnsignedShort->jpeg_exporter;
+//channel_merge->jpeg_exporter;
+channel_merge->convertor;
+convertor.UnsignedShort->jpeg_exporter;
 
 //2: display.
 //module_phase.Module->display
@@ -47,7 +48,7 @@ channel_merge->jpeg_exporter;
 //channel_merge->convertor;
 //convertor.UnsignedShort->display2d;
 //
-self.Input->reader.Input;
+self.Input->reader2.Input;
 //self.SelfA->reader.ReadA;
 //self.SelfB->convertor.Input;
 

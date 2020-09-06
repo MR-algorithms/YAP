@@ -78,7 +78,7 @@ bool Fft2D::Input(const wchar_t * port, IData * data)
 
 	if (GetProperty<bool>(L"InPlace"))
 	{
-		LOG_TRACE(L"<Fft2D> Input::InPlace is true, before Fft().", L"BasicRecon");
+		//LOG_TRACE(L"<Fft2D> Input::InPlace is true, before Fft().", L"BasicRecon");
 		Fft(data_array, data_array, width, height, GetProperty<bool>(L"Inverse"));
 		//
 		time_t end = clock();
@@ -92,7 +92,7 @@ bool Fft2D::Input(const wchar_t * port, IData * data)
 	{
 		auto output = CreateData<complex<double>>(data);
 
-		LOG_TRACE(L"<Fft2D> Input::InPlace is false, create data, before Fft().", L"BasicRecon");
+		//LOG_TRACE(L"<Fft2D> Input::InPlace is false, create data, before Fft().", L"BasicRecon");
 
 		Fft(data_array, GetDataArray<complex<float>>(output.get()),
 			width, height, GetProperty<bool>(L"Inverse"));
@@ -109,10 +109,10 @@ bool Fft2D::Input(const wchar_t * port, IData * data)
 
 void Fft2D::FftShift(std::complex<float>* data, size_t  width, size_t height)
 {
-	LOG_TRACE(L"<Fft2D> FftShift::Before SwapBlock().", L"BasicRecon");
+	//LOG_TRACE(L"<Fft2D> FftShift::Before SwapBlock().", L"BasicRecon");
 	SwapBlock(data, data + height / 2 * width + width / 2, width / 2, height / 2, width);
 	SwapBlock(data + width / 2, data + height / 2 * width, width / 2, height / 2, width);
-	LOG_TRACE(L"<Fft2D> FftShift::After SwapBlock().", L"BasicRecon");
+	//LOG_TRACE(L"<Fft2D> FftShift::After SwapBlock().", L"BasicRecon");
 }
 
 void Fft2D::SwapBlock(std::complex<float>* block1, std::complex<float>* block2, size_t width, size_t height, size_t line_stride)
@@ -122,7 +122,7 @@ void Fft2D::SwapBlock(std::complex<float>* block1, std::complex<float>* block2, 
 
 	auto cursor1 = block1;
 	auto cursor2 = block2;
-	LOG_TRACE(L"<Fft2D> SwapBlock::Before memcpy().", L"BasicRecon");
+	//LOG_TRACE(L"<Fft2D> SwapBlock::Before memcpy().", L"BasicRecon");
 	for (unsigned int row = 0; row < height; ++row)
 	{
 		memcpy(swap_buffer.data(), cursor1, width * sizeof(std::complex<float>));
@@ -132,30 +132,30 @@ void Fft2D::SwapBlock(std::complex<float>* block1, std::complex<float>* block2, 
 		cursor1 += line_stride;
 		cursor2 += line_stride;
 	}
-	LOG_TRACE(L"<Fft2D> SwapBlock::After memcpy().", L"BasicRecon");
+	//LOG_TRACE(L"<Fft2D> SwapBlock::After memcpy().", L"BasicRecon");
 }
 
 bool Fft2D::Fft(std::complex<float> * data, std::complex<float> * result_data, size_t width, size_t height, bool inverse)
 {
 	bool in_place = (data == result_data);
 
-	LOG_TRACE(L"<Fft2D> Fft::Before Plan().", L"BasicRecon");
+	//LOG_TRACE(L"<Fft2D> Fft::Before Plan().", L"BasicRecon");
 	if (width != _plan_data_width || height != _plan_data_height || inverse != _plan_inverse || in_place != _plan_in_place)
 	{
 		Plan(width, height, inverse, in_place);
 	}
-	LOG_TRACE(L"<Fft2D> Fft::After Plan(), before fftwf_execute_dft().", L"BasicRecon");
+	//LOG_TRACE(L"<Fft2D> Fft::After Plan(), before fftwf_execute_dft().", L"BasicRecon");
 	fftwf_execute_dft(_fft_plan, (fftwf_complex*)data, (fftwf_complex*)result_data);
-	LOG_TRACE(L"<Fft2D> Fft::After fftwf_execute_dft().", L"BasicRecon");
+	//LOG_TRACE(L"<Fft2D> Fft::After fftwf_execute_dft().", L"BasicRecon");
 
 	for (auto data = result_data; data < result_data + width * height; ++data)
 	{
 		*data /=  float(sqrt(width * height));
 	}
 
-	LOG_TRACE(L"<Fft2D> Fft::Before FftShift().", L"BasicRecon");
+	//LOG_TRACE(L"<Fft2D> Fft::Before FftShift().", L"BasicRecon");
 	FftShift(result_data, width, height);
-	LOG_TRACE(L"<Fft2D> Fft::After FftShift().", L"BasicRecon");
+	//LOG_TRACE(L"<Fft2D> Fft::After FftShift().", L"BasicRecon");
 	return true;
 }
 

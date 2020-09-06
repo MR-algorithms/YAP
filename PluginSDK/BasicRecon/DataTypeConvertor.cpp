@@ -48,6 +48,8 @@ Yap::SmartPtr<IData> DataTypeConvertor::GetConvertedData(IData* data)
 
 	auto input_end = input + helper.GetDataSize();
 
+	
+
 	while (input != input_end)
 	{
 		ConvertElement(*(input++), *(output++));

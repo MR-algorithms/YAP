@@ -1,5 +1,5 @@
 #include "CompositeProcessor.h"
-
+#include "LogUserImpl.h"
 #include <utility>
 
 using namespace Yap;
@@ -62,6 +62,8 @@ bool Yap::CompositeProcessor::ProcessTimer()
 	std::map<std::wstring, Anchor>::iterator iter;
 	iter = _inputs.begin();
 
+	wstring info = wstring(L"<CompositeProcessor>") + wstring(GetInstanceId()) + L"::ProcessTimer()--- Enter...";
+	LOG_TRACE(info.c_str(), L"Implement");
 	while (iter != _inputs.end())
 	{
 		iter->second.processor->ProcessTimer();
@@ -69,6 +71,8 @@ bool Yap::CompositeProcessor::ProcessTimer()
 
 	}
 
+	info = wstring(L"<CompositeProcessor>") + wstring(GetInstanceId()) + L"::ProcessTimer()--- Leave...";
+	LOG_TRACE(info.c_str(), L"Implement");
 	return true;
 }
 
