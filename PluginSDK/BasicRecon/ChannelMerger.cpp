@@ -28,7 +28,7 @@ ChannelMerger::~ChannelMerger(void)
 }
 bool ChannelMerger::OnTimer()
 {
-	LOG_TRACE(L"<ChannelMerge> OnTimer::", L"BasicRecon");
+	//LOG_TRACE(L"<ChannelMerge> OnTimer::", L"BasicRecon");
 	return true;
 }
 
@@ -46,7 +46,23 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 	dynamic_cast<Yap::Dimensions*>(data->GetDimensions())->GetDimensionInfo2(
 		Yap::DimensionChannel, temp, channel_count);
 	//-------------
+	//
+	{
+		Yap::VariableSpace variable(data->GetVariables());
+		int ready_phasesteps = variable.Get<int>(L"ready_phasesteps");
 
+		unsigned int length;
+		unsigned int index;
+		dynamic_cast<Yap::Dimensions*>(data->GetDimensions())->GetDimensionInfo2(Yap::DimensionChannel, index, length);
+		int channel_index = index;
+
+		wstring info = wstring(L"<ChannelMerge>") + L"-----channel_index = " + to_wstring(channel_index) 
+			+ L"----ready_phasesteps = " + to_wstring(ready_phasesteps)+ L"-------------";
+		
+		LOG_TRACE(info.c_str(), L"BasicRecon");
+	}
+
+	//-------------
 	Dimensions merge_dimensions(helper.GetDimensionCount() - 1); // 消除DimensionChannel这一维
 
 	DimensionType type = DimensionInvalid;
@@ -100,7 +116,7 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 		*merge_cursor = sqrt(*merge_cursor) * c + d;
 	}
 		
-	Log(float(clock()-start));
+	//Log(float(clock()-start));
 	
 	Feed(L"Output", output.get());
 	

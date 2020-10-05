@@ -84,7 +84,25 @@ bool Fft2D::Input(const wchar_t * port, IData * data)
 		time_t end = clock();
 		int ms = float(end - start);// / CLOCKS_PER_SEC;
 									//Log
-		Log(ms);
+		//
+
+		Yap::VariableSpace variable(data->GetVariables());
+		int ready_phasesteps = variable.Get<int>(L"ready_phasesteps");
+
+		unsigned int length;
+		unsigned int index;
+		dynamic_cast<Yap::Dimensions*>(data->GetDimensions())->GetDimensionInfo2(Yap::DimensionSlice, index, length);
+		int slice_index = index;
+		dynamic_cast<Yap::Dimensions*>(data->GetDimensions())->GetDimensionInfo2(Yap::DimensionChannel, index, length);
+		int channel_index = index;
+		
+		wstring info = wstring(L"<Fft2D>") + L"::Feed -----channel_index = " + to_wstring(channel_index) 
+			+ L"----slice_index = " + to_wstring(channel_index) 
+			+ L"----ready_phasesteps = " + to_wstring(ready_phasesteps) + L"-------------";
+		LOG_TRACE(info.c_str(), L"BasicRecon");
+
+		//
+		//Log(ms);
 		
 		return Feed(L"Output", data);
 	}

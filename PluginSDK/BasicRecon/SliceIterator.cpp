@@ -47,12 +47,32 @@ bool SliceIterator::Input(const wchar_t * name, IData * data)
 		unsigned int index;
 		dynamic_cast<Yap::Dimensions*>(data->GetDimensions())->GetDimensionInfo2(Yap::DimensionSlice, index, length);
 	
+
+	
+
 		if (helper.GetDataType() == DataTypeComplexFloat)
 		{
 			auto output = CreateData<complex<float>>(data,
 				Yap::GetDataArray<complex<float>>(data) + i * slice_block_size, slice_data_dimensions, data);
 
 			AddASingleVarible(output.get(), L"slice_count", length, DataHelper(output.get()).GetDataType());
+			{
+				Yap::VariableSpace variable(output->GetVariables());
+				int ready_phasesteps = variable.Get<int>(L"ready_phasesteps");
+	
+				unsigned int length;
+				unsigned int index;
+				dynamic_cast<Yap::Dimensions*>(output->GetDimensions())->GetDimensionInfo2(Yap::DimensionSlice, index, length);
+				int slice_index = index;
+				dynamic_cast<Yap::Dimensions*>(output->GetDimensions())->GetDimensionInfo2(Yap::DimensionChannel, index, length);
+				int channel_index = index;
+
+				wstring info = wstring(L"<SliceIterator>") + L"::Feed -----channel_index = " + to_wstring(channel_index)
+					+ L"----slice_index = " + to_wstring(slice_index)
+					+ L"----ready_phasesteps = " + to_wstring(ready_phasesteps) + L"-------------";
+				LOG_TRACE(info.c_str(), L"BasicRecon2");
+			}
+
 			Feed(L"Output", output.get());
 		}
 		else
@@ -61,6 +81,22 @@ bool SliceIterator::Input(const wchar_t * name, IData * data)
 				Yap::GetDataArray<unsigned short>(data) + i * slice_block_size, slice_data_dimensions, data);
 
 			AddASingleVarible(output.get(), L"slice_count", length, DataHelper(output.get()).GetDataType());
+			{
+				
+				Yap::VariableSpace variable(output->GetVariables());
+				int ready_phasesteps = variable.Get<int>(L"ready_phasesteps");
+				unsigned int length;
+				unsigned int index;
+				dynamic_cast<Yap::Dimensions*>(output->GetDimensions())->GetDimensionInfo2(Yap::DimensionSlice, index, length);
+				int slice_index = index;
+				dynamic_cast<Yap::Dimensions*>(data->GetDimensions())->GetDimensionInfo2(Yap::DimensionChannel, index, length);
+				int channel_index = index;
+
+				wstring info = wstring(L"<SliceIterator>") + L"::Feed -----channel_index = " + to_wstring(channel_index)
+					+ L"----slice_index = " + to_wstring(channel_index)
+					+ L"----ready_phasesteps = " + to_wstring(ready_phasesteps) + L"-------------";
+				LOG_TRACE(info.c_str(), L"BasicRecon");
+			}
 			Feed(L"Output", output.get());
 		}
 

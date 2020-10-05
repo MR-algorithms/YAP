@@ -434,6 +434,23 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 				input_width, input_height, left, top);
 		}
 
+		{//log
+
+			Yap::VariableSpace variable(data->GetVariables());
+			int ready_phasesteps = variable.Get<int>(L"ready_phasesteps");
+
+			unsigned int length;
+			unsigned int index;
+			dynamic_cast<Yap::Dimensions*>(data->GetDimensions())->GetDimensionInfo2(Yap::DimensionSlice, index, length);
+			int slice_index = index;
+			dynamic_cast<Yap::Dimensions*>(data->GetDimensions())->GetDimensionInfo2(Yap::DimensionChannel, index, length);
+			int channel_index = index;
+
+			wstring info = wstring(L"<ZeroFilling>") + L"::Feed -----channel_index = " + to_wstring(channel_index)
+				+ L"----slice_index = " + to_wstring(slice_index)
+				+ L"----ready_phasesteps = " + to_wstring(ready_phasesteps) + L"-------------";
+			LOG_TRACE(info.c_str(), L"BasicRecon");
+		}
 		return Feed(L"Output", output.get());
 	}
 	else
@@ -448,6 +465,24 @@ bool ZeroFilling::Input(const wchar_t * port, IData * data)
 				dest_width, dest_height,
 				Yap::GetDataArray<complex<float>>(data) + source_size * slice,
 				input_width, input_height, left, top);
+		}
+
+		{//log
+
+			Yap::VariableSpace variable(data->GetVariables());
+			int ready_phasesteps = variable.Get<int>(L"ready_phasesteps");
+
+			unsigned int length;
+			unsigned int index;
+			dynamic_cast<Yap::Dimensions*>(data->GetDimensions())->GetDimensionInfo2(Yap::DimensionSlice, index, length);
+			int slice_index = index;
+			dynamic_cast<Yap::Dimensions*>(data->GetDimensions())->GetDimensionInfo2(Yap::DimensionChannel, index, length);
+			int channel_index = index;
+
+			wstring info = wstring(L"<ZeroFilling>") + L"::Feed -----channel_index = " + to_wstring(channel_index)
+				+ L"----slice_index = " + to_wstring(slice_index)
+				+ L"----ready_phasesteps = " + to_wstring(ready_phasesteps) + L"-------------";
+			LOG_TRACE(info.c_str(), L"BasicRecon");
 		}
 		return Feed(L"Output", output.get());
 	}

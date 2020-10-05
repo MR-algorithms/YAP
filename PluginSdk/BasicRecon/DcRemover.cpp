@@ -95,6 +95,23 @@ bool DcRemover::Input(const wchar_t * port, IData * data)
 	if (corner_size >= height / 2 || corner_size >= width / 2 || corner_size < 2)
 		return false;
 
+	{//log
+
+		Yap::VariableSpace variable(data->GetVariables());
+		int ready_phasesteps = variable.Get<int>(L"ready_phasesteps");
+
+		unsigned int length;
+		unsigned int index;
+		dynamic_cast<Yap::Dimensions*>(data->GetDimensions())->GetDimensionInfo2(Yap::DimensionSlice, index, length);
+		int slice_index = index;
+		dynamic_cast<Yap::Dimensions*>(data->GetDimensions())->GetDimensionInfo2(Yap::DimensionChannel, index, length);
+		int channel_index = index;
+
+		wstring info = wstring(L"<DcRemover>") + L"::Feed -----channel_index = " + to_wstring(channel_index)
+			+ L"----slice_index = " + to_wstring(slice_index)
+			+ L"----ready_phasesteps = " + to_wstring(ready_phasesteps) + L"-------------";
+		LOG_TRACE(info.c_str(), L"BasicRecon");
+	}
 	if (data->GetDataType() == DataTypeComplexFloat)
 	{
 		if (inplace)

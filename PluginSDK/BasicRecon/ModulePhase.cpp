@@ -102,7 +102,7 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 			GetModule(GetDataArray<complex<float>>(data),
 				GetDataArray<float>(module.get()),
 				input_data.GetDataSize());
-
+			LOG_TRACE(L"<ModulePhase> ::feed module", L"BasicRecon");
 			//TestChannelOnSlice(module.get());
 			return Feed(L"Module", module.get());
 		}

@@ -137,29 +137,25 @@ namespace _details
 
 	bool ProcessorImpl::OnTimer()
 	{
-
+		/*
 		LOG_TRACE(L"<...> OnTimer() called", L"Implement");
 
 		wstringstream wss;
 		wss << L"<...>: instancce_id =  " << GetInstanceId() << L"  this = " <<std::hex<< reinterpret_cast<int>(this);
 		wstring ws;
 		ws = wss.str(); //»ò ss>>strtEST;
-		//LOG_TRACE(ws.c_str(), L"Implement");
+		LOG_TRACE(ws.c_str(), L"Implement");
+		*/
 		return true;
 
 	}
 
 	bool ProcessorImpl::ProcessTimer()
 	{
-		wstring info = wstring(L"<ProcessorImpl>") + wstring(GetInstanceId()) + L"::ProcessTimer()--- Enter...";
-		LOG_TRACE(info.c_str(), L"ReconDemo");
+		//wstring info = wstring(L"<ProcessorImpl>") + wstring(GetInstanceId()) + L"::ProcessTimer()--- Enter...";
+		//LOG_TRACE(info.c_str(), L"ReconDemo");
 
-		wstringstream wss;
-		wss << L"<...>: instancce_id =  " << GetInstanceId() << L"  this = " << L"0x" << std::hex << reinterpret_cast<int>(this);
-		wstring ws;
-		ws = wss.str(); //»ò ss>>strtEST;
-		//LOG_TRACE(ws.c_str(), L"Implement");
-
+		
 		//---------
 		std::multimap<std::wstring, Anchor>::iterator iter;
 		iter = _links.begin();
@@ -171,9 +167,8 @@ namespace _details
 			++iter;
 		}
 		
-		
-		info = wstring(L"<ProcessorImpl>") + wstring(GetInstanceId()) + L"::ProcessTimer()--- Leave...";
-		LOG_TRACE(info.c_str(), L"Implement");
+		//info = wstring(L"<ProcessorImpl>") + wstring(GetInstanceId()) + L"::ProcessTimer()--- Leave...";
+		//LOG_TRACE(info.c_str(), L"Implement");
 		return true;
 
 	}

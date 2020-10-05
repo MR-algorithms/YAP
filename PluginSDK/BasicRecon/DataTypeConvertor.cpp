@@ -174,6 +174,7 @@ bool Yap::DataTypeConvertor::Input(const wchar_t * port, IData * data)
 	if (std::wstring(port) != L"Input")
 		return false;
 
+	LOG_TRACE(L"<DataTypeConvertor>::Input-----Enter...", L"BasicRecon");
 	bool success = true;
 	switch (data->GetDataType())
 	{
