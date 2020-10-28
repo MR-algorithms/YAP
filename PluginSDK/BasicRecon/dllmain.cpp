@@ -35,6 +35,7 @@
 #include "SliceIterator.h"
 #include "SliceMerger.h"
 #include "SliceSelector.h"
+#include "ChannelSelector.h"
 #include "SubSampling.h"
 #include "ZeroFilling.h"
 
@@ -86,6 +87,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(SliceIterator)
 	ADD_PROCESSOR(SliceMerger)
 	ADD_PROCESSOR(SliceSelector)
+	ADD_PROCESSOR(ChannelSelector)
 	ADD_PROCESSOR(SubSampling)
 	ADD_PROCESSOR(ZeroFilling)
 	//ADD_PROCESSOR(IceReceiver)

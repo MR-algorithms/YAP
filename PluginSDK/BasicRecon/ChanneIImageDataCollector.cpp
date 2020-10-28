@@ -27,7 +27,6 @@ Yap::ChannelImageDataCollector::~ChannelImageDataCollector(void)
 
 bool Yap::ChannelImageDataCollector::Input(const wchar_t * name, IData * data)
 {
-	LOG_TRACE(L"<ChannelImageDataCollector>::Input-----Enter...", L"BasicRecon");
 	assert(data != nullptr);
 	assert(Inputs()->Find(name) != nullptr);
 
@@ -88,10 +87,10 @@ bool Yap::ChannelImageDataCollector::Input(const wchar_t * name, IData * data)
 			//Log(iter->second.count - 1, slice_index, iter->second.ready_phasesteps);
 
 
-			wstring info = wstring(L"<ChannalImageDataCollector>::add element ")
-				+ L"-----channel_index = " + to_wstring(channel_index)
-				+ L"-----slice_index = " + to_wstring(slice_index) + L"-------"
-				+ L"-----ready_phasesteps = " + to_wstring(iter->second.ready_phasesteps);
+			wstring info = wstring(L"<ChannalCollector>::add element ")
+				+ L"----channel_index = " + to_wstring(channel_index)
+				+ L"----slice_index = " + to_wstring(slice_index)
+				+ L"----ready_phasesteps = " + to_wstring(iter->second.ready_phasesteps);
 
 			LOG_TRACE(info.c_str(), L"BasicRecon");
 		}
@@ -126,13 +125,17 @@ bool Yap::ChannelImageDataCollector::Input(const wchar_t * name, IData * data)
 				dynamic_cast<Yap::Dimensions*>(data->GetDimensions())->GetDimensionInfo2(
 					DimensionSlice, index, length);
 				int slice_index = index;
+				dynamic_cast<Yap::Dimensions*>(data->GetDimensions())->GetDimensionInfo2(
+					DimensionChannel, index, length);
+				int channel_index = index;
 
 				//Log(iter->second.count - 1, slice_index, iter->second.ready_phasesteps);
 
 
-				wstring info = wstring(L"<ChannalImageDataCollector>::add element " ) 
-					+ L"-----slice_index = " + to_wstring(slice_index) + L"-------"
-					+ L"-----ready_phasesteps = " + to_wstring(iter->second.ready_phasesteps);
+				wstring info = wstring(L"<ChannalCollector>::add element " ) 
+					+ L"----channel_index = " + to_wstring(channel_index)
+					+ L"----slice_index = " + to_wstring(slice_index)
+					+ L"----ready_phasesteps = " + to_wstring(iter->second.ready_phasesteps);
 
 				LOG_TRACE(info.c_str(), L"BasicRecon");
 			}
@@ -158,8 +161,9 @@ bool Yap::ChannelImageDataCollector::Input(const wchar_t * name, IData * data)
 			Yap::VariableSpace variable(data->GetVariables());
 			int ready_phasesteps = variable.Get<int>(L"ready_phasesteps");
 			
-			wstring info = wstring(L"<ChannalImageDataCollector>") + L"::feed all channels------ready_phasesteps = " + to_wstring(ready_phasesteps)
-				+ L"-------slice_index = " + to_wstring(slice_index) + L"-------";
+			wstring info = wstring(L"<ChannalCollector>") + L"::feed"
+				+ L"----slice_index = " + to_wstring(slice_index)
+				+ L"----ready_phasesteps = " + to_wstring(ready_phasesteps);
 
 			LOG_TRACE(info.c_str(), L"BasicRecon");
 		}
@@ -177,8 +181,9 @@ bool Yap::ChannelImageDataCollector::Input(const wchar_t * name, IData * data)
 			Yap::VariableSpace variable(data->GetVariables());
 			int ready_phasesteps = variable.Get<int>(L"ready_phasesteps");
 			
-			wstring info = wstring(L"<ChannalImageDataCollector>") + L"-----erase element: ready_phasesteps = " + to_wstring(ready_phasesteps)
-				+L"-------slice_index = " + to_wstring(slice_index) + L"-------";
+			wstring info = wstring(L"<ChannalCollector>") + 
+				L"-----erase element: ready_phasesteps = " + to_wstring(ready_phasesteps)
+				+L"----slice_index = " + to_wstring(slice_index) + L"-------";
 
 			LOG_TRACE(info.c_str(), L"BasicRecon");
 		}

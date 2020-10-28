@@ -6,6 +6,7 @@ CmrDataReader reader2(DataPath = "D:\\Data\\cmr_data\\RawData_256\\RawData",
 //select iteraotr or selector.
 SliceIterator slice_iterator;
 //SliceSelector slice_selector(SliceIndex = 3);
+ChannelSelector channel_selector(ChannelIndex=2);
 DcRemover dc_remover;
 ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);
 
@@ -22,7 +23,8 @@ ChannelMerger channel_merge;
 JpegExporter jpeg_exporter(ExportFolder = "D:\\output\\test0_qt_pipeline");
 //Display2D display2d;
 	
-reader2->slice_iterator;
+reader2->channel_selector;
+channel_selector->slice_iterator;
 slice_iterator->dc_remover;
 dc_remover->zero_filling;
 zero_filling->fft;

@@ -43,20 +43,15 @@ bool SliceIterator::Input(const wchar_t * name, IData * data)
 		Dimensions slice_data_dimensions(data->GetDimensions());
 		slice_data_dimensions.SetDimensionInfo2(DimensionSlice, i, 1);
 		
-		unsigned int length;
-		unsigned int index;
-		dynamic_cast<Yap::Dimensions*>(data->GetDimensions())->GetDimensionInfo2(Yap::DimensionSlice, index, length);
-	
-
-	
-
+		
 		if (helper.GetDataType() == DataTypeComplexFloat)
 		{
 			auto output = CreateData<complex<float>>(data,
-				Yap::GetDataArray<complex<float>>(data) + i * slice_block_size, slice_data_dimensions, data);
+				Yap::GetDataArray<complex<float>>(data) + 
+				(i-slice_dimension.start_index) * slice_block_size, slice_data_dimensions, data);
 
-			AddASingleVarible(output.get(), L"slice_count", length, DataHelper(output.get()).GetDataType());
-			{
+			
+			{//log
 				Yap::VariableSpace variable(output->GetVariables());
 				int ready_phasesteps = variable.Get<int>(L"ready_phasesteps");
 	
@@ -78,10 +73,10 @@ bool SliceIterator::Input(const wchar_t * name, IData * data)
 		else
 		{
 			auto output = CreateData<unsigned short>(data,
-				Yap::GetDataArray<unsigned short>(data) + i * slice_block_size, slice_data_dimensions, data);
+				Yap::GetDataArray<unsigned short>(data) 
+				+ (i-slice_dimension.start_index) * slice_block_size, slice_data_dimensions, data);
 
-			AddASingleVarible(output.get(), L"slice_count", length, DataHelper(output.get()).GetDataType());
-			{
+			{//log
 				
 				Yap::VariableSpace variable(output->GetVariables());
 				int ready_phasesteps = variable.Get<int>(L"ready_phasesteps");
