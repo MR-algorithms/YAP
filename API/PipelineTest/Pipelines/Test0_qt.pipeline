@@ -9,8 +9,10 @@ SliceIterator slice_iterator;
 ChannelSelector channel_selector(ChannelIndex=2);
 DcRemover dc_remover;
 ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);
+SimpleGrid simple_grid(DestWidth = 512, DestHeight = 512);
 
 Fft2D fft;
+OverSampling over_sampling(FreqOverSampling = true);
 ModulePhase module_phase;
 DataTypeConvertor convertor;
 
@@ -26,11 +28,20 @@ JpegExporter jpeg_exporter(ExportFolder = "D:\\output\\test0_qt_pipeline");
 reader2->channel_selector;
 channel_selector->slice_iterator;
 slice_iterator->dc_remover;
-dc_remover->zero_filling;
-zero_filling->fft;
-fft->module_phase;
+//switch on convention FT.
+//dc_remover->zero_filling;
+//zero_filling->fft;
+//fft->over_sampling;
+//over_sampling->module_phase;
+
+//switch on SimpleGrid 
+dc_remover->simple_grid;
+simple_grid->module_phase;
+//end of SimpleGrid.
+
 
 //choose one of the following 3 items.
+
 //1: jpeg.
 //module_phase.Module->jpeg_exporter;
 

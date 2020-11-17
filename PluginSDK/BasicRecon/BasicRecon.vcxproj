@@ -187,6 +187,7 @@
     <ClInclude Include="ChannelImageDataCollector.h" />
     <ClInclude Include="ChannelIterator.h" />
     <ClInclude Include="ChannelMerger.h" />
+    <ClInclude Include="ChannelSelector.h" />
     <ClInclude Include="CmrDataReader.h" />
     <ClInclude Include="ComplexSplitter.h" />
     <ClInclude Include="DataTypeConvertor.h" />
@@ -210,8 +211,10 @@
     <ClInclude Include="NiuMriImageWriter.h" />
     <ClInclude Include="NLM.h" />
     <ClInclude Include="Nlmeans.h" />
+    <ClInclude Include="OverSampling.h" />
     <ClInclude Include="PhaseCorrector.h" />
     <ClInclude Include="SamplingMaskCreator.h" />
+    <ClInclude Include="SimpleGrid.h" />
     <ClInclude Include="SliceIterator.h" />
     <ClInclude Include="SliceMerger.h" />
     <ClInclude Include="SliceSelector.h" />
@@ -314,6 +317,7 @@
     <ClCompile Include="NiuMriImageWriter.cpp" />
     <ClCompile Include="NLM.cpp" />
     <ClCompile Include="Nlmeans.cpp" />
+    <ClCompile Include="OverSampling.cpp" />
     <ClCompile Include="PhaseCorrector.cpp" />
     <ClCompile Include="SamplingMaskCreator.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -321,6 +325,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SimpleGrid.cpp" />
     <ClCompile Include="SliceIterator.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>

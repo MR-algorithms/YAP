@@ -38,6 +38,8 @@
 #include "ChannelSelector.h"
 #include "SubSampling.h"
 #include "ZeroFilling.h"
+#include "OverSampling.h"
+#include "SimpleGrid.h"
 
 //#include "IceReceiver.h"
 
@@ -90,6 +92,9 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(ChannelSelector)
 	ADD_PROCESSOR(SubSampling)
 	ADD_PROCESSOR(ZeroFilling)
+	ADD_PROCESSOR(OverSampling);
+	ADD_PROCESSOR(SimpleGrid);
+
 	//ADD_PROCESSOR(IceReceiver)
 	
 	ADD_PROCESSOR(IcePeFt)

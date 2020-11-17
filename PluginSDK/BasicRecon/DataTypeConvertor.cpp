@@ -183,10 +183,31 @@ bool Yap::DataTypeConvertor::Input(const wchar_t * port, IData * data)
 	case DataTypeUnsignedChar:
 		return ConvertAndFeed<unsigned char>(data);
 	case DataTypeShort:
+
 		return ConvertAndFeed<short>(data);
 	case DataTypeUnsignedShort:
+	
 		return ConvertAndFeed<unsigned short>(data);
 	case DataTypeFloat:
+	{
+		DataHelper helper(data);
+		float * merge_cursor = Yap::GetDataArray<float>(data);
+		float * merge_end = merge_cursor + helper.GetBlockSize(DimensionSlice);
+		//
+		auto result = std::minmax_element(merge_cursor, merge_end);
+		decltype(*result.first) min_data = *result.first;
+		decltype(*result.first) max_data = *result.second;
+		min_data = min_data;
+		max_data = max_data;
+		double c = 4095 / (max_data - min_data);
+		double d = -4095 * min_data / (max_data - min_data);
+		//
+
+		for (; merge_cursor < merge_end; ++merge_cursor)
+		{
+			*merge_cursor = (*merge_cursor) * c + d;
+		}
+	}
 		return ConvertAndFeed<float>(data);
 	case DataTypeDouble:
 		return ConvertAndFeed<double>(data);
