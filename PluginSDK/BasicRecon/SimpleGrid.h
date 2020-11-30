@@ -18,8 +18,9 @@ namespace Yap
 	protected:
 		~SimpleGrid();
 		virtual bool Input(const wchar_t * port, IData * data) override;
+		void TestSetup(IData *data);
 		void FillKSpace(std::complex<float> * slice, int width, int height,
-			std::complex<float> * radial, int columns, float angle, float center, float delta_k);
+			std::complex<float> * radial, int columns, float angle, float center, float delta_k, bool OnlykPosition);
 		
 	};
 }
