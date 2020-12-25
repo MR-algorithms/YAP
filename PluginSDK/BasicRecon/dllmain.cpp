@@ -40,6 +40,7 @@
 #include "ZeroFilling.h"
 #include "OverSampling.h"
 #include "SimpleGrid.h"
+#include "Flip.h"
 
 //#include "IceReceiver.h"
 
@@ -94,6 +95,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(ZeroFilling)
 	ADD_PROCESSOR(OverSampling);
 	ADD_PROCESSOR(SimpleGrid);
+	ADD_PROCESSOR(Flip);
 
 	//ADD_PROCESSOR(IceReceiver)
 	

@@ -104,6 +104,19 @@ bool ModulePhase::Input(const wchar_t * port, IData * data)
 				input_data.GetDataSize());
 			LOG_TRACE(L"<ModulePhase> ::feed module", L"BasicRecon");
 			//TestChannelOnSlice(module.get());
+
+			{
+				DataHelper helper(module.get());
+				float * merge_cursor = Yap::GetDataArray<float>(module.get());
+				//float * merge_end = merge_cursor + helper.GetBlockSize(DimensionSlice);
+				int x = helper.GetBlockSize(DimensionSlice);
+				int y = helper.GetDataSize();
+				float * merge_end = merge_cursor + helper.GetDataSize();
+				//
+				auto result = std::minmax_element(merge_cursor, merge_end);
+				decltype(*result.first) min_data = *result.first;
+				decltype(*result.first) max_data = *result.second;
+			}
 			return Feed(L"Module", module.get());
 		}
 	}

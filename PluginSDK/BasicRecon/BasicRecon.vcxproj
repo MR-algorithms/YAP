@@ -197,6 +197,7 @@
     <ClInclude Include="Fft2D.h" />
     <ClInclude Include="Fft3D.h" />
     <ClInclude Include="FineCF.h" />
+    <ClInclude Include="Flip.h" />
     <ClInclude Include="GrayScaleUnifier.h" />
     <ClInclude Include="IcePeFt.h" />
     <ClInclude Include="imageProcessing.h" />
@@ -294,6 +295,7 @@
     </ClCompile>
     <ClCompile Include="Fft3D.cpp" />
     <ClCompile Include="FineCF.cpp" />
+    <ClCompile Include="Flip.cpp" />
     <ClCompile Include="GrayScaleUnifier.cpp" />
     <ClCompile Include="IcePeFt.cpp" />
     <ClCompile Include="JpegExporter.cpp">

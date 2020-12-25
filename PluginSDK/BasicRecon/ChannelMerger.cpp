@@ -34,12 +34,25 @@ bool ChannelMerger::OnTimer()
 
 bool ChannelMerger::Input(const wchar_t * name, IData * data)
 {
+
+	{//观察数据源：
+		DataHelper helper1(data);
+		float * merge_cursor = Yap::GetDataArray<float>(data);
+
+		int x = helper1.GetBlockSize(DimensionSlice);
+		int y = helper1.GetDataSize();
+		float * merge_end = merge_cursor + helper1.GetDataSize();
+		//
+		auto result = std::minmax_element(merge_cursor, merge_end);
+		decltype(*result.first) min_data = *result.first;
+		decltype(*result.first) max_data = *result.second;
+	}
 	time_t start = clock();
 	assert(data != nullptr);
 	assert(Inputs()->Find(name) != nullptr);
 
 	DataHelper helper(data);
-
+	int slice_count = helper.GetSliceCount();
 	int slice_block_size = helper.GetBlockSize(DimensionSlice);
 	unsigned int channel_count;
 	unsigned int temp;
@@ -80,17 +93,20 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 	}
 
 	auto output = CreateData<float>(data, &merge_dimensions);
-	memset(Yap::GetDataArray<float>(output.get()), 0, helper.GetBlockSize(DimensionSlice) * sizeof(float));
+	DataHelper helper_output(output.get());
+	assert(helper_output.GetDataSize() == slice_block_size * slice_count);
+	memset(Yap::GetDataArray<float>(output.get()), 0, helper_output.GetDataSize() * sizeof(float));
 	
 	//-----------
 	float* source_buffer = Yap::GetDataArray<float>(data);
+	
 	for (unsigned int i = 0; i < channel_count; i++)
 	{
 
 		float * merge_cursor = Yap::GetDataArray<float>(output.get());
-
-		float * source_cursor = source_buffer + helper.GetBlockSize(DimensionSlice) * i;
-		float * source_end = source_cursor + helper.GetBlockSize(DimensionSlice);
+		
+		float * source_cursor = source_buffer + slice_block_size *slice_count * i;
+		float * source_end = source_cursor + slice_block_size *slice_count;
 
 		for (; source_cursor < source_end; ++merge_cursor, ++source_cursor)
 		{
@@ -98,24 +114,40 @@ bool ChannelMerger::Input(const wchar_t * name, IData * data)
 		}
 	
 	}
-	{
+	{//Get the sqrt result of the merge value.
 		float * merge_cursor = Yap::GetDataArray<float>(output.get());
-		float * merge_end = merge_cursor + helper.GetBlockSize(DimensionSlice);
+		float * merge_end = merge_cursor + helper_output.GetDataSize();
+		
+		for (; merge_cursor < merge_end; ++merge_cursor)
+		{
+			*merge_cursor = sqrt(*merge_cursor);
+		}
+		
+	}
+
+	{//观察数据源：
+		DataHelper helper1(data);
+		float * merge_cursor = Yap::GetDataArray<float>(data);
+		
+		int x = helper1.GetBlockSize(DimensionSlice);
+		int y = helper1.GetDataSize();
+		float * merge_end = merge_cursor + helper1.GetDataSize();
 		//
 		auto result = std::minmax_element(merge_cursor, merge_end);
 		decltype(*result.first) min_data = *result.first;
 		decltype(*result.first) max_data = *result.second;
-		min_data = sqrt(min_data);
-		max_data = sqrt(max_data);
-		double c = 4095 / (max_data - min_data);
-		double d = -4095 * min_data / (max_data - min_data);
+	}
+	{//观察：
+		DataHelper helper2(output.get());
+		float * merge_cursor = Yap::GetDataArray<float>(output.get());
+		//float * merge_end = merge_cursor + helper2.GetBlockSize(DimensionSlice);
+		int x = helper2.GetBlockSize(DimensionSlice);
+		int y = helper2.GetDataSize();
+		float * merge_end = merge_cursor + helper2.GetDataSize();
 		//
-
-		for (; merge_cursor < merge_end; ++merge_cursor)
-		{
-			*merge_cursor = sqrt(*merge_cursor) * c + d;
-		}
-		
+		auto result = std::minmax_element(merge_cursor, merge_end);
+		decltype(*result.first) min_data = *result.first;
+		decltype(*result.first) max_data = *result.second;
 	}
 	//Log(float(clock()-start));
 	

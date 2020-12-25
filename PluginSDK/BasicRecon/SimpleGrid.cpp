@@ -68,19 +68,31 @@ void SimpleGrid::TestSetup(IData * data)
 		{
 			complex<float> *slice = Yap::GetDataArray<complex<float>>(data) +
 				(i - slice_dimension.start_index) * slice_block_size;
+			//
+			int interleaves = 1;
+			int total_turns = height / interleaves;
+			//测试，仅重现部分采集线。
 			for (int j = 0; j < height; j++)
 			{
-				//猜测1：假定步进角度从 - pi / 2到pi / 2；
-				float angle = (j - center_line_index) * delta_angle;
-				*(slice + j * width + width - 1) = complex<float>(0.0, angle);
-				angles[j] = angle;
+				*(slice + j * width + width - 1) = complex<float>(0,0);
 			}
-
-			//测试，仅重现部分采集线。
-			for (int j : {5, 10, 40, 64, 128, 150})
+		
+			for (int j = 0; j < height/3; j++)
 			{
-				float angle = (j - center_line_index) * delta_angle;
+				//
+				int turn_index = j % total_turns;
+				//假定totoal_turns = 10, interleaves =4; 那么：
+				//j = 2: turns_index = 2; n0 = 0;
+				//j = 12: turn_index = 2; n0 = 1;
+				int n0 = j / total_turns;
+				//猜测步骤2：
+				float angle1 = (turn_index * interleaves + n0) * delta_angle;
+				//猜测步骤3：假定步进角度从 pi / 2到-pi / 2；
+				float angle = (PI / 2 - angle1);
+			
 				*(slice + j * width + width - 1) = complex<float>(1.0, angle);
+
+
 			}
 			int x = 3;
 			
@@ -126,6 +138,7 @@ bool SimpleGrid::Input(const wchar_t * port, IData * data)
 	if (!GetProperty<bool>(L"RadialData"))
 	{
 		TestSetup(data);
+		assert(256 == helper.GetWidth());//Yap2内测试样本数据；
 	}
 	
 	int src_width = helper.GetWidth();
@@ -135,8 +148,9 @@ bool SimpleGrid::Input(const wchar_t * port, IData * data)
 	bool OnlyKPosition(GetProperty<bool>(L"OnlyKPosition"));
 	
 	//Grid parameters:
-	//1. delta_k: 缺省值2，表示重采样的放大倍数；
-	//2. width, height, 重采样构造的k空间数据宽度和高度，跟radial_length, delta
+	//0. 这里已知径向线重构k空间。
+	//1. delta_k: 缺省值2，表示径向线在k空间中采样的间距；
+	//2. width, height--k空间数据的宽度和高度，由已经的径向线决定：径向线点数，中心位置，径向线间距
 	//必须满足一定的约束关系；
 	
 	int center_column_index = src_width / 2;
@@ -145,8 +159,8 @@ bool SimpleGrid::Input(const wchar_t * port, IData * data)
 	int dest_width(GetProperty<int>(L"DestWidth")); 
 	int dest_height(GetProperty<int>(L"DestHeight")); 
 	int dest_depth = src_depth;
-	assert(dest_width >= src_width);
-	float delta_k = static_cast<float>(dest_width) / static_cast<float>(dest_height);
+	assert(dest_width == dest_height);
+	float delta_k = static_cast<float>(dest_width) / static_cast<float>(src_width);
 	
 	
 	//
@@ -179,11 +193,20 @@ bool SimpleGrid::Input(const wchar_t * port, IData * data)
 						Yap::GetDataArray<complex<float>>(data)
 						+ src_width * line_count * slice_index
 						+ src_width * line_index;
+
 					complex<float> temp = *(radial + src_width - 1);
 					bool gate = fabs(temp.real()) > 0.5;
 					
 					if (gate) {
 						float angle = temp.imag();
+						if(slice_index==0)
+						{
+							wstring info = wstring(L"<SimpleGrid>") + L"::Input "
+								+ L"----slice_index = " + to_wstring(slice_index)
+								+ L"----line_index = " + to_wstring(line_index)
+								+ L"----line_angle = " + to_wstring(angle);
+							LOG_TRACE(info.c_str(), L"BasicRecon");
+						}
 
 						FillKSpace(slice, dest_width, dest_height,
 							radial, src_width - 1, angle, center_column_index, delta_k, OnlyKPosition);

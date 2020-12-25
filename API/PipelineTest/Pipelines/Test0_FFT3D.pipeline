@@ -1,0 +1,34 @@
+import "BasicRecon.dll";
+
+CmrDataReader reader(DataPath = "D:\\Data\\cmr_data\\RawData_256\\RawData",
+	ChannelCount = 4, ChannelSwitch = 13);
+
+ChannelSelector channel_selector(ChannelIndex=2);
+ZeroFilling zero_filling(DestWidth = 256, DestHeight = 256, DestDepth = 20);
+
+Fft3D fft;
+ModulePhase module_phase;
+ChannelImageDataCollector data_collector;
+ChannelMerger channel_merge;
+DataTypeConvertor convertor;
+SliceIterator slice_iterator;
+JpegExporter jpeg_exporter(ExportFolder = "D:\\output\\test0_fft3d");
+
+//--------------	
+reader->channel_selector;
+channel_selector->fft;//zero_filling;
+//zero_filling->fft;
+fft->module_phase;
+
+//merge.
+module_phase.Module->data_collector;
+data_collector->channel_merge;
+channel_merge->convertor;
+convertor.UnsignedShort->slice_iterator;
+slice_iterator->jpeg_exporter;
+
+self.Input->reader.Input;
+
+
+
+

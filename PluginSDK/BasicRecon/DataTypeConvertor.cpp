@@ -192,13 +192,15 @@ bool Yap::DataTypeConvertor::Input(const wchar_t * port, IData * data)
 	{
 		DataHelper helper(data);
 		float * merge_cursor = Yap::GetDataArray<float>(data);
-		float * merge_end = merge_cursor + helper.GetBlockSize(DimensionSlice);
+		//float * merge_end = merge_cursor + helper.GetBlockSize(DimensionSlice);
+		int x = helper.GetBlockSize(DimensionSlice);
+		int y = helper.GetDataSize();
+		float * merge_end = merge_cursor + helper.GetDataSize();
 		//
 		auto result = std::minmax_element(merge_cursor, merge_end);
 		decltype(*result.first) min_data = *result.first;
 		decltype(*result.first) max_data = *result.second;
-		min_data = min_data;
-		max_data = max_data;
+
 		double c = 4095 / (max_data - min_data);
 		double d = -4095 * min_data / (max_data - min_data);
 		//

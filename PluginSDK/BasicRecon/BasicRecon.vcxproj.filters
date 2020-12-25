@@ -121,6 +121,9 @@
     <ClCompile Include="SimpleGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Flip.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm2DWrapper.h">
@@ -244,6 +247,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ChannelSelector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Flip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,7 +3,7 @@
 #include "Client/DataHelper.h"
 
 #include "Implement/LogUserImpl.h"
-
+#include <algorithm>
 using namespace Yap;
 using namespace std;
 
@@ -27,6 +27,19 @@ Yap::ChannelImageDataCollector::~ChannelImageDataCollector(void)
 
 bool Yap::ChannelImageDataCollector::Input(const wchar_t * name, IData * data)
 {
+
+	{//观察数据源：
+		DataHelper helper1(data);
+		float * merge_cursor = Yap::GetDataArray<float>(data);
+
+		int x = helper1.GetBlockSize(DimensionSlice);
+		int y = helper1.GetDataSize();
+		float * merge_end = merge_cursor + helper1.GetDataSize();
+		//
+		auto result = std::minmax_element(merge_cursor, merge_end);
+		decltype(*result.first) min_data = *result.first;
+		decltype(*result.first) max_data = *result.second;
+	}
 	assert(data != nullptr);
 	assert(Inputs()->Find(name) != nullptr);
 
@@ -62,7 +75,8 @@ bool Yap::ChannelImageDataCollector::Input(const wchar_t * name, IData * data)
 		collector_buffer.buffer = CreateData<float>(data, &collector_dimensions);
 
 		auto * data_array = Yap::GetDataArray<float>(data);
-		memcpy(collector_buffer.buffer->GetData(), data_array, helper.GetBlockSize(DimensionSlice) * sizeof(float));
+		int temp = helper.GetSliceCount();
+		memcpy(collector_buffer.buffer->GetData(), data_array, helper.GetBlockSize(DimensionSlice) *helper.GetSliceCount()* sizeof(float));
 		collector_buffer.count = 1;
 		collector_buffer.ready_phasesteps = variable.Get<int>(L"ready_phasesteps");
 		assert(collector_buffer.ready_phasesteps >= 0);
