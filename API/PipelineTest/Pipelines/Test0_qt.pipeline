@@ -13,7 +13,7 @@ SimpleGrid simple_grid(DestWidth = 256, DestHeight = 256, RadialData = false);
 
 
 Fft2D fft;
-OverSampling over_sampling(FreqOverSampling = true);
+OverSampling over_sampling(FreqOverSampling = false);
 ModulePhase module_phase;
 DataTypeConvertor convertor;
 Flip flip;

@@ -19,8 +19,8 @@ SimpleGrid::SimpleGrid() : ProcessorImpl(L"SimpleGrid")
 	AddProperty<bool>(L"LinearRadial", true, L"Linear Radial method.");
 	AddProperty<bool>(L"OnlyKPosition", true, L"Only k position.");
 	AddProperty<bool>(L"RadialData", true, L"Radial Data.");
-	AddProperty<int>(L"DestWidth", 256, L"Destination width.");
-	AddProperty<int>(L"DestHeight", 256, L"Destination height.");
+	AddProperty<int>(L"DestWidth", 0, L"Destination width.");
+	AddProperty<int>(L"DestHeight", 0, L"Destination height.");
 
 
 }
@@ -160,6 +160,7 @@ bool SimpleGrid::Input(const wchar_t * port, IData * data)
 	int dest_height(GetProperty<int>(L"DestHeight")); 
 	int dest_depth = src_depth;
 	assert(dest_width == dest_height);
+	assert(dest_width > 0);
 	float delta_k = static_cast<float>(dest_width) / static_cast<float>(src_width);
 	
 	
@@ -184,9 +185,9 @@ bool SimpleGrid::Input(const wchar_t * port, IData * data)
 			std::complex<float>* slice =
 				Yap::GetDataArray<complex<float>>(output.get())
 				+ dest_width*dest_height * slice_index;
-			if(1)
+			if (1)
 			{
-				
+
 				for (int line_index = 0; line_index < line_count; ++line_index)
 				{
 					std::complex<float>* radial =
@@ -196,23 +197,23 @@ bool SimpleGrid::Input(const wchar_t * port, IData * data)
 
 					complex<float> temp = *(radial + src_width - 1);
 					bool gate = fabs(temp.real()) > 0.5;
-					
+
 					if (gate) {
 						float angle = temp.imag();
-						if(slice_index==0)
+						if (slice_index == 0)
 						{
-							wstring info = wstring(L"<SimpleGrid>") + L"::Input "
-								+ L"----slice_index = " + to_wstring(slice_index)
-								+ L"----line_index = " + to_wstring(line_index)
-								+ L"----line_angle = " + to_wstring(angle);
-							LOG_TRACE(info.c_str(), L"BasicRecon");
+							//wstring info = wstring(L"<SimpleGrid>") + L"::Input "
+							//	+ L"----slice_index = " + to_wstring(slice_index)
+							//	+ L"----line_index = " + to_wstring(line_index)
+							//	+ L"----line_angle = " + to_wstring(angle);
+							//LOG_TRACE(info.c_str(), L"BasicRecon");
 						}
 
 						FillKSpace(slice, dest_width, dest_height,
 							radial, src_width - 1, angle, center_column_index, delta_k, OnlyKPosition);
 					}
 				}
-				
+
 			}
 			else {
 				//test.确认k空间索引和图像的关系。
@@ -244,6 +245,7 @@ bool SimpleGrid::Input(const wchar_t * port, IData * data)
 void SimpleGrid::FillKSpace(complex<float> * slice, int width, int height,
 	complex<float> * radial, int columns, float angle, float center, float delta_k, bool OnlyKPosition)
 {
+	float tempx = floor(-5.5);
 	for (int i = 0; i < columns; i++)
 	{
 		//径向采集线的角度是由k空间径向线上的末点决定的；所以，
@@ -275,6 +277,48 @@ void SimpleGrid::FillKSpace(complex<float> * slice, int width, int height,
 		y_index = y_index >= height-1 ? (height - 1) : y_index;
 
 		*(slice + y_index * width + x_index) = OnlyKPosition? complex<float>(100,100): *(radial + i);//note: complex data.
+		//数据驱动：每个数据多填充周围几个点。
+		/*
+		{//2
+			int x1a = x1 + 1;
+			int y1a = y1;
+			int x_index = x1a + width / 2;
+			int y_index = y1a + height / 2;
+			x_index = x_index >= 0 ? x_index : 0;
+			y_index = y_index >= 0 ? y_index : 0;
+
+			x_index = x_index >= width - 1 ? (width - 1) : x_index;
+			y_index = y_index >= height - 1 ? (height - 1) : y_index;
+
+			*(slice + y_index * width + x_index) = OnlyKPosition ? complex<float>(100, 100) : *(radial + i);//note: complex data.
+		}
+		{//3
+			int x1a = x1;
+			int y1a = y1+1;
+			int x_index = x1a + width / 2;
+			int y_index = y1a + height / 2;
+			x_index = x_index >= 0 ? x_index : 0;
+			y_index = y_index >= 0 ? y_index : 0;
+
+			x_index = x_index >= width - 1 ? (width - 1) : x_index;
+			y_index = y_index >= height - 1 ? (height - 1) : y_index;
+
+			*(slice + y_index * width + x_index) = OnlyKPosition ? complex<float>(100, 100) : *(radial + i);//note: complex data.
+		}
+		{//4
+			int x1a = x1 + 1;
+			int y1a = y1 + 1;
+			int x_index = x1a + width / 2;
+			int y_index = y1a + height / 2;
+			x_index = x_index >= 0 ? x_index : 0;
+			y_index = y_index >= 0 ? y_index : 0;
+
+			x_index = x_index >= width - 1 ? (width - 1) : x_index;
+			y_index = y_index >= height - 1 ? (height - 1) : y_index;
+
+			*(slice + y_index * width + x_index) = OnlyKPosition ? complex<float>(100, 100) : *(radial + i);//note: complex data.
+		}
+		*/
 	}
 	int x = 3;
 	return;

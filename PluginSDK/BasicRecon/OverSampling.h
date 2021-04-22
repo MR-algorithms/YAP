@@ -18,6 +18,8 @@ namespace Yap
 	protected:
 		~OverSampling();
 		virtual bool Input(const wchar_t * port, IData * data) override;
+		bool FreqInput(const wchar_t * port, IData * data);
+		bool ProcessOverSampling(const wchar_t * port, IData * data);
 		
 	};
 }
