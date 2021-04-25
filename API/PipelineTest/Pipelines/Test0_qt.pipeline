@@ -13,7 +13,7 @@ SimpleGrid simple_grid(DestWidth = 256, DestHeight = 256, RadialData = false);
 
 
 Fft2D fft;
-OverSampling over_sampling(FreqOverSampling = false);
+DeOversampling de_oversampling(FreqOverSampling = false);
 ModulePhase module_phase;
 DataTypeConvertor convertor;
 Flip flip;
@@ -34,7 +34,7 @@ channel_selector->slice_iterator;
 //dc_remover->zero_filling;
 //zero_filling->fft;
 //fft->over_sampling;
-//over_sampling->module_phase;
+//de_oversampling->module_phase;
 
 //switch on SimpleGrid 
 slice_iterator->simple_grid;

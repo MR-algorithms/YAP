@@ -38,7 +38,7 @@
 #include "ChannelSelector.h"
 #include "SubSampling.h"
 #include "ZeroFilling.h"
-#include "OverSampling.h"
+#include "DeOversampling.h"
 #include "SimpleGrid.h"
 #include "Flip.h"
 
@@ -93,7 +93,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(ChannelSelector)
 	ADD_PROCESSOR(SubSampling)
 	ADD_PROCESSOR(ZeroFilling)
-	ADD_PROCESSOR(OverSampling);
+	ADD_PROCESSOR(DeOversampling);
 	ADD_PROCESSOR(SimpleGrid);
 	ADD_PROCESSOR(Flip);
 

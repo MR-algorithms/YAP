@@ -115,13 +115,13 @@
     <ClCompile Include="ChannelSelector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OverSampling.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SimpleGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Flip.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DeOversampling.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -240,9 +240,6 @@
     <ClInclude Include="ChannelImageDataCollector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OverSampling.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SimpleGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -250,6 +247,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Flip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DeOversampling.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

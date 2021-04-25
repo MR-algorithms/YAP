@@ -192,6 +192,7 @@
     <ClInclude Include="ComplexSplitter.h" />
     <ClInclude Include="DataTypeConvertor.h" />
     <ClInclude Include="DcRemover.h" />
+    <ClInclude Include="DeOversampling.h" />
     <ClInclude Include="Difference.h" />
     <ClInclude Include="Fft1D.h" />
     <ClInclude Include="Fft2D.h" />
@@ -212,7 +213,6 @@
     <ClInclude Include="NiuMriImageWriter.h" />
     <ClInclude Include="NLM.h" />
     <ClInclude Include="Nlmeans.h" />
-    <ClInclude Include="OverSampling.h" />
     <ClInclude Include="PhaseCorrector.h" />
     <ClInclude Include="SamplingMaskCreator.h" />
     <ClInclude Include="SimpleGrid.h" />
@@ -261,6 +261,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="DeOversampling.cpp" />
     <ClCompile Include="Difference.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -319,7 +320,6 @@
     <ClCompile Include="NiuMriImageWriter.cpp" />
     <ClCompile Include="NLM.cpp" />
     <ClCompile Include="Nlmeans.cpp" />
-    <ClCompile Include="OverSampling.cpp" />
     <ClCompile Include="PhaseCorrector.cpp" />
     <ClCompile Include="SamplingMaskCreator.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>

@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "OverSampling.h"
+#include "DeOversampling.h"
 
 #include "Client/DataHelper.h"
 #include "Implement/LogUserImpl.h"
@@ -32,7 +32,7 @@ bool clip(T* dest,
 	return true;
 }
 
-OverSampling::OverSampling() : ProcessorImpl(L"OverSampling")
+DeOversampling::DeOversampling() : ProcessorImpl(L"DeOversampling")
 {
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
@@ -41,12 +41,12 @@ OverSampling::OverSampling() : ProcessorImpl(L"OverSampling")
 
 }
 
-OverSampling::OverSampling(const OverSampling& rhs)
+DeOversampling::DeOversampling(const DeOversampling& rhs)
 	:ProcessorImpl(rhs)
 {
 }
 
-OverSampling::~OverSampling()
+DeOversampling::~DeOversampling()
 {
 }
 /**
@@ -54,7 +54,7 @@ OverSampling::~OverSampling()
 */
 
 
-bool OverSampling::Input(const wchar_t * port, IData * data)
+bool DeOversampling::Input(const wchar_t * port, IData * data)
 {
 
 	if (std::wstring(port) != L"Input")
@@ -93,7 +93,7 @@ bool OverSampling::Input(const wchar_t * port, IData * data)
 \note
 //仅支持频率编码或相位编码方向2倍过采：FT完成后，把中间一半图像作为结果。
 */
-bool OverSampling::ProcessOverSampling(const wchar_t * port, IData * data)
+bool DeOversampling::ProcessOverSampling(const wchar_t * port, IData * data)
 {
 	DataHelper helper(data);
 	
@@ -152,7 +152,7 @@ bool OverSampling::ProcessOverSampling(const wchar_t * port, IData * data)
 		
 		{//log
 
-			wstring info = wstring(L"<OverSampling>") + L"::Feed -----source_width = " + to_wstring(src_width)
+			wstring info = wstring(L"<DeOversampling>") + L"::Feed -----source_width = " + to_wstring(src_width)
 				+ L"----dest_width = " + to_wstring(dest_width);
 			LOG_TRACE(info.c_str(), L"BasicRecon");
 		}
@@ -164,7 +164,7 @@ bool OverSampling::ProcessOverSampling(const wchar_t * port, IData * data)
 \note
 //仅支持读方向2倍过采：FT完成后，把中间一半图像作为结果。
 */
-bool OverSampling::FreqInput(const wchar_t * port, IData * data)
+bool DeOversampling::FreqInput(const wchar_t * port, IData * data)
 {
 	bool FreqOverSampling(GetProperty<bool>(L"FreqOverSampling"));
 	bool PhaseOverSampling(GetProperty<bool>(L"PhaseOverSampling"));
