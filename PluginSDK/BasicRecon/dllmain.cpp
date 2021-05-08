@@ -37,6 +37,7 @@
 #include "SliceSelector.h"
 #include "ChannelSelector.h"
 #include "SubSampling.h"
+#include "RadialSampling.h"
 #include "ZeroFilling.h"
 #include "DeOversampling.h"
 #include "SimpleGrid.h"
@@ -92,6 +93,7 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(SliceSelector)
 	ADD_PROCESSOR(ChannelSelector)
 	ADD_PROCESSOR(SubSampling)
+	ADD_PROCESSOR(RadialSampling)
 	ADD_PROCESSOR(ZeroFilling)
 	ADD_PROCESSOR(DeOversampling);
 	ADD_PROCESSOR(SimpleGrid);

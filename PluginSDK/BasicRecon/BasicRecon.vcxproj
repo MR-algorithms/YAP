@@ -214,6 +214,7 @@
     <ClInclude Include="NLM.h" />
     <ClInclude Include="Nlmeans.h" />
     <ClInclude Include="PhaseCorrector.h" />
+    <ClInclude Include="RadialSampling.h" />
     <ClInclude Include="SamplingMaskCreator.h" />
     <ClInclude Include="SimpleGrid.h" />
     <ClInclude Include="SliceIterator.h" />
@@ -321,6 +322,7 @@
     <ClCompile Include="NLM.cpp" />
     <ClCompile Include="Nlmeans.cpp" />
     <ClCompile Include="PhaseCorrector.cpp" />
+    <ClCompile Include="RadialSampling.cpp" />
     <ClCompile Include="SamplingMaskCreator.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
