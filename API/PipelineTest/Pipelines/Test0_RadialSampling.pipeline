@@ -5,26 +5,30 @@ CmrDataReader reader2(DataPath = "D:\\Data\\cmr_data\\RawData_256\\RawData",
 
 ChannelSelector channel_selector(ChannelIndex=2);
 DcRemover dc_remover;
-SliceIterator slice_iterator;
-RadialSampling radial_sampling;
+//SliceIterator slice_iterator;
+SliceSelector slice_selector(SliceIndex=3);
+RadialSampling radial_sampling(RadialColumns=256, LineCount=100);
+SimpleGrid simple_grid(DestWidth = 512, DestHeight = 512, RadialData = true);
 ZeroFilling zero_filling(DestWidth = 512, DestHeight = 512);
-SimpleGrid simple_grid(DestWidth = 256, DestHeight = 256, RadialData = false);
 Fft2D fft;
-DeOversampling de_oversampling(FreqOverSampling = false);
+DeOversampling de_oversampling(FreqOverSampling = true, PhaseOverSampling=true);
 ModulePhase module_phase;
 DataTypeConvertor convertor;
 Flip flip;
 JpegExporter jpeg_exporter(ExportFolder = "D:\\output\\test0_qt_pipeline");
 //---------------------------------------------------------------	
 reader2->channel_selector;
-channel_selector->slice_iterator;
+//channel_selector->slice_iterator;
 //slice_iterator->radial_sampling;
 
-slice_iterator->simple_grid;
-simple_grid->module_phase;
-//zero_filling->fft;
-//fft->de_oversampling;
-//de_oversampling->module_phase;
+channel_selector->slice_selector;
+slice_selector->radial_sampling;
+
+radial_sampling->simple_grid;
+simple_grid->zero_filling;
+zero_filling->fft;
+fft->de_oversampling;
+de_oversampling->module_phase;
 
 module_phase.Module->convertor;
 convertor.UnsignedShort->flip;

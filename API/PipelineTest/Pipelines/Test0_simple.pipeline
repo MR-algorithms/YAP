@@ -15,6 +15,7 @@ ChannelImageDataCollector data_collector;
 ChannelMerger channel_merge;
 JpegExporter jpeg_exporter(ExportFolder = "D:\\output\\test0_qt_pipeline");
 Flip flip;
+DrawlineOnImage draw_line(ScaleY=0.8);
 //-----------------------------------------------	
 reader2->channel_selector;
 channel_selector->slice_iterator;
@@ -23,8 +24,8 @@ slice_iterator->dc_remover;
 //FT.
 dc_remover->zero_filling;
 zero_filling->fft;
-fft->over_sampling;
-de_oversampling->module_phase;
+fft->module_phase;
+//de_oversampling->module_phase;
 
 //merge.
 module_phase.Module->data_collector;
@@ -32,7 +33,8 @@ data_collector->channel_merge;
 //channel_merge->jpeg_exporter;
 channel_merge->convertor;
 convertor.UnsignedShort->flip;
-flip->jpeg_exporter;
+flip->draw_line;
+draw_line->jpeg_exporter;
 
 //
 self.Input->reader2.Input;

@@ -13,6 +13,8 @@ RadialSampling::RadialSampling():
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexFloat);
 	AddInput(L"Mask", 2, DataTypeFloat);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexFloat);
+	AddProperty<int>(L"RadialColumns", 0, L"Radial Columns width.");
+	AddProperty<int>(L"LineCount", 0, L"Line Count.");
 }
 
 RadialSampling::RadialSampling(const RadialSampling& rhs)
@@ -34,9 +36,13 @@ bool Yap::RadialSampling::Input(const wchar_t * port, IData * data)
 	int depth  = helper.GetSliceCount();
 	//径向采集示例参数：
 	bool LinearRadial = true; //switch between linear and golden angle.
-	int radial_columns = width;
-	int line_count = 100;
-	float delta_k = 1.0;
+
+	int radial_columns(GetProperty<int>(L"RadialColumns"));
+	int line_count(GetProperty<int>(L"LineCount"));
+	assert(radial_columns > 0);
+	assert(line_count > 0);
+
+	float delta_k = static_cast<float>(width)/static_cast<float>(radial_columns);
 	int center_line_index = line_count / 2;
 	int center_column_index = radial_columns / 2;//start from 0, 
 	//end of 参数示例.
@@ -61,28 +67,32 @@ bool Yap::RadialSampling::Input(const wchar_t * port, IData * data)
 	{
 		complex<float>* slice_in  = Yap::GetDataArray<complex<float>>(data) + slice_index * width * height;
 		complex<float>* slice_out = Yap::GetDataArray<complex<float>>(output.get()) + slice_index * radial_columns * line_count;
-
+		float angles[256];
 		for (int line_index = 0; line_index < line_count; ++line_index)
 		{
 			//设置1：径向采集线 步进角度从 - pi / 2到pi / 2
 			float angle = (line_index - center_line_index) * delta_angle;
-
+			angles[line_index] = angle;
 			
 			boost::shared_array<complex<float>> aline
 				= GetRadialLine(slice_in, width, height, radial_columns, angle, center_column_index, delta_k);
 			memcpy(slice_out + line_index * radial_columns, aline.get(), radial_columns*sizeof(complex<float>));
 			
+			//径向采集信息存放在末点。
+			*(slice_out + line_index * radial_columns + radial_columns -1)
+			 = complex<float>(1.0, angle);
 
 		}
-		
 			
 	}
+
+	return Feed(L"Output", output.get());
 	
 
 
 	return true;
 }
-
+//参数解释：跟SimpleGrid.cpp文件相同。
 boost::shared_array<complex<float>>
 RadialSampling::GetRadialLine(std::complex<float> * input_data2D,
 	unsigned int width, unsigned int height,
@@ -109,7 +119,8 @@ RadialSampling::GetRadialLine(std::complex<float> * input_data2D,
 		}
 
 		//--------
-		//2, 转换成像素坐标：左上角为原点：
+		//2, 转换成数据坐标：单行起点为原点，第一行为原点（逐行增大）。
+		//可以理解成：跟k空间坐标方向一致。
 		float x_index = x + width / 2;
 		float y_index = y + height / 2;
 		x_index = x_index >= 0 ? x_index : 0;

@@ -41,6 +41,7 @@
 #include "ZeroFilling.h"
 #include "DeOversampling.h"
 #include "SimpleGrid.h"
+#include "DrawlineOnImage.h"
 #include "Flip.h"
 
 //#include "IceReceiver.h"
@@ -94,10 +95,11 @@ BEGIN_DECL_PROCESSORS
 	ADD_PROCESSOR(ChannelSelector)
 	ADD_PROCESSOR(SubSampling)
 	ADD_PROCESSOR(RadialSampling)
+	ADD_PROCESSOR(DrawlineOnImage)
 	ADD_PROCESSOR(ZeroFilling)
-	ADD_PROCESSOR(DeOversampling);
-	ADD_PROCESSOR(SimpleGrid);
-	ADD_PROCESSOR(Flip);
+	ADD_PROCESSOR(DeOversampling)
+	ADD_PROCESSOR(SimpleGrid)
+	ADD_PROCESSOR(Flip)
 
 	//ADD_PROCESSOR(IceReceiver)
 	

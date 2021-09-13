@@ -92,6 +92,8 @@ void PipelineTest()
 		//auto pipeline = compiler.CompileFile(L"Pipelines\\Test_niumag_recon_yaplocal.pipeline");
 		//auto pipeline = compiler.CompileFile(L"Pipelines\\Test0_qt.pipeline");
 		auto pipeline = compiler.CompileFile(L"Pipelines\\Test0_simple.pipeline");
+		//auto pipeline = compiler.CompileFile(L"Pipelines\\Test0_RadialSampling.pipeline");
+		
 		//auto pipeline = compiler.CompileFile(L"Pipelines\\Test0_fft3d.pipeline");
 		//auto pipeline = compiler.CompileFile(L"Pipelines\\CompressedSensing2.pipeline");
 		//auto pipeline = compiler.CompileFile(L"Pipelines\\demoNiiReader.pipeline");

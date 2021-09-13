@@ -16,8 +16,8 @@ SimpleGrid::SimpleGrid() : ProcessorImpl(L"SimpleGrid")
 {
 	AddInput(L"Input", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
 	AddOutput(L"Output", YAP_ANY_DIMENSION, DataTypeComplexDouble | DataTypeComplexFloat);
-	AddProperty<bool>(L"LinearRadial", true, L"Linear Radial method.");
-	AddProperty<bool>(L"OnlyKPosition", true, L"Only k position.");
+	
+	AddProperty<bool>(L"OnlyKPosition", false, L"Only k position.");
 	AddProperty<bool>(L"RadialData", true, L"Radial Data.");
 	AddProperty<int>(L"DestWidth", 0, L"Destination width.");
 	AddProperty<int>(L"DestHeight", 0, L"Destination height.");
@@ -56,7 +56,7 @@ void SimpleGrid::TestSetup(IData * data)
 	Dimension slice_dimension = helper.GetDimension(DimensionSlice);
 	//----------
 	//
-	bool LinearRadial(GetProperty<bool>(L"LinearRadial"));
+	bool LinearRadial = true;
 	float delta_angle = LinearRadial ? PI / height : (111.25 / 180 * PI);
 	int center_line_index = height / 2; 
 
@@ -111,11 +111,9 @@ void SimpleGrid::TestSetup(IData * data)
 //--radial_scan: 表示是否为径向采集数据。
 //--center_line_index: 中间线索引；表示对应ky=0的径向线索引
 //--cneter_column_index：中间点索引：表示对应k空间原点的径向线上的索引点。
-//Note:
-//1, 对每一个角度：是用终点表征角度的；如：Gx,Gy为正值，角度为第一象限角，k空间位置从
-//第三象限步进到第一象限
-//2, 因为每条线上的末点数据有是否采集和角度信息，真实数据有这个信息，Yap加载数据测试没有这个信息，
-//--所以LinearRadial: 表示线性角或黄金角径向--用于仿真设置角度信息。
+//
+//--因为每条线上的末点数据有是否采集和角度信息，真实数据有这个信息，Yap加载数据测试没有这个信息，
+
 
 bool SimpleGrid::Input(const wchar_t * port, IData * data)
 {
@@ -140,8 +138,8 @@ bool SimpleGrid::Input(const wchar_t * port, IData * data)
 		TestSetup(data);
 		assert(256 == helper.GetWidth());//Yap2内测试样本数据；
 	}
-	
-	int src_width = helper.GetWidth();
+	//数据源是径向数据，
+	int radial_columns = helper.GetWidth();
 	int line_count = helper.GetHeight();
 	int src_depth = helper.GetSliceCount();
 
@@ -153,7 +151,7 @@ bool SimpleGrid::Input(const wchar_t * port, IData * data)
 	//2. width, height--k空间数据的宽度和高度，由已经的径向线决定：径向线点数，中心位置，径向线间距
 	//必须满足一定的约束关系；
 	
-	int center_column_index = src_width / 2;
+	int center_column_index = radial_columns / 2;
 	int center_part_index = src_depth / 2;    // 21; //start from 0, slice direction, used in 3D FFT(?)
 		
 	int dest_width(GetProperty<int>(L"DestWidth")); 
@@ -161,7 +159,7 @@ bool SimpleGrid::Input(const wchar_t * port, IData * data)
 	int dest_depth = src_depth;
 	assert(dest_width == dest_height);
 	assert(dest_width > 0);
-	float delta_k = static_cast<float>(dest_width) / static_cast<float>(src_width);
+	float delta_k = static_cast<float>(dest_width) / static_cast<float>(radial_columns);
 	
 	
 	//
@@ -187,19 +185,21 @@ bool SimpleGrid::Input(const wchar_t * port, IData * data)
 				+ dest_width*dest_height * slice_index;
 			if (1)
 			{
+				float angles[256];
 
 				for (int line_index = 0; line_index < line_count; ++line_index)
 				{
 					std::complex<float>* radial =
 						Yap::GetDataArray<complex<float>>(data)
-						+ src_width * line_count * slice_index
-						+ src_width * line_index;
+						+ radial_columns * line_count * slice_index
+						+ radial_columns * line_index;
 
-					complex<float> temp = *(radial + src_width - 1);
+					complex<float> temp = *(radial + radial_columns - 1);
 					bool gate = fabs(temp.real()) > 0.5;
-
+					
 					if (gate) {
 						float angle = temp.imag();
+						angles[line_index] = angle;
 						if (slice_index == 0)
 						{
 							//wstring info = wstring(L"<SimpleGrid>") + L"::Input "
@@ -210,7 +210,7 @@ bool SimpleGrid::Input(const wchar_t * port, IData * data)
 						}
 
 						FillKSpace(slice, dest_width, dest_height,
-							radial, src_width - 1, angle, center_column_index, delta_k, OnlyKPosition);
+							radial, radial_columns - 1, angle, center_column_index, delta_k, OnlyKPosition);
 					}
 				}
 
@@ -231,7 +231,7 @@ bool SimpleGrid::Input(const wchar_t * port, IData * data)
 		{//log
 
 			wstring info = wstring(L"<SimpleGrid>") + L"::Feed "
-				+ L"----columns = " + to_wstring(src_width - 1)
+				+ L"----columns = " + to_wstring(radial_columns - 1)
 				+ L"----line count = " + to_wstring(line_count)
 				+ L"----slice count = " + to_wstring(src_depth);
 			LOG_TRACE(info.c_str(), L"BasicRecon");
@@ -239,9 +239,12 @@ bool SimpleGrid::Input(const wchar_t * port, IData * data)
 		return Feed(L"Output", output.get());
 	}
 }
+//功能：根据径向数据，填充网格点上的k空间数据。注意：
+//1, 角度：是用终点表征角度的；如：kx,ky为正值，角度为第一象限角，k空间位置从
+//第三象限步进到第一象限
+//2, center:回波中心点索引--该点跟k空间原点重合；
+//3, 假定k空间原点对应数据索引width/2和height/2
 
-//径向参数：center:回波中心点索引--该点跟k空间原点重合；
-//假定k空间原点对应数据索引width/2和height/2
 void SimpleGrid::FillKSpace(complex<float> * slice, int width, int height,
 	complex<float> * radial, int columns, float angle, float center, float delta_k, bool OnlyKPosition)
 {

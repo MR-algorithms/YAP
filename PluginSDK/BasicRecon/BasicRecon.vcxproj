@@ -194,6 +194,7 @@
     <ClInclude Include="DcRemover.h" />
     <ClInclude Include="DeOversampling.h" />
     <ClInclude Include="Difference.h" />
+    <ClInclude Include="DrawlineOnImage.h" />
     <ClInclude Include="Fft1D.h" />
     <ClInclude Include="Fft2D.h" />
     <ClInclude Include="Fft3D.h" />
@@ -283,6 +284,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="DrawlineOnImage.cpp" />
     <ClCompile Include="Fft1D.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
